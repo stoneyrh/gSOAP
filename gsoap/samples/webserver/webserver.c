@@ -133,6 +133,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "httpget.h"
 #include "httppost.h"
 #include "httpform.h"
+/* #include "httppipe.h" */ /* optionally enable HTTP pipelining at the cost of increased memory usage */
 #include "logging.h"
 #include "threads.h"
 #ifdef WITH_OPENSSL
@@ -145,6 +146,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #define AUTH_REALM "gSOAP Web Server Admin demo login: admin guest"
 #define AUTH_USERID "admin"     /* user ID to access admin pages */
 #define AUTH_PASSWD "guest"     /* user pw to access admin pages */
+
+void sigpipe_handle(int x) { }
 
 /******************************************************************************\
  *
@@ -241,7 +244,6 @@ int calcpost(struct soap*);
 int info(struct soap*);
 int html_hbar(struct soap*, const char*, size_t, size_t, unsigned long);
 int html_hist(struct soap*, const char*, size_t, size_t, size_t, const char**, size_t*, size_t);
-void sigpipe_handle(int); /* SIGPIPE handler: Unix/Linux only */
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
 
@@ -294,13 +296,13 @@ int main(int argc, char **argv)
   fprintf(stderr, "[Note: http://localhost:%d for settings, login: '"AUTH_USERID"' and '"AUTH_PASSWD"']\n", port);
   fprintf(stderr, "[Note: you should enable Linux/Unix SIGPIPE handlers to avoid broken pipe]\n");
 
-  /* Init SSL (can skip or call multiple times, engien inits automatically) */
+  /* Init SSL (can skip or call multiple times, engine inits automatically) */
   soap_ssl_init();
-  /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
+  /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere in an application */
 
   soap_init(&soap);
 
-  /* set up lSSL ocks */
+  /* set up SSL locks */
   if (CRYPTO_thread_setup())
   {
     fprintf(stderr, "Cannot setup thread mutex\n");
@@ -346,9 +348,16 @@ int main(int argc, char **argv)
   /* Register HTTP form POST plugin (MUST be registered AFTER the httppost plugin) */
   if (soap_register_plugin_arg(&soap, http_form, (void*)http_form_handler))
     soap_print_fault(&soap, stderr);
+#ifdef HTTPPIPE_H
+  /* Register HTTP PIPE plugin */
+  if (soap_register_plugin(&soap, http_pipe))
+    soap_print_fault(&soap, stderr);
+#endif
+#ifdef LOGGING_H
   /* Register logging plugin */
   if (soap_register_plugin(&soap, logging))
     soap_print_fault(&soap, stderr);
+#endif
 #ifdef HTTPDA_H
   /* Register HTTP Digest Authentication plugin */
   if (soap_register_plugin(&soap, http_da))
@@ -391,15 +400,10 @@ void server_loop(struct soap *soap)
     SOAP_SOCKET sock;
     int newpoolsize;
     
-    soap->cookie_domain = options[OPTION_d].value; /* set domain of this server */
-    soap->cookie_path = options[OPTION_p].value;   /* set root path of the cookies */
-    soap_set_cookie(soap, "visit", "true", NULL, NULL); /* use global domain/path */
-    soap_set_cookie_expire(soap, "visit", 600, NULL, NULL); /* max-age is 600 seconds to expire */
-
     if (options[OPTION_c].selected)
       soap_set_omode(soap, SOAP_IO_CHUNK); /* use chunked HTTP content (fast) */
     if (options[OPTION_k].selected)
-      soap_set_omode(soap, SOAP_IO_KEEPALIVE);
+      soap_set_mode(soap, SOAP_IO_KEEPALIVE); /* HTTP persistent connections */
     if (options[OPTION_t].value)
       soap->send_timeout = soap->recv_timeout = atol(options[OPTION_t].value);
     if (options[OPTION_s].value)
@@ -480,7 +484,12 @@ void server_loop(struct soap *soap)
     }
 
     if (options[OPTION_v].selected)
-      fprintf(stderr, "Request #%d accepted on socket %d connected from %s IPv4=%d.%d.%d.%d or IPv6=%.8x%.8x%.8x%.8x\n", req, sock, soap->host, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF, soap->ip6[0], soap->ip6[1], soap->ip6[2], soap->ip6[3]);
+    {
+      if (soap->ip)
+        fprintf(stderr, "Request #%d accepted on socket %d connected from %s IPv4=%d.%d.%d.%d\n", req, sock, soap->host, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF);
+      else
+        fprintf(stderr, "Request #%d accepted on socket %d connected from %s IPv6=%.8x%.8x%.8x%.8x\n", req, sock, soap->host, soap->ip6[0], soap->ip6[1], soap->ip6[2], soap->ip6[3]);
+    }
 
     if (poolsize > 0)
     {
@@ -800,6 +809,20 @@ int http_GET_handler(struct soap *soap)
     (SOAP_SNPRINTF(soap->endpoint, sizeof(soap->endpoint), strlen(soap->path) + 10), "http://genivia.com%s", soap->path + 8); /* redirect */
     return 307; /* Temporary Redirect */
   }
+  if (!strncmp(soap->path, "/product?SKU=", 13))
+  {
+    struct ns__record record;
+    soap_default_ns__record(soap, &record);
+    record.SKU = atoi(soap->path + 13);
+    record.product_name = (char*)"widgets";
+    record.in_store = 42;
+    soap->http_content = "text/xml";
+    if (soap_response(soap, SOAP_FILE)
+     || soap_put_ns__record(soap, &record, "ns:record", NULL)
+     || soap_end_send(soap))
+      return soap_closesock(soap);
+    return SOAP_OK;
+  }
   /* Check requestor's authentication: */
   if (check_authentication(soap))
     return 401; /* HTTP not authorized */
@@ -846,10 +869,17 @@ int http_PUT_handler(struct soap *soap)
   /* Note: soap->path always starts with '/' */
   if (!strcmp(soap->path, "/person.xml"))
   {
-    /* in this example we actually do not save the data as a file person.xml, but we could! */
+    /* in this example we actually do not save the XML data as a file person.xml, but we could! */
     const char *data = soap_http_get_body(soap, NULL);
     (void)soap_end_recv(soap);
-    return 202; /* HTTP accepted */
+    return data ? 202 : 500; /* HTTP accepted or error when no data was received */
+  }
+  if (!strcmp(soap->path, "/product"))
+  {
+    /* in this example we actually do not save the record data, but we could! */
+    struct ns__record *record = soap_get_ns__record(soap, NULL, "ns:record", NULL);
+    (void)soap_end_recv(soap);
+    return record ? 202 : 500; /* HTTP accepted */
   }
   return 404; /* HTTP not found */
 }
@@ -877,6 +907,19 @@ int http_POST_handler(struct soap *soap)
     const char *data = soap_http_get_body(soap, NULL);
     (void)soap_end_recv(soap);
     return copy_file(soap, "person.xml", "text/xml");
+  }
+  if (!strcmp(soap->path, "/product"))
+  {
+    /* in this example we actually do not save the record data, but we could! */
+    struct ns__record *record = soap_get_ns__record(soap, NULL, "ns:record", NULL);
+    if (!record || soap_end_recv(soap))
+      return 500;
+    /* copy ns__record received to response message */
+    if (soap_response(soap, SOAP_FILE)
+     || soap_put_ns__record(soap, record, "ns:record", NULL)
+     || soap_end_send(soap))
+      return soap_closesock(soap);
+    return SOAP_OK;
   }
   return 404; /* HTTP not found */
 }
@@ -1150,12 +1193,12 @@ int info(struct soap *soap)
   size_t stat_get, stat_post, stat_fail, *hist_min, *hist_hour, *hist_day;
   size_t stat_sent, stat_recv;
   const char *t0, *t1, *t2, *t3, *t4, *t5, *t6, *t7;
-  char buf[4096]; /* buffer large enough to hold parts of HTML content */
+  char buf[4096]; /* a small buffer that is large enough to hold parts of HTML content */
   struct soap_plugin *p;
   time_t now = time(NULL), elapsed = now - start;
   struct tm T;
   query_options(soap, options);
-  if (soap->omode & SOAP_IO_KEEPALIVE)
+  if ((soap->omode & SOAP_IO_KEEPALIVE))
     t0 = "<td align='center' bgcolor='green'>YES</td>";
   else
     t0 = "<td align='center' bgcolor='red'>NO</td>";
@@ -1205,10 +1248,16 @@ int info(struct soap *soap)
     t7 = "<td align='center' bgcolor='green'>YES</td>";
   else
     t7 = "<td align='center' bgcolor='red'>NO</td>";
+#ifdef WITH_COOKIES
+  soap->cookie_domain = options[OPTION_d].value; /* set domain of this server */
+  soap->cookie_path = options[OPTION_p].value;   /* set root path of the cookies */
+  soap_set_cookie(soap, "visit", "true", NULL, NULL); /* use global domain/path */
+  soap_set_cookie_expire(soap, "visit", 600, NULL, NULL); /* max-age is 600 seconds to expire */
+#endif
   if (soap_response(soap, SOAP_HTML))
     return soap->error;
-  (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
-<html>\
+  if (soap_send(soap, 
+"<html>\
 <head>\
 <meta name='Author' content='Robert A. van Engelen'>\
 <meta name='Generator' content='gSOAP'>\
@@ -1217,11 +1266,13 @@ int info(struct soap *soap)
 <title>gSOAP Web Server Administration</title>\
 </head>\
 <body bgcolor='#FFFFFF'>\
-<h1>gSOAP Web Server Administration</h1>\
-<p/>Server endpoint=%s client agent %s with IPv4=%d.%d.%d.%d or IPv6=%.8x%.8x%.8x%.8x\
-<h2>Registered Plugins</h2>\
-", soap->endpoint, soap->host, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF, soap->ip6[0], soap->ip6[1], soap->ip6[2], soap->ip6[3]);
-  if (soap_send(soap, buf))
+<h1>gSOAP Web Server Administration</h1>"))
+    return soap->error;
+  if (soap->ip)
+    (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "<p/>Server endpoint=%s client agent %s with IPv4=%d.%d.%d.%d", soap->endpoint, soap->host, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF);
+  else
+    (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "<p/>Server endpoint=%s client agent %s with IPv6=%.8x%.8x%.8x%.8x", soap->endpoint, soap->host, soap->ip6[0], soap->ip6[1], soap->ip6[2], soap->ip6[3]);
+  if (soap_send(soap, buf) || soap_send(soap, "<h2>Registered Plugins</h2>"))
     return soap->error;
   for (p = soap->plugins; p; p = p->next)
   {
@@ -1418,20 +1469,20 @@ int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t heig
  *
 \******************************************************************************/
 
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL)
 
 struct CRYPTO_dynlock_value
 {
   MUTEX_TYPE mutex;
 };
 
-static MUTEX_TYPE *mutex_buf;
+static MUTEX_TYPE *mutex_buf = NULL;
 
 static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int line)
 {
   struct CRYPTO_dynlock_value *value;
   (void)file; (void)line;
-  value = (struct CRYPTO_dynlock_value*)malloc(sizeof(struct CRYPTO_dynlock_value));
+  value = (struct CRYPTO_dynlock_value*)OPENSSL_malloc(sizeof(struct CRYPTO_dynlock_value));
   if (value)
     MUTEX_SETUP(value->mutex);
   return value;
@@ -1450,7 +1501,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char *fil
 {
   (void)file; (void)line;
   MUTEX_CLEANUP(l->mutex);
-  free(l);
+  OPENSSL_free(l);
 }
 
 static void locking_function(int mode, int n, const char *file, int line)
@@ -1470,7 +1521,7 @@ static unsigned long id_function()
 int CRYPTO_thread_setup()
 {
   int i;
-  mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(MUTEX_TYPE));
+  mutex_buf = (MUTEX_TYPE*)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(MUTEX_TYPE));
   if (!mutex_buf)
     return SOAP_EOM;
   for (i = 0; i < CRYPTO_num_locks(); i++)
@@ -1495,13 +1546,13 @@ void CRYPTO_thread_cleanup()
   CRYPTO_set_dynlock_destroy_callback(NULL);
   for (i = 0; i < CRYPTO_num_locks(); i++)
     MUTEX_CLEANUP(mutex_buf[i]);
-  free(mutex_buf);
+  OPENSSL_free(mutex_buf);
   mutex_buf = NULL;
 }
 
 #else
 
-/* OpenSSL not used */
+/* OpenSSL not used or OpenSSL prior to 1.1.0 */
 
 int CRYPTO_thread_setup()
 {
@@ -1512,11 +1563,3 @@ void CRYPTO_thread_cleanup()
 { }
 
 #endif
-
-/******************************************************************************\
- *
- *      SIGPIPE
- *
-\******************************************************************************/
-
-void sigpipe_handle(int x) { }

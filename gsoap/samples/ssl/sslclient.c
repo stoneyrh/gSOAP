@@ -3,6 +3,11 @@
 
 	Example SSL-secure client.
 
+        Build steps:
+
+        soapcpp2 -c ssl.h
+        cc -o sslserver sslserver.c soapC.c soapClient.c stdsoap2.c thread_setup.c
+
 	SSL-enabled services use the gSOAP SSL interface. See sslclient.c and
 	sslserver.c for example code with instructions and the gSOAP
 	documentation more details.
@@ -38,22 +43,25 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapH.h"
 #include "ssl.nsmap"
 #include "threads.h"		/* gsoap/plugin/threads.h */
+#include "ssl_setup.h"  	/* soap_ssl_client_setup */
 #include <signal.h>		/* defines SIGPIPE */
 
 const char server[] = "https://localhost:18081";
 
+void sigpipe_handle(int x) { }
+
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
-void sigpipe_handle(int);
 
 int main()
 {
   struct soap soap;
   double a, b, result;
-  /* Init SSL (can skip or call multiple times, engien inits automatically) */
+  /* Uncomment to call this first before all else if SSL is initialized elsewhere, e.g. in application code */
+  /* soap_ssl_noinit(); */
+  /* Init SSL before any threads are started (do this just once) */
   soap_ssl_init();
-  /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
-  /* set up lSSL ocks */
+  /* set up SSL locks */
   if (CRYPTO_thread_setup())
   {
     fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
@@ -64,22 +72,22 @@ int main()
   /* Init gSOAP context */
   soap_init(&soap);
   /* The supplied server certificate "server.pem" assumes that the server is
-    running on 'localhost', so clients can only connect from the same host when
-    verifying the server's certificate. Use SOAP_SSL_NO_AUTHENTICATION to omit
-    the authentication of the server and use encryption directly from any site.
-    To verify the certificates of third-party services, they must provide a
-    certificate issued by Verisign or another trusted CA. At the client-side,
-    the capath parameter should point to a directory that contains these
-    trusted (root) certificates or the cafile parameter should refer to one
-    file will all certificates. To help you out, the supplied "cacerts.pem"
-    file contains the certificates issued by various CAs. You should use this
-    file for the cafile parameter instead of "cacert.pem" to connect to trusted
-    servers.  Note that the client may fail to connect if the server's
-    credentials have problems (e.g. expired). Use SOAP_SSL_NO_AUTHENTICATION
-    and set cacert to NULL to encrypt messages if you don't care about the
-    trustworthyness of the server.
-    Note 1: the password and capath are not used with GNUTLS
-    Note 2: setting capath may not work on Windows.
+     running on 'localhost', so clients can only connect from the same host when
+     verifying the server's certificate. Use SOAP_SSL_NO_AUTHENTICATION to omit
+     the authentication of the server and use encryption directly from any site.
+     To verify the certificates of third-party services, they must provide a
+     certificate issued by Verisign or another trusted CA. At the client-side,
+     the capath parameter should point to a directory that contains these
+     trusted (root) certificates or the cafile parameter should refer to one
+     file will all certificates. To help you out, the supplied "cacerts.pem"
+     file contains the certificates issued by various CAs. You should use this
+     file for the cafile parameter instead of "cacert.pem" to connect to trusted
+     servers.  Note that the client may fail to connect if the server's
+     credentials have problems (e.g. expired). Use SOAP_SSL_NO_AUTHENTICATION
+     and set cacert to NULL to encrypt messages if you don't care about the
+     trustworthyness of the server.
+     Note 1: the password and capath are not used with GNUTLS
+     Note 2: setting capath may not work on Windows.
   */
   if (soap_ssl_client_context(&soap,
     /* SOAP_SSL_NO_AUTHENTICATION, */ /* for encryption w/o authentication */
@@ -94,14 +102,32 @@ int main()
   ))
   {
     soap_print_fault(&soap, stderr);
+    exit(EXIT_FAILURE);
+  }
+  /* Consider using soap_ssl_client_setup() instead of soap_ssl_client_context() above:
+     - automatically uses certificates stored in Unix/Linux common locations
+     - automatically uses Windows system certificate store
+     - when -DWITH_WININET is defined, uses the gSOAP WinInet plugin with WinInet system certificate store
+     - when -DWITH_CURL is defined, uses the gSOAP CURL plugin with CURL certificate store
+  if (soap_ssl_client_setup(&soap,
+    // SOAP_SSL_DEFAULT | SOAP_SSL_SKIP_HOST_CHECK, if we don't want the host name checks since these will change from machine to machine
+    SOAP_SSL_DEFAULT | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE, // allow self-signed, expired, and certificates w/o CRL
+    NULL, 		// keyfile (cert+key): required only when client must authenticate to server (see SSL docs to create this file)
+    NULL, 		// password to read the keyfile
+    "cacert.pem",	// optional cacert file to store trusted certificates, use cacerts.pem for all public certificates issued by common CAs
+    NULL 		// optional capath to directory with trusted certificates
+  ))
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
+  */
   /* code below enables CRL, may need SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE when certs have no CRL resulting in a warning/error */
   if (soap_ssl_crl(&soap, "")
   )
   {
     soap_print_fault(&soap, stderr);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   soap.connect_timeout = 30;	/* try to connect for up to 30 seconds */
   soap.send_timeout = soap.recv_timeout = 10;	/* max I/O idle time is 10 seconds */
@@ -122,7 +148,7 @@ int main()
  *
 \******************************************************************************/
 
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL)
 
 struct CRYPTO_dynlock_value
 {
@@ -135,7 +161,7 @@ static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int li
 {
   struct CRYPTO_dynlock_value *value;
   (void)file; (void)line;
-  value = (struct CRYPTO_dynlock_value*)malloc(sizeof(struct CRYPTO_dynlock_value));
+  value = (struct CRYPTO_dynlock_value*)OPENSSL_malloc(sizeof(struct CRYPTO_dynlock_value));
   if (value)
     MUTEX_SETUP(value->mutex);
   return value;
@@ -154,7 +180,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char *fil
 {
   (void)file; (void)line;
   MUTEX_CLEANUP(l->mutex);
-  free(l);
+  OPENSSL_free(l);
 }
 
 static void locking_function(int mode, int n, const char *file, int line)
@@ -174,7 +200,7 @@ static unsigned long id_function()
 int CRYPTO_thread_setup()
 {
   int i;
-  mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+  mutex_buf = (MUTEX_TYPE*)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(MUTEX_TYPE));
   if (!mutex_buf)
     return SOAP_EOM;
   for (i = 0; i < CRYPTO_num_locks(); i++)
@@ -199,13 +225,11 @@ void CRYPTO_thread_cleanup()
   CRYPTO_set_dynlock_destroy_callback(NULL);
   for (i = 0; i < CRYPTO_num_locks(); i++)
     MUTEX_CLEANUP(mutex_buf[i]);
-  free(mutex_buf);
+  OPENSSL_free(mutex_buf);
   mutex_buf = NULL;
 }
 
 #else
-
-/* OpenSSL not used, e.g. GNUTLS is used */
 
 int CRYPTO_thread_setup()
 {
@@ -216,12 +240,3 @@ void CRYPTO_thread_cleanup()
 { }
 
 #endif
-
-/******************************************************************************\
- *
- *	SIGPIPE
- *
-\******************************************************************************/
-
-void sigpipe_handle(int x) { }
-

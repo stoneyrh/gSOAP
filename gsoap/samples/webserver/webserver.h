@@ -44,9 +44,16 @@ int ns__sub(double a, double b, double *result); // HTTP POST request-response
 int ns__mul(double a, double b, double *result); // HTTP POST request-response
 int ns__div(double a, double b, double *result); // HTTP POST request-response
 
+struct ns__record
+{
+  int SKU;
+  char *product_name;
+  int in_store;
+};
+
 //gsoap f schema namespace: urn:form
 
-int f__form1(void);	// one-way MEP
+int f__form1(void);	// one-way message (HTTP form)
 
 int f__form2(struct f__formResponse { double result; } *);
 

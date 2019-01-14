@@ -1,16 +1,17 @@
 This directory contains plugins for extending the gSOAP engine's capabilities.
 
 cacerts.*	To embed client-side certificate chain in code (no cacerts.pem)
-curlapi.*       cURL plugin for gSOAP client applications
-httpda.*	HTTP Digest Authentication, see doc/httpda
-httpget.*	HTTP GET method support
-httpform.*	HTTP POST application/x-www-form-urlencoded support
-httppost.*	HTTP POST method support for example non-SOAP requests
+curlapi.*       cURL plugin for clients, see gsoap/doc/curl/html/index.html
+httpda.*	HTTP Digest Authentication, see gsoap/doc/httpda/html/index.html
+httpget.*	HTTP GET method support for servers
+httpform.*	HTTP POST application/x-www-form-urlencoded support for servers
+httppost.*	HTTP POST method support for servers to handle non-SOAP requests
+httppipe.*	HTTP pipelining support for servers
 httpmd5.*	HTTP MD5 checksums
 logging.*	Message logging (selective inbound/outbound)
 mq.*		Message queueing (for WS-RM message queueing support)
 plugin.*	Example plugin for aspiring plugin developers
-sessions.*	HTTP server session management plugin
+sessions.*	HTTP session management plugin for servers
 wsaapi.*	WS-Addressing (wsa) plugin, see doc/wsa
 wsrmapi.*	WS-ReliableMessaging (wsrm) plugin, see doc/wsrm
 wsseapi.*	WS-Security (wsse) plugin, see doc/wsse

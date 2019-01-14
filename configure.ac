@@ -418,6 +418,7 @@ AC_CONFIG_FILES([ Makefile \
     gsoap/samples/wst/Makefile \
     gsoap/samples/xml-rpc-json/Makefile \
     gsoap/samples/rest/Makefile \
-    gsoap/samples/testmsgr/Makefile
+    gsoap/samples/testmsgr/Makefile \
+    gsoap/samples/async/Makefile
 ])
 AC_OUTPUT

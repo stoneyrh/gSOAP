@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">SOAP_MACRO compile-time values</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Dec 11 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun Jan 13 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -71,43 +71,43 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga71b70dabc89650ed7197fd6d97bb4543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro expands to <code>(std::nothrow)</code> to prevent the deserializer's memory allocator from throwing an exception but return <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code> instead, this macro is empty when <code><a class="el" href="group__group__with.html#ga447e0fdc3b39acab817a73181b16cc14" title="When this macro is defined at compile time (undefined by default), removes dependency on C++ std::str...">WITH_COMPAT</a></code> is enabled or when <code><a class="el" href="group__group__with.html#gaae03aa5dd66b0251c11ba8fc2fe29ecf" title="When this macro is defined at compile time (undefined by default), memory footprint is significantly ...">WITH_LEAN</a></code> or <code><a class="el" href="group__group__with.html#ga6c72f5017edb6930c54a8f70d9fb40b9" title="When this macro is defined at compile time (undefined by default), memory footprint is further reduce...">WITH_LEANER</a></code> are enabled which means that exceptions may be thrown.  <a href="#ga71b70dabc89650ed7197fd6d97bb4543">More...</a><br /></td></tr>
 <tr class="separator:ga71b70dabc89650ed7197fd6d97bb4543"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6ec95d997cc20a6a84dd4d76b3ea2fcc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga6ec95d997cc20a6a84dd4d76b3ea2fcc">SOAP_BUFLEN</a>&#160;&#160;&#160;(65536)</td></tr>
-<tr class="memdesc:ga6ec95d997cc20a6a84dd4d76b3ea2fcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable size of the input and output message buffer <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> (65536 by default)  <a href="#ga6ec95d997cc20a6a84dd4d76b3ea2fcc">More...</a><br /></td></tr>
+<tr class="memdesc:ga6ec95d997cc20a6a84dd4d76b3ea2fcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable size of the input and output message buffer <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> (the value is 65536 by default)  <a href="#ga6ec95d997cc20a6a84dd4d76b3ea2fcc">More...</a><br /></td></tr>
 <tr class="separator:ga6ec95d997cc20a6a84dd4d76b3ea2fcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2652270988caffd32e990912aa3905f4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga2652270988caffd32e990912aa3905f4">SOAP_HDRLEN</a>&#160;&#160;&#160;(8192)</td></tr>
-<tr class="memdesc:ga2652270988caffd32e990912aa3905f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum length of HTTP headers (8192 by default)  <a href="#ga2652270988caffd32e990912aa3905f4">More...</a><br /></td></tr>
+<tr class="memdesc:ga2652270988caffd32e990912aa3905f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum length of HTTP headers (the value is 8192 by default)  <a href="#ga2652270988caffd32e990912aa3905f4">More...</a><br /></td></tr>
 <tr class="separator:ga2652270988caffd32e990912aa3905f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga69f1ba9e1b47201e54822f365087f5a5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga69f1ba9e1b47201e54822f365087f5a5">SOAP_TAGLEN</a>&#160;&#160;&#160;(1024)</td></tr>
-<tr class="memdesc:ga69f1ba9e1b47201e54822f365087f5a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum length of XML tags and URLs (1024 by default)  <a href="#ga69f1ba9e1b47201e54822f365087f5a5">More...</a><br /></td></tr>
+<tr class="memdesc:ga69f1ba9e1b47201e54822f365087f5a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum length of XML tags and URLs (the value is 1024 by default)  <a href="#ga69f1ba9e1b47201e54822f365087f5a5">More...</a><br /></td></tr>
 <tr class="separator:ga69f1ba9e1b47201e54822f365087f5a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga92d654b655b8aca035c8281a836f495f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga92d654b655b8aca035c8281a836f495f">SOAP_TMPLEN</a>&#160;&#160;&#160;(1024)</td></tr>
 <tr class="memdesc:ga92d654b655b8aca035c8281a836f495f"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum length of temporary string values stored in <code><a class="el" href="structsoap.html#a58350076d9fa133bacca27424fe0feff" title="Internal buffer to hold short messages, URLs and HTTP/MIME header lines, must have at least SOAP_TMPL...">soap::msgbuf</a></code> and <code><a class="el" href="structsoap.html#a194bcafed0c3e368b92f452fc80b2d31" title="Internal buffer to hold temporary strings such as string representations of primitive values...">soap::tmpbuf</a></code>, e.g. to hold short strings and brief error messages (1024 by default, must not be less than 1024)  <a href="#ga92d654b655b8aca035c8281a836f495f">More...</a><br /></td></tr>
 <tr class="separator:ga92d654b655b8aca035c8281a836f495f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafd23342e94173d223a24814545babdaf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gafd23342e94173d223a24814545babdaf">SOAP_MAXALLOCSIZE</a>&#160;&#160;&#160;(0)</td></tr>
-<tr class="memdesc:gafd23342e94173d223a24814545babdaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum size of a block of memory that <code>malloc</code> can allocate or 0 for no limit (0 by default)  <a href="#gafd23342e94173d223a24814545babdaf">More...</a><br /></td></tr>
+<tr class="memdesc:gafd23342e94173d223a24814545babdaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum size of a block of memory that <code>malloc</code> can allocate or 0 for no limit (the value is 0 by default)  <a href="#gafd23342e94173d223a24814545babdaf">More...</a><br /></td></tr>
 <tr class="separator:gafd23342e94173d223a24814545babdaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga29a7dab5c96c2724b3c234505d52c76e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga29a7dab5c96c2724b3c234505d52c76e">SOAP_MAXARRAYSIZE</a>&#160;&#160;&#160;(100000)</td></tr>
 <tr class="memdesc:ga29a7dab5c96c2724b3c234505d52c76e"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable macro to protect excessive SOAP array allocation requests by defining a maximum allocation threshold.  <a href="#ga29a7dab5c96c2724b3c234505d52c76e">More...</a><br /></td></tr>
 <tr class="separator:ga29a7dab5c96c2724b3c234505d52c76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad4c2ca8c2293fc75075aec4a09f4dc38"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gad4c2ca8c2293fc75075aec4a09f4dc38">SOAP_MAXDIMESIZE</a>&#160;&#160;&#160;(8*1048576)</td></tr>
-<tr class="memdesc:gad4c2ca8c2293fc75075aec4a09f4dc38"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum length of DIME attachments received (8 MB by default)  <a href="#gad4c2ca8c2293fc75075aec4a09f4dc38">More...</a><br /></td></tr>
+<tr class="memdesc:gad4c2ca8c2293fc75075aec4a09f4dc38"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum length of DIME attachments received (the value is 8 MB by default)  <a href="#gad4c2ca8c2293fc75075aec4a09f4dc38">More...</a><br /></td></tr>
 <tr class="separator:gad4c2ca8c2293fc75075aec4a09f4dc38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga59f0c79e1cd2a135f74351bf9f8c17a6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga59f0c79e1cd2a135f74351bf9f8c17a6">SOAP_MAXEINTR</a>&#160;&#160;&#160;(10)</td></tr>
-<tr class="memdesc:ga59f0c79e1cd2a135f74351bf9f8c17a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum number of EINTR interrupts to ignore while polling a socket for pending activity, each EINTR ignored may increase the I/O blocking time by at most one second (10 by default)  <a href="#ga59f0c79e1cd2a135f74351bf9f8c17a6">More...</a><br /></td></tr>
+<tr class="memdesc:ga59f0c79e1cd2a135f74351bf9f8c17a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum number of EINTR interrupts to ignore while polling a socket for pending activity, each EINTR ignored may increase the I/O blocking time by at most one second (the value is 10 by default)  <a href="#ga59f0c79e1cd2a135f74351bf9f8c17a6">More...</a><br /></td></tr>
 <tr class="separator:ga59f0c79e1cd2a135f74351bf9f8c17a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga449296b6ea91c469c16ed505f04ca070"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga449296b6ea91c469c16ed505f04ca070">SOAP_MAXINFLATESIZE</a>&#160;&#160;&#160;(1*1048576)</td></tr>
 <tr class="memdesc:ga449296b6ea91c469c16ed505f04ca070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trusted inflated content size (1 MB by default), larger content is subject to the <code><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d" title="Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached, trust when compressed / deflated &gt; SOAP...">SOAP_MINDEFLATERATIO</a></code> constraint, i.e. if <code><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d" title="Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached, trust when compressed / deflated &gt; SOAP...">SOAP_MINDEFLATERATIO</a></code> is 1.0, <code><a class="el" href="group__group__soap.html#ga449296b6ea91c469c16ed505f04ca070" title="Trusted inflated content size (1 MB by default), larger content is subject to the SOAP_MINDEFLATERATI...">SOAP_MAXINFLATESIZE</a></code> is always the max size of uncompressed content.  <a href="#ga449296b6ea91c469c16ed505f04ca070">More...</a><br /></td></tr>
 <tr class="separator:ga449296b6ea91c469c16ed505f04ca070"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9750ea0479df8aa88e06f6a148b2a670"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga9750ea0479df8aa88e06f6a148b2a670">SOAP_MAXKEEPALIVE</a>&#160;&#160;&#160;(100)</td></tr>
-<tr class="memdesc:ga9750ea0479df8aa88e06f6a148b2a670"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum iterations in the server-side <code><a class="el" href="group__group__io.html#ga51dba7706a505240bd8935c0b28e419d" title="Serve a pending request. ">soap_serve</a></code> loop (or the C++ service class <code>serve</code> method) on HTTP keep-alive connections, assigned to <code><a class="el" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0" title="User-definable maximum number of keep-alive message exchanges per connection (SOAP_MAXKEEPALIVE by de...">soap::max_keep_alive</a></code> which can be altered at runtime (100 by default)  <a href="#ga9750ea0479df8aa88e06f6a148b2a670">More...</a><br /></td></tr>
+<tr class="memdesc:ga9750ea0479df8aa88e06f6a148b2a670"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum iterations in the server-side <code><a class="el" href="group__group__io.html#ga51dba7706a505240bd8935c0b28e419d" title="Serve a pending request. ">soap_serve</a></code> loop (or the C++ service class <code>serve</code> method) on HTTP keep-alive connections, assigned to <code><a class="el" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0" title="User-definable maximum number of keep-alive message exchanges per connection (the value is SOAP_MAXKE...">soap::max_keep_alive</a></code> which can be altered at runtime (the value is 100 by default)  <a href="#ga9750ea0479df8aa88e06f6a148b2a670">More...</a><br /></td></tr>
 <tr class="separator:ga9750ea0479df8aa88e06f6a148b2a670"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabd0dd334a752d8c145fa720deb905508"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gabd0dd334a752d8c145fa720deb905508">SOAP_MAXLENGTH</a>&#160;&#160;&#160;(0)</td></tr>
-<tr class="memdesc:gabd0dd334a752d8c145fa720deb905508"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum string content length for strings not already constrained by XML schema validation constraints, zero or negative means unlimited string lengths are allowed (0 by default)  <a href="#gabd0dd334a752d8c145fa720deb905508">More...</a><br /></td></tr>
+<tr class="memdesc:gabd0dd334a752d8c145fa720deb905508"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum string content length for strings not already constrained by XML schema validation constraints, zero or negative means unlimited string lengths are allowed (the value is 0 by default)  <a href="#gabd0dd334a752d8c145fa720deb905508">More...</a><br /></td></tr>
 <tr class="separator:gabd0dd334a752d8c145fa720deb905508"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2ad35599c611417132d6b0a9b6870652"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga2ad35599c611417132d6b0a9b6870652">SOAP_MAXLEVEL</a>&#160;&#160;&#160;(10000)</td></tr>
-<tr class="memdesc:ga2ad35599c611417132d6b0a9b6870652"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum XML nesting depth level permitted by the XML parser, must be greater than zero (10000 by default)  <a href="#ga2ad35599c611417132d6b0a9b6870652">More...</a><br /></td></tr>
+<tr class="memdesc:ga2ad35599c611417132d6b0a9b6870652"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum XML nesting depth level permitted by the XML parser, must be greater than zero (the value is 10000 by default)  <a href="#ga2ad35599c611417132d6b0a9b6870652">More...</a><br /></td></tr>
 <tr class="separator:ga2ad35599c611417132d6b0a9b6870652"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3933a58d23a5bf2ad64039725cb23786"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga3933a58d23a5bf2ad64039725cb23786">SOAP_MAXOCCURS</a>&#160;&#160;&#160;(100000)</td></tr>
-<tr class="memdesc:ga3933a58d23a5bf2ad64039725cb23786"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum number of array or container elements for containers that are not already constrained by XML schema validation constraints, must be greater than zero (100000 by default)  <a href="#ga3933a58d23a5bf2ad64039725cb23786">More...</a><br /></td></tr>
+<tr class="memdesc:ga3933a58d23a5bf2ad64039725cb23786"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum number of array or container elements for containers that are not already constrained by XML schema validation constraints, must be greater than zero (the value is 100000 by default)  <a href="#ga3933a58d23a5bf2ad64039725cb23786">More...</a><br /></td></tr>
 <tr class="separator:ga3933a58d23a5bf2ad64039725cb23786"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga61bac5e1247c779c5ea27090faf0e79d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d">SOAP_MINDEFLATERATIO</a>&#160;&#160;&#160;(1.0/1032.0)</td></tr>
 <tr class="memdesc:ga61bac5e1247c779c5ea27090faf0e79d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trusted deflation ratio after <code><a class="el" href="group__group__soap.html#ga449296b6ea91c469c16ed505f04ca070" title="Trusted inflated content size (1 MB by default), larger content is subject to the SOAP_MINDEFLATERATI...">SOAP_MAXINFLATESIZE</a></code> is reached, trust when compressed / deflated &gt; <code><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d" title="Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached, trust when compressed / deflated &gt; SOAP...">SOAP_MINDEFLATERATIO</a></code> (default is 0.00096899224806 or 1032:1, which is according to the zlib site: "The limit (1032:1) comes from the fact that one length/distance pair can represent at most 258 output bytes. A length requires at least one bit and a distance requires at least one bit, so two bits in can give 258 bytes out, or eight bits in give 1032 bytes out. A dynamic block has no length restriction, so you could get arbitrarily close to the limit of 1032:1.".  <a href="#ga61bac5e1247c779c5ea27090faf0e79d">More...</a><br /></td></tr>
@@ -116,13 +116,13 @@ Macros</h2></td></tr>
 <tr class="memdesc:gad4edb63b6b20a8e5ac3891550013f64a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro is set to <code><a class="el" href="group__group__soap.html#gad4edb63b6b20a8e5ac3891550013f64a" title="Macro is set to SOAP_PURE_VIRTUAL = 0 at compile time when macro WITH_PURE_VIRTUAL is defined...">SOAP_PURE_VIRTUAL</a></code> = 0 at compile time when macro <code><a class="el" href="group__group__with.html#gaa0801009d3ed28b2c66063c26423fa8d" title="When this macro is defined at compile time (undefined by default), makes C++ service class operation ...">WITH_PURE_VIRTUAL</a></code> is defined.  <a href="#gad4edb63b6b20a8e5ac3891550013f64a">More...</a><br /></td></tr>
 <tr class="separator:gad4edb63b6b20a8e5ac3891550013f64a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab18ff4d6039f1387641508ae7be8a145"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145">SOAP_SSL_RSA_BITS</a>&#160;&#160;&#160;(2048)</td></tr>
-<tr class="memdesc:gab18ff4d6039f1387641508ae7be8a145"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable length of RSA keys used for https connections (2048 by default)  <a href="#gab18ff4d6039f1387641508ae7be8a145">More...</a><br /></td></tr>
+<tr class="memdesc:gab18ff4d6039f1387641508ae7be8a145"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable length of RSA keys used for https connections (the value is 2048 by default)  <a href="#gab18ff4d6039f1387641508ae7be8a145">More...</a><br /></td></tr>
 <tr class="separator:gab18ff4d6039f1387641508ae7be8a145"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3a42c92a6417928388f4ee790ff74434"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga3a42c92a6417928388f4ee790ff74434">SOAP_UNKNOWN_CHAR</a>&#160;&#160;&#160;(0x7F)</td></tr>
-<tr class="memdesc:ga3a42c92a6417928388f4ee790ff74434"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character (typically UTF-8), this is applicable when the runtime flag <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode C-related input/output flag value to serialize and deserialize 8-bit C/C++ strings containi...">SOAP_C_UTFSTRING</a></code> is not used (0x7F by default)  <a href="#ga3a42c92a6417928388f4ee790ff74434">More...</a><br /></td></tr>
+<tr class="memdesc:ga3a42c92a6417928388f4ee790ff74434"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character (typically UTF-8), this is applicable when the runtime flag <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode C-related input/output flag value to serialize and deserialize 8-bit C/C++ strings containi...">SOAP_C_UTFSTRING</a></code> is not used (the value is 0x7F by default)  <a href="#ga3a42c92a6417928388f4ee790ff74434">More...</a><br /></td></tr>
 <tr class="separator:ga3a42c92a6417928388f4ee790ff74434"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaafe757ff5b99e03ae2c7814dedf9aa8e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gaafe757ff5b99e03ae2c7814dedf9aa8e">SOAP_UNKNOWN_UNICODE_CHAR</a>&#160;&#160;&#160;(0xFFFD)</td></tr>
-<tr class="memdesc:gaafe757ff5b99e03ae2c7814dedf9aa8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A user-definable integer Unicode value representing a character that replaces an invalid Unicode code point, i.e. when converting an XML invalid Unicode character from UTF-8 (0xFFFD by default)  <a href="#gaafe757ff5b99e03ae2c7814dedf9aa8e">More...</a><br /></td></tr>
+<tr class="memdesc:gaafe757ff5b99e03ae2c7814dedf9aa8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A user-definable integer Unicode value representing a character that replaces an invalid Unicode code point, i.e. when converting an XML invalid Unicode character from UTF-8 (the value is 0xFFFD by default)  <a href="#gaafe757ff5b99e03ae2c7814dedf9aa8e">More...</a><br /></td></tr>
 <tr class="separator:gaafe757ff5b99e03ae2c7814dedf9aa8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabd3b66726c9832645b90f313b109d4b5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gabd3b66726c9832645b90f313b109d4b5">SOAP_LONG_FORMAT</a>&#160;&#160;&#160;&quot;%lld&quot;</td></tr>
 <tr class="memdesc:gabd3b66726c9832645b90f313b109d4b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable macro that represents the <code><a class="el" href="group__group__soap.html#ga78b36c5636eb5283d651b69d8684c6ae" title="User-definable macro that represents a portable signed 64 bit integer type. ">LONG64</a></code> printf %-format.  <a href="#gabd3b66726c9832645b90f313b109d4b5">More...</a><br /></td></tr>
@@ -237,13 +237,13 @@ Macros</h2></td></tr>
 <p>This module defines the <code>SOAP_MACRO</code> compile-time values to configure the engine build. </p>
 <p>This module defines the following macros with values to configure the engine build:</p><ul>
 <li><code><a class="el" href="group__group__soap.html#ga71b70dabc89650ed7197fd6d97bb4543" title="Macro expands to (std::nothrow) to prevent the deserializer&#39;s memory allocator from throwing an excep...">SOAP_NOTHROW</a></code></li>
-<li><code><a class="el" href="group__group__soap.html#ga6ec95d997cc20a6a84dd4d76b3ea2fcc" title="User-definable size of the input and output message buffer soap::buf (65536 by default) ...">SOAP_BUFLEN</a></code></li>
-<li><code><a class="el" href="group__group__soap.html#ga2652270988caffd32e990912aa3905f4" title="User-definable maximum length of HTTP headers (8192 by default) ">SOAP_HDRLEN</a></code></li>
-<li><code><a class="el" href="group__group__soap.html#ga69f1ba9e1b47201e54822f365087f5a5" title="User-definable maximum length of XML tags and URLs (1024 by default) ">SOAP_TAGLEN</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#ga6ec95d997cc20a6a84dd4d76b3ea2fcc" title="User-definable size of the input and output message buffer soap::buf (the value is 65536 by default) ...">SOAP_BUFLEN</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#ga2652270988caffd32e990912aa3905f4" title="User-definable maximum length of HTTP headers (the value is 8192 by default) ">SOAP_HDRLEN</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#ga69f1ba9e1b47201e54822f365087f5a5" title="User-definable maximum length of XML tags and URLs (the value is 1024 by default) ...">SOAP_TAGLEN</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga92d654b655b8aca035c8281a836f495f" title="User-definable maximum length of temporary string values stored in soap::msgbuf and soap::tmpbuf...">SOAP_TMPLEN</a></code></li>
-<li><code><a class="el" href="group__group__soap.html#gafd23342e94173d223a24814545babdaf" title="User-definable maximum size of a block of memory that malloc can allocate or 0 for no limit (0 by def...">SOAP_MAXALLOCSIZE</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#gafd23342e94173d223a24814545babdaf" title="User-definable maximum size of a block of memory that malloc can allocate or 0 for no limit (the valu...">SOAP_MAXALLOCSIZE</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga29a7dab5c96c2724b3c234505d52c76e" title="User-definable macro to protect excessive SOAP array allocation requests by defining a maximum alloca...">SOAP_MAXARRAYSIZE</a></code></li>
-<li><code><a class="el" href="group__group__soap.html#gad4c2ca8c2293fc75075aec4a09f4dc38" title="User-definable maximum length of DIME attachments received (8 MB by default) ">SOAP_MAXDIMESIZE</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#gad4c2ca8c2293fc75075aec4a09f4dc38" title="User-definable maximum length of DIME attachments received (the value is 8 MB by default) ...">SOAP_MAXDIMESIZE</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga59f0c79e1cd2a135f74351bf9f8c17a6" title="User-definable maximum number of EINTR interrupts to ignore while polling a socket for pending activi...">SOAP_MAXEINTR</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga449296b6ea91c469c16ed505f04ca070" title="Trusted inflated content size (1 MB by default), larger content is subject to the SOAP_MINDEFLATERATI...">SOAP_MAXINFLATESIZE</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga9750ea0479df8aa88e06f6a148b2a670" title="User-definable maximum iterations in the server-side soap_serve loop (or the C++ service class serve ...">SOAP_MAXKEEPALIVE</a></code></li>
@@ -252,7 +252,7 @@ Macros</h2></td></tr>
 <li><code><a class="el" href="group__group__soap.html#ga3933a58d23a5bf2ad64039725cb23786" title="User-definable maximum number of array or container elements for containers that are not already cons...">SOAP_MAXOCCURS</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d" title="Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached, trust when compressed / deflated &gt; SOAP...">SOAP_MINDEFLATERATIO</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gad4edb63b6b20a8e5ac3891550013f64a" title="Macro is set to SOAP_PURE_VIRTUAL = 0 at compile time when macro WITH_PURE_VIRTUAL is defined...">SOAP_PURE_VIRTUAL</a></code></li>
-<li><code><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145" title="User-definable length of RSA keys used for https connections (2048 by default) ">SOAP_SSL_RSA_BITS</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145" title="User-definable length of RSA keys used for https connections (the value is 2048 by default) ...">SOAP_SSL_RSA_BITS</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga3a42c92a6417928388f4ee790ff74434" title="User-definable 8 bit integer that represents a character that could not be converted to an ASCII char...">SOAP_UNKNOWN_CHAR</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gaafe757ff5b99e03ae2c7814dedf9aa8e" title="A user-definable integer Unicode value representing a character that replaces an invalid Unicode code...">SOAP_UNKNOWN_UNICODE_CHAR</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gabd3b66726c9832645b90f313b109d4b5" title="User-definable macro that represents the LONG64 printf %-format. ">SOAP_LONG_FORMAT</a></code></li>
@@ -410,7 +410,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable size of the input and output message buffer <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> (65536 by default) </p>
+<p>User-definable size of the input and output message buffer <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> (the value is 65536 by default) </p>
 <p>This macro defines the size of the input and output message buffer, which is 65536 by default unless the <code><a class="el" href="group__group__with.html#gaae03aa5dd66b0251c11ba8fc2fe29ecf" title="When this macro is defined at compile time (undefined by default), memory footprint is significantly ...">WITH_LEAN</a></code> or <code><a class="el" href="group__group__with.html#ga6c72f5017edb6930c54a8f70d9fb40b9" title="When this macro is defined at compile time (undefined by default), memory footprint is further reduce...">WITH_LEANER</a></code> compile-time flags are used and the buffer size is 2048. The size of the buffer affects the performance of socket communications, with larger sizes above 8192 generally improving the performance at the cost of the extra memory required to store the larger <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context.</p>
 <p>A default value of 65535 was chosen for OpenVMS TCP/IP stacks that cannot handle 65536 bytes. A default value of 2048 is used for WinCE platforms. A default value of 32767 is used for Tandom NonStop platforms.</p>
 <dl class="section warning"><dt>Warning</dt><dd>When the value of this macro is assigned at the compiler's command line or in an IDE or by specifying <code><a class="el" href="group__group__with.html#ga176c2f40b17a2952361c37c4602a4c37" title="When this macro is defined at compile time (undefined by default) then the header file specified by t...">SOAPDEFS_H</a></code>, then all source code files of an application's project must be recompiled. Otherwise, <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context corruption errors may occur in the non-recompiled parts of the application, because the size of the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context has changed. </dd></dl>
@@ -680,7 +680,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum length of HTTP headers (8192 by default) </p>
+<p>User-definable maximum length of HTTP headers (the value is 8192 by default) </p>
 <dl class="section warning"><dt>Warning</dt><dd>When the value of this macro is assigned at the compiler's command line or in an IDE or by specifying <code><a class="el" href="group__group__with.html#ga176c2f40b17a2952361c37c4602a4c37" title="When this macro is defined at compile time (undefined by default) then the header file specified by t...">SOAPDEFS_H</a></code>, then all source code files of an application's project must be recompiled. Otherwise, <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context corruption errors may occur in the non-recompiled parts of the application, because the size of the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context has changed. </dd></dl>
 
 </div>
@@ -817,7 +817,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum size of a block of memory that <code>malloc</code> can allocate or 0 for no limit (0 by default) </p>
+<p>User-definable maximum size of a block of memory that <code>malloc</code> can allocate or 0 for no limit (the value is 0 by default) </p>
 
 </div>
 </div>
@@ -832,7 +832,7 @@ Macros</h2></td></tr>
 </div><div class="memdoc">
 
 <p>User-definable macro to protect excessive SOAP array allocation requests by defining a maximum allocation threshold. </p>
-<p>Deserialized SOAP arrays larger in size than <code><a class="el" href="group__group__soap.html#ga29a7dab5c96c2724b3c234505d52c76e" title="User-definable macro to protect excessive SOAP array allocation requests by defining a maximum alloca...">SOAP_MAXARRAYSIZE</a></code> are not pre-allocated in memory, but deserialized on an element-by-element basis until XML validation contrains kick in (100000 by default) </p>
+<p>Deserialized SOAP arrays larger in size than <code><a class="el" href="group__group__soap.html#ga29a7dab5c96c2724b3c234505d52c76e" title="User-definable macro to protect excessive SOAP array allocation requests by defining a maximum alloca...">SOAP_MAXARRAYSIZE</a></code> are not pre-allocated in memory, but deserialized on an element-by-element basis until XML validation contrains kick in (the value is 100000 by default) </p>
 
 </div>
 </div>
@@ -846,8 +846,8 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum length of DIME attachments received (8 MB by default) </p>
-<p>DIME attachments sizes are limited to <code><a class="el" href="group__group__soap.html#gad4c2ca8c2293fc75075aec4a09f4dc38" title="User-definable maximum length of DIME attachments received (8 MB by default) ">SOAP_MAXDIMESIZE</a></code>. Increase this value to allow larger attachments or decrease when resources are limited, this limit is to deny senders to pre-allocate excessive memory at the receiver side without actually sending the whole message, i.e. this threshold protects against DIME-based memory resource usage attacks. </p>
+<p>User-definable maximum length of DIME attachments received (the value is 8 MB by default) </p>
+<p>DIME attachments sizes are limited to <code><a class="el" href="group__group__soap.html#gad4c2ca8c2293fc75075aec4a09f4dc38" title="User-definable maximum length of DIME attachments received (the value is 8 MB by default) ...">SOAP_MAXDIMESIZE</a></code>. Increase this value to allow larger attachments or decrease when resources are limited, this limit is to deny senders to pre-allocate excessive memory at the receiver side without actually sending the whole message, i.e. this threshold protects against DIME-based memory resource usage attacks. </p>
 
 </div>
 </div>
@@ -861,7 +861,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum number of EINTR interrupts to ignore while polling a socket for pending activity, each EINTR ignored may increase the I/O blocking time by at most one second (10 by default) </p>
+<p>User-definable maximum number of EINTR interrupts to ignore while polling a socket for pending activity, each EINTR ignored may increase the I/O blocking time by at most one second (the value is 10 by default) </p>
 
 </div>
 </div>
@@ -889,7 +889,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum iterations in the server-side <code><a class="el" href="group__group__io.html#ga51dba7706a505240bd8935c0b28e419d" title="Serve a pending request. ">soap_serve</a></code> loop (or the C++ service class <code>serve</code> method) on HTTP keep-alive connections, assigned to <code><a class="el" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0" title="User-definable maximum number of keep-alive message exchanges per connection (SOAP_MAXKEEPALIVE by de...">soap::max_keep_alive</a></code> which can be altered at runtime (100 by default) </p>
+<p>User-definable maximum iterations in the server-side <code><a class="el" href="group__group__io.html#ga51dba7706a505240bd8935c0b28e419d" title="Serve a pending request. ">soap_serve</a></code> loop (or the C++ service class <code>serve</code> method) on HTTP keep-alive connections, assigned to <code><a class="el" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0" title="User-definable maximum number of keep-alive message exchanges per connection (the value is SOAP_MAXKE...">soap::max_keep_alive</a></code> which can be altered at runtime (the value is 100 by default) </p>
 
 </div>
 </div>
@@ -903,7 +903,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum string content length for strings not already constrained by XML schema validation constraints, zero or negative means unlimited string lengths are allowed (0 by default) </p>
+<p>User-definable maximum string content length for strings not already constrained by XML schema validation constraints, zero or negative means unlimited string lengths are allowed (the value is 0 by default) </p>
 
 </div>
 </div>
@@ -917,7 +917,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum XML nesting depth level permitted by the XML parser, must be greater than zero (10000 by default) </p>
+<p>User-definable maximum XML nesting depth level permitted by the XML parser, must be greater than zero (the value is 10000 by default) </p>
 
 </div>
 </div>
@@ -931,7 +931,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum number of array or container elements for containers that are not already constrained by XML schema validation constraints, must be greater than zero (100000 by default) </p>
+<p>User-definable maximum number of array or container elements for containers that are not already constrained by XML schema validation constraints, must be greater than zero (the value is 100000 by default) </p>
 
 </div>
 </div>
@@ -1057,7 +1057,7 @@ Macros</h2></td></tr>
 <p>Macro expands to <code>(std::nothrow)</code> to prevent the deserializer's memory allocator from throwing an exception but return <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code> instead, this macro is empty when <code><a class="el" href="group__group__with.html#ga447e0fdc3b39acab817a73181b16cc14" title="When this macro is defined at compile time (undefined by default), removes dependency on C++ std::str...">WITH_COMPAT</a></code> is enabled or when <code><a class="el" href="group__group__with.html#gaae03aa5dd66b0251c11ba8fc2fe29ecf" title="When this macro is defined at compile time (undefined by default), memory footprint is significantly ...">WITH_LEAN</a></code> or <code><a class="el" href="group__group__with.html#ga6c72f5017edb6930c54a8f70d9fb40b9" title="When this macro is defined at compile time (undefined by default), memory footprint is further reduce...">WITH_LEANER</a></code> are enabled which means that exceptions may be thrown. </p>
 <p>It is possible to enable C++ exceptions without detrimental effects by compiling the source code with <code><a class="el" href="group__group__soap.html#ga71b70dabc89650ed7197fd6d97bb4543" title="Macro expands to (std::nothrow) to prevent the deserializer&#39;s memory allocator from throwing an excep...">SOAP_NOTHROW</a></code> set to an empty value and in that case C++ exception handlers should be used to catch <code>std::bad_alloc</code>.</p>
 <p>By default, <code><a class="el" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c" title="Allocate and initialize a new soap context. ">soap_new</a></code> and the soapcpp2-generated <code>soap_new_T</code> functions return NULL when allocation failed.</p>
-<dl class="section warning"><dt>Warning</dt><dd><code><a class="el" href="group__group__context.html#gaba556710e010feeb2211ed43b5bf059c" title="Allocate a block of heap memory managed by the specified soap context. ">soap_malloc</a></code> never throws <code>std::bad_alloc</code>, which means that parsing and deserialization of C++ data may not throw <code>std::bad_alloc</code> in some cases, but rather the functions called will return <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code> and <code><a class="el" href="structsoap.html#ab85f5d42702963d13ea540bd9876e6d2" title="The soap context soap_status (int) error code of the last operation or SOAP_OK (zero) ...">soap::error</a></code> is set to <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code>. <code><a class="el" href="group__group__context.html#gaba556710e010feeb2211ed43b5bf059c" title="Allocate a block of heap memory managed by the specified soap context. ">soap_malloc</a></code> also returns <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code> when <code><a class="el" href="group__group__soap.html#gafd23342e94173d223a24814545babdaf" title="User-definable maximum size of a block of memory that malloc can allocate or 0 for no limit (0 by def...">SOAP_MAXALLOCSIZE</a></code> is exceeded.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><code><a class="el" href="group__group__context.html#gaba556710e010feeb2211ed43b5bf059c" title="Allocate a block of heap memory managed by the specified soap context. ">soap_malloc</a></code> never throws <code>std::bad_alloc</code>, which means that parsing and deserialization of C++ data may not throw <code>std::bad_alloc</code> in some cases, but rather the functions called will return <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code> and <code><a class="el" href="structsoap.html#ab85f5d42702963d13ea540bd9876e6d2" title="The soap context soap_status (int) error code of the last operation or SOAP_OK (zero) ...">soap::error</a></code> is set to <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code>. <code><a class="el" href="group__group__context.html#gaba556710e010feeb2211ed43b5bf059c" title="Allocate a block of heap memory managed by the specified soap context. ">soap_malloc</a></code> also returns <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code> when <code><a class="el" href="group__group__soap.html#gafd23342e94173d223a24814545babdaf" title="User-definable maximum size of a block of memory that malloc can allocate or 0 for no limit (the valu...">SOAP_MAXALLOCSIZE</a></code> is exceeded.</dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><pre class="fragment">c++ -D SOAP_NOTHROW="" -o client stdsoap2.cpp soapC.cpp soapClient.cpp client.cpp
 </pre> <div class="fragment"><div class="line"><span class="comment">// compiled with compile-time flag -D SOAP_NOTHROW=&quot;&quot;</span></div><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div><div class="line"><span class="keywordflow">try</span></div><div class="line">{</div><div class="line">  <span class="comment">// soap_new() may cause a std::bad_alloc exception</span></div><div class="line">  <span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>();</div><div class="line">  <span class="comment">// MyClass is declared in soapH.h generated by soapcpp2 from a .h file with MyClass</span></div><div class="line">  MyClass *obj = soap_new_MyClass(soap);</div><div class="line">  ... <span class="comment">// use obj</span></div><div class="line">}</div><div class="line"><span class="keywordflow">catch</span> (std::bad_alloc)</div><div class="line">{</div><div class="line">  ... <span class="comment">// out of memory error</span></div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 
@@ -1149,7 +1149,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable length of RSA keys used for https connections (2048 by default) </p>
+<p>User-definable length of RSA keys used for https connections (the value is 2048 by default) </p>
 
 </div>
 </div>
@@ -1181,7 +1181,7 @@ C:&gt; link /LIBPATH ws2_32.lib /OUT:mygsoap.dll /DLL envC.obj stdsoap2.obj</pre
       </table>
 </div><div class="memdoc">
 
-<p>User-definable maximum length of XML tags and URLs (1024 by default) </p>
+<p>User-definable maximum length of XML tags and URLs (the value is 1024 by default) </p>
 <dl class="section warning"><dt>Warning</dt><dd>When the value of this macro is assigned at the compiler's command line or in an IDE or by specifying <code><a class="el" href="group__group__with.html#ga176c2f40b17a2952361c37c4602a4c37" title="When this macro is defined at compile time (undefined by default) then the header file specified by t...">SOAPDEFS_H</a></code>, then all source code files of an application's project must be recompiled. Otherwise, <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context corruption errors may occur in the non-recompiled parts of the application, because the size of the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context has changed. </dd></dl>
 
 </div>
@@ -1226,7 +1226,7 @@ C:&gt; link /LIBPATH ws2_32.lib /OUT:mygsoap.dll /DLL envC.obj stdsoap2.obj</pre
       </table>
 </div><div class="memdoc">
 
-<p>User-definable 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character (typically UTF-8), this is applicable when the runtime flag <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode C-related input/output flag value to serialize and deserialize 8-bit C/C++ strings containi...">SOAP_C_UTFSTRING</a></code> is not used (0x7F by default) </p>
+<p>User-definable 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character (typically UTF-8), this is applicable when the runtime flag <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode C-related input/output flag value to serialize and deserialize 8-bit C/C++ strings containi...">SOAP_C_UTFSTRING</a></code> is not used (the value is 0x7F by default) </p>
 
 </div>
 </div>
@@ -1240,7 +1240,7 @@ C:&gt; link /LIBPATH ws2_32.lib /OUT:mygsoap.dll /DLL envC.obj stdsoap2.obj</pre
       </table>
 </div><div class="memdoc">
 
-<p>A user-definable integer Unicode value representing a character that replaces an invalid Unicode code point, i.e. when converting an XML invalid Unicode character from UTF-8 (0xFFFD by default) </p>
+<p>A user-definable integer Unicode value representing a character that replaces an invalid Unicode code point, i.e. when converting an XML invalid Unicode character from UTF-8 (the value is 0xFFFD by default) </p>
 
 </div>
 </div>
@@ -1283,10 +1283,10 @@ C:&gt; link /LIBPATH ws2_32.lib /OUT:mygsoap.dll /DLL envC.obj stdsoap2.obj</pre
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Dec 11 2018 14:04:25 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun Jan 13 2019 21:47:45 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

@@ -11,7 +11,7 @@
         Note: multipart/related and multipart/form-data are already handled in gSOAP.
 
 gSOAP XML Web services tools
-Copyright (C) 2004-2005, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 
 --------------------------------------------------------------------------------
 gSOAP public license.
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2004 Robert A. van Engelen, Genivia inc. All Rights Reserved.
+Copyright (C) 2000-2018 Robert A. van Engelen, Genivia inc. All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -58,10 +58,8 @@ compiling, linking, and/or using OpenSSL is allowed.
 
         struct http_post_handlers my_handlers[] = {
           { "application/json",   json_handler },
-          { "application/json;*", json_handler },
           { "image/jpg",          jpeg_handler },
           { "text/html",          html_handler },
-          { "text/html;*",        html_handler },
           { "POST",               generic_POST_handler },
           { "PUT",                generic_PUT_handler },
           { "PATCH",              generic_PATCH_handler },
@@ -69,16 +67,25 @@ compiling, linking, and/or using OpenSSL is allowed.
           { NULL }
         };
 
-        Note that '*' can be used as a wildcard and some media types may have
-        optional parameters (after ';') that should be captured with a '*':
+        Note that `*` and `-` can be used as wildcards to match any text and
+        any character, respectively:
 
           { "image*",            image_handler },
           { "text*",             text_handler },
-          { "text*;*",           text_handler },
+          { "text/---",          three_char_type_text_handler },
 
         In the above, to be more accurate, we should use a slash / between
         image and the wildcard * (which is not shown in the table above due to
-        compilers throwing a fit at the / and * combo).
+        compilers throwing a fit at the / and * combo in this comment block).
+
+        Media types may have optional parameters after `;` such as `charset`
+        and `boundary`.  These parameters can be matched by the media type
+        patterns in the table.  Patterns that are more specific must precede
+        patterns that are less specific in the table.  For example,
+        `"text/xml;*charset=utf-8*"` must precede `"text/xml"` which must
+        precede `"text*"`.  Note that `"text/xml"` also matches any parameters
+        of the media type of the message reveived, such as `"text/xml;
+        charset=utf-8"` (only since gSOAP version 2.8.75).
 
         Each handler is a function that takes the soap context as a parameter
         and returns SOAP_OK or an error code.
@@ -91,7 +98,7 @@ compiling, linking, and/or using OpenSSL is allowed.
         ...
         ... = soap_copy(&soap); // copies plugin too but not its data: plugin data is shared since fcopy is not set
         ...
-        soap_done(&soap); // detach plugin (calls plugin->fdelete)
+        soap_done(&soap); // delete plugin (calls plugin->fdelete)
 
         A POST handler function is triggered by the media type in the
         http_post_handlers table. Use http_http_get_body() as below to retrieve
@@ -185,13 +192,13 @@ static int http_fdel(struct soap *soap);
 int http_post(struct soap *soap, struct soap_plugin *p, void *arg)
 {
   p->id = http_post_id;
-  p->data = (void*)malloc(sizeof(struct http_post_data));
+  p->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_post_data));
   p->fdelete = http_post_delete;
   if (!p->data)
     return SOAP_EOM;
   if (http_post_init(soap, (struct http_post_data*)p->data, (struct http_post_handlers *)arg))
   {
-    free(p->data); /* error: could not init */
+    SOAP_FREE(soap, p->data); /* error: could not init */
     return SOAP_EOM; /* return error */
   }
   return SOAP_OK;
@@ -217,7 +224,7 @@ static void http_post_delete(struct soap *soap, struct soap_plugin *p)
   soap->fput = ((struct http_post_data*)p->data)->fput;
   soap->fpatch = ((struct http_post_data*)p->data)->fpatch;
   soap->fdel = ((struct http_post_data*)p->data)->fdel;
-  free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
+  SOAP_FREE(soap, p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
 }
 
 static int http_post_parse_header(struct soap *soap, const char *key, const char *val)
@@ -228,9 +235,7 @@ static int http_post_parse_header(struct soap *soap, const char *key, const char
   if (data->fparsehdr(soap, key, val)) /* parse HTTP header */
     return soap->error;
   if (!soap_tag_cmp(key, "Content-Type")) /* check content type */
-  {
-      soap->fform = http_lookup_handler(soap, val, data);
-  }
+    soap->fform = http_lookup_handler(soap, val, data);
   if (!soap->fform)
     soap->fform = http_lookup_handler(soap, "POST", data);
   return soap->error;
@@ -239,14 +244,38 @@ static int http_post_parse_header(struct soap *soap, const char *key, const char
 static http_handler_t http_lookup_handler(struct soap *soap, const char *type, struct http_post_data *data)
 {
   struct http_post_handlers *p;
+  const char *params = strchr(type, ';');
+  char temp[SOAP_HDRLEN];
   (void)soap;
+  if (params)
+  {
+    size_t n = params - type;
+    soap_strncpy(temp, sizeof(temp), type, n);
+    temp[n] = '\0';
+  }
   for (p = data->handlers; p && p->type; p++)
   {
-    if (!soap_tag_cmp(type, p->type))
+    if (params)
     {
-      DBGLOG(TEST,SOAP_MESSAGE(fdebug, "Found HTTP POST plugin handler for '%s'\n", type));
-      return p->handler;
+      if (strchr(p->type, ';'))
+      {
+        if (!soap_tag_cmp(type, p->type))
+          break;
+      }
+      else if (!soap_tag_cmp(temp, p->type))
+      {
+        break;
+      }
     }
+    else if (!soap_tag_cmp(type, p->type))
+    {
+      break;
+    }
+  }
+  if (p && p->type)
+  {
+    DBGLOG(TEST,SOAP_MESSAGE(fdebug, "Found HTTP POST plugin handler for '%s'\n", type));
+    return p->handler;
   }
   return NULL;
 }

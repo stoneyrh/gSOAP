@@ -115,10 +115,9 @@ be interpreted as described in RFC-2119.
 * **XML**: implements a fast schema-specific XML pull parser that does not
   require intermediate storage of XML in a DOM to deserialize data.
 
-* **HTTP**: HTTP 1.0/1.1/2.0 (HTTP 2.0 requires gSOAP versions 2.8.74 and
-  greater), IPv4 and IPv6, HTTPS (with OpenSSL or GNUTLS), cookies,
-  authentication, Zlib deflate and gzip compression, and connecting through
-  HTTP proxies.
+* **HTTP**: HTTP 1.0/1.1 (HTTP 2.0 will be available soon), IPv4 and IPv6,
+  HTTPS (requires OpenSSL or GNUTLS), cookies, authentication, Zlib deflate and
+  gzip compression, and connecting through HTTP proxies.
 
 * **Attachments**: MIME (SwA), DIME, and MTOM attachments are supported.
   Streaming capabilities to direct the data stream to/from resources using
@@ -329,7 +328,7 @@ or using a Makefile (see also MSVC++ project examples in the
 <i>`gsoap/samples`</i> directory with tool integration in the MSVC++ IDE).
 For example, to generate code for the calculator Web service, we run the wsdl2h
 tool from the command line on the URL of the WSDL and use
-<b>`wsdl2h -o calc.h`</b> option <b>`-o calc.h`</b> to specify the
+[<b>`wsdl2h -o calc.h`</b> option <b>`-o calc.h`</b>](#wsdl2h-o) to specify the
 <i>`calc.h`</i> interface file to output:
 
      wsdl2h -o calc.h http://www.genivia.com/calc.wsdl
@@ -347,7 +346,7 @@ than the <i>`calc.h`</i> file.
 
 In this example we will develop a C++ API for the calculator service. By
 default, the wsdl2h tool assumes C++ with STL.  To build without STL, use
-<b>`wsdl2h -s`</b> option <b>`-s`</b>:
+[<b>`wsdl2h -s`</b> option <b>`-s`</b>](#wsdl2h-s):
 
      wsdl2h -s -o calc.h http://www.genivia.com/calc.wsdl
 
@@ -411,7 +410,7 @@ Then run the example:
     ./calcclient
     The sum of 1.0 and 2.0 is 3
 
-To build a pure C application, use <b>`wsdl2h -c`</b> option <b>`-c`</b> and
+To build a pure C application, use [<b>`wsdl2h -c`</b> option <b>`-c`</b>](#wsdl2h-c) and
 run <b>`soapcpp2 -C`</b> to generate the client stub functions and serializers:
 
      wsdl2h -c -o calc.h http://www.genivia.com/calc.wsdl
@@ -434,8 +433,9 @@ we also need to explicitly delete data and the context with `::soap_end` and
         printf("The sum of 1.0 and 2.0 is %lg\n", result); 
       else 
         soap_print_fault(soap, stderr); 
-      soap_end(soap);  // delete allocated data and temporaries 
-      soap_free(soap); // finalize and delete the context
+      soap_destroy(soap); // delete managed objects
+      soap_end(soap);     // delete managed data and temporaries 
+      soap_free(soap);    // finalize and delete the context
     }
 ~~~
 
@@ -542,8 +542,8 @@ via the service request dispatcher `::soap_serve`:
       // create soap context and serve one CGI-based request: 
       struct soap *soap = soap_new1(SOAP_XML_INDENT);
       soap_serve(soap);
-      soap_destroy(soap); // delete allocated class instances 
-      soap_end(soap);     // delete allocated data and temporaries 
+      soap_destroy(soap); // delete managed class instances 
+      soap_end(soap);     // delete managed data and temporaries 
       soap_free(soap);    // finalize and free the context
     }
 
@@ -704,8 +704,8 @@ gSOAP offers many options to implement XML data bindings, we wrote a separate
 this topic that contains an in-depth discussion of XML schema mappings to C/C++
 types, using wsdl2h with <i>`typemap.dat`</i> to customize these bindings,
 memory management to allocate and release serializable types, and how to use
-soapcpp2 options to generate deep data structure copy and delete functions for
-serializable types.
+[soapcpp2 options](#soapcpp2options) to generate deep data structure copy and
+delete functions for serializable types.
 
 Basically, the C/C++ XML data binding in gSOAP provides and automated mechanism to serialize
 any C and C++ data structure in XML and to deserialize XML back into C/C++ data
@@ -766,11 +766,10 @@ root element into a C++ class definition:
 
 ~~~{.cpp}
     class book 
-    {
-     public:
+    { public:
       @ ULONG64 isbn; 
-      std::string title; 
-      std::string publisher; 
+        std::string title; 
+        std::string publisher; 
     };
 ~~~
 
@@ -799,8 +798,8 @@ to standard output:
     bk.publisher = "ABC's is our Name"; 
     if (soap_write_book(soap, &bk) != SOAP_OK) 
       ... // error
-    soap_destroy(soap); // delete allocated class instances 
-    soap_end(soap);     // delete allocated data and temporaries 
+    soap_destroy(soap); // delete managed class instances 
+    soap_end(soap);     // delete managed data and temporaries 
     soap_free(soap);    // finalize and free the context
 ~~~
 
@@ -823,8 +822,8 @@ To read the XML representation from standard input into a book class instance:
     else 
       cout << bk.isbn << ", " << bk.title << ", " << bk.publisher << endl; 
     ... // further use of bk
-    soap_destroy(soap); // delete allocated class instances 
-    soap_end(soap);     // delete allocated data and temporaries 
+    soap_destroy(soap); // delete managed class instances 
+    soap_end(soap);     // delete managed data and temporaries 
     soap_free(soap);    // finalize and free the context
 ~~~
 
@@ -918,7 +917,7 @@ schema files.  The WSDLs and XSDs are then translated to C or C++, replacing
 WSDL service operation by C/C++ functions and XML schema data types by C/C++
 data types.
 
-To generate C code, we use <b>`wsdl2h -c`</b> option <b>`-c`</b>:
+To generate C code, we use [<b>`wsdl2h -c`</b> option <b>`-c`</b>](#wsdl2h-c):
 
      wsdl2h -c -o calc.h http://www.genivia.com/calc.wsdl
 
@@ -1174,7 +1173,7 @@ The interface of the generated stub function is identical to the function protot
 
 This stub function is saved in <i>`soapClient.cpp`</i>. The file <i>`soapC.cpp`</i>
 contains the serializer and deserializer functions for the data
-types used by the stub. You can use <b>`wsdl2h -c`</b> option <b>`-c`</b> to
+types used by the stub. You can use [<b>`wsdl2h -c`</b> option <b>`-c`</b>](#wsdl2h-c) to
 generate pure C code.  Likewise, <b>`soapcpp2 -c`</b> option <b>`-c`</b> generates pure C code, if the input interface file is written in C of course.
 
 The `::soap` parameter of the stub function shown above must be a valid pointer
@@ -1198,8 +1197,8 @@ The following example C/C++ client program uses the generated stub function to i
         std::cout << "Sum = " << sum << std::endl; 
       else // an error occurred 
         soap_print_fault(soap, stderr); // display the SOAP fault message on the stderr stream 
-      soap_destroy(soap); // delete allocated class instances 
-      soap_end(soap);     // delete allocated data and temporaries 
+      soap_destroy(soap); // delete managed class instances 
+      soap_end(soap);     // delete managed data and temporaries 
       soap_free(soap);    // finalize and free the context
       return 0; 
     }
@@ -1390,12 +1389,12 @@ example:
       calc.destroy();
     }
     ... // data can still be used
-    soap_destroy(&soap); // delete allocated class instances 
-    soap_end(&soap);     // delete allocated data and temporaries 
+    soap_destroy(&soap); // delete managed class instances 
+    soap_end(&soap);     // delete managed data and temporaries 
     soap_done(&soap);    // finalize the context
 ~~~
 
-In C we use <b>`wsdl2h -c`</b> option <b>`-c`</b> to generate C.  The example
+In C we use [<b>`wsdl2h -c`</b> option <b>`-c`</b>](#wsdl2h-c) to generate C.  The example
 client calculator program would be written as:
 
 ~~~{.cpp}
@@ -1507,15 +1506,15 @@ suffers from conflicting schema content. For example:
 
 ~~~{.cpp}
     class e__Address // an electronic address from schema 'e' 
-    {
-      char *email; 
-      char *url; 
+    { public:
+        char *email; 
+        char *url; 
     }; 
     class s__Address // a street address from schema 's' 
-    {
-      char *street; 
-      int number; 
-      char *city; 
+    { public:
+        char *street; 
+        int number; 
+        char *city; 
     };
 ~~~
 
@@ -1571,8 +1570,8 @@ A new and improved code generation capability is implemented in soapcpp2 for C++
 using <b>`soapcpp2 -j`</b> option <b>`-j`</b> (or option <b>`-i`</b>). These new proxy classes have a cleaner interface and offer more
 capabilities compared to the gSOAP 2.7 proxy and service classes.
 
-In C++ you can also use <b>`wsdl2h -qname`</b> option <b>`-qname`</b> to generate
-the proxy class and serializers in a C++ namespace `name`. This is very useful if you want to
+In C++ you can also use [<b>`wsdl2h -q name`</b> option <b>`-q name`</b>](#wsdl2h-q) to generate
+the proxy class and serializers in the specified C++ namespace `name`. This is very useful if you want to
 create multiple proxies for services by repeated use of wsdl2h and then
 combine them in one code.  Alternatively, you can run wsdl2h just once on
 all service WSDLs and have soapcpp2 generate multiple proxies for you.
@@ -1757,7 +1756,7 @@ The XML message returned by the service:
 
 With <b>`soapcpp2 -j`</b> option <b>`-j`</b>, the constructor of the proxy class allocates and initializes a `::soap` context as a pointer member of the class.  With <b>`soapcpp2 -i`</b> option <b>`-i`</b> the proxy class is derived from the `::soap` struct instead and this context is initialized when the proxy class constructor is invoked.
 
-To place the proxy class in a C++ namespace `name`, use <b>`soapcpp2 -qname`</b> option <b>`-qname`</b>.
+To place the proxy class in a C++ namespace `name`, use <b>`soapcpp2 -q name`</b> option <b>`-q name`</b>.
 See Section \ref soapcpp2options.
 
 🔝 [Back to table of contents](#)
@@ -1793,14 +1792,14 @@ The built-in XSD types are covered by `typedef` mappings and we could map XSD <i
 ~~~{.cpp}
     struct xsd__base64Binary
     {
-      unsigned char *__ptr; // points to raw binary data
-      int __size;           // length of raw binary data
+        unsigned char *__ptr; // points to raw binary data
+        int __size;           // length of raw binary data
     };
 
     struct xsd__hexBinary
     {
-      unsigned char *__ptr; // points to raw binary data
-      int __size;           // length of raw binary data
+        unsigned char *__ptr; // points to raw binary data
+        int __size;           // length of raw binary data
     };
 ~~~
 
@@ -2120,14 +2119,13 @@ The type `FlightInfo` is represented by a `class` in the header file:
     // Contents of file "flight.h": 
     typedef char *xsd__string; 
     class ns2__FlightInfo 
-    {
-     public: 
-      xsd__string airline; 
-      xsd__string flightNumber; 
-      xsd__string altitude; 
-      xsd__string currentLocation; 
-      xsd__string equipment; 
-      xsd__string speed; 
+    { public: 
+        xsd__string airline; 
+        xsd__string flightNumber; 
+        xsd__string altitude; 
+        xsd__string currentLocation; 
+        xsd__string equipment; 
+        xsd__string speed; 
     }; 
     struct ns1__getFlightInfoResponse { ns2__FlightInfo return_; }; 
     int ns1__getFlightInfo(xsd__string param1, xsd__string param2, struct ns1__getFlightInfoResponse &r);
@@ -2158,8 +2156,8 @@ flight information:
         cout << flight.return_.equipment << " flight " << flight.return_.airline << flight.return_.flightNumber 
              << " traveling " << flight.return_.speed << " mph " << " at " << flight.return_.altitude 
              << " ft, is located " << flight.return_.currentLocation << endl;
-      soap_destroy(&soap); // delete allocated class instances 
-      soap_end(&soap);     // delete allocated data and temporaries 
+      soap_destroy(&soap); // delete managed class instances 
+      soap_end(&soap);     // delete managed data and temporaries 
       soap_done(&soap);    // finalize the context
     }
 
@@ -2514,7 +2512,7 @@ For example:
       soap->max_keep_alive = 100;  // max keep-alive sequence 
       // soap_ssl_server_context(soap, ...); // call when HTTPS is used
       SOAP_SOCKET m, s;                      // master and slave sockets 
-      m = soap_bind(soap, NULL, 18083, 1);   // backlog=1 for iterative servers 
+      m = soap_bind(soap, NULL, 18083, 10);  // small BACKLOG for iterative servers 
       if (!soap_valid_socket(m)) 
       {
         soap_print_fault(soap, stderr); 
@@ -2536,19 +2534,19 @@ For example:
             soap_print_fault(soap, stderr);
           else
             fprintf(stderr, "request served\n"); 
-          soap_destroy(soap); // delete allocated class instances 
-          soap_end(soap);     // delete allocated data and temporaries 
+          soap_destroy(soap); // delete managed class instances 
+          soap_end(soap);     // delete managed data and temporaries 
         } 
       } 
       soap_free(soap); // finalize and delete the context 
     }
 ~~~
 
-The `::soap_serve` dispatcher handles one request or multiple requests when HTTP keep-alive is enabled with the `#SOAP_IO_KEEPALIVE` flag, which should only be used with multi-threaded services, see the next section and Section \ref keepalive.
+The `::soap_serve` dispatcher handles one request or multiple requests when HTTP keep-alive is enabled with the `#SOAP_IO_KEEPALIVE` flag, which should only be used with client applications or with stand-alone multi-threaded services, see the next section and Section \ref keepalive.
 
 The gSOAP functions that are frequently used for server-side coding are:
 
-* `soap_bind(struct soap *soap, char *host, int port, int backlog)` binds `::soap::master` socket to the specified port and host name (or NULL for the current machine), using a backlog queue size of pending requests, returns master socket. We check the return value with `#soap_valid_socket`.  The backlog queue size should be small, say 1 or 2, for iterative (not multi-threaded) stand-alone servers to improve fairness among connecting clients.
+* `soap_bind(struct soap *soap, char *host, int port, int backlog)` binds `::soap::master` socket to the specified port and host name (or NULL for the current machine), using a backlog queue size of pending requests, returns master socket. We check the return value with `#soap_valid_socket`.  The backlog queue size should be small, say 2 to 10, for iterative (not multi-threaded) stand-alone servers to ensure fairness among connecting clients.  A smaller value increases fairness and defends against denial of service, but hampers performance because connection requests may be refused.
 
 * `soap_accept(struct soap *soap)` returns `#SOAP_SOCKET` socket `::soap::socket` when connected.  We check the return value with `#soap_valid_socket`.
 
@@ -2599,8 +2597,8 @@ The following example illustrates the use of threads to improve the quality of s
       if (argc < 2) // no args: assume this is a CGI application 
       {
         soap_serve(&soap);   // serve request, one thread, CGI style 
-        soap_destroy(&soap); // delete allocated class instances 
-        soap_end(&soap);     // delete allocated data and temporaries 
+        soap_destroy(&soap); // delete managed class instances 
+        soap_end(&soap);     // delete managed data and temporaries 
       } 
       else 
       {
@@ -2650,8 +2648,8 @@ The following example illustrates the use of threads to improve the quality of s
     {
       THREAD_DETACH(THREAD_ID); 
       soap_serve(soap); 
-      soap_destroy(soap); // delete allocated class instances 
-      soap_end(soap);     // delete allocated data and temporaries 
+      soap_destroy(soap); // delete managed class instances 
+      soap_end(soap);     // delete managed data and temporaries 
       soap_free(soap);    // finalize and delete the context
       return NULL; 
     }
@@ -2688,8 +2686,8 @@ The following example limits the number of concurrent threads to reduce the mach
       if (argc < 2) // no args: assume this is a CGI application 
       {
         soap_serve(&soap);   // serve request, one thread, CGI style 
-        soap_destroy(&soap); // delete allocated class instances 
-        soap_end(&soap);     // delete allocated data and temporaries 
+        soap_destroy(&soap); // delete managed class instances 
+        soap_end(&soap);     // delete managed data and temporaries 
       } 
       else 
       {
@@ -2728,8 +2726,8 @@ The following example limits the number of concurrent threads to reduce the mach
                 // soap_close_connection(soap_thr[i]); // requires compiling 2.8.71 or greater with -DWITH_SELF_PIPE
                 THREAD_JOIN(tid[i]); 
                 fprintf(stderr, "Thread %d completed\n", i); 
-                soap_destroy(soap_thr[i]);            // delete allocated class instances of thread 
-                soap_end(soap_thr[i]);                // delete allocated data and temporaries of thread 
+                soap_destroy(soap_thr[i]);            // delete managed class instances of thread 
+                soap_end(soap_thr[i]);                // delete managed data and temporaries of thread 
                 soap_copy_stream(soap_thr[i], &soap); // pass the connection on to the thread
               } 
               while (THREAD_CREATE(&tid[i], (void*(*)(void*))soap_serve, (void*)soap_thr[i]))
@@ -2796,8 +2794,8 @@ The advantage of the code shown above is that the machine cannot be overloaded w
       if (argc < 2) // no args: assume this is a CGI application 
       {
         soap_serve(&soap);   // serve request, one thread, CGI style 
-        soap_destroy(&soap); // delete allocated class instances 
-        soap_end(&soap);     // delete allocated data and temporaries 
+        soap_destroy(&soap); // delete managed class instances 
+        soap_end(&soap);     // delete managed data and temporaries 
       } 
       else 
       {
@@ -3066,7 +3064,7 @@ The only difference we make to implement the service application is to use the `
 
 In fact, the service classes have `soap_sender_fault` and `soap_receiver_fault` methods that can be used instead.
 
-You can declare a C++ namespace `name` with <b>`soapcpp2 -qname`</b> to create a
+You can declare a C++ namespace `name` with <b>`soapcpp2 -q name`</b> to create a
 server class in the `name` namespace, see Section \ref codenamespace .
 For more options, see also Sections \ref soapcpp2options 
 and \ref dylibs.
@@ -3126,7 +3124,7 @@ In this case invoking the server object's `serve` method is not sufficient, sinc
 service can accept requests while we want multiple services to listen to the
 same port.
 
-For example, say we have three service classes `soapABCService`, `soapUVWService`, and `soapXYZService`.  We run <b>`soapcpp2 -i -S -qname`</b> three times (on the same interface file when applicable):
+For example, say we have three service classes `soapABCService`, `soapUVWService`, and `soapXYZService`.  We run <b>`soapcpp2 -i -S -q name`</b> three times (on the same interface file when applicable):
 
     soapcpp2 -i -S -qAbc file.h
     soapcpp2 -i -S -qUvw file.h
@@ -3682,7 +3680,7 @@ The generated `soap_recv_ns__event` function can be used to parse a SOAP message
 ~~~{.cpp}
     struct ns__event 
     {
-      int eventNo; 
+        int eventNo; 
     }
 ~~~
 
@@ -3818,7 +3816,7 @@ to map schema types to C/C++ types.  For example, the map <i>`xsd:duration`</i> 
 
     xsd__duration = #import "custom/duration.h" | xsd__duration
 
-Then run wsdl2h with the <i>`typemap.dat`</i> file in the current directory or use <b>`wsdl2h -t mapfile.dat`</b> to use <i>`mapfile.dat`</i> instead.  This requires compiling <i>`gsoap/custom/duration.c`</i> with your build.
+Then run wsdl2h with the <i>`typemap.dat`</i> file in the current directory or use [<b>`wsdl2h -t mapfile.dat`</b> option `-t mapfile.dat`](#wsdl2h-t) to use <i>`mapfile.dat`</i> instead.  This requires compiling <i>`gsoap/custom/duration.c`</i> with your build.
 
 Another example is <i>`xsd:dateTime`</i> which is mapped to `time_t`.  To expand the range and precision of <i>`xsd:dateTime`</i> we can map <i>`xsd:dateTime`</i> to `struct tm`:
 
@@ -3980,17 +3978,16 @@ Additional features and C/C++ syntax requirements:
     extern class classname; // this class is not serializable 
     struct structname
     {
-      extern char *name; // this member is not serializable
-      int num;
+        extern char *name; // this member is not serializable
+        int num;
     };
 ~~~
   
 *  Only public members of a class can be serialized:
 ~~~{.cpp}
     class name
-    {
-     private:
-      char *secret; // private and protected members are not serializable
+    { private:
+        char *secret; // private and protected members are not serializable
     };
 ~~~
    and members are public by default in the interface header file for soapcpp2.
@@ -4000,24 +3997,24 @@ Additional features and C/C++ syntax requirements:
 ~~~{.cpp}
     volatile struct tm
     {
-      int tm_sec;  ///< seconds (0 - 60)
-      int tm_min;  ///< minutes (0 - 59)
-      int tm_hour; ///< hours (0 - 23)
-      int tm_mday; ///< day of month (1 - 31)
-      int tm_mon;  ///< month of year (0 - 11)
-      int tm_year; ///< year - 1900
+        int tm_sec;  ///< seconds (0 - 60)
+        int tm_min;  ///< minutes (0 - 59)
+        int tm_hour; ///< hours (0 - 23)
+        int tm_mday; ///< day of month (1 - 31)
+        int tm_mon;  ///< month of year (0 - 11)
+        int tm_year; ///< year - 1900
     };
 ~~~
   
 *  Classes and structs may be declared `mutable` means that they can be augmented with additional members using redefinitions of the struct or class:
 ~~~{.cpp}
     mutable class classname
-    {
-      int n; // classname has a member 'n' 
+    { public:
+        int n; // classname has a member 'n' 
     };
     mutable class name
-    {
-      float x; // classname also has a member 'x'
+    { public:
+        float x; // classname also has a member 'x'
     };
 ~~~
   The `::SOAP_ENV__Header` struct is mutable as well as the `::SOAP_ENV__Fault`, `::SOAP_ENV__Detail`, `::SOAP_ENV__Reason`, and `::SOAP_ENV__Code` structs.  The reason is that these structures are augmented with additional members by plugins such as WS-Addressing <i>`gsoap/plugin/wsaapi.h`</i> to support these SOAP-based protocols.
@@ -4025,10 +4022,10 @@ Additional features and C/C++ syntax requirements:
 *  Members of a struct or class are serialized as XML attributes when qualified with '@', for example:
 ~~~{.cpp}
     struct record
-   {
-     @ char *name; // XML attribute name
-     int num;      // XML element num
-   };
+    {
+      @ char *name; // XML attribute name
+        int num;    // XML element num
+    };
 ~~~
   
 *  Strings with 8-bit content hold ASCII by default or hold UTF-8 when enabled with runtime flag
@@ -4159,7 +4156,7 @@ Consider for example the following interface header file for soapcpp2 declares a
 ~~~{.cpp}
     struct ns__Person
     {
-      char *name;
+        char *name;
     };
 ~~~
 
@@ -4337,9 +4334,9 @@ Consider for example the following `struct`:
 ~~~{.cpp}
     struct Tricky
     {
-      int *p; 
-      int n; 
-      int *q; 
+        int *p; 
+        int n; 
+        int *q; 
     };
 ~~~
 
@@ -4413,14 +4410,13 @@ With the soapcpp2-generated serializers you can define a C++ operator that seria
 
 ~~~{.cpp}
     class ns__Person
-    {
-     public:
-      ns__Person();
-      ~ns__Person();
-      void set_name(const char *);
-      const char *get_name();
-      const char *name;
-      struct soap *soap;
+    { public:
+        ns__Person();
+        ~ns__Person();
+        void set_name(const char *);
+        const char *get_name();
+        const char *name;
+        struct soap *soap;
     };
 ~~~
 
@@ -4521,21 +4517,19 @@ As an example, consider the following data type declarations:
     enum ns__Gender { male, female }; 
 
     class ns__Address 
-    {
-     public: 
-      const char *street; 
-      uint32_t    number; 
-      const char *city; 
+    { public: 
+        const char *street; 
+        uint32_t    number; 
+        const char *city; 
     }; 
 
     class ns__Person 
-    {
-     public: 
-      const char     *name; 
-      enum ns__Gender gender; 
-      ns__Address     address; 
-      ns__Person     *mother; 
-      ns__Person     *father; 
+    { public: 
+        const char     *name; 
+        enum ns__Gender gender; 
+        ns__Address     address; 
+        ns__Person     *mother; 
+        ns__Person     *father; 
     };
 ~~~
 
@@ -4650,7 +4644,7 @@ The following program decodes this content from standard input and reconstructs 
         ... // use the data
       }
       soap_destroy(soap); // deletes john, mother and father
-      soap_end(soap);     // deletes other managed data
+      soap_end(soap);     // deletes other managed data and temporaries
       soap_free(soap);    // finalize and delete the context
     } 
 ~~~
@@ -4692,9 +4686,9 @@ Default values can also be assigned to individual `struct` and `class` members o
 ~~~{.cpp}
     struct MyRecord 
     {
-      char *name = "Unknown"; // optional
-      int value = 9999; 
-      enum Status { active, passive } status = passive; 
+        char *name = "Unknown"; // optional
+        int value = 9999; 
+        enum Status { active, passive } status = passive; 
     }
 ~~~
 
@@ -4741,7 +4735,7 @@ First, to convert a WSDL to C++ we use:
 
      wsdl2h file.wsdl
 
-This generates an interface header file <i>`file.h`</i>. When using a URL to the WSDL we use <b>`wsdl2h -ofile.h`</b> option <b>`-ofile.h`</b> to save the file:
+This generates an interface header file <i>`file.h`</i>. When using a URL to the WSDL we use [<b>`wsdl2h -o file.h`</b> option <b>`-o file.h`</b>](#wsdl2h-o) to save the file:
 
      wsdl2h -ofile.h http://www.example.com/file.wsdl
 
@@ -4752,11 +4746,11 @@ The generated header file also contains instructions for the user and has
 documentation copies from the WSDL as well as various directives related to the
 Web service properties defined in the WSDL.
 
-Multiple WSDL specifications can be processed at once and saved to one interface header file with <b>`wsdl2h -ofile.h`</b> option <b>`-ofile.h`</b>:
+Multiple WSDL specifications can be processed at once and saved to one interface header file with [<b>`wsdl2h -o file.h`</b> option <b>`-o file.h`</b>](#wsdl2h-o):
 
      wsdl2h -o file.h file1.wsdl file2.wsdl file3.wsdl
 
-To generate C source code, use <b>`wsdl2h -c`</b> option <b>`-c`</b>:
+To generate C source code, use [<b>`wsdl2h -c`</b> option <b>`-c`</b>](#wsdl2h-c):
 
      wsdl2h -c file.wsdl
 
@@ -4777,7 +4771,7 @@ There are many cases when wsdl2h generates code with `#import` directives, such 
 
      soapcpp2 -I some_path_to/gsoap/import file.h
 
-When WSDLs are converted to C++ source code, you may want to use <b>`wsdl2h -j`</b> option <b>`-j`</b> (or option <b>`-i`</b>) to generate proxy and service classes:
+When WSDLs are converted to C++ source code, you may want to use [<b>`wsdl2h -j`</b> option <b>`-j`</b>](#wsdl2h-j) (or [<b>`wsdl2h -j`</b> option <b>`-i`</b>](#wsdl2h-i)) to generate proxy and service classes:
 
      soapcpp2 -j file.h
 
@@ -4808,72 +4802,1408 @@ is the first WSDL/schema input file name but with extension <i>`.h`</i> that rep
 <i>`.wsdl`</i> (or replaces <i>`.xsd`</i> in case of XSD files specified). When
 an input file is absent or a WSDL file is loaded from a Web URL, the header
 output will be produced on the standard
-output unless <b>`wsdl2h -ofile.h`</b> option <b>`-ofile.h`</b> is used to save
+output unless [<b>`wsdl2h -o file.h`</b> option <b>`-o file.h`</b>](#wsdl2h-o) is used to save
 the output to <i>`file.h`</i> (or any other file name specified).
 
 The wsdl2h command-line options are:
 
-option                   | result
------------------------- | ------
-`-a`                     | generate indexed struct names for local elements with anonymous types 
-`-b`                     | generate bi-directional operations to serve one-way response messages (duplex)
-`-c`                     | generate C source code 
-`-c++`                   | generate C++ source code (default)
-`-c++11`                 | generate C++11 source code
-`-d`                     | generate DOM code for xsd:any and xsd:anyType elements 
-`-D`                     | make attribute members with default values optional with pointers
-`-e`                     | don't qualify enum names
-`-f`                     | generate flat C++ class hierarchy for schema extensions 
-`-g`                     | generate global top-level element declarations 
-`-h`                     | print help information 
-`-I path`                | use path to locate source files for `#import` 
-`-i`                     | don't import (advanced option)
-`-j`                     | don't generate `::SOAP_ENV__Header` and `::SOAP_ENV__Detail` definitions 
-`-k`                     | don't generate `::SOAP_ENV__Header` `mustUnderstand` qualifiers 
-`-l`                     | include license information in output 
-`-M`                     | suppress error "must understand element with wsdl:required='true'"
-`-m`                     | use xsd.h module to import primitive types 
-`-N name`                | use `name` for service prefixes to produce a service for each binding 
-`-n name`                | use `name` as the base namespace prefix name instead of `ns` 
-`-O1`                    | optimize by omitting duplicate choice/sequence members
-`-O2`                    | optimize `-O1` and omit unused schema types (unreachable from roots)
-`-O3`                    | optimize `-O2` and omit unused schema root attributes
-`-O4`                    | optimize `-O3` and omit unused schema root elements (use only with WSDLs)
-`-o file`                | output to file 
-`-P`                     | don't create polymorphic types inherited from `xsd__anyType` 
-`-p`                     | create polymorphic types inherited from base `xsd__anyType` (automatic when the WSDL or XSD contains polymorphic definitions)
-`-q name`                | use `name` for the C++ namespace of all declarations 
-`-R`                     | generate REST operations for REST bindings in the WSDL 
-`-r host[:port[:id:pw]]` | connect via proxy host, port, and proxy credentials 
-`-r:uid:pwd`             | connect with authentication credentials (digest auth requires SSL) 
-`-s`                     | don't generate STL code (no std::string and no std::vector) 
-`-S name`                | use name instead of `soap` for the soap context included in C++ classes as a member variable or use `-S ""` to remove it
-`-t file`                | use type map file instead of the default file typemap.dat 
-`-U`                     | map Unicode XML names to UTF-8-encoded Unicode C/C++ identifiers 
-`-u`                     | don't generate unions 
-`-V`                     | display the current version and exit
-`-v`                     | verbose output 
-`-W`                     | suppress warnings 
-`-w`                     | always wrap response parameters in a response struct 
-`-x`                     | don't generate `_XML any` and `_XML anyAttribute` extensibility elements 
-`-y`                     | generate typedef synonyms for structs and enums 
-`-z1`                    | compatibility with 2.7.6e: generate pointer-based arrays
-`-z2`                    | compatibility with 2.7.15: qualify element/attribute referenced members
-`-z3`                    | compatibility with 2.7.16 to 2.8.7: qualify element/attribute references
-`-z4`                    | compatibility up to 2.8.11: don't generate union structs in std::vector 
-`-z5`                    | compatibility up to 2.8.15: don't include minor improvements
-`-z6`                    | compatibility up to 2.8.17: don't include minor improvements
-`-z7`                    | compatibility up to 2.8.59: don't generate `std::vector` of class of union
-`-_`                     | don't generate `_USCORE` (replace with Unicode `_x005f`) 
+option                                    | result
+----------------------------------------- | ------
+[`-a`](#wsdl2h-a)                         | generate indexed struct names for local elements with anonymous types 
+[`-b`](#wsdl2h-b)                         | generate bi-directional operations to serve one-way response messages (duplex)
+[`-c`](#wsdl2h-c)                         | generate C source code 
+[`-c++`](#wsdl2h-c)                       | generate C++ source code (default)
+[`-c++11`](#wsdl2h-c)                     | generate C++11 source code
+[`-D`](#wsdl2h-D)                         | make attribute members with default/fixed values optional with pointers
+[`-d`](#wsdl2h-d)                         | generate DOM code for xsd:any and xsd:anyType elements 
+[`-e`](#wsdl2h-e)                         | don't qualify enum names
+[`-F`](#wsdl2h-F)                         | add transient members to structs to simulate struct-type derivation in C
+[`-f`](#wsdl2h-f)                         | generate flat C++ class hierarchy by removing inheritance
+[`-g`](#wsdl2h-g)                         | generate global top-level element and attribute declarations 
+[`-h`](#wsdl2h-h)                         | display help info and exit
+[`-I`](#wsdl2h-I) `path`                  | use `path` to locate WSDL and XSD files
+[`-i`](#wsdl2h-i)                         | don't import (advanced option)
+[`-j`](#wsdl2h-j)                         | don't generate `::SOAP_ENV__Header` and `::SOAP_ENV__Detail` definitions 
+[`-k`](#wsdl2h-k)                         | don't generate `::SOAP_ENV__Header` `mustUnderstand` qualifiers 
+[`-L`](#wsdl2h-L)                         | generate less documentation by removing generic `@note` comments
+[`-l`](#wsdl2h-l)                         | display license information
+[`-M`](#wsdl2h-M)                         | suppress error "must understand element with wsdl:required='true'"
+[`-m`](#wsdl2h-m)                         | use xsd.h module to import primitive types 
+[`-N`](#wsdl2h-N) `name`                  | use `name` for service prefixes to produce a service for each binding 
+[`-n`](#wsdl2h-n) `name`                  | use `name` as the base namespace prefix name instead of `ns` 
+[`-O1`](#wsdl2h-O)                        | optimize by omitting duplicate choice/sequence members
+[`-O2`](#wsdl2h-O)                        | optimize `-O1` and omit unused schema types (unreachable from roots)
+[`-O3`](#wsdl2h-O)                        | optimize `-O2` and omit unused schema root attributes
+[`-O4`](#wsdl2h-O)                        | optimize `-O3` and omit unused schema root elements (use only with WSDLs)
+[`-o`](#wsdl2h-o) `file`                  | output to file 
+[`-P`](#wsdl2h-P)                         | don't create polymorphic types inherited from `xsd__anyType` 
+[`-p`](#wsdl2h-p)                         | create polymorphic types inherited from base `xsd__anyType` (automatic when the WSDL or XSD contains polymorphic definitions)
+[`-q`](#wsdl2h-q) `name`                  | use `name` for the C++ namespace of all declarations 
+[`-R`](#wsdl2h-R)                         | generate REST operations for REST bindings in the WSDL 
+[`-r`](#wsdl2h-r) `host[:port[:uid:pwd]]` | connect via proxy `host`, `port`, and proxy credentials `uid` and `pwd`
+[`-r`](#wsdl2h-r) `:uid:pwd`              | connect with authentication credentials `uid` and `pwd`
+[`-S`](#wsdl2h-S) `name`                  | use `name` instead of `soap` for the soap context included in C++ classes as a member variable or use `-S ""` to remove it
+[`-s`](#wsdl2h-s)                         | don't generate STL code (no std::string and no std::vector) 
+[`-t`](#wsdl2h-t) `file`                  | use type map file instead of the default file typemap.dat 
+[`-U`](#wsdl2h-U)                         | map Unicode XML names to UTF-8-encoded Unicode C/C++ identifiers 
+[`-u`](#wsdl2h-u)                         | don't generate unions 
+[`-V`](#wsdl2h-V)                         | display the current version and exit
+[`-v`](#wsdl2h-v)                         | verbose output 
+[`-W`](#wsdl2h-W)                         | suppress warnings 
+[`-w`](#wsdl2h-w)                         | always wrap response parameters in a response struct 
+[`-x`](#wsdl2h-x)                         | don't generate `_XML any` and `_XML anyAttribute` extensibility elements 
+[`-y`](#wsdl2h-y)                         | generate typedef synonyms for structs and enums 
+[`-z1`](#wsdl2h-z)                        | compatibility with 2.7.6e: generate pointer-based arrays
+[`-z2`](#wsdl2h-z)                        | compatibility with 2.7.15: qualify element/attribute referenced members
+[`-z3`](#wsdl2h-z)                        | compatibility with 2.7.16 to 2.8.7: qualify element/attribute references
+[`-z4`](#wsdl2h-z)                        | compatibility up to 2.8.11: don't generate union structs in std::vector 
+[`-z5`](#wsdl2h-z)                        | compatibility up to 2.8.15: don't include minor improvements
+[`-z6`](#wsdl2h-z)                        | compatibility up to 2.8.17: don't include minor improvements
+[`-z7`](#wsdl2h-z)                        | compatibility up to 2.8.59: don't generate `std::vector` of class of union
+[`-_`](#wsdl2h-_)                         | don't generate `_USCORE` (replace with Unicode `_x005f`) 
+
+The following subsections explain the options in detail.  The source code
+examples generated by wsdl2h are slightly simplified by removing comments
+and some other details without changing their meaning to improve readability.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -a {#wsdl2h-a}
+
+This option generates indexed identifier names for structs, classes, unions,
+and enums declared for local elements with local (i.e. anonymous) types.  When
+local elements and attributes have local types that are mapped to a struct,
+class, union, or enum, the generated type name is normally the outer
+struct/class name concatenated with the element/attribute name.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="TypeWithNestedType">
+        <xsd:sequence>
+          <xsd:element name="element">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="nested-element" type="xsd::string"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, this schema is translated by wsdl2h to the
+following interface header file declaration:
+
+~~~{.cpp}
+    class ns__TypeWithNestedType             // complexType
+    { public:
+        class ns__TypeWithNestedType_element // local complexType
+        { public:
+            std::string nested_element;      // nested required element
+        } element;                           // required element
+    };
+~~~
+
+By contrast, with <b>`wsdl2h -a`</b> option <b>`-a`</b> we obtain an indexed
+local class `_ns__struct_1` in the generated interface header file for
+soapcpp2:
+
+~~~{.cpp}
+    class ns__TypeWithNestedType          // complexType
+    { public:
+        class _ns__struct_1               // local complexType
+        { public:
+            std::string nested_element;   // nested required element
+        } element;                        // required element
+    };
+~~~
+
+The next local struct or class is named `_ns__struct_2` and so on.  The same
+indexing applies to local unions and enums.
+
+@note The soapcpp2 tool always un-nests nested struct, class, union and enum
+declarations, which means that the above eventially results in the following
+source code generated by soapcpp2:
+
+~~~{.cpp}
+    class _ns__struct_1
+    { public:
+        std::string nested_element;
+    };
+    class ns__TypeWithNestedType
+    { public:
+        _ns__struct_1 element;
+    };
+~~~
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -b {#wsdl2h-b}
+
+This option generates bi-directional operations (duplex operations) intended
+for asynchrounous server operations.  The bi-directional operations for server
+response messages are generated in addition to the request-response operations.
+
+For example, the wsdl2h tool generates the following declaration of a service
+operation `ns__add` for a hypothetical calculator Web service:
+
+~~~{.cpp}
+    int ns__add(
+        double a,
+        double b,
+        double& result
+    );
+~~~
+
+By contrast, with this option <b>`-b`</b> we obtain an additional one-way
+operation `ns__addResponse` to send and receive one-way response messages:
+
+~~~{.cpp}
+    int ns__addResponse(
+        double result,
+        void
+    );
+    int ns__add(
+        double a,
+        double b,
+        double& result
+    );
+~~~
+
+Where `void` as a result parameter means that the operation uses "one-way"
+messaging, in this case to send and receive response messages one-way
+asynchronously:
+
+- `int soap_send_ns__addResponse(struct soap *soap, const char *endpoint, const char *action, double& result)`
+- `int soap_recv_ns__addResponse(struct soap *soap, double& result)`
+
+At the sender side use `soap_send_ns__addResponse` to send the message one-way,
+followed by `::soap_recv_empty_response` to receive the HTTP acknowledgment.
+At the receiver side use `soap_recv_ns__addResponse`.  To develop a server,
+simply implement `soap_ns__addResponse` to handle the service operation and
+in this function call `::soap_send_empty_response` to send the HTTP
+acknowledgment.  The same applies to C++ proxy classes generated by soapcpp2.
+
+@note Version 2.8.75 of gSOAP and greater generate send and receive
+functions for each client-side call function.  This means that a client
+application can simply call `soap_send_ns__add` to send the request and then
+call `soap_recv_ns__add` to receive the response after polling the server
+connection with `::soap_ready` to check if the server is ready (`::soap_ready`
+returns `#SOAP_OK`) to send the response message as a reply message to be
+received by the client.  Therefore, this option <b>`-b`</b> is not required to
+implement asynchronous request-response messaging but rather adds one-way
+asynchronous response messaging as well.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -c -c++ -c++11 {#wsdl2h-c}
+
+This option sets the source code output to C, C++, or C++11, respectively.
+
+For C++ and C++11 you can also use [<b>`wsdl2h -s`</b> option <b>`-s`</b>](#wsdl2h-s)
+to replace `std::vector` by arrays and replaces `std::string` by `char*`.  Use
+a [<i>`typemap.dat`</i> file](#typemap) to specify further details for the
+source code output generated by wsdl2h.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -D {#wsdl2h-D}
+
+This option makes attribute members of a struct or class with default or fixed
+values optional with pointers.  Elements with default and fixed values are not
+affected by this option.
+
+Without this option, optional attributes with default or fixed values are
+always output in XML, because the struct/class attribute member is not a
+pointer.  This does not negatively affect the meaning of the XML produced,
+because omitted attributes are replaced by their default or fixed value.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="data">
+        <xsd:sequence>
+          <xsd:element name="foo" type="xsd:string" minOccurs="0" default="abc"/>
+        </xsd:sequence>
+        <xsd:attribute name="bar" type="xsd:int" use="optional" default="123"/>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, this schema is translated by wsdl2h to the
+following interface header file declaration:
+
+~~~{.cpp}
+    class ns__data
+    { public:
+        std::string* foo 0 = "abc"; // optional element with default value "abc"
+      @ int bar 0 = 123;            // optional with default value 123
+    };
+~~~
+
+The deserializer populates the attribute value with the default or fixed
+value when the attribute is omitted from XML.  The element is populated
+when the element is empty, i.e. <i>`<bar/>`</i> or <i>`<bar></bar>`</i>,
+but not when it is omitted, as per the W3C XML Schema standards.
+
+This option forces the optional attributes to be pointer-based
+members, meaning that their output can be turned on or off by setting the
+pointer to a value or to NULL:
+
+~~~{.cpp}
+    class ns__data
+    { public:
+        std::string* foo 0 = "abc"; // optional element with default value "abc"
+      @ int* bar 0 = 123;           // optional with default value 123
+    };
+~~~
+
+@warning In this case the deserializer will not populate the attribute value
+with the default or fixed value when the attribute is omitted from XML, which
+differs from the W3C XML schema standards.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -d {#wsdl2h-d}
+
+This option replaces literal XML strings `_XML` (a `char*` string with XML
+content) with DOM nodes that are used to store the content of
+<i>`xsd:any`</i>, <i>`xsd:anyAttribute`</i> <i>`xsd:anyType`</i>, and mixed
+content values.  The [DOM API](#dom) offers more features to manipulate XML
+content compared to the literal `_XML` string type.
+
+The DOM node type `xsd__anyType` of the gSOAP [DOM API](#dom) is imported in the
+wsdl2h-generated interface header file with `#import "dom.h"` where
+<i>`dom.h`</i> is located in the <i>`gsoap/import`</i> directory.  This
+requires compiling <i>`gsoap/dom.c`</i> in C and <i>`gsoap/dom.cpp`</i> in C++.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="data">
+        <xsd:sequence>
+          <xsd:element name="foo" type="xsd:anyType"/>
+          <xsd:any/>
+        </xsd:sequence>
+        <xsd:anyAttribute processContents="lax"/>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, this schema is translated by wsdl2h to the
+following interface header file declarations:
+
+~~~{.cpp}
+    class xsd__anyType
+    { public:
+        _XML __item; // XML string content
+    };
+    class ns__data : public xsd__anyType
+    { public:
+        xsd__anyType* foo;
+        _XML __any;	     // Store any element content in XML string
+      @ _XML __anyAttribute; // A placeholder that has no effect
+    };
+~~~
+
+The `xsd__anyType` type has `_XML` simpleContent stored in `__item`.
+Names starting with double underscores have no representation in XML
+as elements or attribute names, meaning that only their values matter.
+Therefore, `_XML __any` holds the element and its content in a string.
+
+With <b>`wsdl2h -d`</b> option <b>`-d`</b> we obtain:
+
+~~~{.cpp}
+    #import "dom.h" // imports xsd__anyType as a DOM node
+
+    class ns__data : public xsd__anyType
+    { public:
+        xsd__anyType* foo;                // Store <foo> element in DOM soap_dom_element
+        xsd__anyType __any;	          // Store any element content in DOM soap_dom_element
+      @ xsd__anyAttribute __anyAttribute; // Store anyAttribute content in DOM soap_dom_attribute linked node structure
+    };
+~~~
+
+See [DOM API](#dom) for details on how to use the `xsd__anyType` and
+`xsd__anyAttribute`.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -e {#wsdl2h-e}
+
+This option removes the prefix qualifier from enumeration names.
+
+Without this option all enumeration names are prefixed by their `enum` name to
+ensure that enumeration names do not clash with other constants and enumeration
+names.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:simpleType name="engine">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="ON"/>
+          <xsd:enumeration value="OFF"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="light">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="ON"/>
+          <xsd:enumeration value="OFF"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, this schema is translated by wsdl2h to the
+following interface header file declarations:
+
+~~~{.cpp}
+    enum ns__engine { ns__engine__ON, ns__engine__OFF };
+    enum ns__light { ns__light__ON, ns__light__OFF, ns__light__BROKEN };
+~~~
+
+By contrast, with <b>`wsdl2h -e`</b> option <b>`-e`</b> we obtain:
+
+~~~{.cpp}
+    enum ns__engine { ON, OFF };
+    enum ns__light { ON_, OFF_, BROKEN };
+~~~
+
+Where enumeration names are suffixed with underscores to make them unique.
+
+Note that C++11 scoped enumerations can be used with
+[<b>`wsdl2h -c++11`</b> option <b>`-c++11`</b>](#wsdl2h-c), which makes option
+<b>`-e`</b> useless.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -F {#wsdl2h-F}
+
+This option produces interface header files with struct/class
+declarations that simulate inheritance using transient pointer members to
+derived types.  This option is particularly useful for C source code generation
+when derived types are required by the application.  Derived type values are
+indicated by <i>`xsi:type`</i> attributes in XML with the derived type name.
+
+This option can also be used for C++ to replace class inheritance by simulated
+inheritance using transient pointer members in base classes that point to the
+value of a derived type, meaning that the base class instance is replaced by
+the derived class instance.  This option also removes pointers from array and
+container item types.  These pointers are normally added to ensure containers
+can contain derived type values, but pointers are no longer needed by the
+simulated approach that add pointer members to the base classes.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:tns="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="base">
+        <xsd:sequence>
+          <xsd:element name="value" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="derived1">
+        <xsd:complexContent>
+          <xsd:extension base="tns:base">
+            <xsd:sequence>
+              <xsd:element name="name" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="derived2">
+        <xsd:complexContent>
+          <xsd:extension base="tns:base">
+            <xsd:sequence>
+              <xsd:element name="x" type="xsd:float"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="derived3">
+        <xsd:complexContent>
+          <xsd:extension base="tns:derived1">
+            <xsd:sequence>
+              <xsd:element name="x" type="xsd:float"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, this schema is translated by <b>`wsdl2h -c`</b>
+option <b>`-c`</b> to the following interface header file declaration in C that
+lacks inheritance:
+
+~~~{.cpp}
+    struct ns__base
+    {
+        int value;
+    };
+    struct ns__derived1
+    {
+        int value;  // base type value of ns__base
+        char *name; // extension
+    };
+    struct ns__derived2
+    {
+        int value;  // base type value of ns__base
+        float x;    // extension
+    };
+    struct ns__derived3
+    {
+        int value;  // derived1 type value of ns__base
+        char *name; // derived1 type
+        float x;    // extension
+    };
+~~~
+
+By contrast, with <b>`wsdl2h -c -F`</b> option <b>`-F`</b> we obtain an interface
+header file with simulated inheritance using transient pointer members of base
+types pointing to derived types:
+
+~~~{.cpp}
+    struct ns__base
+    {
+        [ struct ns__derived1 *ns__derived1; ] // points to derived type
+        [ struct ns__derived2 *ns__derived2; ] // points to derived type
+        int value;
+    };
+    struct ns__derived1
+    {
+        int value;                             // base type value of ns__base
+        char *name;                            // extension
+        [ struct ns__derived3 *ns__derived3; ] // points to derived type
+    };
+    struct ns__derived2
+    {
+        int value;                             // base type value of ns__base
+        float x;                               // extension
+    };
+    struct ns__derived3
+    {
+        int value;                             // derived1 type value of ns__base
+        char *name;                            // derived1 type
+        float x;                               // extension
+    };
+~~~
+
+Each transient pointer member name that is used to point to a derived type must
+match the type name as shown, but trailing underscores are allowed in the
+member name and type name, to prevent name clashes.
+
+This latter form supports <i>`xsi:type`</i> attributes in XML with the derived
+type name to replace base type values by derived type values at runtime by
+setting one of the transient pointer members to non-NULL.  For example, assume
+<i>`ns:data`</i> has a base type `ns__base` (i.e. declared as `struct ns__base
+data`) then the following is legal and serializable:
+
+<div class="alt">
+~~~{.xml}
+    <ns:data>
+      <value>123</value>
+    </ns:data>
+~~~
+</div>
+
+This is serialized XML for `data.value` with `data.ns__derived1` and
+`data.ns__derived2` both set to NULL.
+
+<div class="alt">
+~~~{.xml}
+    <ns:data xsi:type="ns:derived1">
+      <value>123</value>
+      <name>abc</name>
+    </ns:data>
+~~~
+</div>
+
+This is serialized XML for `data.ns__derived1->value` and
+`data.ns__derived1->name` where `data.ns__derived1` is non-NULL, for example
+allocated and set with `data.ns__derived1 = soap_new_ns__derived1(soap)`.
+
+<div class="alt">
+~~~{.xml}
+    <ns:data xsi:type="ns:derived2">
+      <value>123</value>
+      <x>3.14</x>
+    </ns:data>
+~~~
+</div>
+
+This is serialized XML for `data.ns__derived2->value` and
+`data.ns__derived2->x` where `data.ns__derived1` is NULL and
+`data.ns__derived2` is non-NULL, for example allocated and set with
+`data.ns__derived2 = soap_new_ns__derived2(soap)`.
+
+<div class="alt">
+~~~{.xml}
+    <ns:data xsi:type="ns:derived3">
+      <value>123</value>
+      <name>abc</name>
+      <x>3.14</x>
+    </ns:data>
+~~~
+</div>
+
+This is serialized XML for `data.ns__derived1->ns__derived3->value`,
+`data.ns__derived1->ns__derived3->name`, and
+`data.ns__derived1->ns__derived3->x` where `data.ns__derived1` and
+`data.ns__derived1->ns__derived3` are non-NULL.
+
+Note that C++ class inheritance achieves the same results for base and derived
+types, but without the use of transient pointer members.  However, this requires
+container values to be pointers to support type derivation (class members are
+already pointers), as generated by wsdl2h for C++.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -f {#wsdl2h-f}
+
+This option removes C++ class inheritance to produce a flat C++ class hierarchy
+similar to structs in C as generated by wsdl2h.
+
+As a side effect, derived type values can no longer be serialized in place of
+base type values, see also [<b>`wsdl2h -F`</b> option <b>`-F`</b>](#wsdl2h-F).
+
+Basically this option removes support for <i>`xsi:type`</i> in XML that
+indicates a derived type that is restricted or extended from its base type.
+
+This option also removes pointers from array and container item types, because
+there are no derived types that could extend the item value types.  These
+pointers are normally added to ensure containers can contain derived type
+values in addition to the base type values.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:tns="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="base">
+        <xsd:sequence>
+          <xsd:element name="value" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="derived1">
+        <xsd:complexContent>
+          <xsd:extension base="tns:base">
+            <xsd:sequence>
+              <xsd:element name="name" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="derived2">
+        <xsd:complexContent>
+          <xsd:extension base="tns:base">
+            <xsd:sequence>
+              <xsd:element name="x" type="xsd:float"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="derived3">
+        <xsd:complexContent>
+          <xsd:extension base="tns:derived1">
+            <xsd:sequence>
+              <xsd:element name="x" type="xsd:float"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, this schema is translated to the following
+interface header file declaration in C++ with base and derived classes:
+
+~~~{.cpp}
+    class ns__base
+    { public:
+        int value;
+    };
+    class ns__derived1 : public ns__base
+    { public:
+        char *name; // extension
+    };
+    class ns__derived2 : public ns__base
+    { public:
+        float x;    // extension
+    };
+    class ns__derived3 : public ns__derived1
+    { public:
+        float x;    // extension
+    };
+~~~
+
+By contrast, with <b>`wsdl2h -f`</b> option <b>`-f`</b> we obtain an interface
+header file without inheritance but with classes that are extended with the
+base class members:
+
+~~~{.cpp}
+    class ns__base
+    { public:
+        int value;
+    };
+    class ns__derived1
+    { public:
+        int value;  // base type value of ns__base
+        char *name; // extension
+    };
+    class ns__derived2
+    { public:
+        int value;  // base type value of ns__base
+        float x;    // extension
+    };
+    class ns__derived3
+    { public:
+        int value;  // derived1 type value of ns__base
+        char *name; // derived1 type
+        float x;    // extension
+    };
+~~~
+
+This former form supports <i>`xsi:type`</i> attributes in XML with the derived
+type name to replace base type values by derived type values at runtime.  But
+this latter form does not support <i>`xsi:type`</i> attributes in XML and
+only the base class can be serialized, for example `ns__base data`:
+
+<div class="alt">
+~~~{.xml}
+    <ns:data>
+      <value>123</value>
+    </ns:data>
+~~~
+</div>
+
+This is serialized XML for `data.value`.
+
+<div class="alt">
+~~~{.xml}
+    <ns:data xsi:type="ns:derived1">
+      <value>123</value>
+      <name>abc</name>
+    </ns:data>
+~~~
+</div>
+
+This example can be deserialized when `#SOAP_XML_STRICT` is not enabled, but
+only the `value` is retained in `data.value`.  However, when `#SOAP_XML_STRICT`
+is enabled, deserialization fails due to the additional element <i>`name`</i>
+that is rejected.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -g {#wsdl2h-g}
+
+This option adds global top-level element and attribute declarations to the
+interface header file generated by wsdl2h.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:tns="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:attribute name="type" type="xsd:QName"/>
+      <xsd:element name="data" type="tns:record"/>
+      <xsd:complexType name="record">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="value" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, this schema is translated to the following
+C++ interface header file (the C interface header file is similar) that
+declares the `ns__record` type for <i>`tns:record`</i> but does not declare
+attribute <i>`tns:type`</i> and element <i>`tns:data`</i>:
+
+~~~{.cpp}
+    typedef std::string xsd__QName;
+    class ns__record
+    { public:
+        std::string name;
+        int value;
+    };
+~~~
+
+By contrast, with <b>`wsdl2h -g`</b> option <b>`-g`</b> we obtain an interface
+header file with the attribute and element declarations:
+
+~~~{.cpp}
+    typedef std::string xsd__QName;
+    class ns__record
+    { public:
+        std::string name;
+        int value;
+    };
+    typedef ns__record _ns__data; 
+    typedef xsd__QName _ns__type;
+~~~
+
+This defines `_ns__type` and `_ns__data`, where the latter can be used as a
+root element to serialize its content with the soapcpp2-generated readers and
+writers:
+
+~~~{.cpp}
+    struct soap *soap = soap_new();
+    _ns__data data;
+    if (soap_read__ns__data(soap, &data))
+      ... // error
+    if (soap_write__ns__data(soap, &data))
+      ... // error
+~~~
+
+which parses and re-writes the XML fragment:
+
+<div class="alt">
+~~~{.xml}
+    <ns:data xmlns:ns="urn:example">
+      <name>abc</name>
+      <value>123</value>
+    </ns:data>
+~~~
+</div>
+
+Note that top-level element and attribute type names start with an underscore
+to distinguish them from types.  This convention is also used by soapcpp2 to
+generate schemas that define top-level attributes and elements.
+
+Note that a schema may define a global top-level element with a local type, for
+example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:tns="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="record">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="value" type="xsd:int"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+~~~
+</div>
+
+This schema is translated to the following C++ interface header file (the C
+interface header file is simular) that declares the `_ns__record` type and
+element for the <i>`tns:record`</i> top-level element:
+
+~~~{.cpp}
+    class _ns__record
+    { public:
+        std::string name;
+        int value;
+    };
+~~~
+
+In this case option <b>`-g`</b> has no effect, because <i>`tns:record`</i> has
+a local type that may be used elsewhere in the schema.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -h {#wsdl2h-h}
+
+This option displays help info and then exits.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -I {#wsdl2h-I}
+
+This option specifies a directory path to search for WSDL and XSD files.
+
+For example:
+
+    wsdl2h -I path file.wsdl
+
+This searches <i>`path`</i> for <i>`.wsdl`</i> and <i>`.xsd`</i> files that are
+imported by <i>`file.wsdl`</i>.
+
+WSDL and XSD files that import other WSDL and XSD files typically use relative
+paths, at least that is recommended by best practices.  If absolute paths are
+used then wsdl2h may fail to find the imported WSDLs and XSDs.  This option
+resolves relative paths but does not help to resolve absolute paths.  In
+the worst case one must edit the WSDLs and XSDs to refer to proper file
+locations.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -i {#wsdl2h-i}
+
+This option skips over schema <i>`import`</i> and as a result none of the
+imported schemas and their components are imported.
+
+There are two reasons to use this option:
+
+- when imported components are already declared in interface header files that
+  are imported into the main interface header file with `#import`, and
+- when imported schemas are explicitly provided with the wsdl2h command as
+  command line arguments, which means that the specified schemas will be used
+  instead of the imported schemas.  This may help to resolve issues when
+  imported files are not found by wsdl2h.  The schema <i>`targetNamespace`</i>
+  namespace names are relevant when schemas reference imported schemas by their
+  namespace, not the schema file name.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -j {#wsdl2h-j}
+
+This option skips the generation of `::SOAP_ENV__Header` and `::SOAP_ENV__Detail`
+structure definitions, assuming that these are manually replaced in the
+generated interface header file for soapcpp2.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -k {#wsdl2h-k}
+
+This option skips the generation of `mustUnderstand` qualifiers for
+`::SOAP_ENV__Header` members.  This removes the <i>`mustUnderstand="true"`</i>
+XML attributes from SOAP Headers in SOAP messages.  As per SOAP standard,
+SOAP Headers with <i>`mustUnderstand="true"`</i> must not be ignored by
+receivers.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -L {#wsdl2h-L}
+
+This option generates less documentation by removing generic `@note` comments
+from the interface header file output, thereby reducing the size of the output
+without removing critical information.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -l {#wsdl2h-l}
+
+This option displays license information.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -M {#wsdl2h-M}
+
+This option suppresses the wsdl2h error message
+
+    "must understand element with wsdl:required='true'"
+
+This error indicates that a (special) WSDL construct was used that is marked
+<i>`wsdl:required="true"`</i>, meaning that must not be ignored by the WSDL
+processor (unless the developer knows what he or she is doing).
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -m {#wsdl2h-m}
+
+This option tells wsdl2h to use <i>`xsd.h`</i> to define the primitive XSD
+types instead of generating them in the interface header file for soapcpp2.
+This option offers an alternative to the use of <i>`typemap.dat`</i> to
+redefine primitive XSD types by defining them all together instead of on a
+type-by-type basis.  The interface header file output by wsdl2h includes
+`#import "xsd.h"`.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -N {#wsdl2h-N}
+
+This option specifies a name to be used as a service namespace prefix for each
+WSDL binding.
+
+By default without this option, the wsdl2h tool warns when it reads one or more
+WSDLs that define multiple bindings:
+
+    Warning: 3 service bindings found, but collected as one service (use option -Nname to produce a separate service for each binding)
+
+This means that all 3 services will be collected under one name.  When proxy
+and service classes are generated with <b>`soapcpp2 -i`</b> option <b>`-i`</b>
+or with <b>`soapcpp2 -j`</b> option <b>`-j`</b> then the service operations are
+collected into one proxy and service class.  Essentially only one namespace is
+used.  This may lead to clashes when multiple bindings define the same Web
+service operations (name clashes are resolved by wsdl2h by adding trailing
+underscores).
+
+By contrast, with <b>`wsdl2h -N name`</b> option <b>`-N name`</b> we obtain an interface
+header file that uses the specified name as a prefix to define the service
+bindings and service operations.
+
+For example:
+
+    wsdl2h -N foo file.wsdl
+
+If <i>`file.wsdl`</i> has multiple bindings, then the Web service operations
+associated with each binding are identified by their prefix `foo1`, `foo2`,
+`foo3`, and so on.  As a result, we obtain more than one proxy and service
+class generated by soapcpp2, one for each binding.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -n {#wsdl2h-n}
+
+This option changes the default `ns` namespace prefix to the specified prefix
+name.
+
+By default without this option, the XML namespace prefix is `ns` which results
+in the generation of prefixes `ns1`, `ns2`, `ns3`, and so on.
+
+For example:
+
+    wsdl2h -n foo file.wsdl
+
+This generates namespace prefixes `foo1`, `foo2`, `foo3`, and so on.
+
+@warning It is strongly recommended to define namespace prefixes in the
+[<i>`typemap.dat`</i> file](#typemap) to prevent future runs of wsdl2h to
+produce namespace prefixes that are not in the same original order.  For
+example when the order of WSDLs and XSDs changes or if new WSDLs and XSDs are
+added.  Therefore, do not use this option unless the single WSDL processed by
+wsdl2h is relatively simple and does not import WSDLs and XSDs.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -O {#wsdl2h-O}
+
+This option optimizes the generated interface header file:
+
+- <b>`-O1`</b> omit duplicate choice/sequence members.
+- <b>`-O2`</b> optimize with <b>`-O1`</b> and omit unused schema types (types
+  that are unreachable from top-level schema element and attribute roots).
+- <b>`-O3`</b> optimize with <b>`-O2`</b> and omit unused schema root
+  attributes.
+- <b>`-O4`</b> optimize with <b>`-O3`</b> and omit unused schema root elements,
+  only retain the root elements used by WSDLs, so use this option only with
+  WSDLs (but WSDLs can be combined with XSDs).
+
+Option <b>`-O4`</b> is the most aggressive.  When used only for one or more
+XSDs as input to wsdl2h, the output will be empty because removing the root
+elements (and attributes) results in removing all types from the schema.
+However, this option is safe to use with WSDLs to aggressively remove all
+unused schema components that are unreachable from the Web service operation
+parameter elements and types.  Option <b>`-O3`</b> is safe to use with one or
+more XSDs as input to wsdl2h, when developing an XML application that
+serializes data as XML root elements (<b>`wsdl2h -g`</b> option <b>`-g`</b> is
+recommended in this case).
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -o {#wsdl2h-o}
+
+This option specifies a file name for the wsdl2h interface header file output.
+
+By default without this option, the wsdl2h tool writes the interface header
+file to the file named after the first file name input at the command line, but
+using <i>`.h`</i> as the file name extension.
+
+When the input to the wsdl2h tool consists of URLs, the wsdl2h tool writes its
+output to standard output (usually the screen).  Use this option to specify
+a file instead.
+
+For example:
+
+    wsdl2h calc.wsdl
+
+This saves <i>`calc.h`</i> because the first file specified on the command line
+is <i>`calc.wsdl`</i>.
+
+Option <b>`-o`</b> should be used when a URL is specified on the command line:
+
+    wsdl2h -o calc.h http://www.genivia.com/calc.wsdl
+
+This saves the interface header file <i>`calc.h`</i>.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -P {#wsdl2h-P}
+
+This option disables the generation of types inherited from the `xsd__anyType`
+base type.
+
+This option has effect only when [<b>`wsdl2h -p`</b> option <b>`-p`</b>](#wsld2h-p)
+is used or when the wsdl2h tool detects that <i>`xsd:anyType`</i> is used
+(thereby implicitly and automatically enabling option <b>`-p`</b>), which means
+that `xsd__anyType` should be a base type for all possible types defined in the
+schemas.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -p {#wsdl2h-p}
+
+This option makes all types inherit `xsd__anyType` to support full polymorphism.
+
+This option is automatically enabled when the wsld2h tool detects that
+<i>`xsd:anyType`</i> is used, which means that
+`xsd__anyType` should be a base type for all possible types defined in the
+schemas.  To disable, use [<b>`wsdl2h -P`</b> option <b>`-P`</b>](#wsld2h-P).
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="data" type="data"/>
+      <xsd:complexType name="data">
+        <xsd:sequence>
+          <xsd:element name="value" type="xsd:string"/>
+          <xsd:element name="item" type="xsd:anyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+This schema is translated to the following C++ interface header file that
+declares the `xsd__anyType` type with `_XML` simpleContent (meaning that
+`__item` contains element content as per gSOAP convention) and the `ns__data`
+class:
+
+~~~{.cpp}
+    class xsd__anyType
+    { public:
+        _XML __item;
+    };
+    class xsd__string_ : public xsd__anyType
+    { public:
+        std::string __item;
+    };
+    class ns__data : public xsd__anyType
+    { public:
+        std::string value;
+        std::vector<xsd__anyType*> item;
+    };
+~~~
+
+The `xsd__anyType` pointer values of the items of the vector can be assigned
+derived class instances to serialize any type of value declared in the
+interface header file, including the `xsd__string_` wrapper class with
+simpleContent and the `ns__data` class with complexContent.
+
+This schema is translated to the following C interface header file with
+<b>`wsdl2h -c -F`</b> [option <b>`-c`</b>](#wsdl2h-c) and
+[option <b>`-F`</b>](#wsdl2h-F) to simulate inheritance in C:
+
+~~~{.cpp}
+    struct xsd__string_
+    {
+        char* __item;
+    };
+    struct xsd__anyType_
+    {
+        _XML __item;
+      [ struct xsd__string_ *xsd__string; ]
+      [ struct ns__data *ns__data; ]
+    };
+    struct ns__data
+    {
+        char* value;
+      $ int __sizeitem;
+        struct xsd__anyType_* item;
+    };
+~~~
+
+The `xsd__anyType_` values of items of the dynamic array (`item` points to an
+array of size `__sizeitem` which is a special member to indicate dynamic
+arrays) can be assigned base `xsd__anyType_` and derived types, see
+[<b>`wsdlh2 -F`</b> option <b>`-F`</b>](#wsdl2h-F).
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -q {#wsdl2h-q}
+
+This option specifies a C++ namespace name.  The interface header file
+declarations are placed in the given C++ namespace.
+
+For example:
+
+    wsdl2h -q api file.wsdl
+
+The generated interface header file for soapcpp2 places all declarations in the
+`api` C++ namespace:
+
+~~~{.cpp}
+    namespace api {
+      ...
+    }
+~~~
+
+@warning It is more difficult to use SOAP Headers and SOAP Faults when C++
+namespaces are used.  When wsdl2h finds SOAP Headers and SOAP Fault Details it
+collects these into `::SOAP_ENV__Header` and `::SOAP_ENV__Detail` structures,
+which become part of the given C++ namespace.  However, to use the
+`::SOAP_ENV__Header` and `::SOAP_ENV__Detail` structures these should be
+declared at the global scope.  This option places these structures
+with the types used by their members in the given C++ namespace, making them
+unavailable to the global scope.
+
+This option has no effect for C source code output.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -R {#wsdl2h-R}
+
+This option enables the generation of REST service operations in the interface header
+file saved by wsdl2h for soapcpp2.
+
+By default without this option, REST service operations defined in one or more
+WSDLs are ignored.
+
+With this option, both REST and SOAP service operations are declared in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -r {#wsdl2h-r}
+
+This option specifies a proxy host name and port number with proxy credentials
+to connect to web sites through a proxy server.
+
+This option can also be used to specify credentials to access a web site that
+requires authentication (HTTP basic or digest authentication).
+
+For example:
+
+    wsdl2h -r proxy.example.org:80:proxyuserid:proxypasswd -r userid:passwd
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -S {#wsdl2h-S}
+
+This option renames the `soap` members of the generated C++ classes in the
+interface header file for soapcpp2.
+
+By default without this option, wsdl2h adds `struct soap *soap` members to
+classes and structs.  This member points to the `::soap` context that manages
+the instance, when the instance was allocated by the gSOAP engine.
+
+To remove the `struct soap *soap` members use this option with an empty name:
+
+    wsdl2h -S '' file.wsdl
+
+To rename the `struct soap *soap` members, specify a name for the member, for
+example `ctx`:
+
+    wsdl2h -S ctx file.wsdl
+
+This option has no effect for C source code output.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -s {#wsdl2h-s}
+
+This option replaces STL `std::vector` and `std::string` by C-like equivalents
+and is intended for systems with limited support for C++ libraries.
+
+The `std::vector` struct/class member is replaced by a dynamic array, declared
+with a `__size` member followed by a pointer member to the array items.
+
+The `std::string` is replaced by `char*`.
+
+This option has no effect for C source code output.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -t {#wsdl2h-t}
+
+This option specifies an alternate file or path for <i>`typemap.dat`</i>.
+See [<i>`typemap.dat`</i> file](#typemap).
+
+For example:
+
+    wsdl2h -t $GSOAP/gsoap/typemap.dat file.wsdl
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -U {#wsdl2h-U}
+
+This option allows UTF-8-encoded Unicode C/C++ identifier names in the
+generated interface header file for soapcpp2.  This assumes that the C/C++
+compiler that is used to compile a gSOAP client or server application supports
+Unicode identifier names.
+
+By default without this option, Unicode XML names in WSDLs and XSDs are
+preserved using the gSOAP convention for UCS-2 characters in identifier names
+with `_xHHHH` where `HHHH` is a hexadecimal Unicode character code point.
+
+With this option, Unicode XML names in WSDLs and XSDs are preserved "as is" in
+C/C++ identifier names.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -u {#wsdl2h-u}
+
+This option replaces unions with structs/classes in the generated interface
+header file for soapcpp2.  Union members are used to represent
+<i>`xsd:choice`</i> of elements.  A choice of elements can also be represented
+by pointer members of a struct/class such that only one member is non-NULL.
+However, when using a struct/class instead of a union, the deserialization
+validator will not reject additional elements when present.
+
+For example:
+
+<div class="alt">
+~~~{.xml}
+    <xsd:schema targetNamespace="urn:example" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="data" type="data"/>
+      <xsd:complexType name="data">
+        <xsd:sequence>
+          <xsd:element name="value" type="xsd:string"/>
+          <xsd:choice>
+            <xsd:element name="string" type="xsd:string"/>
+            <xsd:element name="number" type="xsd:float"/>
+          </xsd:choice>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+~~~
+</div>
+
+By default without this option, wsdl2h generates a tagged `union` for the
+<i>`xsd:choice`</i>, where the tag is a special member `int __union_data`
+that is set to `SOAP_UNION__ns__union_data_string` when the `string` union
+member is valid or `SOAP_UNION__ns__union_data_number` when the `number` union
+member is valid:
+
+~~~{.cpp}
+    class ns__data
+    { public:
+        std::string value;
+      $ int __union_data;
+        union _ns__union_data
+        {
+            std::string* string;
+            float number;
+        } union_data;
+    };
+~~~
+
+With this option, wsdl2h removes the `union` and replaces it with pointer
+members to produce a simpler structure:
+
+~~~{.cpp}
+    class ns__data
+    { public:
+        std::string value;
+    //  BEGIN CHOICE <xs:choice>
+        std::string* string; // Choice of element (one of multiple choices)
+        float* number;       // Choice of element (one of multiple choices)
+    //  END OF CHOICE
+    };
+~~~
+
+@warning This option removes the uniqueness check on choices from the
+deserialization validator.  When serializing data, only one of the choice
+pointer members should be non-NULL.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -V {#wsdl2h-V}
+
+This option displays the current wsdl2h tool version and then exits.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -v {#wsdl2h-v}
+
+This option enables verbose output to assist in debugging the wsdl2h tool.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -W {#wsdl2h-W}
+
+This option suppresses all warnings produced by wsdl2h.  Errors are not
+suppressed.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -w {#wsdl2h-w}
+
+This option wraps response parameters in a response struct.
+
+The last parameter of a service operation declared as a function in the
+interface header file is the response parameter.  When multiple response
+parameters are returned by the service operation or if the response parameter
+is a complexType (a struct or class), then the parameters should be wrapped in
+a special "response struct".  However, if a single response parameter is a
+primitive type value then this parameter does not need to be wrapped in a
+response struct.
+
+This option consistently wraps response parameters in a response struct, even
+when a single response parameter is a primitive type value.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -x {#wsdl2h-x}
+
+This option removes `_XML` type members of structs and classes that are
+generated for <i>`xsd:any`</i> and <i>`xsd:anyAttribute`</i> components.
+
+There are two options to represent <i>`xsd:any`</i> and
+<i>`xsd:anyAttribute`</i> components: the literal `_XML` string type with XML
+content (a `char*` string) or a DOM node.  DOM nodes are generated for
+<i>`xsd:any`</i> and <i>`xsd:anyAttribute`</i> components with
+[<b>`wsdl2h -d`</b> option <b>`-d`</b>](#wsdl2h-d), which also defines
+<i>`xsd:anyType`</i> as the DOM node `xsd__anyType` in C and C++.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -y {#wsdl2h-y}
+
+This option adds typedef synonyms for structs and enums to the interface
+header file, which is useful for C source code.  A typedef synonym for a struct
+is declared by `typedef struct name name;` and for an enum is declared by
+`typedef enum name name;`.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -z {#wsdl2h-z}
+
+These options are for backward compatiility with older gSOAP releases:
+
+- <b>`-z1`</b> compatibility with 2.7.6e: generate pointer-based arrays.
+- <b>`-z2`</b> compatibility with 2.7.7 to 2.7.15: qualify element/attribute references.
+- <b>`-z3`</b> compatibility with 2.7.16 to 2.8.7: qualify element/attribute references.
+- <b>`-z4`</b> compatibility up to 2.8.11: don't generate union structs in std::vector.
+- <b>`-z5`</b> compatibility up to 2.8.15: don't include minor improvements.
+- <b>`-z6`</b> compatibility up to 2.8.17: don't include minor improvements.
+- <b>`-z7`</b> compatibility up to 2.8.59: don't generate std::vector of class of union.
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -_ {#wsdl2h-_}
+
+This option replaces `_USCORE` by the Unicode `_x005f` character code point in
+identifier names in C and C++ in the generated interface header file.
 
 🔝 [Back to table of contents](#)
 
 ## Customizing XML data bindings with the typemap.dat file        {#typemap}
 
-The <i>`typemap.dat`</i> file for the wsdl2h tool is intended to customize or optimize
+The <i>`typemap.dat`</i> file for the wsdl2h tool can be used to customize or optimize
 the type bindings by mapping schema types to C/C++ types.  This file contains custom
 XML schema to C/C++ type bindings and XML namespace bindings for namespace prefixes
-to be generated by the wsdl2h tool.
+to be generated by the wsdl2h tool.  You can edit this file to enable features
+such as custom serializers for schema types, C++11 smart pointers to replace
+regular pointers, bind XML namespace prefixes to XML namespace URIs, and
+specify bindings for schema types.
 
 Here is a simple example of a <i>`typemap.dat`</i> file:
 
@@ -4918,6 +6248,14 @@ type is used as a pointer type by other types and as function parameters.
 
 XML Schema types are associated with an optional C/C++ type declaration, a use reference, and a pointer-use reference. The pointer-use reference of the `xsd__byte` type for example, is `int*` because `char*` is reserved for strings.
 
+For example, you can replace the `std::string` that used by default for C++ with a wide string:
+
+    xsd__string = | std::wstring
+
+Or replace the `char*` strings that are used by default for C with `wchar_t*`:
+
+    xsd__string = | wchar_t* | wchar_t*
+
 When a type binding requires only the usage to be changed, the
 declaration part can be an ellipsis `...`, as in:
 
@@ -4926,58 +6264,28 @@ declaration part can be an ellipsis `...`, as in:
 The `...` ellipsis ensures that the wsdl2h-generated type definition is preserved,
 while the `use` and `ptr-use` parts are amended as specified.
 
-This method is useful to serialize dynamic types in C, where elements types int
-XML carry the <i>`xsi:type`</i> attribute.
-For example, the following illustrates an "any" type mapping for the
-<i>`ns:sometype`</i> XSD type in a schema. This type will be replaced with a "any"
-type wrapper that supports dynamic serialization with <i>`xsi:type`</i>:
+This method is useful to serialize types dynamically, when XML elements
+carry the <i>`xsi:type`</i> attribute indicating the type of element content.
+The following illustrates an "any" type mapping for the <i>`ns:sometype`</i>
+XSD type in a schema. This type will be replaced with a "any" type wrapper that
+supports dynamic serialization of element types indicated by the
+<i>`xsi:type`</i> attribute:
 
     [ 
     struct __any 
     {
-      int __type; 
-      void *__item; 
+      int __type;   // set to a SOAP_TYPE_T value
+      void *__item; // points to data of type T as serialized per SOAP_TYPE_T
     } 
     ] 
     xsd__anyType = ... | struct __any | struct __any
 
-where `__type` and `__item` are used to serialize any data type in the wrapper,
-including base and its derived types based on <i>`xsi:type`</i> attributes.
+where `__type` and `__item` are used to serialize any data type in the wrapper.
+The `__item` member points to the value (de)serialized, with the type of this value
+indicated by `__type` which is a `SOAP_TYPE_T` value for type named `T`.
 
-To support complexType extensions that are dynamically bound in C code, i.e.
-polymorphic types based on inheritance hierarchies, we can redeclare the base
-type of a hierarchy as a wrapper type and use the `__type` to serialize
-base or derived types. One addition is needed to support base type
-serialization without the use of <i>`xsi:type`</i> attributes. The absence of this attribute requires the serialization of the base type.
-
-Basically, we need to be able to both handle a base type and its extensions
-as per schema extensibility. Say base type <i>`ns:base`</i> is a complexType that is extended by several other complexTypes. To implement dynamic binding in C to serialize the base type and derived types, we define:
-
-    [ 
-    struct __ns__base 
-    {
-      int __type;    // set to a SOAP_TYPE_T value
-      void *__item;  // points to data of type T as serialized per SOAP_TYPE_T
-      struct ns__base *__self; 
-    } 
-    ] 
-    ns__base = ... | struct __ns__base | struct __ns__base
-
-The `__self` member refers to the element tag (basically a struct member name)
-with which the <i>`ns:base`</i> type is associated. So for example, we see in the soapcpp2-generated output:
-
-~~~{.cpp}
-    struct ns__data 
-    {
-      struct __ns__base name; 
-      ... //
-    };
-~~~
-
-where `__ns__base::__item` represents `name` with the proper type serialized, when the `__ns__base` is
-serialized with an <i>`xsi:type="ns:base"`</i> attribute.  Furthermore, `__self` represents
-`name` when the `__ns__base` is serialized without an <i>`xsi:type`</i>
-attribute. Therefore, the dynamic binding defaults to `struct ns__base *__self` when no dynamic type information in XML is available.
+To match an element with content to (de)serialize, rename the `__item` member
+to the XML element name, as usual.
 
 Additional members can be specified to extend a generated struct or class.
 Class and struct extensions are of the form:
@@ -4999,6 +6307,45 @@ For example:
     SOAP_ENC__boolean == xsd__boolean
 
 where <i>`SOAP_ENC__boolean`</i> is replaced by <i>`xsd__boolean`</i>, which in turn may be mapped to a C `enum xsd__boolean` type or C++ `bool` type.
+
+The <b>`$CONTAINER`</b> variable defines the container type to use in
+the wsdl2h-generated declarations for C++, which is `std::vector` by default.
+For example, to use `std::list` as the container in the wsdl2h-generated
+declarations we add the following line to <i>`typemap.dat`</i>:
+
+    $CONTAINER = std::list
+
+Also a Qt container can be used instead of the default `std::vector`, for
+example `QVector`:
+
+    [
+    #include <QVector>
+    ]
+    $CONTAINER = QVector
+
+To remove containers, use <b>`wsdl2h -s`</b>.  This also removes `std::string`,
+but you can re-introduce `std::string` with
+
+    xsd__string = | std::string
+
+The <i>`typemap.dat`</i> <b>`$POINTER`</b> variable defines the smart pointer to use in the
+wsdl2h-generated declarations for C++, which replaces the use of `*` pointers.
+For example:
+
+    $POINTER = std::shared_ptr
+
+Not all pointers in the generated output are replaced by smart pointers by
+wsdl2h, such as pointers as union members and pointers as struct/class members
+that point to arrays of values.
+
+The variable <b>`$SIZE`</b> defines the type of array sizes, which is `int` by
+default.  For example, to change array size types to `size_t`:
+
+    $SIZE = size_t
+
+Permissible types are `int` and `size_t`.  This variable does not affect the
+size of dynamic arrays, `xsd__hexBinary` and `xsd__base64Binary` types, which
+is always `int`.
 
 🔝 [Back to table of contents](#)
 
@@ -5069,84 +6416,873 @@ The following files are part of the gSOAP source code distribution and are requi
 
 The soapcpp2 tool supports the following command-line options:
 
-option      | result
------------ | ------
-`-1`        | generate SOAP 1.1 bindings
-`-2`        | generate SOAP 1.2 bindings
-`-0`        | no SOAP bindings, use REST
-`-C`        | generate client-side code only
-`-S`        | generate server-side code only
-`-T`        | generate server auto-test code
-`-Ec`       | generate extra functions for deep copying
-`-Ed`       | generate extra functions for deep deletion
-`-Et`       | generate extra functions for data traversals with walker functions
-`-L`        | don't generate `soapClientLib` and `soapServerLib`
-`-A`        | require HTTP SOAPAction headers to invoke server-side operations
-`-a`        | use HTTP SOAPAction headers with WS-Addressing to invoke server-side operations
-`-b`        | serialize byte arrays `char[N]` as string
-`-c`        | generate C source code
-`-c++`      | generate C++ source code (default)
-`-c++11`    | generate C++ source code optimized for C++11 (compile with `-std=c++11`)
-`-d path`   | use path to save files
-`-e`        | generate SOAP RPC encoding style bindings (also use `-1` or `-2`)
-`-f N`      | multiple `soapC` files, with N serializer definitions per file (N>=10)
-`-g`        | generate XML sample messages in template format for [testmsgr](../../testmsgr/html/index.html)
-`-h`        | display help info
-`-I path`   | use path(s) for `#import` (paths separated with `:`)
-`-i`        | generate C++ service proxies and objects inherited from soap struct
-`-j`        | generate C++ service proxies and objects that share a soap struct
-`-l`        | generate linkable modules (experimental)
-`-m`        | generate Matlab(tm) code for MEX compiler (deprecated)
-`-n`        | use service name to rename service functions and namespace table
-`-p name`   | save files with new prefix name instead of `soap`
-`-Q name`   | use name as the C++ namespace for declarations, including custom serializers
-`-q name`   | use name as the C++ namespace for declarations, excluding custom serializers
-`-r`        | generate soapReadme.md report
-`-s`        | generate stub and skeleton functions with strict XML validation checks
-`-t`        | generate code for fully `xsi:type` typed SOAP/XML messaging
-`-u`        | uncomment WSDL/schema output by suppressing XML comments
-`-V`        | display the current version and exit
-`-v`        | verbose output
-`-w`        | don't generate WSDL and schema files
-`-x`        | don't generate sample XML message files
-`-y`        | include C/C++ type access information in sample XML messages
-`-z1`       | compatibility: generate old-style C++ service proxies and objects
-`-z2`       | compatibility with 2.7.x: omit XML output for NULL pointers
-`-z3`       | compatibility with <= 2.8.30: `_param_N` indexing; nillable pointers
+option                     | result
+-------------------------- | ------
+[`-0`](#soapcpp2-0)        | no SOAP, generate REST source code
+[`-1`](#soapcpp2-1)        | generate SOAP 1.1 source code
+[`-2`](#soapcpp2-2)        | generate SOAP 1.2 source code
+[`-A`](#soapcpp2-A)        | require HTTP SOAPAction headers to invoke server-side operations
+[`-a`](#soapcpp2-a)        | use HTTP SOAPAction headers with WS-Addressing to invoke server-side operations
+[`-b`](#soapcpp2-b)        | serialize byte arrays `char[N]` as string
+[`-C`](#soapcpp2-C)        | generate client-side source code only
+[`-c`](#soapcpp2-c)        | generate C source code
+[`-c++`](#soapcpp2-c)      | generate C++ source code (default)
+[`-c++11`](#soapcpp2-c)    | generate C++ source code optimized for C++11 (compile with `-std=c++11`)
+[`-d`](#soapcpp2-d) `path` | use `path` to save files
+[`-Ec`](#soapcpp2-E)       | generate extra functions for deep copying
+[`-Ed`](#soapcpp2-E)       | generate extra functions for deep deletion
+[`-Et`](#soapcpp2-E)       | generate extra functions for data traversals with callback functions
+[`-e`](#soapcpp2-e)        | generate SOAP RPC encoding style bindings (also use `-1` or `-2`)
+[`-f`](#soapcpp2-f) `N`    | multiple `soapC` files, with `N` serializer definitions per file (N>=10)
+[`-g`](#soapcpp2-g)        | generate XML sample messages in template format for [testmsgr](../../testmsgr/html/index.html)
+[`-h`](#soapcpp2-h)        | display help info and exit
+[`-I`](#soapcpp2-I) `path` | use `path`(s) for `#import` (paths separated with `:`)
+[`-i`](#soapcpp2-i)        | generate C++ service proxies and objects inherited from soap struct
+[`-j`](#soapcpp2-j)        | generate C++ service proxies and objects that share a soap struct
+[`-L`](#soapcpp2-L)        | don't generate `soapClientLib` and `soapServerLib`
+[`-l`](#soapcpp2-l)        | generate linkable modules (experimental)
+[`-m`](#soapcpp2-m)        | generate source code for the Matlab(tm) MEX compiler (deprecated)
+[`-n`](#soapcpp2-n)        | use service name to rename service functions and namespace table
+[`-p`](#soapcpp2-p) `name` | save files with new prefix `name` instead of `soap`
+[`-Q`](#soapcpp2-Q) `name` | use `name` as the C++ namespace, including custom serializers
+[`-q`](#soapcpp2-q) `name` | use `name` as the C++ namespace, excluding custom serializers
+[`-r`](#soapcpp2-r)        | generate soapReadme.md report
+[`-S`](#soapcpp2-S)        | generate server-side source code only
+[`-s`](#soapcpp2-s)        | generate stub and skeleton functions with strict XML validation checks
+[`-T`](#soapcpp2-T)        | generate server auto-test source code
+[`-t`](#soapcpp2-t)        | generate source code for fully `xsi:type` typed SOAP/XML messages
+[`-u`](#soapcpp2-u)        | uncomment WSDL/schema output by suppressing XML comments
+[`-V`](#soapcpp2-V)        | display the current version and exit
+[`-v`](#soapcpp2-v)        | verbose output
+[`-w`](#soapcpp2-w)        | don't generate WSDL and schema files
+[`-x`](#soapcpp2-x)        | don't generate sample XML message files
+[`-y`](#soapcpp2-y)        | include C/C++ type access information in sample XML messages
+[`-z1`](#soapcpp2-z)       | compatibility: generate old-style C++ service proxies and objects
+[`-z2`](#soapcpp2-z)       | compatibility with 2.7.x: omit XML output for NULL pointers
+[`-z3`](#soapcpp2-z)       | compatibility up to 2.8.30: `_param_N` indexing; nillable pointers
 
 For example
 
-     soapcpp2 -L -c -d projects -pmy -x file.h
+     soapcpp2 -L -c -d projects -p my -x file.h
 
-This saves these source code files:
+This saves the following source code files:
 
-* <i>`projects/myH.h`</i> 
-
-* <i>`projects/myC.c`</i> 
-
-* <i>`projects/myClient.c`</i> 
-
-* <i>`projects/myServer.c`</i> 
-
-* <i>`projects/myStub.h`</i> 
-
-* <i>`projects/ns.wsdl`</i> 
-
-* <i>`projects/ns.xsd`</i> 
-
-* <i>`projects/ns.nsmap`</i> 
+- <i>`projects/myH.h`</i> serialization functions, this file should be included in projects.
+- <i>`projects/myC.c`</i> serialization functions
+- <i>`projects/myClient.c`</i> client call stub functions
+- <i>`projects/myServer.c`</i> server request dispatcher
+- <i>`projects/myStub.h`</i> annotated copy of the source interface header file
+- <i>`projects/ns.nsmap`</i> namespace table, this file should be included or used in projects.
+- <i>`projects/ns.wsdl`</i> WSDL with Web service definitions
+- <i>`projects/ns.xsd`</i>  XML schema
 
 Windows users can use the usual <b>`/`</b> for compile-time flags as well as <b>`-`</b>, for example:
 
-    soapcpp2 -L -c /d projects /pmy /x file.h
+    soapcpp2 -L -c /d projects /p my /x file.h
 
-Options <b>`-a`</b>, <b>`-c`</b>, <b>`-c++`</b>, <b>`-c++11`</b>, <b>`-i`</b>, <b>`-j`</b>, <b>`-n`</b>, <b>`-s`</b>, <b>`-t`</b>, <b>`-w`</b>, and <b>`-x`</b> can also be specified in the interface header file for soapcpp2 using the <b>`//gsoapopt`</b> directive, for example:
+Options <b>`-A`</b>, <b>`-a`</b>, <b>`-c`</b>, <b>`-c++`</b>, <b>`-c++11`</b>, <b>`-e`</b>, <b>`-i`</b>, <b>`-j`</b>, <b>`-n`</b>, <b>`-s`</b>, <b>`-t`</b>, <b>`-w`</b>, and <b>`-x`</b> can also be specified in the interface header file for soapcpp2 using the <b>`//gsoapopt`</b> directive, for example:
 
 ~~~{.cpp}
     // Generate pure C and do not produce WSDL output: 
     //gsoapopt cw 
     int ns__webmethod(char *in, char **out);
 ~~~
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -0 {#soapcpp2-0}
+
+This option generates XML REST source code by disabling SOAP bindings,
+essentially disabling the SOAP protocol and replacing it by direct XML REST
+messaging.
+
+This option uses `::soap_set_version` at the client side in the generated
+source code to enable XML REST messaging, disabling SOAP.
+
+In addition, the soapcpp2 tool nullifies the SOAP namespaces from the the
+generated namespace table file to force a server application that uses this
+table to use XML REST only:
+
+~~~{.cpp}
+    struct Namespace namespaces[] = {
+        { "SOAP-ENV", NULL, NULL, NULL },
+        { "SOAP-ENC", NULL, NULL, NULL },
+        { "xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL },
+        { "xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL },
+        ...
+        { NULL, NULL, NULL, NULL}
+    };
+~~~
+
+@note Web services applications developed with gSOAP support both REST and SOAP
+messaging automatically when the namespace table is left intact (i.e. generated
+without option <b>`-0`</b>) with the SOAP namespaces present in the table.  XML
+REST request messages are served and REST messages returned.  Likewise, SOAP
+1.1 request messages are served and SOAP 1.1 messages returned, SOAP 1.2
+request messages are served and SOAP 1.2 messages returned.
+
+For example, the following example calculator service SOAP and XML REST request
+messages are served by a gSOAP service developed with SOAP 1.1 as the default
+protocol:
+
+<div class="alt">
+~~~{.xml}
+    <SOAP-ENV:Envelope
+        xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:ns="urn:calc">
+      <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+        <ns:add>
+          <a>2</a>
+          <b>3</b>
+        </ns:add>
+      </SOAP-ENV:Body>
+    </SOAP-ENV:Envelope>
+~~~
+</div>
+
+<div class="alt">
+~~~{.xml}
+    <ns:add
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:ns="urn:calc">
+      <a>2</a>
+      <b>3</b>
+    </ns:add>
+~~~
+</div>
+
+The server returns the following XML SOAP 1.1 and XML REST responses:
+
+<div class="alt">
+~~~{.xml}
+    <SOAP-ENV:Envelope
+        xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:ns="urn:calc">
+      <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+        <ns:addResponse>
+          <result>5</result>
+        </ns:addResponse>
+      </SOAP-ENV:Body>
+    </SOAP-ENV:Envelope>
+~~~
+</div>
+
+<div class="alt">
+~~~{.xml}
+    <ns:addResponse
+        xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:ns="urn:calc">
+      <result>0</result>
+    </ns:addResponse>
+~~~
+</div>
+
+By default all XML namespaces are included with the root element, which
+improves messaging performance at the sending and receiving sides, because
+a stack of <i>`xmlns`</i> binding scopes does not need to be maintained.
+Use `#SOAP_XML_CANONICAL` to emit <i>`xmlns`</i> binding pairs when the
+XML namespace prefix is used.  This is slower but may or may not reduce the
+message size.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -1 {#soapcpp2-1}
+
+This option forces SOAP 1.1 bindings globally in the generated source code,
+thereby overriding the SOAP protocol version used in the interface header file
+input.
+
+This option uses `::soap_set_version` at the client to enable SOAP 1.1 request
+and response messages, disallowing SOAP 1.2.
+
+In addition, the soapcpp2 tool saves the SOAP 1.1 namespaces in the
+second column of the generated namespace table file and the SOAP 1.2 in the
+third column to allow the server to accept SOAP 1.1 and SOAP 1.2 requests:
+
+~~~{.cpp}
+    struct Namespace namespaces[] = {
+        { "SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*/soap-envelope", NULL },
+        { "SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*/soap-encoding", NULL },
+        { "xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL },
+        { "xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL },
+        ...
+        { NULL, NULL, NULL, NULL}
+    };
+~~~
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -2 {#soapcpp2-2}
+
+This option forces SOAP 1.2 bindings globally in the generated source code,
+thereby overriding the SOAP protocol version used in the interface header file
+input.
+
+This option uses `::soap_set_version` at the client to enable SOAP 1.2 request
+and response messages, disallowing SOAP 1.1.
+
+In addition, the soapcpp2 tool saves the SOAP 1.2 namespaces in the
+second column of the generated namespace table file and the SOAP 1.1 in the
+third column to allow the server to accept SOAP 1.1 and SOAP 1.2 requests:
+
+~~~{.cpp}
+    struct Namespace namespaces[] = {
+        { "SOAP-ENV", "http://www.w3.org/2003/05/soap-envelope", "http://schemas.xmlsoap.org/soap/envelope/", NULL },
+        { "SOAP-ENC", "http://www.w3.org/2003/05/soap-encoding", "http://schemas
+        { "xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL },
+        { "xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL },
+        ...
+        { NULL, NULL, NULL, NULL}
+    };
+~~~
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -A {#soapcpp2-A}
+
+This option generates server-side source code that requires HTTP SOAPAction
+headers to be present.  The server invokes server-side operations
+based on the SOAPAction header value in request messages, instead of the
+SOAP/XML request message name which is ignored.  This option is used with
+WS-Addressing, WS-ReliableMessaging, and WS-Discovery servers to relay messages
+based on HTTP SOAPAction headers and/or the SOAP Header <i>`wsa:Action`</i>
+when present (the latter requires the [WS-Addressing plugin](wsaplugin)).
+
+Alternatively, use [<b>`soapcpp2 -a`</b> option <b>`-a`</b>](#soapcpp2-a) to
+let the server invoke server-side operations based on the SOAPAction header
+value in request messages when present, otherwise when not present this lets
+the server invoke server-side operations based on the SOAP/XML request message
+name as usual.
+
+This option can also be specified by the `//gsoapopt A` directive in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -a {#soapcpp2-a}
+
+This option generates server-side source code that uses HTTP SOAPAction headers
+when present to invoke server-side operations based on the SOAPAction header
+value in request messages, otherwise when not present lets the server invoke
+server-side operations based on the SOAP/XML request message name as usual.
+This option is used with WS-Addressing, WS-ReliableMessaging, and WS-Discovery
+servers to relay messages based on HTTP SOAPAction headers and/or the SOAP
+Header <i>`wsa:Action`</i> when present (the latter requires the
+[WS-Addressing plugin](wsaplugin)).
+
+Alternatively, use [<b>`soapcpp2 -A`</b> option <b>`-A`</b>](#soapcpp2-A) to
+require HTTP SOAPAction headers to be present in SOAP request messages
+to invoke server-side operations.
+
+This option can also be specified by the `//gsoapopt a` directive in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -b {#soapcpp2-b}
+
+This option serializes byte arrays specified as `char[N]` as strings.
+Without this option `char[N]` is serialized as an array of bytes.
+Fixed-size arrays specified in the interface header file input are generally
+serialized as arrays in XML using <i>`item`</i> elements.
+
+For example:
+
+~~~{.cpp}
+    struct ns__record
+    {
+      char bytes[3];
+      int ints[2];
+    };
+~~~
+
+By default without this option the `ns__record` struct is serialized as:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <bytes>
+        <item>65</item>
+        <item>66</item>
+        <item>0</item>
+      </bytes>
+      <ints>
+        <item>1</item>
+        <item>2</item>
+      </ints>
+    </ns:record>
+~~~
+</div>
+
+With this option, the `ns__record` struct is serialized as:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <bytes>AB</bytes>
+      <ints>
+        <item>1</item>
+        <item>2</item>
+      </ints>
+    </ns:record>
+~~~
+</div>
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -C {#soapcpp2-C}
+
+This option restricts soapcpp2 to generate client-side source code only.  When
+this option is combined with
+[<b>`soapcpp2 -CS`</b> option <b>`-S`</b>](#soapcpp2-S), no client and server
+source code is generated.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -c -c++ -c++11 {#soapcpp2-c}
+
+Option <b>`-c`</b> generates C source code, <b>`-c++`</b> generates C++ source
+code, and <b>`-c++11`</b> generates C++11 source code.
+
+@note The `//gsoapopt` directive in the interface header file takes priority
+over this option, when `c`, `c++`, or `c++11` is declared with this directive
+in the interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -d {#soapcpp2-d}
+
+This option specifies a path to save the generated files.  For example:
+
+    soapcpp2 -d source file.h
+
+This saves files to the <i>`source/`</i> directory located within the current
+directory, which should exist and should be writable.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -Ec -Ed -Et {#soapcpp2-E}
+
+These options generate extra functions for deep copying of serializable C/C++
+data, deep deletion of serializable C/C++ data, and deep data traversals with
+user-defined callback functions over serializable C/C++ data.
+
+For a serializable type `T` declared in the interface header file for soapcpp2,
+option <b>`-Ec`</b> generates:
+
+- `virtual T * T::soap_dup(struct soap*) const` where `T` is a class,
+  returns a duplicate of this object by deep copying, replicating all deep
+  cycles and shared pointers when a managing `soap` context is provided as
+  argument.  Deep copy is a tree when argument is NULL, but the presence of
+  deep cycles will lead to non-termination.  Use flag `SOAP_XML_TREE` with the
+  managing context to copy into a tree without cycles and pointers to shared
+  objects.
+
+- `T * soap_dup_T(struct soap*, T *dst, const T *src)` where `T` is not a class,
+  deep copy `src` into `dst`, replicating all deep cycles and shared pointers
+  when a managing `soap` context is provided as argument.  When `dst` is NULL,
+  allocates space for `dst` and returns a pointer to the allocated copy.  Deep
+  copy results in a tree when the `soap` context is NULL, but the presence of
+  deep cycles will lead to non-termination.  Use flag `SOAP_XML_TREE` with
+  managing context to copy into a tree without cycles and pointers to shared
+  objects.  Returns `dst` or allocated copy when `dst` is NULL.
+
+For a serializable type `T` declared in the interface header file for soapcpp2,
+option <b>`-Ed`</b> generates:
+
+- `virtual void T::soap_del() const` where `T` is a class, deletes all
+  heap-allocated members of this object by deep deletion ONLY IF this object
+  and all of its (deep) members are not managed by a `soap` context AND the deep
+  structure is a tree (no cycles and co-referenced objects by way of multiple
+  (non-smart) pointers pointing to the same data).  Can be safely used after
+  `T::soap_dup(NULL)` to delete the deep copy.  Does not delete the object
+  itself.
+
+- `void soap_del_T(const T*)` where `T` is not a class, deletes all
+  heap-allocated members of this object by deep deletion ONLY IF this object
+  and all of its (deep) members are not managed by a `soap` context AND the deep
+  structure is a tree (no cycles and co-referenced objects by way of multiple
+  (non-smart) pointers pointing to the same data).  Can be safely used after
+  `soap_dup_T(NULL, NULL, const T*)` to delete the deep copy returned.  Does
+  not delete the object itself.
+
+For a serializable type `T` declared in the interface header file for soapcpp2,
+option <b>`-Et`</b> generates:
+
+- `virtual void T::soap_traverse(struct soap *soap, const char *tag, soap_walker p, soap_walker q)`
+  where `T` is a class, uses function callbacks `p` and `q` to traverse this
+  object by deep ordered tree traversals over its members when non-NULL.
+  Function `p` is a pre-order function that is called before objects and data
+  are visited recursively and function `q` is a post-order function that is
+  called after objects and data are visited recursively.  Either `p` or `q` may
+  be NULL.  The `tag` string is passed to `p` and `q` and should not be NULL.
+  Cyclic graphs are treated as trees by pruning pointer back-edges, though this
+  method does not always prevent a data node from being visited twice.
+
+- `void soap_traverse_T(struct soap *soap, T *data, const char *tag, soap_walker p, soap_walker q)`
+  where `T` is not a class, uses function callbacks `p` and `q` to traverse this
+  data by deep ordered tree traversals over its members when present and
+  non-NULL.  Function `p` is a pre-order function that is called before objects
+  and data are visited recursively and function `q` is a post-order function
+  that is called after objects and data are visited recursively.  Either `p` or
+  `q` may be NULL.  The `tag` string is passed to `p` and `q` and should not be
+  NULL.  Cyclic graphs are treated as trees by pruning pointer back-edges.
+  though this method does not always prevent a data node from being visited twice.
+
+The pre-order `p` and post-order `q` callback functions should be declared as
+a `soap_walker` function, which has the following function signature:
+
+~~~{.cpp}
+    void soap_walker(struct soap *soap, void *data, int soap_type, const char *tag, const char *type)
+~~~
+
+where `data` points to the data node visited which is of type `soap_type` (a
+`SOAP_TYPE_T` constant), `tag` is the non-NULL element or attribute
+tag name (qualified or unqualified), and `type` is the non-NULL C/C++ type of
+the data.  The `void* ::soap::user` member can be used to pass user-defined
+data to the callbacks.
+
+For example:
+
+~~~{.cpp}
+    // file: record.h
+    //gsoap ns schema namespace: urn:example
+    struct ns__record
+    {
+      @ char *name;
+        int value;
+        struct ns__record *subrecord;
+    };
+~~~
+
+    soapcpp2 -Ecdt record.h
+
+The main program:
+
+~~~{.cpp}
+    #include "soapH.h"
+    #include "ns.nsmap"
+
+    int main()
+    {
+      struct soap *soap = soap_new();
+      ns__record record;                            // a serializable type
+      ns__record rec_dup;
+      int indent = 0;
+      soap->recvfd = open(file, O_RDONLY); 
+      if (soap->recvfd < 0)
+        ... // error
+      if (soap_read_ns__record(soap, &record))      // deserialize from file into managed memory
+        ... // error
+      close(soap->recvfd);
+      if (soap_write_ns__record(soap, &record))     // serialize to standard output
+        ... // error
+      soap->user = (void*)&indent;
+      soap_traverse_ns__record(soap, record, "record", pre, post);
+      soap_dup_ns__record(NULL, &rec_dup, &record); // deep copy the record to unmanaged memory
+      soap_destroy(soap);                           // delete managed objects
+      soap_end(soap);                               // delete managed data and temporaries
+      soap_free(soap);                              // free the context
+      soap_del_ns__record(&rec_dup)                 // deep delete unmanaged record
+    }
+
+    void pre(struct soap *soap, void *a, int n, const char *s, const char *t)
+    {
+      printf("\n%*s%s %s = {", (*(int*)soap->user)++, "", t, s);
+      if (n == SOAP_TYPE_int)
+        printf(" %d", *(int*)a);
+      else if (n == SOAP_TYPE_string)
+        printf(" %s", *(char**)a ? *(char**)a : "(n/a)");
+    }
+
+    void post(struct soap *soap, void *a, int n, const char *s, const char *t)
+    {
+      printf(" }");
+      (*(int*)soap->user)--;
+    }
+~~~
+
+The `soap_read_ns__record` deserializes the following XML:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record xmlns:ns="urn:example" name="foo">
+      <value>123</value>
+      <subrecord name="bar">
+        <value>456</name>
+      </subrecord>
+    </ns:record>
+~~~
+</div>
+
+Then `soap_traverse_ns__record` call displays the contenst of `record` using
+the `pre` and `post` walker functions:
+
+    struct ns__record record = {
+     char * name = { foo }
+     int value = { 123 }
+     struct ns__record subrecord = {
+      char * name = { bar }
+      int value = { 456 } } }
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -e {#soapcpp2-e}
+
+This option forces SOAP RPC encoding bindings globally in the generated source
+code, when the SOAP messaging style is not declared in the interface header
+file with directives.
+
+SOAP document/literal style messaging it the default messaging style.  The
+messaging style can be specified with the `//gsoap <prefix> service style:` and
+`//gsoap <prefix> service encoding:` [directives](#directives).  See also
+[SOAP RPC encoded versus document/literal style](#literal).
+
+This option can also be specified by the `//gsoapopt e` directive in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -f {#soapcpp2-f}
+
+This option splits the serialization source code saved to <i>`soapC`</i> files into
+multiple <i>`soapC_NNN`</i> files as specified by the numeric parameter.  This
+option alleviates compilation issues with very large source code files.
+
+For example:
+
+    soapcpp2 -f40 file.h
+
+This generates multiple <i>`soapC_NNN.cpp`</i> files each with 40 serializers, with
+<i>`NNN`</i> counting from `001` onward.
+
+The value of this option must be larger or equal to 10.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -g {#soapcpp2-g}
+
+This option generates XML sample messages in template format for the gSOAP
+Test Messenger [testmsgr](../../testmsgr/html/index.html) tool to test SOAP and
+REST XML clients and servers.
+
+By default without this option, soapcpp2 generates sample XML messages with the
+proper XML structure but without useful data.  The Test Messenger tool generates
+random messages directed by the template parameters included by
+<b>`soapcpp2 -g`</b> option <b>`-g`</b>.
+
+This option only has effect when
+[<b>`soapcpp2 -x`</b> option <b>`-x`</b>](#soapcpp2-x) is not used, which skips
+the generation of sample messages.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -h {#soapcpp2-h}
+
+This option displays help info and then exits.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -I {#soapcpp2-I}
+
+This option specifies one or more directory paths to search for imported
+interface header files.  Multiple paths are separated by a colon.
+
+For example:
+
+    soapcpp2 -I path1:path2 file.h
+
+This searches <i>`path1`</i> and then <i>`path2`</i> for files that are
+imported with `#import` in <i>`file.h`</i>.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -i {#soapcpp2-i}
+
+This option generates C++ client-side proxy classes and server-side service
+classes, where the classes inherit the `::soap` context struct with the engine
+state to handle communications and manage memory independently of other class
+instances.
+
+By contrast, [<b>`soapcpp2 -j`</b> option <b>`-j`</b>](#soapcpp2-j) allows a
+`::soap` context to be used and reused for multiple proxy and server instances.
+
+This option can also be specified by the `//gsoapopt i` directive in the
+interface header file.
+
+This option has no effect for C source code output.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -j {#soapcpp2-j}
+
+This option generates C++ client-side proxy classes and server-side service
+classes, where the classes have a pointer member `soap` to a `::soap` context
+struct that handles communications and manages memory.
+
+By contrast to [<b>`soapcpp2 -i`</b> option <b>`-i`</b>](#soapcpp2-i), this
+option allows a `::soap` context to be used and reused for multiple proxy and
+server instances.
+
+This option can also be specified by the `//gsoapopt j` directive in the
+interface header file.
+
+This option has no effect for C source code output.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -L {#soapcpp2-L}
+
+This option skips the generation of the <i>`soapClientLib`</i> and <i>`soapServerLib`</i>
+files.  These files are generally not needed to build client and server applications.
+
+These files are useful to compile multiple "libraries" of client and
+server applications, such that all serialization source code is declared static
+and kept hidden from the global scope, which makes the serialization functions
+inaccessible to the global scope to prevent global name clashes.
+
+Alternatively, use <b>`soapcpp2 -q name`</b> option <b>`-q name`</b> to develop
+C++ applications with C++ namespaces to prevent global name clashes.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -l {#soapcpp2-l}
+
+This option is experimental and should only be used to generate source code for
+modules.  This option is auto-enabled when a `#module` directive is found
+in an interface header file for soapcpp2, see
+[how to build modules and libraries with the #module directive](#module).
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -m {#soapcpp2-m}
+
+This option to generate source code for the Matlab(tm) MEX compiler is
+deprecated.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -n {#soapcpp2-n}
+
+This option renames the generated service functions `::soap_serve` to
+`name_serve` and the generated namespace table `::namespaces` to
+`name_namespaces` to the <b>`name`</b> specified with the
+[<b>`soapcpp2 -n -p name`</b> option <b>`-p name`</b>](#soapcpp2-p).
+
+This option is useful to prevent name clashes when soapcpp2 is invoked multiple
+times to generate source code for different parts of an application.  See also
+[how to create client/server libraries](#dylibs).
+
+This option can also be specified by the `//gsoapopt n` directive in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -p {#soapcpp2-p}
+
+This option saves source code files with the specified file name prefix
+<i>`name`</i> with <b>`soapcpp2 -p name`</b> instead of <i>`soap`</i> as the
+file name prefix.
+
+This option is useful to prevent name clashes when soapcpp2 is invoked multiple
+times to generate source code for different parts of an application.  See also
+[how to create client/server libraries](#dylibs).
+
+For example:
+
+    soapcpp2 -p foo file.h
+
+This saves `fooStub.h`, `fooH.h`, `fooC.cpp`, and so on.
+
+When the main application is build from the renamed <i>`name`</i>-prefixed
+source code files, plugins and custom serializers that are compiled and linked
+with the application should include <i>`nameH.h`</i> instead of
+<i>`soapH.h`</i>.  This can be done with the <b>`-D SOAP_H_FILE=nameH.h`</b>
+option to the C/C++ compiler to rename this file to include instead of
+<i>`soapH.h`</i>.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -Q {#soapcpp2-Q}
+
+This option specifies a C++ namespace name for the generated source code,
+including for the custom serializers when used.  See also
+[<b>`soapcpp2 -q name`</b> option <b>`-q name`</b>](#soapcpp2-q).
+
+The source code files are saved with <i>`name`</i> as prefix instead of
+<i>`soap`</i>.  This means that all plugins and custom serializers
+that are compiled and linked with the application should include <i>`nameH.h`</i>
+instead of <i>`soapH.h`</i>.  This can be done with the <b>`-D SOAP_H_FILE=nameH.h`</b>
+option to the C/C++ compiler to rename this file to include instead of <i>`soapH.h`</i>.
+
+This option has no effect for C source code output.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -q {#soapcpp2-q}
+
+This option specifies a C++ namespace name for the generated source code,
+excluding the custom serializers when used.  See also
+[<b>`soapcpp2 -Q name`</b> option <b>`-Q name`</b>](#soapcpp2-Q).
+
+This option is the same as specifying a C++ namespace in the interface header
+file that encapsulates all declarations:
+
+~~~{.cpp}
+    namespace name {
+
+      ... // all of the interface header file content goes here
+
+    }
+~~~
+
+This interface header file format is generated with
+[<b>`wsdl2h -q name`</b> option <b>`-q name`</b>](#wsdl2h-q).
+
+The source code files are saved with <i>`name`</i> as prefix instead of
+<i>`soap`</i>.  This means that all plugins and custom serializers
+that are compiled and linked with the application should include <i>`nameH.h`</i>
+instead of <i>`soapH.h`</i>.  This can be done with the <b>`-D SOAP_H_FILE=nameH.h`</b>
+option to the C/C++ compiler to rename this file to include instead of <i>`soapH.h`</i>.
+
+This option has no effect for C source code output.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -r {#soapcpp2-r}
+
+This option generates a <i>`soapReadme.md`</i> markdown report.  This report
+includes details pertaining the serializable data types and Web client and
+service operations, covering XML type details, serialization functions, and
+SOAP/REST API programming details.
+
+The markdown report is readable as it is,
+but can be converted to HTML for improved readability with Doxygen or with
+pandoc, or can be browsed in Firefox with
+[https://www.genivia.com/files/readmeviewer.html.zip](readmeviewer.html).
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -S {#soapcpp2-S}
+
+This option restricts soapcpp2 to generate server-side source code only.  When
+this option is combined with
+[<b>`soapcpp2 -CS`</b> option <b>`-C`</b>](#soapcpp2-C), no client and server
+source code is generated.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -s {#soapcpp2-s}
+
+This option generates client-side stub functions and proxy classes, server-side
+skeleton functions and service classes with strict XML validation checks
+enabled.  This option effectively hard-codes the `#SOAP_XML_STRICT` run time
+mode flag. 
+
+This option can also be specified by the `//gsoapopt s` directive in the
+interface header file.
+
+@warning This option is not recommended for SOAP RPC encoding style messaging,
+but XML REST and SOAP/XML document/literal style messages can be validated.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -T {#soapcpp2-T}
+
+This option generates server auto-test source code.  The generated source code
+implements a test server <i>`soapTester.c`</i> (for C) or
+<i>`soapTester.cpp`</i> (for C++) that can be deployed to echo client requests,
+for example for testing purposes.
+
+For example:
+
+    soapcpp2 -T file.h
+    c++ -o tester soapTester.cpp soapServer.cpp soapC.cpp stdsoap2.cpp
+    ./tester 8192 8080
+
+This runs the <i>`tester`</i> server on port 8080 with `::soap` context
+initialization mode flag 8192 = 0x2000 = `#SOAP_XML_INDENT`.
+
+See [generating an auto test server for client testing](#autotest) for more details.
+More advanced servers for testing are available with the gSOAP Test Messenger
+[testmsgr](../../testmsgr/html/index.html) tool to test SOAP and REST XML
+clients and servers.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -t {#soapcpp2-t}
+
+This option generates source code to fully annotate SOAP/XML messages with
+<i>`xsi:type`</i> attribute values.  This option is useful for SOAP RPC encoded
+messaging with SOAP applications that require <i>`xsi:type`</i> attributes for
+all XML elements in SOAP messages.
+
+This option can also be specified by the `//gsoapopt t` directive in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -u {#soapcpp2-u}
+
+This option uncomments WSDL and XSD files generated by soapcpp2 by supressing
+the inclusion of `<!-- -->` comments to annotate WSDL and XSD files.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -V {#soapcpp2-V}
+
+This option displays the current soapcpp2 tool version and then exits.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -v {#soapcpp2-v}
+
+This option enables verbose output to assist in debugging the soapcpp2 tool.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -w {#soapcpp2-w}
+
+This option skips the generation of WSDL and XSD files.
+
+This option can also be specified by the `//gsoapopt w` directive in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -x {#soapcpp2-x}
+
+This option skips the generation of sample XML message files.
+
+This option can also be specified by the `//gsoapopt x` directive in the
+interface header file.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -y {#soapcpp2-y}
+
+This option adds C/C++ type information to the sample XML message files
+generated by soapcpp2.
+
+🔝 [Back to table of contents](#)
+
+### soapcpp2 -z {#soapcpp2-z}
+
+These options are for backward compatiility with older gSOAP releases:
+
+- <b>`-z1`</b> compatibility: generate old-style C++ service proxies and objects
+- <b>`-z2`</b> compatibility with 2.7.x: omit XML output for NULL pointers
+- <b>`-z3`</b> compatibility up to 2.8.30: `_param_N` indexing; nillable pointers
 
 🔝 [Back to table of contents](#)
 
@@ -5447,21 +7583,22 @@ is serialized in XML as:
 </div>
 
 Other special characters are added to C/C++ names as `_xHHHH` where `HHHH` is
-the hexadecimal code of a Unicode character.
+the hexadecimal code of a Unicode character code point.
 
 Trailing underscores in an identifier name are stripped from the XML encoding.
 This is useful when an identifier name clashes with a C++
 keyword. For example, <i>`return`</i> may be used as an XML element.
 This <i>`return`</i> element can be specified as `return_`, for example as a struct or class member or function parameter.
 
-By default the soapcpp2 tool generates data binding source code in which all local XML elements are and attributes are unqualified:
+By default the soapcpp2 tool generates data binding source code in which all
+local XML elements are and attributes are unqualified:
 
 ~~~{.cpp}
     //gsoap x schema namespace: urn:x 
     struct x__record
     {
       @ char * type; // maps to unqualified type attribute
-      char * name;   // maps to unqualified name element
+        char * name; // maps to unqualified name element
     };
 ~~~
 
@@ -5475,7 +7612,7 @@ To force qualification of elements and attributes, use the "form" directive:
     struct x__record 
     {
       @ char * type; // maps to qualified x:type attribute
-      char * name;   // maps to qualified x:name element
+        char * name; // maps to qualified x:name element
     };
 ~~~
 
@@ -5494,7 +7631,7 @@ If explicit qualification is needed, this can be done using the prefix conventio
     struct x__record 
     {
       @ char * xsi__type; // maps to qualified xsi:type attribute
-      char * y__name;     // maps to qualified y:name element
+        char * y__name;   // maps to qualified y:name element
     };
 ~~~
 
@@ -5515,7 +7652,7 @@ The colon notation for type names, struct and class names, and members overrides
     struct x:record 
     {
       @ char * xsi:type; // maps to qualified xsi:type attribute
-      char * y:name;     // maps to qualified y:name element
+        char * y:name;   // maps to qualified y:name element
     };
 ~~~
 
@@ -5526,8 +7663,8 @@ The soapcpp2 tool generates data binding implementation source code with the fol
     // This code is generated in soapStub.h: 
     struct record 
     {
-      char * type; /* optional attribute of type xsd:string */ 
-      char * name; /* optional element of type xsd:string */ 
+        char * type; /* optional attribute of type xsd:string */ 
+        char * name; /* optional element of type xsd:string */ 
     };
 ~~~
 
@@ -5543,7 +7680,7 @@ The colon notation also allows you to override the element and attribute forms t
     struct x:record 
     {
       @ char * :type; // maps to unqualified type attribute
-      char * :name;   // maps to unqualified name element
+        char * :name; // maps to unqualified name element
     };
 ~~~
 
@@ -5581,7 +7718,7 @@ annotation of a tag placed next to the member member name. This is particularly 
     struct x:record 
     {
       @ char * t `:type`; // maps to unqualified type attribute
-      char * s `name`;    // maps to qualified x:name element
+        char * s `name`;  // maps to qualified x:name element
     };
 ~~~
 
@@ -5594,7 +7731,7 @@ accepted by soapcpp2 when the source file is encoded in UTF-8. C/C++ Unicode
 names are mapped to Unicode XML tags. For C/C++ source code portability
 reasons, the wsdl2h tool still converts Unicode XML tag names to ASCII C/C++
 identifiers using the `_xHHHH` naming convention for `HHHH` character code
-points. Use <b>`wsdl2h -U`</b> option <b>`-U`</b> to map Unicode letters in XML
+points. Use [<b>`wsdl2h -U`</b> option <b>`-U`</b>](#wsdl2h-U) to map Unicode letters in XML
 tag names to UTF-8-encoded Unicode letters in C/C++ identifiers.
 
 🔝 [Back to table of contents](#)
@@ -5669,70 +7806,112 @@ The online getting-started guide covers example client and server applications i
 
 ## Generating an auto test server for client testing   {#autotest}
 
-The <b>`soapcpp2 -T`</b> option <b>`-T`</b> generates an echo test server application source code <i>`soapTester.cpp`</i>, which is to be compiled and linked with the code generated for a server implementation <i>`soapServer.cpp`</i> (or with the generated service class file) and <i>`soapC.cpp`</i>. The feature also supports C source code, use the <b>`soapcpp2 -c -T`</b> options <b>`-c`</b> and <b>`-T`</b> to generate a C test server.
+The <b>`soapcpp2 -T`</b> option <b>`-T`</b> generates an echo test server
+application source code <i>`soapTester.cpp`</i>, which is to be compiled and
+linked with the code generated for a server implementation
+<i>`soapServer.cpp`</i> (or with the generated service class file) and
+<i>`soapC.cpp`</i>. The feature also supports C source code, use the
+<b>`soapcpp2 -c -T`</b> options <b>`-c`</b> and <b>`-T`</b> to generate a C
+test server.
 
-The echo test server can be used to test a client application, by the client sending messages to the echo test server that echos responses back to the client.  These responses are structurally valid but may lack sufficient details to consider the response messages useful.
+The echo test server can be used to test a client application, by the client
+sending messages to the echo test server that echos responses back to the
+client.  These responses are structurally valid but may lack sufficient details
+to consider the response messages useful.
 
 The generated source code is compiled with:
 
     c++ -o tester soapTester.cpp soapServer.cpp soapC.cpp stdsoap2.cpp
 
-To run the <b>`tester`</b> auto-test service on a port to test a client against, use two command-line arguments: the first argument is a combined integer of OR-ed values of the context flags such as 12288 which is a combination of `#SOAP_XML_INDENT` (0x1000 = 4096) and `#SOAP_XML_STRICT` (0x1000 = 8196) and the second argument is the port number:
+To run the <b>`tester`</b> auto-test service on a port to test a client
+against, use two command-line arguments: the first argument is a combined
+integer of OR-ed values of the context flags such as 12288 which is a
+combination of `#SOAP_XML_INDENT` (0x1000 = 4096) and `#SOAP_XML_STRICT`
+(0x1000 = 8196) and the second argument is the port number:
 
      ./tester 12288 8080
 
-This starts an iterative stand-alone server on port 8080. Messages
-can be sent to <i>`http://localhost:8080`</i> to test a client application against the echo test server. The data in the
-response messages are copied from the request messages
-when possible, or XML default values, or empty otherwise.
+This starts an iterative stand-alone server on port 8080. Messages can be sent
+to <i>`http://localhost:8080`</i> to test a client application against the echo
+test server. The data in the response messages are copied from the request
+messages when possible, or XML default values, or empty otherwise.
 
-You can also use the gSOAP [Test Messenger](../../testmsgr/html/index.html) application to generate randomized messages to test your client applications.
+More advanced servers for testing are available with the gSOAP Test Messenger
+[testmsgr](../../testmsgr/html/index.html) tool to test SOAP and REST XML
+clients and servers.
 
 🔝 [Back to table of contents](#)
 
 ## Generating deep copy and deletion functions   {#deep}
 
-The <b>`soapcpp2 -Ec`</b> option <b>`-Ec`</b> generates deep copy code for each serializable type `T` declared in an interface header file for soapcpp2:
+The [<b>`soapcpp2 -Ec`</b> option <b>`-Ec`</b>](#soapcpp2-E) generates deep copy code for each
+serializable type `T` declared in an interface header file for soapcpp2.  The
+[<b>`soapcpp2 -Ed`</b> option <b>`-Ed`</b>](#soapcpp2-E) generates deep
+deletion code.
 
-`T * soap_dup_T(struct soap*, T *dst, const T *src)` deep copy `src`
-into `dst`, replicating all deep cycles and shared pointers when a managing
-soap context is provided as argument. When `dst` is NULL, allocates space
-for `dst`. Deep copy is a tree when argument is NULL, but the presence of
-deep cycles will lead to non-termination. Use flag `#SOAP_XML_TREE` with
-managing context to copy into a tree without cycles and
-pointers to shared objects. Returns `dst` (or allocated space when
-`dst` is NULL).
+For a serializable type `T` declared in the interface header file for soapcpp2,
+option <b>`-Ec`</b> generates:
 
-For classes `T`, also a deep copy method is generated with option <b>`-Ec`</b>:
+- `virtual T * T::soap_dup(struct soap*) const` where `T` is a class,
+  returns a duplicate of this object by deep copying, replicating all deep
+  cycles and shared pointers when a managing `soap` context is provided as
+  argument.  Deep copy is a tree when argument is NULL, but the presence of
+  deep cycles will lead to non-termination.  Use flag `SOAP_XML_TREE` with the
+  managing context to copy into a tree without cycles and pointers to shared
+  objects.
 
-`virtual T * T::soap_dup(struct soap*) const` returns a duplicate of this
-object by deep copying, replicating all deep cycles and shared pointers when a
-managing `::soap` context is provided as argument. Deep copy is a tree when
-argument is NULL, but the presence of deep cycles will lead to non-termination.
-Use flag `#SOAP_XML_TREE` with managing context to copy into a tree
-without cycles and pointers to shared objects.
+- `T * soap_dup_T(struct soap*, T *dst, const T *src)` where `T` is not a class,
+  deep copy `src` into `dst`, replicating all deep cycles and shared pointers
+  when a managing `soap` context is provided as argument.  When `dst` is NULL,
+  allocates space for `dst` and returns a pointer to the allocated copy.  Deep
+  copy results in a tree when the `soap` context is NULL, but the presence of
+  deep cycles will lead to non-termination.  Use flag `SOAP_XML_TREE` with
+  managing context to copy into a tree without cycles and pointers to shared
+  objects.  Returns `dst` or allocated copy when `dst` is NULL.
 
-The  <b>`soapcpp2 -Ed`</b> option <b>`-Ed`</b> generates deep deletion code for each type
-`T`:
+For a serializable type `T` declared in the interface header file for soapcpp2,
+option <b>`-Ed`</b> generates:
 
-`void soap_del_T(const T*)` deletes all heap-allocated members of
-this object by deep deletion ONLY IF this object and all of its (deep) members
-are not managed by a `::soap` context AND the deep structure is a tree (no cycles
-and co-referenced objects by way of multiple
-(non-smart) pointers pointing to the same data). Can be safely used after
-`soap_dup(NULL)` to delete the deep copy. Does not delete the object
-itself.
+- `virtual void T::soap_del() const` where `T` is a class, deletes all
+  heap-allocated members of this object by deep deletion ONLY IF this object
+  and all of its (deep) members are not managed by a `soap` context AND the deep
+  structure is a tree (no cycles and co-referenced objects by way of multiple
+  (non-smart) pointers pointing to the same data).  Can be safely used after
+  `T::soap_dup(NULL)` to delete the deep copy.  Does not delete the object
+  itself.
 
-For classes `T`, also a deep deletion method is generated with option
-<b>`-Ed`</b>:
+- `void soap_del_T(const T*)` where `T` is not a class, deletes all
+  heap-allocated members of this object by deep deletion ONLY IF this object
+  and all of its (deep) members are not managed by a `soap` context AND the deep
+  structure is a tree (no cycles and co-referenced objects by way of multiple
+  (non-smart) pointers pointing to the same data).  Can be safely used after
+  `soap_dup_T(NULL, NULL, const T*)` to delete the deep copy returned.  Does
+  not delete the object itself.
 
-`virtual void T::soap_del() const` deletes all
-heap-allocated members of this object by deep deletion ONLY IF this object
-and all of its (deep) members are not managed by a `::soap` context AND the deep
-structure is a tree (no cycles and co-referenced objects by way of multiple
-(non-smart) pointers pointing to the same data).Can be safely used after
-`soap_dup(NULL)` to delete the deep copy. Does not delete the object
-itself.
+For example:
+
+~~~{.cpp}
+    #include "soapH.h"
+    #include "ns.nsmap"
+
+    int main()
+    {
+      struct soap *soap = soap_new();
+      ns__record record;                            // a serializable type
+      ns__record rec_dup;
+      soap->recvfd = open(file, O_RDONLY); 
+      if (soap->recvfd < 0)
+        ... // error
+      if (soap_read_ns__record(soap, &record))      // deserialize from file into managed memory
+        ... // error
+      close(soap->recvfd);
+      soap_dup_ns__record(NULL, &rec_dup, &record); // deep copy the record to unmanaged memory
+      soap_destroy(soap);                           // delete managed objects
+      soap_end(soap);                               // delete managed data and temporaries
+      soap_free(soap);                              // free the context
+      soap_del_ns__record(&rec_dup)                 // deep delete unmanaged record
+    }
+~~~
 
 🔝 [Back to table of contents](#)
 
@@ -5951,8 +8130,8 @@ Better is to use the base64 serializer that serializes binary data as <i>`xsd:ba
 ~~~{.cpp}
     struct xsd__base64Binary
     {
-      unsigned char *__ptr; // point to data to serialize
-      int __size;           // length of the data to serialize
+        unsigned char *__ptr; // point to data to serialize
+        int __size;           // length of the data to serialize
     };
 ~~~
 
@@ -6048,8 +8227,8 @@ Better is to use the hex serializer that serializes binary data as <i>`xsd:hexBi
 ~~~{.cpp}
     struct xsd__hexBinary
     {
-      unsigned char *__ptr; // point to data to serialize
-      int __size;           // length of the data to serialize
+        unsigned char *__ptr; // point to data to serialize
+        int __size;           // length of the data to serialize
     };
 ~~~
 
@@ -6238,10 +8417,9 @@ To create a derivable primitive type `T`, a wrapper class is declared as follows
 
 ~~~{.cpp}
     class prefix__type_name : public xsd__super_type_name
-    {
-     public:
-      T __item; 
-      ... // other members, see note below
+    { public:
+        T __item; 
+        ... // other members, see note below
     };
 ~~~
 
@@ -6333,10 +8511,9 @@ Consider for example:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      const char *s;
-      const char *t;
+    { public:
+        const char *s;
+        const char *t;
     };
 ~~~
 
@@ -6368,10 +8545,9 @@ to the same string.  For example:
     typedef char *xsd__string;
     typedef char *ns__string;
     class ns__record
-    {
-     public:
-      const xsd__string s;
-      const ns__string t;
+    { public:
+        const xsd__string s;
+        const ns__string t;
     };
 ~~~
 
@@ -6782,26 +8958,22 @@ C++11 scoped enumerations for bitmasks are supported by soapcpp2, for example:
 
 🔝 [Back to table of contents](#)
 
-## Struct serialization        {#struct}
+## Struct and class serialization        {#struct}
 
-This section gives a very brief overview of struct serialization.  See Section \ref class for details on serializing classes, which also applies to structs in C and in C++.
+This section gives a brief overview of struct and class serialization.  
 
-A struct is serialized as an XML element with attributes and sub-elements, which is represented in XML schema as a <i>`complexType`</i>.
-The struct name is the XML schema type name and the
-member variables of the struct are the type's accessors. This mapping is
-identical to the class mapping, but without supporting inheritance.
-Serialization of structs is slightly more efficient compared to
-classes.
+Structs do not support inheritance when declared in an interface header file
+for soapcpp2.  This makes serialization of structs is more efficient compared
+to classes.  Serialization functions for structs are global functions.
+By contrast, soapcpp2 augments classes with serialization methods and `soap_type()`
+method that returns the type of the class instance, which is necessary to distinguish
+base class instances from derived class instances for (smart) pointers to base class instances.
 
-For additional details, see the [C and C++ XML Data Bindings](../../databinding/html/index.html) documentation.
+For additional details not covered here,
+see the [C and C++ XML Data Bindings](../../databinding/html/index.html) documentation.
 
-🔝 [Back to table of contents](#)
-
-## Class serialization        {#class}
-
-This section gives a brief overview of class serialization, which also applies to structs except that structs do not support inheritance when used with soapcpp2.  This allows structs to be more efficiently serialized.
-
-A class and struct is serialized as an XML element with attributes and sub-elements, which is represented in XML schema as a <i>`complexType`</i>.
+A class and struct instance is serialized as an XML element with attributes and
+sub-elements, which is represented in XML schema as a <i>`complexType`</i>.
 The class name is the XML schema type name and the
 member variables of the class are the type's accessors.
 
@@ -6809,14 +8981,13 @@ Consider the general declaration of an inherited class:
 
 ~~~{.cpp}
     class prefix__class_name1 : public prefix__class_name2
-    {
-     public:
-      field1; 
-      field2; 
-      ... // more fields
-      method1; 
-      method2; 
-      ... // more methods
+    { public:
+        field1; 
+        field2; 
+        ... // more fields
+        method1; 
+        method2; 
+        ... // more methods
     }; 
 ~~~
 
@@ -6913,19 +9084,17 @@ The following example declares a base class `ns__Object` and a derived class `ns
 ~~~{.cpp}
     // Contents of file "shape.h": 
     class ns__Object 
-    {
-     public: 
+    { public: 
       @ char *name; 
     }; 
     class ns__Shape : public ns__Object 
-    {
-     public: 
+    { public: 
       @ int sides; 
       @ enum ns__Color { Red, Green, Blue } color; 
-      std::string description;
-      ns__Shape(); 
-      ns__Shape(int sides, enum ns__Color color, std::string& description); 
-      ~ns__Shape(); 
+        std::string description;
+        ns__Shape(); 
+        ns__Shape(int sides, enum ns__Color color, std::string& description); 
+        ~ns__Shape(); 
     };
 ~~~
 
@@ -6985,12 +9154,11 @@ Here is an example of a base64 binary class:
 
 ~~~{.cpp}
     class xsd__base64Binary 
-    {
-     public: 
-      unsigned char *__ptr; 
-      int __size; 
-      int get(struct soap *soap); 
-      int set(struct soap *soap); 
+    { public: 
+        unsigned char *__ptr; 
+        int __size; 
+        int get(struct soap *soap); 
+        int set(struct soap *soap); 
     };
 ~~~
 
@@ -7007,10 +9175,9 @@ Here is another example. It defines a primitive `update` type. The class is a wr
 
 ~~~{.cpp}
     class update 
-    {
-     public: 
-      time_t __item; 
-      int set(struct soap *soap); 
+    { public: 
+        time_t __item; 
+        int set(struct soap *soap); 
     };
 ~~~
 
@@ -7048,15 +9215,13 @@ SOAP Header is received.  An example is shown below:
 
 ~~~{.cpp}
     class h__Authentication 
-    {
-     public: 
-      char *id; 
-      int get(struct soap *soap); 
+    { public: 
+        char *id; 
+        int get(struct soap *soap); 
     }; 
     class SOAP_ENV__Header 
-    {
-     public: 
-      h__Authentication *h__authentication; 
+    { public: 
+        h__Authentication *h__authentication; 
     };
 ~~~
 
@@ -7066,69 +9231,78 @@ before the rest of the SOAP message is parsed.
 
 🔝 [Back to table of contents](#)
 
-### Polymorphism, derived classes, and dynamic binding        {#polymorph}
+### Polymorphism, derived types, and dynamic binding in C++     {#polymorph}
 
-Polymorphism through C++ inheritance is supported by the gSOAP tools.  This
-means that derived types can be used in place of base types in service
+Polymorphism through C++ inheritance is supported by the gSOAP tools, which
+means that derived XML schema types are (de)serialized when an
+<i>`xsi:type`</i> attribute is present.
+
+Because C does not support inheritance, a different approach is use for C code,
+see Section \ref polymorphC for details.
+
+Base and derived C++ classes can be used anywhere, including service
 operation parameters and in struct and class members, provided that parameters
-and members are base class pointer types.  Also containers such as
-`std::vector` and smart pointers such as `std::shared_ptr` are serializable
-when containing derived types.
+and members are pointers to classes to allow dynamic binding at run time.  Base
+and derived classes can also be used with containers such as `std::vector` and
+smart pointers such as `std::shared_ptr`.
 
-The following example declares `Base` and `Derived` classes and a service operation
-that takes a pointer to a `Base` class instance and returns a `Base` class
-instance:
+The following example interface header file for soapcpp2 declares `ns__Base` and `ns__Derived`
+classes and a service operation that takes a pointer to a `ns__Base` class instance
+and returns a `ns__Base` class instance:
 
 ~~~{.cpp}
     // Contents of file "derived.h" 
-    class Base 
-    {
-     public: 
-      char *name; 
-      Base(); 
-      virtual void print(); 
+    class ns__Base 
+    { public: 
+        char *name; 
+        ns__Base(); 
+        virtual void print(); 
     }; 
-    class Derived : public Base 
-    {
-     public: 
-      int num; 
-      Derived(); 
-      virtual void print(); 
+    class ns__Derived : public ns__Base 
+    { public: 
+        int num; 
+        ns__Derived(); 
+        virtual void print(); 
     }; 
-    int ns__webmethod(Base *in, struct ns__webmethodResponse { Base *out; } & result);
+    int ns__webmethod(ns__Base *in, struct ns__webmethodResponse { ns__Base *out; } & result);
 ~~~
 
-The soapcpp2 tool produces the stub and skeleton functions which are used to implement a client and service.
-The service operation input parameter may point to a `Derived` class instance that will be serialized as `Derived` class instance instead of a `Base` class instance.  Likewise, the service operation output parameter that is placed in a wrapper struct (because structs and classes are always considered wrappers to define the response message with output parameters) may point to a `Derived` class instance.
+The service operation input parameter may point to a `ns__Derived` class instance
+that will be serialized as `ns__Derived` class instance instead of a `ns__Base` class
+instance.  Likewise, the service operation output parameter that is placed in a
+wrapper struct (because structs and classes are always considered wrappers to
+define the response message with output parameters) may point to a
+`ns__Derived` class instance.
 
-The `Base` and `Derived` class method implementations are:
+The `ns__Base` and `ns__Derived` class method implementations are:
 
 ~~~{.cpp}
-    // Method implementations of the Base and Derived classes: 
+    // Method implementations of the ns__Base and ns__Derived classes: 
     #include "soapH.h" 
 
-    Base::Base() 
+    ns__Base::ns__Base() 
     {
-      cout << "created a Base class instance" << endl; 
+      std::cout << "created a Base class instance" << std::endl; 
     } 
 
-    Derived::Derived() 
+    ns__Derived::ns__Derived() 
     {
-      cout << "created a Derived class instance" << endl; 
+      std::cout << "created a Derived class instance" << std::endl; 
     } 
 
-    Base::print() 
+    ns__Base::print() 
     {
-      cout << "print(): Base class instance " << name << endl; 
+      std::cout << "print(): Base class instance " << name << std::endl; 
     } 
 
-    Derived::print() 
+    ns__Derived::print() 
     {
-      cout << "print(): Derived class instance " << name << " " << num << endl; 
+      std::cout << "print(): Derived class instance " << name << " " << num << std::endl; 
     }
 ~~~
 
-Below is an example `CLIENT` application that creates a Derived class instance that is passed as the input parameter of the `ns__webmethod` service operation:
+Below is an example client application that creates a `ns__Derived` class instance
+that is passed as the input parameter of the `ns__webmethod` service operation:
 
 ~~~{.cpp}
     // CLIENT 
@@ -7138,23 +9312,25 @@ Below is an example `CLIENT` application that creates a Derived class instance t
     {
       struct soap soap; 
       soap_init(&soap); 
-      Derived obj1; 
-      Base *obj2; 
+      ns__Derived obj; 
       struct ns__webmethodResponse r; 
-      obj1.name = "X"; 
-      obj1.num = 3; 
-      soap_call_ns__webmethod(&soap, url, action, &obj1, r); 
-      r.obj2->print(); 
+      soap_default_ns__Derived(&soap, &obj);
+      obj.name = "X"; 
+      obj.num = 3; 
+      if (soap_call_ns__webmethod(&soap, endpoint, NULL, &obj, r) == SOAP_OK)
+        if (r.out)
+          r.out->print(); 
       soap_destroy(&soap);
       soap_end(&soap);
       soap_done(&soap);
     } 
 ~~~
 
-The following example `SERVER1` application copies a class instance (Base or Derived class) from the input to the output parameter:
+The following example server application copies a class instance (`ns__Base` or
+`ns__Derived`) from the input to the output parameter:
 
 ~~~{.cpp}
-    // SERVER1 
+    // SERVER
     #include "soapH.h" 
 
     int main() 
@@ -7167,62 +9343,149 @@ The following example `SERVER1` application copies a class instance (Base or Der
       soap_done(&soap);
     } 
 
-    int ns__webmethod(struct soap *soap, Base *obj1, struct ns__webmethodResponse &result) 
+    int ns__webmethod(struct soap *soap, ns__Base *in, struct ns__webmethodResponse &result) 
     {
-      obj1->print(); 
-      result.obj2 = obj1; 
+      if (in)
+        in->print(); 
+      result.out = in; 
       return SOAP_OK; 
     } 
 ~~~
 
-The following messages are produced by the `CLIENT` and `SERVER1` applications:
+The following messages are produced by the client and server applications:
 
     CLIENT: created a Derived class instance 
-    SERVER1: created a Derived class instance 
-    SERVER1: print(): Derived class instance X 3 
+    SERVER: print(): Derived class instance X 3 
     CLIENT: created a Derived class instance 
     CLIENT: print(): Derived class instance X 3
 
-This shows that the `Derived` class instance kept its identity as it passed through `SERVER1`.
+This shows that the `Derived` class instance kept its identity as it passed
+through the server.
 
-Suppose a service application is developed that only accepts `Base` class instances. The header file is:
+Another way to serialize polymorphic values in XML that are indicated with
+<i>`xsi:type`</i> attributes is with `void*` members that point to a
+serializable value.  See Section \ref void for details.
+
+🔝 [Back to table of contents](#)
+
+### Polymorphism, derived types, and dynamic binding in C     {#polymorphC}
+
+Because C does not support object-oriented inheritance, derived types are
+obviously not declared as base structs or classes as in C++.  Instead, we add
+the derived type structs to the base structs as members that point to the
+derived type value when the base type is dynamically overridden by one of the
+derived types.  In this way we can (de)serialize a base type struct as usual or one
+of the derived structs when the base type is overridden.  To serialize a
+derived type struct in place of the base struct, we set its corresponding
+member point to the derived struct value, which is serialized with the
+<i>`xsi:type`</i> attribute to indicate a derived type is used in XML.
+Deserialization of a derived type struct is done automatically when the
+<i>`xsi:type`</i> attribute is present.
+
+This approach with additional members pointing to derived types was introduced
+with gSOAP 2.8.75.  This approach has the benefit of type safety compared to
+attempts to replicate C++ inheritance by trying to overlay derived types with
+base types in memory, which would be fragile.
+
+This method is fully automated for the wsdl2h tool to generate an interface
+header file for soapcpp2 with the type derivations in C.  To use this method to
+generate code from WSDLs and XSDs, use [<b>`wsdl2h -F`</b> option <b>`-F`</b>](#wsdl2h-F).
+This also works in C++, but C++ inheritance works fine without this method.
+
+Using this method with soapcpp2 alone using a manually-specified interface
+header file produces the specified type inheritance in the soapcpp2-generated
+WSDL and XML schema files as complexType extensions.
+
+The soapcpp2 tool warns if a derived type has multiple base types.  At most one
+base type for a derived type may be specified.
+
+To illustrate this method, consider the following interface header file
+example for soapcpp2 based on \ref polymorph.  This example declares `ns__Base` and
+`ns__Derived` structs and a service operation that takes a pointer to a `ns__Base`
+value and returns a `ns__Base` value:
 
 ~~~{.cpp}
-    // Contents of file "base.h": 
-    class Base 
+    // Contents of file "derived.h" 
+    struct ns__Base 
     {
-     public: 
-      char *name; 
-      Base(); 
-      virtual void print(); 
+        char *name; 
+      [ struct ns__Derived *ns__Derived; ] // points to derived type when non-NULL
     }; 
-    int ns__webmethod(Base *in, struct ns__webmethodResponse { Base *out; } & result);
+    struct ns__Derived
+    {
+        char *name; 
+        int num; 
+    }; 
+    int ns__webmethod(struct ns__Base *in, struct ns__webmethodResponse { struct ns__Base *out; } *result);
 ~~~
 
-The soapcpp2 tool produces the stub and skeleton functions which are used to implement a service, but not a client.
-Our client application still uses the `Derived` class instance.  So what happens at the server side when the client sends a `Derived` class instance?
+The `ns__Base` struct includes the special member `ns__Derived` that points to a
+`ns__Derived` value.  This special member must be:
 
-At the server side, the method implementation of the `Base` class are:
+- a transient member (i.e. non-serializable) by placing the declaration within
+  `[` and `]`, and
+- the member name must match the type name (to be more precise, at least the
+  initial part of the member name must match the type name as in the example
+  `ns__Derived_` works too).
+
+To serialize the `ns__Base` value make sure to set the `ns__Derived` member to NULL.
+The soapcpp2-generated `soap_default_ns__Base()` function default initializes a given
+`ns__Base` value for you.  To serialize the `ns__Derived` value make sure to set the
+`ns__Derived` member to point to the address of a `ns__Derived` value.  This is easy by
+calling `soap_new_ns__Derived()` that allocates and default initializes a `ns__Derived`
+value, whose address is returned by this function.
+
+When multiple derived types are declared for a base type, all immediately
+derived struct types are added as transient pointer members to the base type.
+Indirectly derived types do not need to be added to the base type as members,
+but it is perfectly fine to do so.
+
+To properly declare derived types, make sure to include all base type members
+in the derived type.  In our example the `ns__Derived` struct contains the `ns__Base`
+struct members (except for the `ns__Derived` member) and adds additional members as
+extensions.
+
+Below is an example client application based on the example in Section \ref
+polymorph that creates a `ns__Derived` value that is passed as the input parameter
+of the `ns__webmethod` service operation:
 
 ~~~{.cpp}
-    // Method implementations of the Base class: 
+    // CLIENT 
     #include "soapH.h" 
 
-    Base::Base() 
+    int main() 
     {
-      cout << "created a Base class instance" << endl; 
-    } 
-
-    Base::print() 
-    {
-      cout << "print(): Base class instance " << name << endl; 
+      struct soap soap; 
+      soap_init(&soap); 
+      struct ns__Base obj; 
+      struct ns__Derived der; 
+      struct ns__webmethodResponse r; 
+      soap_default_ns__Base(&soap, &obj);
+      soap_default_ns__Derived(&soap, &der);
+      obj.ns__Derived = &der;
+      der.name = "X"; 
+      der.num = 3; 
+      if (soap_call_ns__webmethod(&soap, endpoint, NULL, &obj, &r) == SOAP_OK)
+      {
+        if (r->out && r.out->ns__Derived)
+          printf("print(): Derived class instance %s %d\n",
+              r.out->ns__Derived->name,
+              r.out->ns__Derived->num);
+        else if (r->out)
+          printf("print(): Base class instance %s\n",
+              r.out->name);
+      }
+      soap_destroy(&soap);
+      soap_end(&soap);
+      soap_done(&soap);
     } 
 ~~~
 
-And the `SERVER2` application:
+The following example server application copies a class instance (`ns__Base` or
+`ns__Derived` class) from the input to the output parameter:
 
 ~~~{.cpp}
-    // SERVER2 
+    // SERVER
     #include "soapH.h" 
 
     int main() 
@@ -7235,23 +9498,78 @@ And the `SERVER2` application:
       soap_done(&soap);
     } 
 
-    int ns__webmethod(struct soap *soap, Base *obj1, struct ns__webmethodResponse &result) 
+    int ns__webmethod(struct soap *soap, struct ns__Base *in, struct ns__webmethodResponse *result) 
     {
-      obj1->print(); 
-      result.obj2 = obj1; 
+      if (in && in->ns__Derived)
+        printf("print(): Derived class instance %s %d\n",
+            in->ns__Derived->name,
+            in->ns__Derived->num);
+      else if (in)
+        printf("print(): ns__Base class instance %s\n",
+            in->name);
+      result.out = in; 
       return SOAP_OK; 
     } 
 ~~~
 
-Here are the messages produced by the `CLIENT` and `SERVER2` applications:
+The following messages are produced by the client and server applications:
 
-    CLIENT: created a Derived class instance 
-    SERVER2: created a Base class instance 
-    SERVER2: print(): Base class instance X 
-    CLIENT: created a Base class instance 
-    CLIENT: print(): Base class instance X
+    SERVER: print(): Derived class instance X 3 
+    CLIENT: print(): Derived class instance X 3
 
-In this example, the object was passed as a `Derived` class instance to `SERVER2`. Since `SERVER2` only implements the `Base` class, this object is converted to a `Base` class instance and send back to `CLIENT`.
+This shows that the `Derived` class instance kept its identity as it passed
+through the server.
+
+Another way to serialize polymorphic values in XML that are indicated with
+<i>`xsi:type`</i> attributes is with `void*` members that point to a
+serializable value.  See \ref void for details.
+
+Deeper levels of simulated inheritance are possible, for example:
+
+~~~{.cpp}
+    // Contents of file "derived.h" 
+    struct ns__Base 
+    {
+        char *name; 
+      [ struct ns__Derived *ns__Derived; ] // points to derived type when non-NULL
+    }; 
+    struct ns__Derived
+    {
+        char *name; 
+        int   num; 
+      [ struct ns__Derived2 *ns__Derived2; ] // points to derived type when non-NULL
+    }; 
+    struct ns__Derived2
+    {
+        char *name; 
+        int   num; 
+        char *value;
+    }; 
+    int ns__webmethod(struct ns__Base *in, struct ns__webmethodResponse { struct ns__Base *out; } *result);
+~~~
+
+This requires two pointer traversals from the base type `ns__Base` via
+`ns__Derived` to reach `ns__Derived2`:
+
+~~~{.cpp}
+    int ns__webmethod(struct soap *soap, struct ns__Base *in, struct ns__webmethodResponse *result) 
+    {
+      if (in && in->ns__Derived && in->ns__Derived->ns__Derived2)
+        printf("print(): Derived2 class instance %s %d %s\n",
+            in->ns__Derived->ns__Derived2->name,
+            in->ns__Derived->ns__Derived2->num,
+            in->ns__Derived->ns__Derived2->value);
+      else if (in && in->ns__Derived)
+        printf("print(): Derived class instance %s %d\n",
+            in->ns__Derived->name,
+            in->ns__Derived->num);
+      else if (in)
+        printf("print(): ns__Base class instance %s\n",
+            in->name);
+      result.out = in; 
+      return SOAP_OK; 
+    } 
+~~~
 
 🔝 [Back to table of contents](#)
 
@@ -7277,10 +9595,10 @@ For example:
     enum ns__state { _0, _1, _2 }; 
     struct ns__myStruct 
     {
-      @ std::string       *type;
-      @ bool               flag = false;
-      @ enum ns__state     state = _2;
-      struct ns__myStruct *next; 
+      @ std::string         *type;
+      @ bool                 flag = false;
+      @ enum ns__state       state = _2;
+        struct ns__myStruct *next; 
     };
 ~~~
 
@@ -7308,8 +9626,8 @@ example:
 
 ~~~{.cpp}
     class xsd__string 
-    {
-      char *__item; 
+    { public:
+        char * __item; 
       @ bool flag; 
     };
 ~~~
@@ -7318,9 +9636,9 @@ and
 
 ~~~{.cpp}
     class xsd__base64Binary 
-    {
-      unsigned char *__ptr; 
-      int __size; 
+    { public:
+        unsigned char *__ptr; 
+        int __size; 
       @ bool flag; 
     };
 ~~~
@@ -7345,7 +9663,7 @@ For example:
     typedef char *xsd__QName; 
     struct ns__myStruct 
     {
-      xsd__QName elt = "ns:xyz";   // QName element with default value "ns:xyz" 
+        xsd__QName elt = "ns:xyz"; // QName element with default value "ns:xyz" 
       @ xsd__QName att = "ns:abc"; // QName attribute with default value "ns:abc" 
     };
 ~~~
@@ -7380,22 +9698,22 @@ represents <i>`xsd:choice`</i> XML schema component. For example:
 ~~~{.cpp}
     struct ns__PO 
     {
-      ... // members of ns__PO
+        ... // members of ns__PO
     }; 
     struct ns__Invoice 
     {
-      ... // members of ns__Invoice
+        ... // members of ns__Invoice
     }; 
     union ns__PO_or_Invoice 
     {
-      struct ns__PO po; 
-      struct ns__Invoice invoice; 
+        struct ns__PO po; 
+        struct ns__Invoice invoice; 
     }; 
     struct ns__composite 
     {
-      char *name; 
-      int __union; 
-      union ns__PO_or_Invoice value; 
+        char *name; 
+        int __union; 
+        union ns__PO_or_Invoice value; 
     };
 ~~~
 
@@ -7434,9 +9752,9 @@ for the <i>`xsd:choice`</i>:
 ~~~{.cpp}
     struct ns__composite 
     {
-      char *name; 
-      int __union 0; // declares <choice minOccurs="0">
-      union ns__PO_or_Invoice value; 
+        char *name; 
+        int __union 0; // declares <choice minOccurs="0">
+        union ns__PO_or_Invoice value; 
     };
 ~~~
 
@@ -7448,9 +9766,9 @@ selector member that must be of type `int` and the member name can be chosen arb
 ~~~{.cpp}
     struct ns__composite 
     {
-      char *name; 
-      $int select 0; // declares <choice minOccurs="0">
-      union ns__PO_or_Invoice value; 
+        char *name; 
+      $ int select 0; // declares <choice minOccurs="0">
+        union ns__PO_or_Invoice value; 
     };
 ~~~
 
@@ -7479,11 +9797,11 @@ When more than one union is used in a struct or class, the
 ~~~{.cpp}
     struct ns__composite 
     {
-      char *name; 
-      $int sel_value; // = SOAP_UNION_ns__PO_or_Invoice_[po|invoice] 
-      union ns__PO_or_Invoice value; 
-      $int sel_data; // = SOAP_UNION_ns__Email_or_Fax_[email|fax] 
-      union ns__Email_or_Fax data; 
+        char *name; 
+      $ int sel_value; // = SOAP_UNION_ns__PO_or_Invoice_[po|invoice] 
+        union ns__PO_or_Invoice value; 
+      $ int sel_data; // = SOAP_UNION_ns__Email_or_Fax_[email|fax] 
+        union ns__Email_or_Fax data; 
     };
 ~~~
 
@@ -7522,8 +9840,8 @@ Consider for example the following a linked list data structure:
     typedef char *xsd__string; 
     struct ns__list
     {
-      xsd__string value; 
-      struct ns__list *next; 
+        xsd__string value; 
+        struct ns__list *next; 
     };
 ~~~
 
@@ -7551,14 +9869,14 @@ non-pointer-based members:
 
     struct ns__record 
     {
-      xsd__int *a; 
-      xsd__int *b; 
+        xsd__int *a; 
+        xsd__int *b; 
     } P; 
 
     struct ns__record
     {
-      xsd__int a; 
-      xsd__int b; 
+        xsd__int a; 
+        xsd__int b; 
     } R; 
 
     int main()
@@ -7595,9 +9913,9 @@ Section \ref flags  to control the serialization of NULLs), for example:
 ~~~{.cpp}
     struct X 
     {
-      int *p; 
-      int **q; 
-      int *r nullptr 1;
+        int *p; 
+        int **q; 
+        int *r nullptr 1;
     }
 ~~~
 
@@ -7633,14 +9951,16 @@ void pointers that are members of structs and classes, you can insert a
 data.  The `int __type` member is set to a `SOAP_TYPE_T` value, where `T` is the name of a type.  The soapcpp2 tool generates the `SOAP_TYPE_T` definitions in <i>`soapH.h`</i> and uses them internally to uniquely identify the type of each object.
 The type naming conventions outlined in
 Section \ref serialize  are used to determine the type name for `T`.
+Values serialized in XML with this approach always carry the <i>`xsi:type`</i>
+attribute in XML to indicate the type of content serialized.
 
-Here is an example to illustrate the serialization of a `void*` member in a struct:
+Here is an example to illustrate the serialization of a `void*` member in a struct/class:
 
 ~~~{.cpp}
-    struct myStruct 
+    struct ns__record 
     {
-      int __type; // the SOAP_TYPE pointed to by p 
-      void *p; 
+        int __type; // the SOAP_TYPE_T pointed to by val
+        void *val;  // serialize any type in element <val>
     };
 ~~~
 
@@ -7651,44 +9971,56 @@ The following example illustrates the initialization of `myStruct` with a
 void pointer to an int:
 
 ~~~{.cpp}
-    struct myStruct S; 
-    int n; 
-    S.p = &n; 
+    struct ns__record S; 
+    int n = 123; 
+    S.val = (void*)&n; 
     S.__type = SOAP_TYPE_int; 
 ~~~
 
-The serialized output of `S` contains the integer.
+The serialized output of `S` contains the integer in its <i>`val`</i> element:
 
-The deserializer for `myStruct` will automatically set the `__type`
-field and void pointer to the deserialized data, provided that the XML content
-for `p` carries the <i>`xsi:type`</i> attribute from which gSOAP can determine
-the type.
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <val xsi:type="xsd:int">123</val>
+    </ns:record>
+~~~
+</div>
 
-@note when serializing strings via a `void*` member, the `void*` pointer must directly point to the string value rather than indirectly as with all other types. For example:
+The deserializer for `ns__record` will automatically set the `__type`
+field and void pointer when deserializing the data, provided that the
+XML element <i>`val`</i> carries the <i>`xsi:type`</i> attribute from which it
+can determine the type.
+
+@note when serializing strings via a `void*` member, the `void*` pointer must
+directly point to the string value rather than indirectly as with all other
+types. For example:
+
 ~~~{.cpp}
-    struct myStruct S; 
-    S.p = (void*)"Hello"; 
+    struct ns__record S; 
+    S.val = (void*)"Hello"; 
     S.__type = SOAP_TYPE_string; 
 ~~~
+
 This is the case for all string-based types, including types defined with `typedef char*`.
 
 You may use an arbitrary suffix with the `__type` members to handle
 multiple void pointers in structs/classes.  For example:
 
 ~~~{.cpp}
-    struct myStruct 
+    struct ns__record 
     {
-      int __typeOfp; // the SOAP_TYPE pointed to by p 
-      void *p; 
-      int __typeOfq; // the SOAP_TYPE pointed to by q 
-      void *q; 
+        int __typeOfp; // the SOAP_TYPE_T pointed to by p 
+        void *p;       // element <p>
+        int __typeOfq; // the SOAP_TYPE_T pointed to by q 
+        void *q;       // element <q>
     };
 ~~~
 
 Because service method parameters are stored within structs, you can use
 `__type` and `void*` parameters to pass polymorphic arguments without
-having to define a C++ class hierarchy (Section \ref polymorph ).  For
-example:
+having to define a C++ class hierarchy (Section \ref polymorph ), provided that
+<i>`xsi:type`</i> attributes are present in the XML elements.  For example:
 
 ~~~{.cpp}
     typedef char *xsd__string; 
@@ -7697,8 +10029,8 @@ example:
     enum ns__status { on, off }; 
     struct ns__widget
     {
-      char *name;
-      int part;
+        char *name;
+        int part;
     };
     int ns__webmethod(int __type, void *data, struct ns__webmethodResponse { int __type; void *return_; } *out);
 ~~~
@@ -7709,6 +10041,42 @@ output parameter `return_`.  The `__type` parameters can be one of
 `SOAP_TYPE_xsd__float`, `SOAP_TYPE_ns__status`, or
 `SOAP_TYPE_ns__widget`.  The WSDL and XSD files produced by the soapcpp2 tool
 declare the `void*` polymorphic members as <i>`xsd:anyType`</i> elements.
+
+To declare a wrapper struct/class for `void*` pointers allows us to reuse this
+mechanism when we use `__self` as a member name that refers to the current XML
+element tag name:
+
+~~~{.cpp}
+    struct __any 
+    {
+        int __type;   // the SOAP_TYPE_T pointed to by __self
+        void *__self; // serialize any type of content of the current element
+    };
+    struct ns__record
+    {
+        __any val;
+    };
+~~~
+
+The following example illustrates the initialization of `__ns__record` with a
+void pointer to an int:
+
+~~~{.cpp}
+    struct ns__record S; 
+    int n = 123; 
+    S.val.__item = (void*)&n; 
+    S.val.__type = SOAP_TYPE_int; 
+~~~
+
+The serialized output of `S` contains the integer:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <val xsi:type="xsd:int">123</val>
+    </ns:record>
+~~~
+</div>
 
 🔝 [Back to table of contents](#)
 
@@ -7725,7 +10093,7 @@ For example:
     // Contents of file "fixed.h": 
     struct Example 
     {
-      float a[3]; 
+        float a[3]; 
     };
 ~~~
 
@@ -7782,10 +10150,10 @@ The general form of the struct or class declaration that contains a one-dimensio
 ~~~{.cpp}
     struct array_name 
     {
-      Type *__ptr;  // pointer to array of elements in memory
-      int __size;   // number of elements pointed to 
-      int __offset; // optional SOAP 1.1 array offset
-      ...           // anything that follows here will be ignored 
+        Type *__ptr;  // pointer to array of elements in memory
+        int __size;   // number of elements pointed to 
+        int __offset; // optional SOAP 1.1 array offset
+        ...           // anything that follows here will be ignored 
     };
 ~~~
 
@@ -7817,15 +10185,14 @@ starts at 1:
 ~~~{.cpp}
     // Contents of file "vector.h": 
     class Vector 
-    {
-     public:
-      float *__ptr; 
-      int __size; 
-      int __offset; 
-      Vector();
-      Vector(struct soap *, int n);
-      float& operator[](int i); 
-      struct soap *soap;
+    { public:
+        float *__ptr; 
+        int __size; 
+        int __offset; 
+        Vector();
+        Vector(struct soap *, int n);
+        float& operator[](int i); 
+        struct soap *soap;
     };
 ~~~
 
@@ -7887,15 +10254,14 @@ For example, using `class Vector` declared in the previous section, `class Matri
 ~~~{.cpp}
     // Contents of file "matrix.h": 
     class Matrix 
-    {
-     public: 
-      Vector *__ptr; 
-      int __size; 
-      int __offset; 
-      Matrix(); 
-      Matrix(struct soap *soap, int n, int m); 
-      Vector& operator[](int i); 
-      struct soap *soap;
+    { public: 
+        Vector *__ptr; 
+        int __size; 
+        int __offset; 
+        Matrix(); 
+        Matrix(struct soap *soap, int n, int m); 
+        Vector& operator[](int i); 
+        struct soap *soap;
     }; 
 ~~~
 
@@ -7913,10 +10279,10 @@ number of elements per dimension.  A `K`-dimensional array is declared as:
 ~~~{.cpp}
     struct array_name 
     {
-      Type *__ptr;     // pointer to array of elements in memory
-      int __size[K];   // number of elements per dimension
-      int __offset[K]; // optional SOAP 1.1 array offset
-      ...              // anything that follows here will be ignored 
+        Type *__ptr;     // pointer to array of elements in memory
+        int __size[K];   // number of elements per dimension
+        int __offset[K]; // optional SOAP 1.1 array offset
+        ...              // anything that follows here will be ignored 
     };
 ~~~
 
@@ -7926,11 +10292,10 @@ For example, the following declaration specifies a matrix class:
 
 ~~~{.cpp}
     class Matrix 
-    {
-     public: 
-      float *__ptr; 
-      int __size[2]; 
-      int __offset[2]; 
+    { public: 
+        float *__ptr; 
+        int __size[2]; 
+        int __offset[2]; 
     }; 
 ~~~
 
@@ -7952,9 +10317,9 @@ a namespace prefix.  There are two forms. The first form is similar to the SOAP-
 ~~~{.cpp}
     struct prefix__array_name 
     {
-      Type *__ptr;  // pointer to array of elements in memory
-      int __size;   // number of elements pointed to 
-      ...           // anything that follows here will be ignored 
+        Type *__ptr;  // pointer to array of elements in memory
+        int __size;   // number of elements pointed to 
+        ...           // anything that follows here will be ignored 
     };
 ~~~
 
@@ -7963,13 +10328,13 @@ The second form is more generic, because the array can be declared anywhere in t
 ~~~{.cpp}
     struct prefix__array_name 
     {
-      ...                   // other members that are serialized
-      int __size_of_array1; // number of elements pointed to 
-      Type1 *array1;        // pointer to array of elements in memory
-      ...                   // other members that are serialized
-      int __size_of_array1; // number of elements pointed to 
-      Type2 *array2;        // pointer to array of elements in memory
-      ...                   // other members that are serialized
+        ...                   // other members that are serialized
+        int __size_of_array1; // number of elements pointed to 
+        Type1 *array1;        // pointer to array of elements in memory
+        ...                   // other members that are serialized
+        int __size_of_array1; // number of elements pointed to 
+        Type2 *array2;        // pointer to array of elements in memory
+        ...                   // other members that are serialized
     };
 ~~~
 
@@ -7980,12 +10345,12 @@ For example, we define a Map structure that contains a sequence of key-val pairs
 ~~~{.cpp}
     struct ns__Map 
     {
-      int __size; // number of pairs 
-      struct ns__Pair
-      {
-        char *key;
-        char *val;
-      } *pair;    // array of pairs
+        int __size; // number of pairs 
+        struct ns__Pair
+        {
+            char *key;
+            char *val;
+        } *pair;    // array of pairs
     };
 ~~~
 
@@ -7995,12 +10360,12 @@ size member instead of requiring these members to start with `__size`:
 ~~~{.cpp}
     struct ns__Map 
     {
-      $int size;  // number of pairs 
-      struct ns__Pair
-      {
-        char *key;
-        char *val;
-      } *pair;    // array of pairs
+      $ int size;  // number of pairs 
+        struct ns__Pair
+        {
+            char *key;
+            char *val;
+        } *pair;    // array of pairs
     };
 ~~~
 
@@ -8036,12 +10401,12 @@ Multiple arrays can be part of a struct or class.  For example:
 ~~~{.cpp}
     struct ns__Contact 
     {
-      char *firstName; 
-      char *lastName; 
-      $int nPhones;         // number of Phones
-      ULONG64 *phoneNumber; // array of phone numbers 
-      $int nEmails;         // number of emails 
-      char **emailAddress;  // array of email addresses 
+        char *firstName; 
+        char *lastName; 
+      $ int nPhones;          // number of Phones
+        ULONG64 *phoneNumber; // array of phone numbers 
+      $ int nEmails;          // number of emails 
+        char **emailAddress;  // array of email addresses 
     };
 ~~~
 
@@ -8076,10 +10441,9 @@ and `std::vector`, respectively.  For example:
 ~~~{.cpp}
     #import "stlvector.h" 
     class ns__myClass 
-    {
-     public: 
-      std::vector<int>          number 1:10; // 1 to 10 numbers
-      std::vector<std::string> *name   2;    // more than 2 names
+    { public: 
+        std::vector<int>          number 1:10; // 1 to 10 numbers
+        std::vector<std::string> *name   2;    // more than 2 names
     };
 ~~~
 
@@ -8125,76 +10489,75 @@ Here is in example container template class:
     // simple_vector.h 
     template <class T> 
     class simple_vector 
-    {
-     public: 
-      typedef T                       value_type; 
-      typedef value_type            * pointer; 
-      typedef const value_type      * const_pointer; 
-      typedef value_type            & reference; 
-      typedef const value_type      & const_reference; 
-      typedef pointer                 iterator; 
-      typedef const_pointer           const_iterator; 
-     protected: 
-      iterator                        head; 
-      iterator                        tail; 
-      size_t                          capacity; 
-     public: 
-                                      simple_vector()       { head = tail = NULL; } 
-                                      simple_vector(const simple_vector& v) 
-                                                            { operator=(v); } 
-                                      ~simple_vector()      { if (head) delete[] head; } 
-      void                            clear()               { tail = head; } 
+    { public: 
+        typedef T                       value_type; 
+        typedef value_type            * pointer; 
+        typedef const value_type      * const_pointer; 
+        typedef value_type            & reference; 
+        typedef const value_type      & const_reference; 
+        typedef pointer                 iterator; 
+        typedef const_pointer           const_iterator; 
+      protected: 
+        iterator                        head; 
+        iterator                        tail; 
+        size_t                          capacity; 
+      public: 
+                                        simple_vector()       { head = tail = NULL; } 
+                                        simple_vector(const simple_vector& v) 
+                                                              { operator=(v); } 
+                                        ~simple_vector()      { if (head) delete[] head; } 
+        void                            clear()               { tail = head; } 
     /* the member functions below are required for serialization of templates */ 
-      iterator                        begin()               { return head; } 
-      const_iterator                  begin() const { return head; } 
-      iterator                        end()                 { return tail; } 
-      const_iterator                  end() const { return tail; } 
-      size_t                          size() const { return tail - head; } 
-      iterator                        insert(iterator pos, const_reference val) 
-      {
-        if (!head) 
-          head = tail = new value_type[capacity = 1]; 
-        else if (tail >= head + capacity) 
+        iterator                        begin()               { return head; } 
+        const_iterator                  begin() const { return head; } 
+        iterator                        end()                 { return tail; } 
+        const_iterator                  end() const { return tail; } 
+        size_t                          size() const { return tail - head; } 
+        iterator                        insert(iterator pos, const_reference val) 
         {
-          iterator i = head; 
-          iterator j = new value_type[capacity *= 2]; 
-          iterator k = j; 
-          while (i < tail) 
-            *k++ = *i++; 
-          if (pos) 
-            pos = j + (pos - head); 
-          tail = j + (tail - head); 
-          delete[] head; 
-          head = j; 
+          if (!head) 
+            head = tail = new value_type[capacity = 1]; 
+          else if (tail >= head + capacity) 
+          {
+            iterator i = head; 
+            iterator j = new value_type[capacity *= 2]; 
+            iterator k = j; 
+            while (i < tail) 
+              *k++ = *i++; 
+            if (pos) 
+              pos = j + (pos - head); 
+            tail = j + (tail - head); 
+            delete[] head; 
+            head = j; 
+          } 
+          if (pos && pos >= head && pos < tail) 
+          {
+            iterator i = tail; 
+            iterator j = i - 1; 
+            while (j != pos) 
+               *i-- = *j--; 
+            *pos = val; 
+          } 
+          else 
+          {
+            pos = tail; 
+            *tail++ = val; 
+          } 
+          return pos; 
         } 
-        if (pos && pos >= head && pos < tail) 
+        simple_vector& operator=(const simple_vector& v) 
         {
-          iterator i = tail; 
-          iterator j = i - 1; 
-          while (j != pos) 
-             *i-- = *j--; 
-          *pos = val; 
+          head = tail = NULL; 
+          capacity = v.capacity; 
+          if (v.head) 
+          {
+            head = tail = new value_type[capacity]; 
+            iterator i = v.head; 
+            while (i != v.tail) 
+              *tail++ = *i++; 
+          } 
+          return *this; 
         } 
-        else 
-        {
-          pos = tail; 
-          *tail++ = val; 
-        } 
-        return pos; 
-      } 
-      simple_vector& operator=(const simple_vector& v) 
-      {
-        head = tail = NULL; 
-        capacity = v.capacity; 
-        if (v.head) 
-        {
-          head = tail = new value_type[capacity]; 
-          iterator i = v.head; 
-          while (i != v.tail) 
-            *tail++ = *i++; 
-        } 
-        return *\this; 
-      } 
     };
 ~~~
 
@@ -8217,25 +10580,21 @@ declared as an array of pointers to a base class. For example:
 
 ~~~{.cpp}
     class ns__Object 
-    {
-     public: 
-      ... // members of ns__Object
+    { public: 
+        ... // members of ns__Object
     }; 
     class ns__Data : public ns__Object 
-    {
-     public: 
-      ... // members of ns__Data
+    { public: 
+        ... // members of ns__Data
     }; 
     class ArrayOfObject 
-    {
-     public: 
-      ns__Object **__ptr; // pointer to array of pointers to base or derived objects 
-      int __size;         // size of the array
+    { public: 
+        ns__Object **__ptr; // pointer to array of pointers to base or derived objects 
+        int __size;         // size of the array
     }; 
     class ns__Objects 
-    {
-     public: 
-      std::vector<ns__Object> objects; // vector of base or derived objects 
+    { public: 
+        std::vector<ns__Object> objects; // vector of base or derived objects 
     };
 ~~~
 
@@ -8249,18 +10608,18 @@ mechanism we can use is void pointers .  Here is an example of a polymorphic SOA
 ~~~{.cpp}
     struct __wrapper 
     {
-      int __type;   // identify the type below by SOAP_TYPE_T 
-      void *__item; // pointer to data of type T 
+        int __type;   // identify the type below by SOAP_TYPE_T 
+        void *__item; // pointer to data of type T 
     }; 
     struct ArrayOfObject 
     {
-      struct __wrapper *__ptr; // pointer to array
-      int __size;              // size of the array
+        struct __wrapper *__ptr; // pointer to array
+        int __size;              // size of the array
     }; 
     struct ns__Objects 
     {
-      int __size;                // size of the array
-      struct __wrapper *objects; // pointer to array
+        int __size;                // size of the array
+        struct __wrapper *objects; // pointer to array
     };
 ~~~
 
@@ -8283,8 +10642,8 @@ Consider for example:
 ~~~{.cpp}
     struct ArrayOfstring 
     {
-      char* *__ptrstring;
-      int __size;
+        char* *__ptrstring;
+        int __size;
     };
 ~~~
 
@@ -8310,8 +10669,8 @@ The <i>`base64Binary`</i> XSD type is introduced in an interface header file for
 ~~~{.cpp}
     struct xsd__base64Binary 
     {
-      unsigned char *__ptr; 
-      int __size; 
+        unsigned char *__ptr; 
+        int __size; 
     };
 ~~~
 
@@ -8322,8 +10681,8 @@ To introduce a new XML schema type derived from <i>`base64Binary`</i> use the sa
 ~~~{.cpp}
     struct ns__binary
     {
-      unsigned char *__ptr; 
-      int __size; 
+        unsigned char *__ptr; 
+        int __size; 
     };
 ~~~
 
@@ -8347,8 +10706,8 @@ The <i>`base64Binary`</i> XSD type is introduced in an interface header file for
 ~~~{.cpp}
     struct xsd__hexBinary 
     {
-      unsigned char *__ptr; 
-      int __size; 
+        unsigned char *__ptr; 
+        int __size; 
     };
 ~~~
 
@@ -8359,10 +10718,9 @@ If a binary type such as `xsd__base64Binary` is already defined, then we can sim
 
 ~~~{.cpp}
     class xsd__base64Binary
-    {
-     public: 
-      unsigned char *__ptr; 
-      int __size; 
+    { public: 
+        unsigned char *__ptr; 
+        int __size; 
     }; 
     typedef xsd__base64Binary xsd__hexBinary; // serializes into hex content
 ~~~
@@ -8490,8 +10848,8 @@ Default values can be specified for struct and class members, as shown in the ex
 ~~~{.cpp}
     struct ns__MyRecord 
     {
-      int n = 5; // optional element with default value 5 
-      char *name = "none"; // optional element with default value "none" 
+        int n = 5;           // optional element with default value 5 
+        char *name = "none"; // optional element with default value "none" 
       @ enum ns__color { RED, WHITE, BLUE } color = RED; // optional attribute with default value RED 
     };
 ~~~
@@ -8534,19 +10892,19 @@ For example
 ~~~{.cpp}
     struct ns__MyRecord 
     {
-      int n 0 = 5; // element with default value 5, minOccurs=0, maxOccurs=1
-      int m; // element with minOccurs=1 
-      int *k nullptr 1; // element with minOccurs=1 and nillable=true 
-      int v == 2; // element with minOccurs=1 and fixed value 2 
-      int __size 0:10; // sequence <item> with minOccurs=0, maxOccurs=10
-      int *item; 
-      std::vector<double> nums 2; // sequence <nums> with minOccurs=2, maxOccurs=unbounded 
+        int n 0 = 5;      // element with default value 5, minOccurs=0, maxOccurs=1
+        int m;            // element with minOccurs=1 
+        int *k nullptr 1; // element with minOccurs=1 and nillable=true 
+        int v == 2;       // element with minOccurs=1 and fixed value 2 
+        int __size 0:10;  // sequence <item> with minOccurs=0, maxOccurs=10
+        int *item; 
+        std::vector<double> nums 2; // sequence <nums> with minOccurs=2, maxOccurs=unbounded 
     }; 
 
     struct arrayOfint 
     {
-      int *__ptr 1:100; // minOccurs=1, maxOccurs=100 
-      int size; 
+        int *__ptr 1:100; // minOccurs=1, maxOccurs=100 
+        int size; 
     };
 ~~~
 
@@ -8567,9 +10925,9 @@ For example
 ~~~{.cpp}
     struct ns__MyRecord 
     {
-      @ int m 1; // required attribute (occurs at least once) 
+      @ int m 1;   // required attribute (occurs at least once) 
       @ int n = 5; // optional attribute with default value 5
-      @ int o 0; // optional attribute (may or may not occur) 
+      @ int o 0;   // optional attribute (may or may not occur) 
       @ int p 0:0; // prohibited attribute 
     };
 ~~~
@@ -8611,7 +10969,7 @@ A complexType with simpleContent is defined with a wrapper struct/class:
 ~~~{.cpp}
     struct time__date 
     {
-      char *__item; // some custom format date (restriction of string) 
+        char *__item; // some custom format date (restriction of string) 
       @ enum time__zone { EST, GMT, ... } zone; 
     }
 ~~~
@@ -8644,12 +11002,12 @@ Data value length constraints of simpleTypes and complexTypes with simpleContent
     typedef std::string *ns__string8 8; // simpleType restriction of string with at least 8 characters 
     struct ns__data // simpleContent wrapper 
     {
-      char *__item :256; // simpleContent with at most 256 characters 
-      @ char *name 1; // required name attribute 
+        char *__item :256; // simpleContent with at most 256 characters 
+      @ char *name 1;      // required name attribute 
     }; 
     struct time__date // simpleContent wrapper 
     {
-      char *__item :100; 
+        char *__item :100; 
       @ enum time__zone { EST, GMT, ... } zone = GMT; 
     }
 ~~~
@@ -8694,8 +11052,8 @@ For example:
     typedef float ns__float -1.0 <:< 10.5; // simpleType restriction of float in (-1,10.5) 
     struct ns__data // simpleContent wrapper 
     {
-      int __item 0:10; // simpleContent range 0..10 
-      @ char *name 1; // required name attribute 
+        int __item 0:10; // simpleContent range 0..10 
+      @ char *name 1;    // required name attribute 
     };
 ~~~
 
@@ -8777,7 +11135,7 @@ Consider for example:
     struct ns__record 
     {
       @ char * type; 
-      char * name; 
+        char * name; 
     };
 ~~~
 
@@ -8801,7 +11159,7 @@ To override the form for individual members that represent elements and attribut
     struct ns__record 
     {
       @ char * ns:type; 
-      char * :name; 
+        char * :name; 
     };
 ~~~
 
@@ -8824,7 +11182,7 @@ The colon notation does not avoid name clashes between members. For example:
     struct x__record 
     {
       @ char * name; 
-      char * x:name; 
+        char * x:name; 
     };
 ~~~
 
@@ -8834,7 +11192,7 @@ results in a redefinition error, since both members have the same name. To avoid
     struct x__record 
     {
       @ char * name; 
-      char * x:name_; 
+        char * x:name_; 
     };
 ~~~
 
@@ -8844,7 +11202,7 @@ Not that the namespace prefix convention can be used instead:
     struct x__record 
     {
       @ char * name; 
-      char * x__name; 
+        char * x__name; 
     };
 ~~~
 
@@ -8861,10 +11219,10 @@ qualification by form overriding. This is best illustrated by an example:
 ~~~{.cpp}
     struct x__record 
     {
-      char * :name; 
-      char * x:phone; 
-      char * x__fax; 
-      char * y__zip; 
+        char * :name; 
+        char * x:phone; 
+        char * x__fax; 
+        char * y__zip; 
     };
 ~~~
 
@@ -9055,12 +11413,12 @@ messages in SOAP Header:
 ~~~{.cpp}
     struct t__transaction
     {
-      int number;
-      const char *dscription;
+        int number;
+        const char *dscription;
     };
     struct SOAP_ENV__Header 
     {
-      mustUnderstand struct t__transaction *t__transaction; 
+        mustUnderstand struct t__transaction *t__transaction; 
     };
     //gsoap ns service method-input-header-part: webmethod t__transaction
     int ns__webmethod(...);
@@ -9144,8 +11502,8 @@ For another example, consider:
 ~~~{.cpp}
     struct SOAP_ENV__Header 
     {
-      char *h__transaction; 
-      struct UserAuth *h__authentication; 
+        char *h__transaction; 
+        struct UserAuth *h__authentication; 
     };
 ~~~
 
@@ -9185,8 +11543,8 @@ For example:
 ~~~{.cpp}
     struct SOAP_ENV__Header 
     {
-      char *h__transaction; 
-      struct UserAuth *h__authentication; 
+        char *h__transaction; 
+        struct UserAuth *h__authentication; 
     }; 
     //gsoap ns service method-input-header-part: login h__authentication 
     //gsoap ns service method-input-header-part: login h__transaction 
@@ -9208,26 +11566,26 @@ This structure has the general form:
 ~~~{.cpp}
     struct SOAP_ENV__Fault 
     {
-      _QName faultcode; // _QName is built-in 
-      char *faultstring; 
-      char *faultactor; 
-      struct SOAP_ENV__Detail *detail; 
-      struct SOAP_ENV__Code *SOAP_ENV__Code; // must be a SOAP_ENV__Code struct defined below 
-      char *SOAP_ENV__Reason; 
-      char *SOAP_ENV__Node; 
-      char *SOAP_ENV__Role; 
-      struct SOAP_ENV__Detail *SOAP_ENV__Detail; // SOAP 1.2 detail member 
+        _QName faultcode; // _QName is built-in 
+        char *faultstring; 
+        char *faultactor; 
+        struct SOAP_ENV__Detail *detail; 
+        struct SOAP_ENV__Code *SOAP_ENV__Code; // must be a SOAP_ENV__Code struct defined below 
+        char *SOAP_ENV__Reason; 
+        char *SOAP_ENV__Node; 
+        char *SOAP_ENV__Role; 
+        struct SOAP_ENV__Detail *SOAP_ENV__Detail; // SOAP 1.2 detail member 
     }; 
     struct SOAP_ENV__Code 
     {
-      _QName SOAP_ENV__Value; 
-      struct SOAP_ENV__Code *SOAP_ENV__Subcode; 
+        _QName SOAP_ENV__Value; 
+        struct SOAP_ENV__Code *SOAP_ENV__Subcode; 
     }; 
     struct SOAP_ENV__Detail 
     {
-      int __type; // The SOAP_TYPE_ of the object serialized as Fault detail 
-      void *fault; // pointer to the fault object, or NULL 
-      _XML __any; // any other detail element content (stored in XML format) 
+        int __type;  // The SOAP_TYPE_ of the object serialized as Fault detail 
+        void *fault; // pointer to the fault object, or NULL 
+        _XML __any;  // any other detail element content (stored in XML format) 
     };
 ~~~
 
@@ -9289,11 +11647,11 @@ For an example that used the SOAP Fault detail structure:
 ~~~{.cpp}
     struct SOAP_ENV__Detail 
     {
-      const char *f__invalid;
-      const char *f__unavailable;
-      int __type;
-      void *fault;
-      _XML __any;
+        const char *f__invalid;
+        const char *f__unavailable;
+        int __type;
+        void *fault;
+        _XML __any;
     }; 
     //gsoap ns service method-fault: login f__invalid 
     //gsoap ns service method-fault: login f__unavailable 
@@ -9564,11 +11922,11 @@ base64, we extend the `::xsd__base64Binary` type with three additional members:
 ~~~{.cpp}
     struct xsd__base64Binary 
     {
-      unsigned char *__ptr; 
-      int __size; 
-      char *id; 
-      char *type; 
-      char *options; 
+        unsigned char *__ptr; 
+        int __size; 
+        char *id; 
+        char *type; 
+        char *options; 
     };
 ~~~
 
@@ -9609,11 +11967,11 @@ The declaration of an extended binary type in the interface header file for soap
 ~~~{.cpp}
     struct ns__myBinaryDataType 
     {
-      unsigned char *__ptr; 
-      int __size; 
-      char *id; 
-      char *type; 
-      char *options; 
+        unsigned char *__ptr; 
+        int __size; 
+        char *id; 
+        char *type; 
+        char *options; 
     };
 ~~~
 
@@ -9621,15 +11979,15 @@ C++ programmers can use inheritance instead of textual extension required in C:
 
 ~~~{.cpp}
     class xsd__base64Binary 
-    {
-      unsigned char *__ptr; 
-      int __size; 
+    { public:
+        unsigned char *__ptr; 
+        int __size; 
     }; 
-    class ns__myBinaryDataType : xsd__base64Binary 
-    {
-      char *id; 
-      char *type; 
-      char *options; 
+    class ns__myBinaryDataType : public xsd__base64Binary 
+    { public:
+        char *id; 
+        char *type; 
+        char *options; 
     };
 ~~~
 
@@ -9641,11 +11999,11 @@ When a different attribute is to be used, this must be explicitly defined:
     //gsoap WSref schema import: http://schemas.xmlsoap.org/ws/2002/04/reference/ 
     struct ns__myBinaryDataType 
     {
-      unsigned char *__ptr; 
-      int __size; 
-      char *id; 
-      char *type; 
-      char *options; 
+        unsigned char *__ptr; 
+        int __size; 
+        char *id; 
+        char *type; 
+        char *options; 
       @ char *WSref__location; 
     };
 ~~~
@@ -9894,11 +12252,11 @@ MIME attachments uses the extended binary type comparable to DIME support. This 
     //gsoap xop schema import: http://www.w3.org/2004/08/xop/include 
     struct _xop__Include 
     {
-      unsigned char *__ptr; 
-      int __size; 
-      char *id; 
-      char *type; 
-      char *options; 
+        unsigned char *__ptr; 
+        int __size; 
+        char *id; 
+        char *type; 
+        char *options; 
     }; 
     typedef struct _xop__Include _xop__Include;
 ~~~
@@ -9925,8 +12283,8 @@ You can import <i>`xop.h`</i> in your interface header file to use the MTOM atta
     //gsoap x schema namespace: http://my.first.mtom.net 
     struct x__myData 
     {
-      _xop__Include xop__Include; // attachment 
-      @ char *xmime5__contentType; // and its contentType 
+        _xop__Include xop__Include; // attachment 
+      @ char *xmime5__contentType;  // and its contentType 
     }; 
     int x__myMTOMtest(struct x__myData *in, struct x__myData *out);
 ~~~
@@ -9973,8 +12331,8 @@ For example:
     //gsoap x schema namespace: http://my.first.mtom.net 
     struct x__myData 
     {
-      _xop__Include xop__Include; // attachment 
-      @ char *xmime5__contentType; // and its contentType 
+        _xop__Include xop__Include; // attachment 
+      @ char *xmime5__contentType;  // and its contentType 
     }; 
     //gsoap x service method-mime-type: myMTOMtest text/xml 
     int x__myMTOMtest(struct x__myData *in, struct x__myData *out);
@@ -10046,7 +12404,7 @@ The wsdl2h importer generates a header file with `#import "xop.h"` from a WSDL t
     #import "xmime5.h" 
     struct ns__Data 
     {
-      _xop__Include xop__Include; 
+        _xop__Include xop__Include; 
       @ char *xmime5__contentType;  
     };
 ~~~
@@ -10650,7 +13008,7 @@ one-way messages in the header file:
     int ns__bcastStringResponse(char *res, void);
 ~~~
 
-To obtain response one-way operations, use <b>`wsdl2h -b`</b> option <b>`-b`</b>.
+To obtain response one-way operations, use [<b>`wsdl2h -b`</b> option <b>`-b`</b>](#wsdl2h-b).
 
 The client code includes a loop to receive response messages until a timeout occurs:
 
@@ -10770,8 +13128,8 @@ cannot be dispatched to threads. Instead the `::soap_serve` waits for a message
 and immediately accepts it. You can use a receive timeout value for
 `::soap::recv_timeout` to make `::soap_serve` non-blocking.
 
-To obtain response one-way operations from a WSDL, use <b>`wsdl2h -b`</b>
-option <b>`-b`</b>.  This produces additional one-way operations to support
+To obtain response one-way operations from a WSDL, use [<b>`wsdl2h -b`</b> option <b>`-b`</b>](#wsdl2h-b).
+This produces additional one-way operations to support
 asynchronous handling of response messages in the same way requests are
 handled.
 
@@ -10815,43 +13173,44 @@ groups you are interested in:
 
 The following macros are defined in the API documentation Module \ref group_with.  These macros are used to enable or disable features as specified below, by compiling source code files with compiler option <b>`-D`</b> to set the macro:
 
-define                       | result
----------------------------- | ------
-`#SOAPDEFS_H`                | the header file to include, if different from `soapdefs.h`
-`#WITH_SOAPDEFS_H`           | includes the `soapdefs.h` file for custom settings, see Section \ref soapdefs  
-`#WITH_COMPAT`               | removes dependency on C++ stream libraries and C++ exceptions 
-`#WITH_LEAN`                 | creates a small-footprint executable, see Section \ref lean  
-`#WITH_LEANER`               | creates an even smaller footprint executable, see Section \ref lean  
-`#WITH_FAST`                 | use faster memory allocation when used with `#WITH_LEAN` or `#WITH_LEANER` 
-`#WITH_COOKIES`              | enables HTTP cookies, see Sections \ref clientcookie and \ref servercookie  
-`#WITH_INSECURE_COOKIES`     | enables HTTP cookies and allows cookies with their Secure flag set to be sent over insecure channels
-`#WITH_IPV6`                 | enables IPv6 support
-`#WITH_IPV6_V6ONLY`          | enables IPv6 support with IPv6-only server option
-`#WITH_OPENSSL`              | enables OpenSSL, see Sections \ref clientopenssl and \ref serveropenssl  
-`#WITH_GNUTLS`               | enables GNUTLS, see Sections \ref clientopenssl and \ref serveropenssl  
-`#WITH_GZIP`                 | enables gzip and deflate compression, see Section \ref compression  
-`#WITH_ZLIB`                 | enables deflate compression only, see Section \ref compression  
-`#WITH_NTLM`                 | enables NTLM support
-`#WITH_C_LOCALE`             | force the use locale functions when available to ensure locale-independent number conversions
-`#WITH_NO_C_LOCALE`          | remove the use of locale functions to improve portability
-`#WITH_INCLUDE_XLOCALE_H`    | force the inclusion of `<xlocale.h>` to define `locale_t` and `_l` functions, to improve portability
-`#WITH_DOM`                  | enable DOM parsing in the engine, required by the WS-Security plugin
-`#WITH_REPLACE_ILLEGAL_UTF8` | enable strict UTF-8, replaces UTF-8 content that is outside the allowed range with U+FFFD 
-`#WITH_FASTCGI`              | enables FastCGI, see Section \ref fastcgi  
-`#WITH_NOIO`                 | removes IO operations, to eliminate the use of BSD sockets, see Section \ref noio  
-`#WITH_NOIDREF`              | removes id and href/ref multi-reference data, more aggressive than using the `#SOAP_XML_TREE` runtime flag 
-`#WITH_NOHTTP`               | removes the HTTP stack to reduce code size 
-`#WITH_NOZONE`               | disables and ignores the timezone in `xsd:dateTime` values
-`#WITH_NOEMPTYSTRUCT`        | inserts a dummy member in empty structs to allow compilation 
-`#WITH_NOGLOBAL`             | omit SOAP Header and Fault serialization code, prevents duplicate definitions with generated soapXYZLib code 
-`#WITH_NONAMESPACES`         | disables dependence on global `namespaces` table, a table must be set explicitly with `::soap_set_namespaces` see also Section \ref nstable  
-`#WITH_CDATA`                | retains the parsed CDATA sections in literal XML strings
-`#WITH_PURE_VIRTUAL`         | enables C++ abstract service classes with pure virtual methods, requires soapcpp2 option `-i` or `-j`
-`#WITH_DEFAULT_VIRTUAL`      | enables C++ base service classes with default virtual methods returning fault `#SOAP_NO_METHOD`, requires soapcpp2 option `-i` or `-j`
-`#WITH_CASEINSENSITIVETAGS`  | enables case insensitive XML parsing 
-`#WITH_SOCKET_CLOSE_ON_EXIT` | prevents a server port from staying in listening mode after exit by internally setting `fcntl(sock, F_SETFD, FD_CLOEXEC)` 
-`#WITH_TCPFIN`               | enables TCP FIN after sends when socket is ready to close 
-`#WITH_SELF_PIPE`            | enables a "self pipe" to enable the `::soap_close_connection` function (gSOAP 2.8.71 or greater)
+define                        | result
+----------------------------- | ------
+`#SOAPDEFS_H`                 | the header file to include, if different from `soapdefs.h`
+`#WITH_SOAPDEFS_H`            | includes the `soapdefs.h` file for custom settings, see Section \ref soapdefs  
+`#WITH_COMPAT`                | removes dependency on C++ stream libraries and C++ exceptions 
+`#WITH_LEAN`                  | creates a small-footprint executable, see Section \ref lean  
+`#WITH_LEANER`                | creates an even smaller footprint executable, see Section \ref lean  
+`#WITH_FAST`                  | use faster memory allocation when used with `#WITH_LEAN` or `#WITH_LEANER` 
+`#WITH_COOKIES`               | enables HTTP cookies, see Sections \ref clientcookie and \ref servercookie  
+`#WITH_INSECURE_COOKIES`      | enables HTTP cookies and allows cookies with their Secure flag set to be sent over insecure channels
+`#WITH_IPV6`                  | enables IPv6 support
+`#WITH_IPV6_V6ONLY`           | enables IPv6 support with IPv6-only server option
+`#WITH_OPENSSL`               | enables OpenSSL, see Sections \ref clientopenssl and \ref serveropenssl  
+`#WITH_GNUTLS`                | enables GNUTLS, see Sections \ref clientopenssl and \ref serveropenssl  
+`#WITH_GZIP`                  | enables gzip and deflate compression, see Section \ref compression  
+`#WITH_ZLIB`                  | enables deflate compression only, see Section \ref compression  
+`#WITH_NTLM`                  | enables NTLM support
+`#WITH_C_LOCALE`              | force the use locale functions when available to ensure locale-independent number conversions
+`#WITH_NO_C_LOCALE`           | remove the use of locale functions to improve portability
+`#WITH_INCLUDE_XLOCALE_H`     | force the inclusion of `<xlocale.h>` to define `locale_t` and `_l` functions, to improve portability
+`#WITH_DOM`                   | enable DOM parsing in the engine, required by the WS-Security plugin
+`#WITH_REPLACE_ILLEGAL_UTF8`  | enable strict UTF-8, replaces UTF-8 content that is outside the allowed range with U+FFFD 
+`#WITH_FASTCGI`               | enables FastCGI, see Section \ref fastcgi  
+`#WITH_NOIO`                  | removes IO operations, to eliminate the use of BSD sockets, see Section \ref noio  
+`#WITH_NOIDREF`               | removes id and href/ref multi-reference data, more aggressive than using the `#SOAP_XML_TREE` runtime flag 
+`#WITH_NOHTTP`                | removes the HTTP stack to reduce code size 
+`#WITH_NOZONE`                | disables and ignores the timezone in `xsd:dateTime` values
+`#WITH_WITH_NOEMPTYNAMESPACES`| disables xmlns="" default empty namespaces from XML messages
+`#WITH_NOEMPTYSTRUCT`         | inserts a dummy member in empty structs to allow compilation 
+`#WITH_NOGLOBAL`              | omit SOAP Header and Fault serialization code, prevents duplicate definitions with generated soapXYZLib code 
+`#WITH_NONAMESPACES`          | disables dependence on global `namespaces` table, a table must be set explicitly with `::soap_set_namespaces` see also Section \ref nstable  
+`#WITH_CDATA`                 | retains the parsed CDATA sections in literal XML strings
+`#WITH_PURE_VIRTUAL`          | enables C++ abstract service classes with pure virtual methods, requires soapcpp2 option `-i` or `-j`
+`#WITH_DEFAULT_VIRTUAL`       | enables C++ base service classes with default virtual methods returning fault `#SOAP_NO_METHOD`, requires soapcpp2 option `-i` or `-j`
+`#WITH_CASEINSENSITIVETAGS`   | enables case insensitive XML parsing 
+`#WITH_SOCKET_CLOSE_ON_EXIT`  | prevents a server port from staying in listening mode after exit by internally setting `fcntl(sock, F_SETFD, FD_CLOEXEC)` 
+`#WITH_TCPFIN`                | enables TCP FIN after sends when socket is ready to close 
+`#WITH_SELF_PIPE`             | enables a "self pipe" to enable the `::soap_close_connection` function (gSOAP 2.8.71 or greater)
 
 The following subset of macros are defined in the API documentation Module \ref group_soap.  These macros are used to enable or disable features as specified below, by compiling source code files with compiler option <b>`-D`</b> to set the macro:
 
@@ -10915,9 +13274,9 @@ The following header file for soapcpp2 refers to `std::ostream` without soapcpp2
     extern class std::ostream;
 
     class ns__myClass 
-    {
-      virtual void print(std::ostream &s) const; // we need std::ostream here 
-      ... //
+    { public:
+        virtual void print(std::ostream &s) const; // we need std::ostream here 
+        ... //
     };
 ~~~
 
@@ -10955,7 +13314,7 @@ mode flag             | in/out | result
 `#SOAP_ENC_SSL`       | in+out | use SSL/TLS, automatic when connecting "https:" endpoints
 `#SOAP_XML_INDENT`    | out    | output indented XML and JSON
 `#SOAP_XML_CANONICAL` | out    | output canonical XML
-`#SOAP_XML_DEFAULTNS` | out    | output XML with default namespace bindings
+`#SOAP_XML_DEFAULTNS` | out    | output XML with default namespace bindings `xmlns="..."`
 `#SOAP_XML_IGNORENS`  | in     | ignores XML namespaces in XML input 
 `#SOAP_XML_STRICT`    | in     | apply strict validation of XML input
 `#SOAP_XML_TREE`      | in+out | out: serialize data as XML trees (no multi-ref, duplicate data when necessary); in: ignore id attributes (do not resolve id-ref)
@@ -11267,14 +13626,13 @@ Consider for example the following class declaration:
 
 ~~~{.cpp}
     class Class 
-    {
-     public:
-      Class();
-      ~Class();
-      struct soap *soap;
-      char *name; 
-      void setName(const char *s); 
-      char *getName();
+    { public:
+        Class();
+        ~Class();
+        struct soap *soap;
+        char *name; 
+        void setName(const char *s); 
+        char *getName();
     };
 ~~~
 
@@ -11824,8 +14182,8 @@ We can then use this type elsewhere, for example:
 ~~~{.cpp}
     struct ns__record
     {
-      FILE *fd;
-      const char *name;
+        FILE *fd;
+        const char *name;
     };
 ~~~
 
@@ -11836,9 +14194,9 @@ Another example:
 ~~~{.cpp}
     extern class std::ostream; // std::ostream can't be serialized, but need to be declared
     class ns__myClass 
-    {
-      virtual void print(std::ostream &s) const; // need ostream here 
-      ... //
+    { public:
+        virtual void print(std::ostream &s) const; // need ostream here 
+        ... //
     };
 ~~~
 
@@ -11868,9 +14226,9 @@ We can use `[` and `]` brackets for parts of the code, for example to make sever
       int b; // transient member 
       char s[256]; // transient member 
       ]  
-      extern float d; // transient member 
+      extern float d; // transient type float and member
       char *t; // will be serialized 
-      transientInt *n; // transient member 
+      transientInt *n; // transient type int and member 
       [ 
       virtual void method(char buf[1024]); // does not create a char[1024] serializer 
       ]  
@@ -11904,17 +14262,17 @@ Consider for example `struct tm`, declared in <i>`time.h`</i>. The structure may
     #include <time.h>
     volatile struct tm 
     {
-      int tm_sec;         /* seconds (0 - 60) */ 
-      int tm_min;         /* minutes (0 - 59) */ 
-      int tm_hour;        /* hours (0 - 23) */ 
-      int tm_mday;        /* day of month (1 - 31) */ 
-      int tm_mon;         /* month of year (0 - 11) */ 
-      int tm_year;        /* year - 1900 */ 
-      int tm_wday;        /* day of week (Sunday = 0) */ 
-      int tm_yday;        /* day of year (0 - 365) */ 
-      int tm_isdst;       /* is summer time in effect? */ 
-      char *tm_zone;        /* abbreviation of timezone name */ 
-      long tm_gmtoff;      /* offset from UTC in seconds */ 
+        int tm_sec;         /* seconds (0 - 60) */ 
+        int tm_min;         /* minutes (0 - 59) */ 
+        int tm_hour;        /* hours (0 - 23) */ 
+        int tm_mday;        /* day of month (1 - 31) */ 
+        int tm_mon;         /* month of year (0 - 11) */ 
+        int tm_year;        /* year - 1900 */ 
+        int tm_wday;        /* day of week (Sunday = 0) */ 
+        int tm_yday;        /* day of year (0 - 365) */ 
+        int tm_isdst;       /* is summer time in effect? */ 
+        char *tm_zone;        /* abbreviation of timezone name */ 
+        long tm_gmtoff;      /* offset from UTC in seconds */ 
     };
 ~~~
 
@@ -11942,7 +14300,7 @@ declaration to the header file:
     #include <time.h>
     volatile struct tm
     {
-      ... // see above
+        ... // see above
     };
     typedef struct tm time__struct_tm;
 ~~~
@@ -11953,17 +14311,17 @@ or simply use colon notation since we keep the `tm` name:
     #include <time.h>
     volatile struct time:tm 
     {
-      int tm_sec;         /* seconds (0 - 60) */ 
-      int tm_min;         /* minutes (0 - 59) */ 
-      int tm_hour;        /* hours (0 - 23) */ 
-      int tm_mday;        /* day of month (1 - 31) */ 
-      int tm_mon;         /* month of year (0 - 11) */ 
-      int tm_year;        /* year - 1900 */ 
-      int tm_wday;        /* day of week (Sunday = 0) */ 
-      int tm_yday;        /* day of year (0 - 365) */ 
-      int tm_isdst;       /* is summer time in effect? */ 
-      char *tm_zone;        /* abbreviation of timezone name */ 
-      long tm_gmtoff;      /* offset from UTC in seconds */ 
+        int tm_sec;         /* seconds (0 - 60) */ 
+        int tm_min;         /* minutes (0 - 59) */ 
+        int tm_hour;        /* hours (0 - 23) */ 
+        int tm_mday;        /* day of month (1 - 31) */ 
+        int tm_mon;         /* month of year (0 - 11) */ 
+        int tm_year;        /* year - 1900 */ 
+        int tm_wday;        /* day of week (Sunday = 0) */ 
+        int tm_yday;        /* day of year (0 - 365) */ 
+        int tm_isdst;       /* is summer time in effect? */ 
+        char *tm_zone;      /* abbreviation of timezone name */ 
+        long tm_gmtoff;     /* offset from UTC in seconds */ 
     };
 ~~~
 
@@ -11981,8 +14339,8 @@ For example:
     extern typedef char *MyData; 
     struct Sample 
     {
-      MyData s; // use custom serializer for this member 
-      char *t;  // use auto-generated serializer
+        MyData s; // use custom serializer for this member 
+        char *t;  // use auto-generated serializer
     };
 ~~~
 
@@ -12378,8 +14736,8 @@ The interface header file for soapcpp2 is:
     //gsoap ns service namespace: urn:callback 
     struct ns__person 
     {
-      char *name; 
-      int age; 
+        char *name; 
+        int age; 
     }; 
     int ns__test(struct ns__person in, struct ns__test &out);
 ~~~
@@ -13261,7 +15619,7 @@ multi-threaded stand-alone SOAP Web Service:
       THREAD_TYPE tid; 
       struct soap *soap, *tsoap; 
       soap_ssl_init(); /* init OpenSSL (skipping this or calling multiple times is OK, since the engine will init SSL automatically) */
-      // soap_ssl_noinit(); /* do not init OpenSSL (if SSL is already initialized elsewhere) */
+      /* soap_ssl_noinit(); */ /* do not init OpenSSL (if SSL is already initialized elsewhere in this application) */
       if (CRYPTO_thread_setup()) /* OpenSSL thread mutex setup */
       {
         fprintf(stderr, "Cannot setup thread mutex\n"); 
@@ -13458,8 +15816,10 @@ A client program simply uses the prefix <i>`https:`</i> instead of <i>`http:`</i
 Web Service to use encrypted transfers (if the service supports HTTPS). You need to specify the client-side key file and password of the keyfile:
 
 ~~~{.cpp}
+    struct soap soap;
     soap_ssl_init(); /* init OpenSSL (skipping this or calling multiple times is OK, since the engine will init SSL automatically) */
-    // soap_ssl_noinit(); /* do not init OpenSSL (if SSL is already initialized elsewhere) */
+    /* soap_ssl_noinit(); */ /* do not init OpenSSL (if SSL is already initialized elsewhere in this application) */
+    soap_init(&soap);
     if (soap_ssl_client_context(&soap, 
       SOAP_SSL_DEFAULT, 
       "client.pem",        /* keyfile: required only when client must authenticate to server (see SSL docs on how to obtain this file) */ 
@@ -13488,8 +15848,10 @@ You can set a specific cipher list with `SSL_CTX_set_cipher_list(soap->ctx, "...
 Other client-side SSL options are `#SOAP_SSL_SKIP_HOST_CHECK` to skip the host name verification check and `#SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE` to allow connecting to a host with an expired certificate. For example,
 
 ~~~{.cpp}
+    struct soap soap;
     soap_ssl_init(); /* init OpenSSL (skipping this or calling multiple times is OK, since the engine will init SSL automatically) */
-    // soap_ssl_noinit(); /* do not init OpenSSL (if SSL is already initialized elsewhere) */
+    /* soap_ssl_noinit(); */ /* do not init OpenSSL (if SSL is already initialized elsewhere in this application) */
+    soap_init(&soap);
     if (soap_ssl_client_context(&soap, 
       SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION  
       | SOAP_SSL_SKIP_HOST_CHECK, 
@@ -13911,7 +16273,7 @@ The following example server adopts cookies for session control:
       } 
       else 
       {
-        m = soap_bind(&soap, NULL, atoi(argv[1]), 1); // backlog=1 for iterative servers
+        m = soap_bind(&soap, NULL, atoi(argv[1]), 10); // small BACKLOG for iterative servers
         if (!soap_valid_socket(m)) 
           exit(EXIT_FAILURE); 
         for (int i = 1; ; i++) 
@@ -14104,7 +16466,7 @@ assignment. For more details, please see Section \ref typemap .
 
 Another approach to combine multiple client and service applications into one
 executable is by using C++ namespaces to structurally separate the definitions.
-This is automated with <b>`wsdl2h -qname`</b> option <b>`-qname`</b>.
+This is automated with [<b>`wsdl2h -q name`</b> option <b>`-q name`</b>](#wsdl2h-q).
 Or by creating libraries in C for the client/server objects as explained in
 subsequent sections
 
@@ -14122,7 +16484,7 @@ clients and servers that can be combined and linked together without conflicts,
 which is explained in more detail in the next section (which also shows an
 example combining two client libraries defined in two C++ code namespaces).
 
-Use <b>`wsdl2h -qname`</b> option <b>`-qname`</b> to generate definitions in the C++ `name` namespace. This option can also be used in combination with C++ proxy and server object generation, using <b>`soapcpp2 -j`</b> option <b>`-j`</b> or option <b>`-i`</b>).
+Use [<b>`wsdl2h -q name`</b> option <b>`-q name`</b>](#wsdl2h-q) to generate definitions in the C++ `name` namespace. This option can also be used in combination with C++ proxy and server object generation, using <b>`soapcpp2 -j`</b> option <b>`-j`</b> or option <b>`-i`</b>).
 
 At most one namespace can be defined for the entire interface header file for
 soapcpp2. The C++ namespace must completely encapsulate the entire contents of
@@ -14187,9 +16549,9 @@ you can define a C++ namespace in your header file with
 <b>`soapcpp2 -qname`</b> option <b>`-qname`</b>, see Section \ref codenamespace
 for details.
 
-For C, you can use <b>`soapcpp2 -c -pname`</b> option <b>`-pname`</b> to
+For C, you can use <b>`soapcpp2 -c -p name`</b> option <b>`-p name`</b> to
 rename the generated <i>`soapClientLib.c`</i> and <i>`soapServerLib.c`</i> (and
-associated) files. The <b>`-pname`</b> option specifies the file <i>`name`</i>
+associated) files. The <b>`-p name`</b> option specifies the file <i>`name`</i>
 prefix to replace the <i>`soap`</i> file name prefix.
 
 The engine does not define SOAP Header and Fault serializers that the engine
@@ -14561,7 +16923,7 @@ To serve both the quote and rate services on the same port, we chain the service
 
 ~~~{.cpp}
     struct soap *soap = soap_new(); 
-    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 1))) // backlog=1 for iterative servers
+    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 10))) // small BACKLOG for iterative servers
     {
       while (1)
       {
@@ -14665,12 +17027,12 @@ by using the MSVC Pre-Processor definitions `SOAP_FMAC5=__declspec(dllexport)` a
 
 This DLL links to <i>`stdsoap2.dll`</i> we created in Section \ref basedll.
 
-To create multiple DLLs in the same project directory, you should use <b>`soapcpp2 -pname`</b> option
-<b>`-pname`</b> to rename the generated <i>`soapClientLib.cpp`</i> and
-<i>`soapServerLib.cpp`</i> (and associated) files. The <b>`-pname`</b> option specifies
+To create multiple DLLs in the same project directory, you should use <b>`soapcpp2 -p name`</b> option
+<b>`-p name`</b> to rename the generated <i>`soapClientLib.cpp`</i> and
+<i>`soapServerLib.cpp`</i> (and associated) files. The <b>`-p name`</b> option specifies
 a <i>`name`</i> prefix to replace the <i>`soap`</i> file name prefix.
-Another way is to use C++ namespaces with  <b>`soapcpp2 -qname`</b> option
-<b>`-qname`</b>, if the interface header file input to soapcpp2 does not already declare a C++ namespace.
+Another way is to use C++ namespaces with  <b>`soapcpp2 -q name`</b> option
+<b>`-q name`</b>, if the interface header file input to soapcpp2 does not already declare a C++ namespace.
 A clean separation of libraries can also be achieved with C++ namespaces, see Section \ref codenamespace .
 
 Unless you use the client proxy and server object classes (<i>`soapXYZProxy.h`</i> and <i>`soapXYZService.h`</i>), all client and server applications must explicitly set the namespaces value of the `::soap` context
@@ -14686,7 +17048,10 @@ where the `namespaces[]` table should be defined in the client/server source. Th
 
 ## How to build modules and libraries with the #module directive        {#module}
 
-The `#module` directive is used to build modules with soapcpp2. A library can be built from a module and linked with multiple Web services applications. The directive should appear at the top of the interface header file for soapcpp2 and has the following formats:
+The `#module` directive is used to build modules with soapcpp2. A library can
+be built from a module and linked with multiple Web services applications. The
+directive should appear at the top of the interface header file for soapcpp2
+and has the following formats:
 
 ~~~{.cpp}
     #module "name" 
@@ -14698,9 +17063,20 @@ and
     #module "name" "fullname"
 ~~~
 
-where the `name` must be a unique short name for the module. The name is case insensitive and must not exceed 4 characters in length. The `fullname`, when present, represents the full name of the module and is used to prefix the function names of the generated serializers replacing the usual `soap` prefix.  If absent, the short name is used to prefix the function names of the serializers.
+where the `name` must be a unique short name for the module. The name is case
+insensitive and must not exceed 4 characters in length. The `fullname`, when
+present, represents the full name of the module and is used to prefix the
+function names of the generated serializers replacing the usual `soap` prefix.
+If absent, the short name is used to prefix the function names of the
+serializers.
 
-The rest of the content of the interface header file includes type declarations and optionally the declarations of service operations and SOAP Headers and Faults that are universally used by SOAP services, when applicable. When the soapcpp2 tool processes the header file module, it will generate the source codes for a library. The Web services application that uses the library should use a header file that imports the module with the `#import` directive, for example:
+The rest of the content of the interface header file includes type declarations
+and optionally the declarations of service operations and SOAP Headers and
+Faults that are universally used by SOAP services, when applicable. When the
+soapcpp2 tool processes the header file module, it will generate the source
+codes for a library. The Web services application that uses the library should
+use a header file that imports the module with the `#import` directive, for
+example:
 
 ~~~{.cpp}
     /* Contents of file "module.h" */ 
@@ -14713,19 +17089,34 @@ The rest of the content of the interface header file includes type declarations 
     // a module-specific struct
     struct ns__S 
     {
-      ... // members
+        ... // members
     };
 ~~~
 
-The <i>`module.h`</i> data binding interface header file for soapcpp2 declares module-specific serializable types `LONG64`, `xsd__long`, `char*`, and a `struct ns__S`. The module name is "test", so the soapcpp2 tool produces a <i>`testC.cpp`</i> file with the XML serializers for these types. The <i>`testC.cpp`</i> data binding implementation source code can be separately compiled and linked with an application. If service operations are declared in the interface header file as function prototypes, we also get <i>`testClient.cpp`</i> client stub functions and <i>`testServer.cpp`</i> server skeleton functions.
+The <i>`module.h`</i> data binding interface header file for soapcpp2 declares
+module-specific serializable types `LONG64`, `xsd__long`, `char*`, and a
+`struct ns__S`. The module name is "test", so the soapcpp2 tool produces a
+<i>`testC.cpp`</i> file with the XML serializers for these types. The
+<i>`testC.cpp`</i> data binding implementation source code can be separately
+compiled and linked with an application. If service operations are declared in
+the interface header file as function prototypes, we also get
+<i>`testClient.cpp`</i> client stub functions and <i>`testServer.cpp`</i>
+server skeleton functions.
 
 There are some limitations for module imports:
 
-* A module must be imported into another interface header to use the module's type definitions.
+- A module must be imported into another interface header to use the module's
+  type definitions.
+- When multiple modules are imported, the types that they declare must be
+  declared in one module only to avoid name clashes and link errors. You cannot
+  create two modules that declare or use the same type and import these modules
+  separately into another header file. When using modules, consider creating a
+  module hierarchy such that types are declared only once and by only one
+  module when these modules must be linked.
 
-* When multiple modules are imported, the types that they declare must be declared in one module only to avoid name clashes and link errors. You cannot create two modules that declare or use the same type and import these modules separately into another header file. When using modules, consider creating a module hierarchy such that types are declared only once and by only one module when these modules must be linked.
-
-With modules, the source code serializers for the types defined in the modules are generated with soapcpp2 separately.  For example, assume that we have a module <i>`module.h`</i>:
+With modules, the source code serializers for the types defined in the modules
+are generated with soapcpp2 separately.  For example, assume that we have a
+module <i>`module.h`</i>:
 
 ~~~{.cpp}
     /* Contents of file "module.h" */
@@ -14733,8 +17124,8 @@ With modules, the source code serializers for the types defined in the modules a
 
     struct ns__S
     {
-      char *name;
-      int amount;
+        char *name;
+        int amount;
     };
 ~~~
 
@@ -14751,9 +17142,13 @@ The module is compiled as follows:
 
     soapcpp2 module1.h
 
-This generates the files <i>`testStub.h`</i>, <i>`testH.h`</i>, and <i>`testC.cpp`</i> with serializers for `struct ns__S` but also for `char*` and `int`.
+This generates the files <i>`testStub.h`</i>, <i>`testH.h`</i>, and
+<i>`testC.cpp`</i> with serializers for `struct ns__S` but also for `char*` and
+`int`.
 
-Running soapcpp2 on <i>`example.h`</i> imports the module definitions, but does not generate serializers for `struct ns__S`, `char*` and `int` since these are defined by <i>`module.h`</i>:
+Running soapcpp2 on <i>`example.h`</i> imports the module definitions, but does
+not generate serializers for `struct ns__S`, `char*` and `int` since these are
+defined by <i>`module.h`</i>:
 
     soapcpp2 -CL example.h
 
@@ -14785,7 +17180,8 @@ We compile this example as follows:
 
     c++ -o example example.cpp testC.cpp soapC.cpp soapClient.cpp stdsoap2.cpp
 
-Modules may help to define a modular hierarchy of libraries with reusable serializable types.
+Modules may help to define a modular hierarchy of libraries with reusable
+serializable types.
 
 🔝 [Back to table of contents](#)
 
@@ -14949,19 +17345,46 @@ See also API documentation Module \ref group_plugin .
 
 🔝 [Back to table of contents](#)
 
-### DOM API {#dom}
+### DOM API overview {#dom}
 
 The DOM API is not a plugin, but an extension that provides a DOM API as a
 separate source code file to compile and link with gSOAP applications to
 enabled the gSOAP DOM.  XML DOM processing is optional, and enabled with
-<b>`wsdl2h -d`</b> option <b>`-d`</b> to generate DOM structures for
+[<b>`wsdl2h -d`</b> option <b>`-d`</b>](#wsdl2h-d) to generate DOM structures for
 <i>`xsd:anyType`</i>, <i>`xsd:any`</i>, and <i>`xsd:anyAttribute`</i> schema
 components, which are enabled with `#import "dom.h"` in an interface header
 file for soapcpp2.  This imports <i>`gsoap/import/dom.h`</i>.  Then compile
 <i>`gsoap/dom.c`</i> for C or <i>`gsoap/dom.cpp`</i> for C++ with your
 application.
 
-See the gSOAP [XML DOM](../../dom/html/index.html) documentation for more details.
+To use the DOM API with Web services, add `#import "dom.h"` to the interface
+header file or use [<b>`wsdl2h -d`</b> option <b>`-d`</b>](#wsdl2h-d):
+
+~~~{.cpp}
+    #import "dom.h"
+~~~
+
+This declares `xsd__anyType` and `xsd__anyAttribute` types.
+
+A DOM element node is serialized with the `xsd__anyType` serializable type.
+The underlying implementation type of `xsd__anyType` is `soap_dom_element`.
+One or more DOM attribute nodes are serialized with the `xsd__anyAttribute`
+serializable type.  The underlying implementation type of `xsd__anyAttribute`
+is `soap_dom_attribute`, which is a linked list.
+
+~~~{.cpp}
+    #import "dom.h" // imports xsd__anyType as a DOM node
+
+    class ns__data : public xsd__anyType
+    { public:
+        xsd__anyType* foo;                // Store <foo> element in DOM soap_dom_element
+        xsd__anyType __any;	          // Store any element content in DOM soap_dom_element
+      @ xsd__anyAttribute __anyAttribute; // Store anyAttribute content in DOM soap_dom_attribute linked node structure
+    };
+~~~
+
+To manipulate the DOM elements and attributes we use the DOM API functions
+documented in the gSOAP [XML DOM API documentation](../../dom/html/index.html).
 
 🔝 [Back to table of contents](#)
 
@@ -15116,10 +17539,9 @@ To simplify the server-side handling of POST requests, handlers can be associate
     struct http_post_handlers my_handlers[] = 
     {
       { "image/jpg", jpeg_handler }, 
-      { "image/ *",  image_handler }, 
+      { "image/*",   image_handler }, 
       { "text/html", html_handler }, 
-      { "text/ *",   text_handler }, 
-      { "text/ *;*", text_handler }, 
+      { "text/*",    text_handler }, 
       { "POST",      generic_POST_handler }, 
       { "PUT",       generic_PUT_handler }, 
       { "PATCH",     generic_PATCH_handler }, 
@@ -15128,10 +17550,18 @@ To simplify the server-side handling of POST requests, handlers can be associate
     };
 ~~~
 
-Note that `*` can be used as a wildcard and some media types may have
-optional parameters (after `;`). The handlers are functions that will be
-invoked when a POSTed request message matching media type is send to the
-server.
+Note that `*` and `-` can be used as wildcards to match any text and any
+character, respectively.  Media types may have optional parameters after `;`
+such as `charset` and `boundary`.  These parameters can be matched by the media
+type patterns in the table.  Patterns that are more specific must precede
+patterns that are less specific in the table.  For example,
+`"text/xml;*charset=utf-8*"` must precede `"text/xml"` which must precede
+`"text/*"`.  Note that `"text/xml"` also matches any parameters of the media
+type of the message reveived, such as `"text/xml; charset=utf-8"` (only
+since gSOAP version 2.8.75).
+
+The handlers are functions that will be invoked when a POSTed request message
+matching media type is sent to the server.
 
 An example image handler that checks the specific image type:
 
@@ -15188,7 +17618,9 @@ For client applications to use HTTP POST, use the `::soap_POST` operation:
 
 Similarly, `::soap_PUT`, `::soap_PATCH`, and `::soap_DELETE` commands are provided for PUT, PATCH, and DELETE handling.
 
-See also `::http_post`.
+To support HTTP pipelining use the `::http_pipe` plugin, which can be used at the server side but also at the client side.
+
+See also `::http_post` and `::http_pipe`.
 
 🔝 [Back to table of contents](#)
 

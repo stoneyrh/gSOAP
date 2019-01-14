@@ -104,7 +104,7 @@ am__objects_1 =
 am__objects_2 = sslclient-soapC.$(OBJEXT)
 am__objects_3 = sslclient-soapClient.$(OBJEXT) $(am__objects_2)
 am_sslclient_OBJECTS = sslclient-sslclient.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_3)
+	$(am__objects_3) sslclient-ssl_setup.$(OBJEXT)
 sslclient_OBJECTS = $(am_sslclient_OBJECTS)
 am__DEPENDENCIES_1 =
 sslclient_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1) \
@@ -137,6 +137,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/sslclient-soapC.Po \
 	./$(DEPDIR)/sslclient-soapClient.Po \
+	./$(DEPDIR)/sslclient-ssl_setup.Po \
 	./$(DEPDIR)/sslclient-sslclient.Po \
 	./$(DEPDIR)/sslserver-soapC.Po \
 	./$(DEPDIR)/sslserver-soapServer.Po \
@@ -345,8 +346,8 @@ BUILT_SOURCES = $(SOAP_C_SRC)
 CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
 SOAP_NS = $(SOAP_NS_DEF)
 sslclient_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
-sslclient_SOURCES = sslclient.c $(SOAPHEADER) $(SOAP_C_CLIENT)
-sslclient_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS) -lpthread
+sslclient_SOURCES = sslclient.c $(SOAPHEADER) $(SOAP_C_CLIENT) ssl_setup.c
+sslclient_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 sslserver_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 sslserver_SOURCES = sslserver.c $(SOAPHEADER) $(SOAP_C_SERVER) ../../plugin/threads.c
 sslserver_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS) -lpthread
@@ -405,6 +406,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslclient-soapC.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslclient-soapClient.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslclient-ssl_setup.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslclient-sslclient.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslserver-soapC.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslserver-soapServer.Po@am__quote@ # am--include-marker
@@ -472,6 +474,20 @@ sslclient-soapC.obj: soapC.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='soapC.c' object='sslclient-soapC.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslclient_CFLAGS) $(CFLAGS) -c -o sslclient-soapC.obj `if test -f 'soapC.c'; then $(CYGPATH_W) 'soapC.c'; else $(CYGPATH_W) '$(srcdir)/soapC.c'; fi`
+
+sslclient-ssl_setup.o: ssl_setup.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslclient_CFLAGS) $(CFLAGS) -MT sslclient-ssl_setup.o -MD -MP -MF $(DEPDIR)/sslclient-ssl_setup.Tpo -c -o sslclient-ssl_setup.o `test -f 'ssl_setup.c' || echo '$(srcdir)/'`ssl_setup.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sslclient-ssl_setup.Tpo $(DEPDIR)/sslclient-ssl_setup.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ssl_setup.c' object='sslclient-ssl_setup.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslclient_CFLAGS) $(CFLAGS) -c -o sslclient-ssl_setup.o `test -f 'ssl_setup.c' || echo '$(srcdir)/'`ssl_setup.c
+
+sslclient-ssl_setup.obj: ssl_setup.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslclient_CFLAGS) $(CFLAGS) -MT sslclient-ssl_setup.obj -MD -MP -MF $(DEPDIR)/sslclient-ssl_setup.Tpo -c -o sslclient-ssl_setup.obj `if test -f 'ssl_setup.c'; then $(CYGPATH_W) 'ssl_setup.c'; else $(CYGPATH_W) '$(srcdir)/ssl_setup.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sslclient-ssl_setup.Tpo $(DEPDIR)/sslclient-ssl_setup.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ssl_setup.c' object='sslclient-ssl_setup.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslclient_CFLAGS) $(CFLAGS) -c -o sslclient-ssl_setup.obj `if test -f 'ssl_setup.c'; then $(CYGPATH_W) 'ssl_setup.c'; else $(CYGPATH_W) '$(srcdir)/ssl_setup.c'; fi`
 
 sslserver-sslserver.o: sslserver.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -MT sslserver-sslserver.o -MD -MP -MF $(DEPDIR)/sslserver-sslserver.Tpo -c -o sslserver-sslserver.o `test -f 'sslserver.c' || echo '$(srcdir)/'`sslserver.c
@@ -659,6 +675,7 @@ clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/sslclient-soapC.Po
 	-rm -f ./$(DEPDIR)/sslclient-soapClient.Po
+	-rm -f ./$(DEPDIR)/sslclient-ssl_setup.Po
 	-rm -f ./$(DEPDIR)/sslclient-sslclient.Po
 	-rm -f ./$(DEPDIR)/sslserver-soapC.Po
 	-rm -f ./$(DEPDIR)/sslserver-soapServer.Po
@@ -711,6 +728,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/sslclient-soapC.Po
 	-rm -f ./$(DEPDIR)/sslclient-soapClient.Po
+	-rm -f ./$(DEPDIR)/sslclient-ssl_setup.Po
 	-rm -f ./$(DEPDIR)/sslclient-sslclient.Po
 	-rm -f ./$(DEPDIR)/sslserver-soapC.Po
 	-rm -f ./$(DEPDIR)/sslserver-soapServer.Po

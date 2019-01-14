@@ -99,38 +99,38 @@ Compile with /DYYINITDEPTH=5000
 
 COMMAND LINE OPTIONS
 
--1      generate SOAP 1.1 bindings
--2      generate SOAP 1.2 bindings
--0      no SOAP bindings, use REST
--C	generate client-side code only
--S	generate server-side code only
--T	generate server auto-test code
--Ec	generate extra functions for deep copying
--Ed	generate extra functions for deep deletion
--Et     generate extra functions for data traversals with walker functions
--L	don't generate soapClientLib/soapServerLib
+-0      no SOAP, generate REST source code
+-1      generate SOAP 1.1 source code
+-2      generate SOAP 1.2 source code
 -A	require SOAPAction headers to invoke server-side operations
 -a	use SOAPAction with WS-Addressing to invoke server-side operations
 -b	serialize byte arrays char[N] as string
+-C	generate client-side code only
 -c      generate C source code
 -c++    generate C++ source code (default)
 -c++11  generate C++ source code optimized for C++11 (compile with -std=c++11)
 -dpath  use path to save files
+-Ec	generate extra functions for deep copying
+-Ed	generate extra functions for deep deletion
+-Et     generate extra functions for data traversals with callback functions
 -e	generate SOAP RPC encoding style bindings (also use -1 or -2)
 -fN	multiple soapC files, with N serializer definitions per file (N>=10)
--h	display help info
+-h	display help info and exit
 -Ipath  use path(s) for #import (paths separated with ':', or ';' for windows)
 -i      generate C++ service proxies and objects inherited from soap struct
 -j      generate C++ service proxies and objects that share a soap struct
+-L	don't generate soapClientLib/soapServerLib
 -l      generate linkable modules (experimental)
--m      generate Matlab(tm) code for MEX compiler
+-m      generate source code for the Matlab(tm) MEX compiler (deprecated)
 -n      use service name to rename service functions and namespace table
 -pname  save files with new prefix name instead of 'soap'
--Qname  use name as the C++ namespace for decls, including custom serializers
--qname  use name as the C++ namespace of all declarations
+-Qname  use name as the C++ namespace, including custom serializers
+-qname  use name as the C++ namespace, exclusing custom serializers
 -r      generate soapReadme.md report
+-S	generate server-side code only
 -s      generate stub and skeleton functions with strict XML validation checks
--t      generate code for fully xsi:type typed SOAP/XML messaging
+-T	generate server auto-test source code
+-t      generate source code for fully xsi:type typed SOAP/XML messages
 -u	uncomment comments in WSDL/schema output by suppressing XML comments
 -V	display the current version and exit
 -v	verbose output
@@ -139,7 +139,7 @@ COMMAND LINE OPTIONS
 -y	include C/C++ type access information in sample XML messages
 -z1	generate deprecated old-style C++ service proxies and objects
 -z2	compatibility with 2.7.x: omit XML output for NULL pointers
--z3     compatibility with <= 2.8.30: _param_N indexing; nillable pointers
+-z3     compatibility up to 2.8.30: _param_N indexing; nillable pointers
 infile	header file to parse (or stdin)
 
 DOCUMENTATION

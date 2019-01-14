@@ -1,13 +1,13 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.74
+        DOM API v5 gSOAP 2.8.75
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2017, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20874
+#define GSOAP_LIB_VERSION 20875
 
 #include "stdsoap2.h"
 
@@ -86,7 +86,7 @@ namespace SOAP_DOM_EXTERNAL_NAMESPACE {
 SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap*, const void*, int);
 #endif
 
-SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap*, int*);
+SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap*, const char*, int*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap*, const void*, const char*, int, int);
 SOAP_FMAC3 void * SOAP_FMAC4 soap_dupelement(struct soap*, const void*, int);
 SOAP_FMAC3 void SOAP_FMAC4 soap_delelement(const void*, int);
@@ -103,7 +103,7 @@ extern "C" {
 SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap*, const void*, int);
 #endif
 
-SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap*, int*);
+SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap*, const char*, int*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap*, const void*, const char*, int, int);
 SOAP_FMAC3 void * SOAP_FMAC4 soap_dupelement(struct soap*, const void*, int);
 SOAP_FMAC3 void SOAP_FMAC4 soap_delelement(const void*, int);
@@ -642,11 +642,11 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
   {
     soap->mode = m;
 #ifdef SOAP_DOM_EXTERNAL_NAMESPACE
-    node->node = SOAP_DOM_EXTERNAL_NAMESPACE::soap_getelement(soap, &node->type);
+    node->node = SOAP_DOM_EXTERNAL_NAMESPACE::soap_getelement(soap, NULL, &node->type);
     if ((!node->node || !node->type) && soap->error == SOAP_TAG_MISMATCH)
-      node->node = ::soap_getelement(soap, &node->type);
+      node->node = ::soap_getelement(soap, NULL, &node->type);
 #else
-    node->node = soap_getelement(soap, &node->type);
+    node->node = soap_getelement(soap, NULL, &node->type);
 #endif
     if (node->node && node->type)
     {

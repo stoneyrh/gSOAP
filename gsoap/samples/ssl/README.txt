@@ -9,11 +9,17 @@ The SSL-enabled applications are compiled with -DWITH_OPENSSL -DWITH_GZIP and
 linked with -lgsoapssl++ (or -lgsoapssl) -lssl -lcrypto -lz
 
 OpenSSL multithreaded applications require mutex locks, see the
-CRYPTO_thread_setup() and CRYPTO_thread_cleanup() code in the examples.
+CRYPTO_thread_setup() and CRYPTO_thread_cleanup() usage in the examples and
+thread_setup.h and thread_setup.c/.cpp for these functions.
 
 The certificates of trusted certificate authorities (CA) are stored in
 cacerts.pem and can be used to connect gSOAP clients to secure services. To do
 so, use cacerts.pem instead of the demo cacert.pem with soap_ssl_client_context.
+
+As a better alternative to calling soap_ssl_client_context(), trusted
+certificate stores are automatically added with ssl_client_setup(), which works
+for Unix/Linux and Windows platforms.  See ssl_setup.h and ssl_setup.c/.cpp
+for an explanation.
 
 Using GNUTLS
 ------------

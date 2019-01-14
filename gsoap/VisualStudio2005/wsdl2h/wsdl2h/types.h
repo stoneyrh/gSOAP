@@ -47,7 +47,8 @@ typedef map<const char*, CType, ltstr> MapOfStringToCType;
 enum Lookup { NOLOOKUP, LOOKUP };
 
 class Types
-{ public:
+{
+  public:
     SetOfString		knames;	// keywords, reserved words, class names, and typedefs
     MapOfStringToString modtypemap;
     MapOfStringToString deftypemap;
@@ -55,6 +56,7 @@ class Types
     MapOfStringToString ptrtypemap;
     MapOfStringToString smptypemap;
     MapOfStringToCType	ctypemap;
+    MapOfStringToString wnames;	// name -> wrapper name
     MapOfPairToString	qnames;	// (URI,name) -> name
     MapOfStringToString	uris;	// URI -> prefix
     MapOfStringToNum	syms;	// prefix -> count (ns1, ns2, ...)
@@ -76,7 +78,7 @@ class Types
     const char *fname(const char *prefix, const char *URI, const char *qname, SetOfString *reserved, enum Lookup lookup, bool isqname);
   public:
     const char *aname(const char *prefix, const char *URI, const char *qname, SetOfString *reserved = NULL);
-    const char *wname(const char *prefix, const char *URI, const char *qname);
+    const char *wname(const char *prefix, const char *URI, const char *qname, enum Lookup lookup);
     const char *cname(const char *prefix, const char *URI, const char *qname);
     const char *tname(const char *prefix, const char *URI, const char *qname);
     const char *tnameptr(bool, const char *prefix, const char *URI, const char *qname);

@@ -57,16 +57,6 @@
 #
 #       This ensure that the wsdl2h-generated type definition is preserved,
 #       while the use and ptr-use are changed.
-#
-#       For example, this is useful to map schema polymorphic types to C types,
-#       where we need to be able to both handle a base type and its extensions
-#       as per schema extensibility. Say base type ns:base allows derived
-#       extensions and we need to map this to C types as follows:
-#
-#               ns__base = ... | int __type_base; void*
-#
-#       where __type_base and void* are used to (de)serialize any data type,
-#       including base and its derived types.
 
 ####### CLASS/STRUCT MEMBER ADDITIONS
 

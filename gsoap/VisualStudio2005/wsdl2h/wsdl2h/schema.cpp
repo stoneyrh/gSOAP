@@ -43,6 +43,7 @@ extern int warn_ignore(struct soap*, const char*);
 
 extern const char *qname_token(const char*, const char*);
 extern int is_builtin_qname(const char*);
+extern xsd__QName make_qname(xs__schema&, const char *);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -408,7 +409,7 @@ int xs__schema::read(const char *cwd, const char *loc)
   if (!cwd)
     cwd = cwd_path;
   if (vflag)
-    fprintf(stderr, "\nOpening schema '%s' from '%s'\n", loc ? loc : "(stdin)", cwd ? cwd : "./");
+    fprintf(stderr, "\nOpening schema '%s' relative to '%s'\n", loc ? loc : "(stdin)", cwd ? cwd : "./");
   if (loc)
   {
     if (soap->recvfd > 2)
@@ -463,7 +464,7 @@ int xs__schema::read(const char *cwd, const char *loc)
       fprintf(stderr, "%*sConnecting to '%s' to retrieve schema '%s'...", 2*openfiles, "", location, loc);
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       {
-        fprintf(stderr, "\n\nError: connection failed\n");
+        fprintf(stderr, "\n\nError: failed to retrieve '%s'\n", loc);
         soap_print_fault(soap, stderr);
         exit(1);
       }
@@ -472,6 +473,8 @@ int xs__schema::read(const char *cwd, const char *loc)
     }
     else
     {
+      if (!strncmp(loc, "file://", 7))
+        loc += 7;
       soap->recvfd = open(loc, O_RDONLY, 0);
       if (soap->recvfd < 0)
       {
@@ -486,14 +489,18 @@ int xs__schema::read(const char *cwd, const char *loc)
             s = strrchr(location, '\\');
 #endif
           if (s)
+          {
             *s = '\0';
-          size_t n = strlen(location);
-          soap_strcpy(location + n, l + 2 - n, "/");
-          ++n;
-          soap_strcpy(location + n, l + 2 - n, loc);
-          if (!strncmp(location, "file://", 7))
-            location += 7;
-          soap->recvfd = open(location, O_RDONLY, 0);
+            size_t n = strlen(location);
+            soap_strcpy(location + n, l + 2 - n, "/");
+            ++n;
+            soap_strcpy(location + n, l + 2 - n, loc);
+            if (!strncmp(location, "file://", 7))
+              location += 7;
+            soap->recvfd = open(location, O_RDONLY, 0);
+            if (vflag)
+              cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
+          }
         }
         if (soap->recvfd < 0 && import_path)
         {
@@ -507,6 +514,8 @@ int xs__schema::read(const char *cwd, const char *loc)
           if (!strncmp(location, "file://", 7))
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
+          if (vflag)
+            cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
         }
         if (soap->recvfd < 0)
         {
@@ -557,7 +566,9 @@ int xs__schema::read(const char *cwd, const char *loc)
       redirs--;
     }
     else
+    {
       fprintf(stderr, "Authentication failed, use option -r:uid:pwd and (re)build with OpenSSL to enable digest authentication\n");
+    }
     return r;
   }
   if (soap->error)
@@ -578,7 +589,9 @@ int xs__schema::read(const char *cwd, const char *loc)
     soap->recvfd = -1;
   }
   else
+  {
     soap_closesock(soap);
+  }
   cwd_path = cwd_temp;
   return SOAP_OK;
 }
@@ -597,31 +610,27 @@ char *xs__schema::absoluteLocation(const char *loc) const
 {
   if (!location)
     return soap_strdup(soap, loc);
-  if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8) || !strncmp(loc, "file://", 7))
+  if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8))
     return soap_strdup(soap, loc);
+  if (!strncmp(loc, "file://", 7))
+    loc += 7;
   const char *s = strrchr(location, '/');
   if (!s)
     return soap_strdup(soap, loc);
-  size_t k = 0;
-  while (!strncmp(loc, "../", 3))
+  if (strncmp(loc, "../", 3))
+    return soap_strdup(soap, loc);
+  while (!strncmp(loc, "../", 3) && s > location)
   {
+    while (--s >= location)
+      if (*s == '/')
+        break;
     loc += 3;
-    ++k;
   }
-  while (k > 0 && s > location)
-    if (*--s == '/')
-      --k;
-  loc -= 3*k;
-  size_t n = s - location;
+  size_t n = s - location + 1;
   size_t l = n + strlen(loc);
-  char *abs = (char*)soap_malloc(soap, l + 2);
-  soap_strncpy(abs, l + 2, location, n);
-  if (n > 0)
-  {
-    soap_strcpy(abs + n, l + 2 - n, "/");
-    ++n;
-  }
-  soap_strcpy(abs + n, l + 2 - n, loc);
+  char *abs = (char*)soap_malloc(soap, l + 1);
+  soap_strncpy(abs, l + 1, location, n);
+  soap_strcpy(abs + n, l + 1 - n, loc);
   return abs;
 }
 
@@ -647,6 +656,11 @@ void xs__schema::builtinType(const char *type)
   builtinTypeSet.insert(type);
 }
 
+void xs__schema::builtinTypeDerivation(xs__schema& schema, const char *base, const char *derived)
+{
+  builtinTypeMap[make_qname(schema, derived)] = base;
+}
+
 void xs__schema::builtinElement(const char *element)
 {
   builtinElementSet.insert(element);
@@ -660,6 +674,11 @@ void xs__schema::builtinAttribute(const char *attribute)
 const SetOfString& xs__schema::builtinTypes() const
 {
   return builtinTypeSet;
+}
+
+const MapOfStringToString& xs__schema::builtinTypeDerivations() const
+{
+  return builtinTypeMap;
 }
 
 const SetOfString& xs__schema::builtinElements() const
@@ -716,8 +735,8 @@ int xs__include::preprocess(xs__schema &schema)
         for (i = included.begin(); i != included.end(); ++i)
         {
           if ((*i).second->targetNamespace
-              && !strcmp(schemaLocation, (*i).first)
-              && !strcmp(schema.targetNamespace, (*i).second->targetNamespace))
+           && !strcmp(schemaLocation, (*i).first)
+           && !strcmp(schema.targetNamespace, (*i).second->targetNamespace))
             break;
         }
       }
@@ -1767,11 +1786,25 @@ int xs__simpleType::traverse(xs__schema &schema)
     cerr << "   Analyzing schema simpleType '" << (name ? name : "(null)") << "'" << endl;
   schemaRef = &schema;
   if (list)
+  {
     list->traverse(schema);
+  }
   else if (restriction)
+  {
     restriction->traverse(schema);
+    if (name)
+    {
+      xs__simpleType *base = restriction->simpleTypePtr();
+      if (base)
+        base->add_restriction(schema, name);
+      else if (is_builtin_qname(restriction->base))
+        schema.builtinTypeDerivation(schema, restriction->base, name);
+    }
+  }
   else if (union_)
+  {
     union_->traverse(schema);
+  }
   return SOAP_OK;
 }
 
@@ -1834,6 +1867,26 @@ bool xs__simpleType::is_used() const
   return used;
 }
 
+void xs__simpleType::add_extension(xs__schema& schema, xsd__NCName name)
+{
+  extensions.push_back(make_qname(schema, name));
+}
+
+void xs__simpleType::add_restriction(xs__schema& schema, xsd__NCName name)
+{
+  restrictions.push_back(make_qname(schema, name));
+}
+
+const std::vector<xsd__QName>& xs__simpleType::get_extensions() const
+{
+  return extensions;
+}
+
+const std::vector<xsd__QName>& xs__simpleType::get_restrictions() const
+{
+  return restrictions;
+}
+
 xs__complexType::xs__complexType()
 {
   schemaRef = NULL;
@@ -1847,19 +1900,83 @@ int xs__complexType::traverse(xs__schema &schema)
     cerr << "   Analyzing schema complexType '" << (name ? name : "(null)") << "'" << endl;
   schemaRef = &schema;
   if (simpleContent)
+  {
     simpleContent->traverse(schema);
+    if (name)
+    {
+      if (simpleContent->extension)
+      {
+        xs__complexType *ct_base = simpleContent->extension->complexTypePtr();
+        if (ct_base)
+        {
+          ct_base->add_extension(schema, name);
+        }
+        else
+        {
+          xs__simpleType *st_base = simpleContent->extension->simpleTypePtr();
+          if (st_base)
+            st_base->add_extension(schema, name);
+          else if (is_builtin_qname(simpleContent->extension->base))
+            schema.builtinTypeDerivation(schema, simpleContent->extension->base, name);
+        }
+      }
+      else if (simpleContent->restriction)
+      {
+        xs__complexType *ct_base = simpleContent->restriction->complexTypePtr();
+        if (ct_base)
+        {
+          ct_base->add_restriction(schema, name);
+        }
+        else
+        {
+          xs__simpleType *st_base = simpleContent->restriction->simpleTypePtr();
+          if (st_base)
+            st_base->add_restriction(schema, name);
+          else if (is_builtin_qname(simpleContent->restriction->base))
+            schema.builtinTypeDerivation(schema, simpleContent->restriction->base, name);
+        }
+      }
+    }
+  }
   else if (complexContent)
+  {
     complexContent->traverse(schema);
+    if (name)
+    {
+      if (complexContent->extension)
+      {
+        xs__complexType *ct_base = complexContent->extension->complexTypePtr();
+        if (ct_base)
+          ct_base->add_extension(schema, name);
+      }
+      else if (complexContent->restriction)
+      {
+        xs__complexType *ct_base = complexContent->restriction->complexTypePtr();
+        if (ct_base)
+          ct_base->add_restriction(schema, name);
+      }
+    }
+  }
   else if (all)
+  {
     all->traverse(schema);
+  }
   else if (choice)
+  {
     choice->traverse(schema);
+  }
   else if (sequence)
+  {
     sequence->traverse(schema);
+  }
   else if (group)
+  {
     group->traverse(schema);
+  }
   else if (any)
+  {
     any->traverse(schema);
+  }
   for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
     (*at).traverse(schema);
   for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
@@ -1966,6 +2083,26 @@ void xs__complexType::mark()
 bool xs__complexType::is_used() const
 {
   return used;
+}
+
+void xs__complexType::add_extension(xs__schema& schema, xsd__NCName name)
+{
+  extensions.push_back(make_qname(schema, name));
+}
+
+void xs__complexType::add_restriction(xs__schema& schema, xsd__NCName name)
+{
+  restrictions.push_back(make_qname(schema, name));
+}
+
+const std::vector<xsd__QName>& xs__complexType::get_extensions() const
+{
+  return extensions;
+}
+
+const std::vector<xsd__QName>& xs__complexType::get_restrictions() const
+{
+  return restrictions;
 }
 
 int xs__simpleContent::traverse(xs__schema &schema)

@@ -4,9 +4,9 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: GSoap
-Description: SOAP C Web Services with SSL, ZLIB, DOM, and cookies
+Description: SOAP C Web Services with SSL, ZLIB, DOM
 Version: @VERSION@
 Requires:
 Libs: -L${libdir} -lgsoapssl
 Libs.private: @SAMPLE_SSL_LIBS@ @SAMPLE_EXTRA_LIBS@
-Cflags: @SOAPCPP2_IPV6@ @WSDL2H_EXTRA_FLAGS@ -DWITH_DOM -DWITH_COOKIES -I${includedir}
+Cflags: @SOAPCPP2_IPV6@ @WSDL2H_EXTRA_FLAGS@ -DWITH_DOM -I${includedir}

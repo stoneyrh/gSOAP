@@ -4,7 +4,7 @@
         WS-Security plugin demo application. See comments below.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -47,10 +47,15 @@ server.pem              server private key and certificate (do not distrubute)
 servercert.pem          server public certificate for public distribution
 cacert.pem              root CA certificate for public distribution
 
-Note:
+Notes:
 
 The wsse.h, wsu.h, ds.h, xenc.h c14n.h files are located in 'import'.
 The smdevp.*, mecevp.* and wsseapi.* files are located in 'plugin'.
+
+This demo uses SHA1 as an example, which is chosen to ensure that OpenSSL 0.9.7
+and earlier can handle the signed messages.  Recommended is SHA256 or greater.
+Just change SOAP_XYZ_SHA1 to SOAP_XYZ_SHA256 in the source code below, except
+in the token_handler() function.
 
 Usage: wssedemo abcdefghiklmnopqstxyz [port]
 
@@ -534,7 +539,7 @@ int main(int argc, char **argv)
 	if (nobody || addsig) /* do not sign body */
 	  soap_wsse_sign(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
 	else
-	  soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
+	  soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
       }
 
       /* auto-verification of signatures in server responses */
@@ -625,7 +630,7 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
     /* the above suffices to return an unsigned fault, but here we show how to return a signed fault: */
     soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert);
     soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
-    soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
+    soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
     return err;
   }
   if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
@@ -663,7 +668,7 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
     if (nobody || addsig)
       soap_wsse_sign(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
     else
-      soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
+      soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
   }
   /* sign the response message inside the unsigned enveloping body? If so, set wsu:Id of the response */
   if (addsig)
@@ -769,7 +774,7 @@ int ns1__sub(struct soap *soap, double a, double b, double *result)
       soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert);
       soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
     }
-    soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
+    soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
   }
   *result = a - b;
   return SOAP_OK;
@@ -817,7 +822,7 @@ int ns1__mul(struct soap *soap, double a, double b, double *result)
       soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert);
       soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
     }
-    soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
+    soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
   }
   *result = a * b;
   return SOAP_OK;

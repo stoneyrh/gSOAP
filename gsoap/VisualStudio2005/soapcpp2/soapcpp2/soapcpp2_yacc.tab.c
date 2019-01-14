@@ -3391,7 +3391,7 @@ yyreduce:
                             {
                               if (merge((Table*)p->info.typ->ref, sp->table))
                               {
-                                sprintf(errbuf, "member name clash in class '%s' declared at line %d", (yyvsp[-3].e)->sym->name, p->lineno);
+                                sprintf(errbuf, "member name clash in class '%s' declared at %s:%d", (yyvsp[-3].e)->sym->name, p->filename, p->lineno);
                                 semerror(errbuf);
                               }
                               p->info.typ->width += sp->offset;
@@ -3489,7 +3489,7 @@ yyreduce:
                             {
                               if (merge((Table*)p->info.typ->ref, sp->table))
                               {
-                                sprintf(errbuf, "member name clash in struct '%s' declared at line %d", (yyvsp[-3].e)->sym->name, p->lineno);
+                                sprintf(errbuf, "member name clash in struct '%s' declared at %s:%d", (yyvsp[-3].e)->sym->name, p->filename, p->lineno);
                                 semerror(errbuf);
                               }
                               p->info.typ->width += sp->offset;
@@ -3519,7 +3519,7 @@ yyreduce:
                             }
                             else
                             {
-                              sprintf(errbuf, "'struct %s' redeclaration (line %d)", (yyvsp[0].sym)->name, p->lineno);
+                              sprintf(errbuf, "'struct '%s' redeclaration (line %d)", (yyvsp[0].sym)->name, p->lineno);
                               semerror(errbuf);
                               (yyval.typ) = mkint();
                             }

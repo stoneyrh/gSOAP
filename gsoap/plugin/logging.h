@@ -89,7 +89,7 @@ struct logging_data {
 SOAP_FMAC1 int SOAP_FMAC2 logging(struct soap *soap, struct soap_plugin *plugin, void *arg);
 SOAP_FMAC1 void SOAP_FMAC2 soap_set_logging_inbound(struct soap *soap, FILE *fd);
 SOAP_FMAC1 void SOAP_FMAC2 soap_set_logging_outbound(struct soap *soap, FILE *fd);
-SOAP_FMAC1 void SOAP_FMAC2 soap_get_logging_stats(struct soap *soap, size_t *sent, size_t *recv);
+SOAP_FMAC1 void SOAP_FMAC2 soap_logging_stats(struct soap *soap, size_t *sent, size_t *recv);
 SOAP_FMAC1 void SOAP_FMAC2 soap_reset_logging_stats(struct soap *soap);
 
 #ifdef __cplusplus

@@ -5,6 +5,7 @@ To build the example services and clients, run 'make' in the 'samples'
 directory. The concurrent server examples require the Pthreads library. The SSL
 example requires OpenSSL. The webserver example also requires Zlib.
 
+async:                    Asynchronous messaging, optional HTTP pipelining (C)
 atom:                     Atom 1.0 reading and writing, REST GET/PUT (C++)
 autotest:                 Autotest code generation for XML databindings (C++)
 aws-s3:                   AWS S3 SOAP client (C++)
@@ -14,7 +15,7 @@ calc_vs2005:              VS2005 project calc client example (C++)
 calc_xcode:               Mac OS X Xcode project calc client example (C++)
 chaining:                 Chaining multiple separately-compiled services (C)
 chaining++:               Chaining multiple separately-compiled services (C++)
-curl:                     CURL plugin example (C,C++)
+curl:                     CURL plugin example (C/C++)
 databinding:              Data binding example for address.xsd addressbook (C++)
 dime:                     DIME attachment client and server (C++,pthreads)
 dom:                      DOM-based calculator client (C++)
@@ -61,6 +62,10 @@ plugin/cacerts.h/.c       Hard-coded SSL public certificates
 plugin/wsaapi.h/.c        WS-Addressing plugin
 plugin/wsseapi.h/.c       WS-Security plugin
 plugin/wsrmeapi.h/.c      WS-ReliableMessaging plugin
+plugin/httpda.h/.c        HTTP digest authentication
+plugin/httpget.h/.c       HTTP GET server support plugin
+plugin/httppost.h/.c      HTTP POST/PUT/PATCH server support plugin
+plugin/httppipe.h/.c      HTTP pipelining plugin
 
 DISCLAIMER
 

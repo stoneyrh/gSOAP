@@ -3,6 +3,11 @@
 
 	Example stand-alone SSL-secure gSOAP Web service.
 
+        Build steps:
+
+        soapcpp2 -c ssl.h
+        cc -o sslserver sslserver.c soapC.c soapServer.c stdsoap2.c thread_setup.c
+
 	SSL-enabled services use the gSOAP SSL interface. See sslclient.c and
 	sslserver.c for example code with instructions and the gSOAP
 	documentation more details.
@@ -37,19 +42,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "soapH.h"
 #include "ssl.nsmap"
-#include <signal.h>		/* defines SIGPIPE */
 #include "threads.h"		/* gsoap/plugin/threads.h */
+#include <signal.h>		/* defines SIGPIPE */
 
-/******************************************************************************\
- *
- *	Forward decls
- *
-\******************************************************************************/
+void sigpipe_handle(int x) { }
 
 void *process_request(struct soap*);
+
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
-void sigpipe_handle(int);
 
 /******************************************************************************\
  *
@@ -62,16 +63,17 @@ int main()
   SOAP_SOCKET m;
   THREAD_TYPE tid;
   struct soap soap, *tsoap;
-  /* Init SSL (can skip or call multiple times, engien inits automatically) */
+  /* Uncomment to call this first before all else if SSL is initialized elsewhere, e.g. in application code */
+  /* soap_ssl_noinit(); */
+  /* Init SSL before any threads are started (do this just once) */
   soap_ssl_init();
-  /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
   /* Need SIGPIPE handler on Unix/Linux systems to catch broken pipes: */
   signal(SIGPIPE, sigpipe_handle);
   /* set up lSSL ocks */
   if (CRYPTO_thread_setup())
   {
     fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   /* init gsoap context and SSL */
   soap_init(&soap);
@@ -103,13 +105,13 @@ int main()
   )
   {
     soap_print_fault(&soap, stderr);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   /* enable CRL, may need SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE when certs have no CRL
   if (soap_ssl_crl(&soap, ""))
   {
     soap_print_fault(&soap, stderr);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   */
   soap.accept_timeout = 60;	/* server times out after 1 minute inactivity */
@@ -118,7 +120,7 @@ int main()
   if (!soap_valid_socket(m))
   {
     soap_print_fault(&soap, stderr);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   fprintf(stderr, "Bind successful: socket = %d\n", m);
   for (;;)
@@ -188,7 +190,7 @@ int ns__add(struct soap *soap, double a, double b, double *result)
  *
 \******************************************************************************/
 
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL)
 
 struct CRYPTO_dynlock_value
 {
@@ -201,7 +203,7 @@ static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int li
 {
   struct CRYPTO_dynlock_value *value;
   (void)file; (void)line;
-  value = (struct CRYPTO_dynlock_value*)malloc(sizeof(struct CRYPTO_dynlock_value));
+  value = (struct CRYPTO_dynlock_value*)OPENSSL_malloc(sizeof(struct CRYPTO_dynlock_value));
   if (value)
     MUTEX_SETUP(value->mutex);
   return value;
@@ -220,7 +222,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char *fil
 {
   (void)file; (void)line;
   MUTEX_CLEANUP(l->mutex);
-  free(l);
+  OPENSSL_free(l);
 }
 
 static void locking_function(int mode, int n, const char *file, int line)
@@ -240,7 +242,7 @@ static unsigned long id_function()
 int CRYPTO_thread_setup()
 {
   int i;
-  mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+  mutex_buf = (MUTEX_TYPE*)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(MUTEX_TYPE));
   if (!mutex_buf)
     return SOAP_EOM;
   for (i = 0; i < CRYPTO_num_locks(); i++)
@@ -265,13 +267,13 @@ void CRYPTO_thread_cleanup()
   CRYPTO_set_dynlock_destroy_callback(NULL);
   for (i = 0; i < CRYPTO_num_locks(); i++)
     MUTEX_CLEANUP(mutex_buf[i]);
-  free(mutex_buf);
+  OPENSSL_free(mutex_buf);
   mutex_buf = NULL;
 }
 
 #else
 
-/* OpenSSL not used, e.g. GNUTLS is used */
+/* OpenSSL not used or OpenSSL prior to 1.1.0 */
 
 int CRYPTO_thread_setup()
 {
@@ -282,12 +284,3 @@ void CRYPTO_thread_cleanup()
 { }
 
 #endif
-
-/******************************************************************************\
- *
- *	SIGPIPE
- *
-\******************************************************************************/
-
-void sigpipe_handle(int x) { }
-

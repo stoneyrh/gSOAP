@@ -72,6 +72,15 @@ int is_builtin_qname(const char *QName)
   return 0;
 }
 
+xsd__QName make_qname(xs__schema& schema, const char *name)
+{
+  const char *URI = schema.targetNamespace ? schema.targetNamespace : "";
+  size_t n = strlen(URI) + strlen(name) + 3;
+  char *s = (char*)soap_malloc(schema.soap, n + 1);
+  (SOAP_SNPRINTF(s, n + 1, n), "\"%s\":%s", URI, name);
+  return s;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //      wsdl
@@ -185,7 +194,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
   if (!cwd)
     cwd = cwd_path;
   if (vflag)
-    fprintf(stderr, "\nOpening WSDL/WADL or XSD '%s' from '%s'\n", loc ? loc : "(stdin)", cwd ? cwd : "./");
+    fprintf(stderr, "\nOpening WSDL/WADL or XSD '%s' relative to '%s'\n", loc ? loc : "(stdin)", cwd ? cwd : "./");
   if (loc)
   {
     if (soap->recvfd > 2)
@@ -240,7 +249,8 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
       fprintf(stderr, "%*sConnecting to '%s' to retrieve '%s'...", 2*openfiles, "", location, loc);
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       {
-        fprintf(stderr, "\n\nError: connection failed\n");
+        fprintf(stderr, "\n\nError: failed to retrieve '%s'\n", loc);
+        soap_print_fault(soap, stderr);
         exit(1);
       }
       fprintf(stderr, " connected, receiving...\n");
@@ -248,6 +258,8 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
     }
     else
     {
+      if (!strncmp(loc, "file://", 7))
+        loc += 7;
       soap->recvfd = open(loc, O_RDONLY, 0);
       if (soap->recvfd < 0)
       {
@@ -262,14 +274,18 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
             s = strrchr(location, '\\');
 #endif
           if (s)
+          {
             *s = '\0';
-          size_t n = strlen(location);
-          soap_strcpy(location + n, l + 2 - n, "/");
-          ++n;
-          soap_strcpy(location + n, l + 2 - n, loc);
-          if (!strncmp(location, "file://", 7))
-            location += 7;
-          soap->recvfd = open(location, O_RDONLY, 0);
+            size_t n = strlen(location);
+            soap_strcpy(location + n, l + 2 - n, "/");
+            ++n;
+            soap_strcpy(location + n, l + 2 - n, loc);
+            if (!strncmp(location, "file://", 7))
+              location += 7;
+            soap->recvfd = open(location, O_RDONLY, 0);
+            if (vflag)
+              cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
+          }
         }
         if (soap->recvfd < 0 && import_path)
         {
@@ -283,6 +299,8 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
           if (!strncmp(location, "file://", 7))
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
+          if (vflag)
+            cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
         }
         if (soap->recvfd < 0)
         {
@@ -291,7 +309,9 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
         }
       }
       else
+      {
         location = soap_strdup(soap, loc);
+      }
       fprintf(stderr, "%*sReading '%s'...\n", 2*openfiles, "", location);
       openfiles++;
     }
@@ -379,7 +399,9 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
         redirs--;
       }
       else
+      {
         fprintf(stderr, "Authentication failed, use option -r:uid:pwd and (re)build with OpenSSL to enable digest authentication\n");
+      }
       return r;
     }
     else
@@ -400,7 +422,9 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
     soap->recvfd = -1;
   }
   else
+  {
     soap_closesock(soap);
+  }
   cwd_path = cwd_temp;
   return SOAP_OK;
 }
@@ -560,31 +584,27 @@ char *wsdl__definitions::absoluteLocation(const char *loc) const
 {
   if (!location)
     return soap_strdup(soap, loc);
-  if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8) || !strncmp(loc, "file://", 7))
+  if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8))
     return soap_strdup(soap, loc);
+  if (!strncmp(loc, "file://", 7))
+    loc += 7;
   const char *s = strrchr(location, '/');
   if (!s)
     return soap_strdup(soap, loc);
-  size_t k = 0;
-  while (!strncmp(loc, "../", 3))
+  if (strncmp(loc, "../", 3))
+    return soap_strdup(soap, loc);
+  while (!strncmp(loc, "../", 3) && s > location)
   {
+    while (--s >= location)
+      if (*s == '/')
+        break;
     loc += 3;
-    ++k;
   }
-  while (k > 0 && s > location)
-    if (*--s == '/')
-      --k;
-  loc -= 3*k;
-  size_t n = s - location;
+  size_t n = s - location + 1;
   size_t l = n + strlen(loc);
-  char *abs = (char*)soap_malloc(soap, l + 2);
-  soap_strncpy(abs, l + 2, location, n);
-  if (n > 0)
-  {
-    soap_strcpy(abs + n, l + 2 - n, "/");
-    ++n;
-  }
-  soap_strcpy(abs + n, l + 2 - n, loc);
+  char *abs = (char*)soap_malloc(soap, l + 1);
+  soap_strncpy(abs, l + 1, location, n);
+  soap_strcpy(abs + n, l + 1 - n, loc);
   return abs;
 }
 
@@ -610,10 +630,21 @@ void wsdl__definitions::builtinType(const char *type)
   builtinTypeSet.insert(type);
 }
 
+void wsdl__definitions::builtinTypeDerivation(xs__schema& schema, const char *base, const char *derived)
+{
+  builtinTypeMap[make_qname(schema, derived)] = base;
+}
+
 void wsdl__definitions::builtinTypes(const SetOfString& types)
 {
   for (SetOfString::const_iterator tp = types.begin(); tp != types.end(); ++tp)
     builtinTypeSet.insert(*tp);
+}
+
+void wsdl__definitions::builtinTypeDerivations(const MapOfStringToString& derivations)
+{
+  for (MapOfStringToString::const_iterator dp = derivations.begin(); dp != derivations.end(); ++dp)
+    builtinTypeMap.insert(*dp);
 }
 
 void wsdl__definitions::builtinElement(const char *element)
@@ -641,6 +672,11 @@ void wsdl__definitions::builtinAttributes(const SetOfString& attributes)
 const SetOfString& wsdl__definitions::builtinTypes() const
 {
   return builtinTypeSet;
+}
+
+const MapOfStringToString& wsdl__definitions::builtinTypeDerivations() const
+{
+  return builtinTypeMap;
 }
 
 const SetOfString& wsdl__definitions::builtinElements() const
@@ -1932,6 +1968,7 @@ int wsdl__types::traverse(wsdl__definitions& definitions)
       for (SetOfString::const_iterator i = (*schema5)->builtinTypes().begin(); i != (*schema5)->builtinTypes().end(); ++i)
         cerr << " Built-in schema type '" << (*i) << "'" << endl;
     definitions.builtinTypes((*schema5)->builtinTypes());
+    definitions.builtinTypeDerivations((*schema5)->builtinTypeDerivations());
     definitions.builtinElements((*schema5)->builtinElements());
     definitions.builtinAttributes((*schema5)->builtinAttributes());
   }
@@ -2017,6 +2054,7 @@ int wsdl__import::traverse(wsdl__definitions& definitions)
     definitionsRef->traverse();
     // collect imported artifacts into parent collections
     definitions.builtinTypes(definitionsRef->builtinTypes());
+    definitions.builtinTypeDerivations(definitionsRef->builtinTypeDerivations());
     definitions.builtinElements(definitionsRef->builtinElements());
     definitions.builtinAttributes(definitionsRef->builtinAttributes());
   }

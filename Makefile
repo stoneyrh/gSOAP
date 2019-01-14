@@ -367,7 +367,7 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-SUBDIRS = gsoap
+SUBDIRS = . gsoap
 CLEANFILES = *~
 VERYVERYCLEANFILES = *~ configure Makefile.in compile config.guess config.sub config.log autoscan.log \
 depcomp install-sh missing mkinstalldirs stamp-h.in config.h.in \

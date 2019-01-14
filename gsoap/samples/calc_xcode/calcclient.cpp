@@ -44,8 +44,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 const char server[] = "http://websrv.cs.fsu.edu/~engelen/calcserver.cgi";
 
 int main(int argc, char **argv)
-{ if (argc < 4)
-  { fprintf(stderr, "Usage: [add|sub|mul|div|pow] num num\n");
+{
+  if (argc < 4)
+  {
+    fprintf(stderr, "Usage: [add|sub|mul|div|pow] num num\n");
     exit(0);
   }
   double a, b, result;
@@ -54,7 +56,8 @@ int main(int argc, char **argv)
   calcProxy calc;
   calc.soap_endpoint = server;
   switch (*argv[1])
-  { case 'a':
+  {
+    case 'a':
       calc.add(a, b, &result);
       break;
     case 's':
@@ -80,4 +83,3 @@ int main(int argc, char **argv)
   calc.destroy(); /* clean up mem */
   return 0;
 }
-

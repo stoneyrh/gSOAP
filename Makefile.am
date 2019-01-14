@@ -1,6 +1,6 @@
 ####### This is the input file for automake, which will generate Makefile.in ##########
 
-SUBDIRS = gsoap
+SUBDIRS = . gsoap
 CLEANFILES = *~
 VERYVERYCLEANFILES = *~ configure Makefile.in compile config.guess config.sub config.log autoscan.log \
 depcomp install-sh missing mkinstalldirs stamp-h.in config.h.in \

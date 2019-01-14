@@ -1048,7 +1048,7 @@ type    : VOID          { $$ = mkvoid(); }
                             {
                               if (merge((Table*)p->info.typ->ref, sp->table))
                               {
-                                sprintf(errbuf, "member name clash in class '%s' declared at line %d", $1->sym->name, p->lineno);
+                                sprintf(errbuf, "member name clash in class '%s' declared at %s:%d", $1->sym->name, p->filename, p->lineno);
                                 semerror(errbuf);
                               }
                               p->info.typ->width += sp->offset;
@@ -1129,7 +1129,7 @@ type    : VOID          { $$ = mkvoid(); }
                             {
                               if (merge((Table*)p->info.typ->ref, sp->table))
                               {
-                                sprintf(errbuf, "member name clash in struct '%s' declared at line %d", $1->sym->name, p->lineno);
+                                sprintf(errbuf, "member name clash in struct '%s' declared at %s:%d", $1->sym->name, p->filename, p->lineno);
                                 semerror(errbuf);
                               }
                               p->info.typ->width += sp->offset;
@@ -1154,7 +1154,7 @@ type    : VOID          { $$ = mkvoid(); }
                             }
                             else
                             {
-                              sprintf(errbuf, "'struct %s' redeclaration (line %d)", $2->name, p->lineno);
+                              sprintf(errbuf, "'struct '%s' redeclaration (line %d)", $2->name, p->lineno);
                               semerror(errbuf);
                               $$ = mkint();
                             }

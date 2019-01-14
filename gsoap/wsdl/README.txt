@@ -144,35 +144,39 @@ COMMAND LINE OPTIONS
 -c      generate C source code
 -c++    generate C++ source code (default)
 -c++11  generate C++11 source code
+-D      make attribute members with default/fixed values optional with pointers
 -d      use DOM to populate xs:any and xsd:anyType elements
--D      make attribute members with default values optional with pointers
 -e      don't qualify enum names
--f      generate flat C++ class hierarchy
--g      generate global top-level element declarations
--h      display help info
--Ipath  use path to find files
+-F      add transient members to structs to simulate struct-type derivation in C
+-f      generate flat C++ class hierarchy by removing inheritance
+-g      generate global top-level element and attribute declarations
+-h      display help info and exit
+-Ipath  use path to locate WSDL and XSD files
 -i      don't import (advanced option)
 -j	don't generate SOAP_ENV__Header and SOAP_ENV__Detail definitions
 -k	don't generate SOAP_ENV__Header mustUnderstand qualifiers
--l      include license information in output
--m      use xsd.h module to import primitive types
+-L      generate less documentation by removing generic @note comments
+-l      display license information
 -M      suppress error "must understand element with wsdl:required='true'"
+-m      use xsd.h module to import primitive types
 -Nname  use name for service prefixes to produce a service for each binding
 -nname  use name as the base namespace prefix instead of 'ns'
 -O1     optimize by omitting duplicate choice/sequence members
 -O2     optimize -O1 and omit unused schema types (unreachable from roots)
+-O3     optimize -O2 and omit unused schema root attributes
+-O4     optimize -O3 and omit unused schema root elements (use only with WSDLs)
 -ofile  output to file
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType
 -p      create polymorphic types with C++ inheritance from base xsd__anyType
 -qname  use name for the C++ namespace for all service declarations
 -R      generate REST operations for REST bindings specified in a WSDL
 -rhost[:port[:uid:pwd]]
-        connect via proxy host, port, and proxy credentials
+        connect via proxy host, port, and proxy credentials uid and pwd
 -r:uid:pwd
-        connect with authentication credentials (digest auth requires SSL)
+        connect with authentication credentials uid and pwd
 -R      generate REST operations for REST bindings in the WSDL
--s      don't generate STL code (no std::string and no std::vector)
 -Sname  use name instead of 'soap' for the C++ class member with soap context
+-s      don't generate STL code (no std::string and no std::vector)
 -tfile  use type map file instead of the default file typemap.dat
 -u      don't generate unions
 -V      display the current version and exit
@@ -188,7 +192,7 @@ COMMAND LINE OPTIONS
 -z5     compatibility up to 2.8.15: don't include minor improvements
 -z6     compatibility up to 2.8.17: don't include minor improvements
 -z7     compatibility up to 2.8.59: don't generate std::vector of class of union
--_      don't generate _USCORE (replace with UNICODE _x005f)
+-_      don't generate _USCORE (replace with Unicode code point _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 
 DOCUMENTATION

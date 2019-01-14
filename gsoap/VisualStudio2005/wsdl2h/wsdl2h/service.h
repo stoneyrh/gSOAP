@@ -39,7 +39,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "wsdlH.h"
 
 class Message
-{ public:
+{
+  public:
     wsdl__message *message;
     const char *name;
     const char *URI;
@@ -65,7 +66,8 @@ class Message
 typedef map<const char*, Message*, ltstr> MapOfStringToMessage;
 
 class Operation
-{ public:
+{
+  public:
     const wsdl__operation *operation;
     const char *prefix;
     const char *URI;
@@ -89,7 +91,8 @@ class Operation
 };
 
 class Service
-{ public:
+{
+  public:
     const char *prefix;			// a gSOAP service has a unique namespace
     const char *URI;
     const char *name;			// binding name
@@ -115,7 +118,8 @@ class Service
 typedef map<const char*, Service*, ltstr> MapOfStringToService;
 
 class Definitions
-{ public:
+{
+  public:
     Types types;				// to process schema type information
     MapOfStringToService services;		// service information gathered
     bool soap12;

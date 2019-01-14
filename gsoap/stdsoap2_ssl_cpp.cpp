@@ -1,10 +1,10 @@
 /*
-        stdsoap2.c[pp] 2.8.74
+        stdsoap2.c[pp] 2.8.75
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20874
+#define GSOAP_LIB_VERSION 20875
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.74 2018-12-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.75 2019-01-14 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.74 2018-12-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.75 2019-01-14 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -988,7 +988,7 @@ soap_query_send_key(struct soap *soap, const char *s)
   if (!soap->body && soap_send_raw(soap, "&", 1))
     return soap->error;
   soap->body = 0;
-  (void)soap_encode_url(s, soap->msgbuf, sizeof(soap->msgbuf));
+  (void)soap_encode_url(s, soap->msgbuf, (int)sizeof(soap->msgbuf)); /* msgbuf length is max SOAP_TMPLEN or just 1024 bytes */
   return soap_send(soap, soap->msgbuf);
 }
 #endif
@@ -1003,7 +1003,7 @@ soap_query_send_val(struct soap *soap, const char *s)
 {
   if (soap_send_raw(soap, "=", 1))
     return soap->error;
-  (void)soap_encode_url(s, soap->msgbuf, sizeof(soap->msgbuf));
+  (void)soap_encode_url(s, soap->msgbuf, (int)sizeof(soap->msgbuf)); /* msgbuf length is max SOAP_TMPLEN or just 1024 bytes */
   return soap_send(soap, soap->msgbuf);
 }
 #endif
@@ -3794,8 +3794,14 @@ soap_match_tag(struct soap *soap, const char *tag1, const char *tag2)
     if (!(soap->mode & SOAP_XML_IGNORENS) || SOAP_STRCMP(s + 1, tag2)) /* always fails (except when ignoring ns) */
       return SOAP_TAG_MISMATCH;
   }
-  else if (SOAP_STRCMP(tag1, tag2) || ((soap->mode & SOAP_XML_STRICT) && !(soap->mode & SOAP_XML_IGNORENS) && soap_match_namespace(soap, tag1, tag2, 0, 0))) /* strict checking: default namespace must be null namespace */
+  else if (SOAP_STRCMP(tag1, tag2)
+#ifndef WITH_NOEMPTYNAMESPACES
+        || ((soap->mode & SOAP_XML_STRICT) && !(soap->mode & SOAP_XML_IGNORENS) && soap_match_namespace(soap, tag1, tag2, 0, 0)) /* strict checking: default namespace must be null namespace */
+#endif
+      )
+  {
     return SOAP_TAG_MISMATCH;
+  }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Tags match: '%s' '%s'\n", tag1, tag2));
   return SOAP_OK;
 }
@@ -4040,7 +4046,7 @@ soap_ssl_crl(struct soap *soap, const char *crlfile)
 #ifdef WITH_OPENSSL
   if (crlfile && soap->ctx)
   {
-#if (OPENSSL_VERSION_NUMBER > 0x00907000L)
+#if OPENSSL_VERSION_NUMBER > 0x00907000L
     X509_STORE *store = SSL_CTX_get_cert_store(soap->ctx);
     if (*crlfile)
     {
@@ -4203,11 +4209,7 @@ soap_ssl_error(struct soap *soap, int ret, int err)
         break;
     }
   }
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
   ERR_clear_error();
-#else
-  ERR_remove_state(0);
-#endif
   return soap->msgbuf;
 #endif
 #ifdef WITH_GNUTLS
@@ -4247,7 +4249,7 @@ static int
 ssl_auth_init(struct soap *soap)
 {
 #ifdef WITH_OPENSSL
-#if (OPENSSL_VERSION_NUMBER >= 0x10101000L)
+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
   int minv = 0, maxv = 0;
 #endif
   long flags = SSL_OP_ALL;
@@ -4260,7 +4262,7 @@ ssl_auth_init(struct soap *soap)
   ERR_clear_error();
   if (!soap->ctx)
   {
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
     /* TLS_method: a TLS/SSL connection established may understand the SSLv3, TLSv1, TLSv1.1 and TLSv1.2 protocols. */
     soap->ctx = SSL_CTX_new(TLS_method());
 #else
@@ -4348,7 +4350,7 @@ ssl_auth_init(struct soap *soap)
 #endif
   if ((soap->ssl_flags & SOAP_SSL_RSA))
   {
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
     if (SSL_CTX_need_tmp_RSA(soap->ctx))
 #endif
     {
@@ -4394,7 +4396,7 @@ ssl_auth_init(struct soap *soap)
   /* enable all TSLv1 protocols and disable SSLv3 by default if no SSL/TLS flags are set */
   if (!(soap->ssl_flags & SOAP_SSLv3_TLSv1))
     soap->ssl_flags = SOAP_TLSv1;
-#if (OPENSSL_VERSION_NUMBER >= 0x10101000L)
+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
   if ((soap->ssl_flags & SOAP_SSLv3))
     minv = SSL3_VERSION;
   else if ((soap->ssl_flags & SOAP_TLSv1_0))
@@ -4423,7 +4425,7 @@ ssl_auth_init(struct soap *soap)
   flags = SSL_OP_NO_SSLv2;
   if (!(soap->ssl_flags & SOAP_SSLv3))
     flags |= SSL_OP_NO_SSLv3;
-#if (OPENSSL_VERSION_NUMBER >= 0x10001000L)
+#if OPENSSL_VERSION_NUMBER >= 0x10001000L
   if (!(soap->ssl_flags & SOAP_TLSv1_0))
     flags |= SSL_OP_NO_TLSv1;
   if (!(soap->ssl_flags & SOAP_TLSv1_1))
@@ -4444,7 +4446,7 @@ ssl_auth_init(struct soap *soap)
   else
     mode = SSL_VERIFY_NONE;
   SSL_CTX_set_verify(soap->ctx, mode, soap->fsslverify);
-#if (OPENSSL_VERSION_NUMBER < 0x00905100L)
+#if OPENSSL_VERSION_NUMBER < 0x00905100L
   SSL_CTX_set_verify_depth(soap->ctx, 1);
 #else
   SSL_CTX_set_verify_depth(soap->ctx, 9);
@@ -4738,19 +4740,12 @@ soap_ssl_accept(struct soap *soap)
   BIO *bio;
   int err = SSL_ERROR_NONE;
   int retries, r, s;
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
   ERR_clear_error();
-#else
-  ERR_remove_state(0);
-#endif
   if (!soap_valid_socket(sk))
     return soap_set_receiver_error(soap, "SSL/TLS error", "No socket in soap_ssl_accept()", SOAP_SSL_ERROR);
   soap->ssl_flags &= ~SOAP_SSL_CLIENT;
   if (!soap->ctx && (soap->error = soap->fsslauth(soap)) != SOAP_OK)
-  {
-    soap_closesock(soap);
-    return soap->error;
-  }
+    return soap_closesock(soap);
   if (!soap->ssl)
   {
     soap->ssl = SSL_new(soap->ctx);
@@ -4803,8 +4798,8 @@ soap_ssl_accept(struct soap *soap)
     SOAP_SOCKBLOCK(sk)
   if (r <= 0)
   {
-    soap_closesock(soap);
-    return soap_set_receiver_error(soap, soap_ssl_error(soap, r, err), "SSL_accept() failed in soap_ssl_accept()", SOAP_SSL_ERROR);
+    soap_set_receiver_error(soap, soap_ssl_error(soap, r, err), "SSL_accept() failed in soap_ssl_accept()", SOAP_SSL_ERROR);
+    return soap_closesock(soap);
   }
   if ((soap->ssl_flags & SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION))
   {
@@ -4827,16 +4822,10 @@ soap_ssl_accept(struct soap *soap)
 #ifdef WITH_GNUTLS
   int retries, r, s;
   if (!soap_valid_socket(sk))
-  {
-    soap_closesock(soap);
     return soap_set_receiver_error(soap, "SSL/TLS error", "No socket in soap_ssl_accept()", SOAP_SSL_ERROR);
-  }
   soap->ssl_flags &= ~SOAP_SSL_CLIENT;
   if (!soap->session && (soap->error = soap->fsslauth(soap)) != SOAP_OK)
-  {
-    soap_closesock(soap);
-    return soap->error;
-  }
+    return soap_closesock(soap);
   gnutls_transport_set_ptr(soap->session, (gnutls_transport_ptr_t)(long)sk);
   /* default timeout: 10 sec retries, 100 times 0.1 sec */
   retries = 100;
@@ -4875,8 +4864,8 @@ soap_ssl_accept(struct soap *soap)
     SOAP_SOCKBLOCK(sk)
   if (r)
   {
-    soap_closesock(soap);
-    return soap_set_receiver_error(soap, soap_ssl_error(soap, r, 0), "SSL/TLS handshake failed", SOAP_SSL_ERROR);
+    soap_set_receiver_error(soap, soap_ssl_error(soap, r, 0), "SSL/TLS handshake failed", SOAP_SSL_ERROR);
+    return soap_closesock(soap);
   }
   if ((soap->ssl_flags & SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION))
   {
@@ -4891,6 +4880,9 @@ soap_ssl_accept(struct soap *soap)
 #ifdef WITH_SYSTEMSSL
   gsk_iocallback local_io = { ssl_recv, ssl_send, NULL, NULL, NULL, NULL };
   int retries, r, s;
+  if (!soap_valid_socket(sk))
+    return soap_set_receiver_error(soap, "SSL/TLS error", "No socket in soap_ssl_accept()", SOAP_SSL_ERROR);
+  soap->ssl_flags &= ~SOAP_SSL_CLIENT;
   /* default timeout: 10 sec retries, 100 times 0.1 sec */
   retries = 100;
   if (soap->recv_timeout || soap->send_timeout)
@@ -4941,7 +4933,10 @@ soap_ssl_accept(struct soap *soap)
   if (!soap->recv_timeout && !soap->send_timeout)
     SOAP_SOCKBLOCK(sk)
   if (r != GSK_OK)
-    return soap_set_receiver_error(soap, gsk_strerror(r), "gsk_secure_socket_init() failed in soap_ssl_accept()", SOAP_SSL_ERROR);
+  {
+    soap_set_receiver_error(soap, gsk_strerror(r), "gsk_secure_socket_init() failed in soap_ssl_accept()", SOAP_SSL_ERROR);
+    return soap_closesock(soap);
+  }
 #endif
   soap->imode |= SOAP_ENC_SSL;
   soap->omode |= SOAP_ENC_SSL;
@@ -5666,13 +5661,10 @@ again:
       soap->omode |= SOAP_IO_BUFFER;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connecting to %s proxy server %s for destination endpoint %s\n", soap->proxy_http_version, soap->proxy_host, endpoint));
 #ifdef WITH_NTLM
-      if (soap->ntlm_challenge)
+      if (soap->ntlm_challenge && soap_ntlm_handshake(soap, SOAP_CONNECT, endpoint, host, port))
       {
-        if (soap_ntlm_handshake(soap, SOAP_CONNECT, endpoint, host, port))
-        {
-          soap->fclosesocket(soap, sk);
-          return soap->socket = SOAP_INVALID_SOCKET;
-        }
+        soap->fclosesocket(soap, sk);
+        return soap->socket = SOAP_INVALID_SOCKET;
       }
 #endif
       if (soap_init_send(soap))
@@ -5717,11 +5709,7 @@ again:
       soap->mode = m;
     }
 #ifdef WITH_OPENSSL
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     ERR_clear_error();
-#else
-    ERR_remove_state(0);
-#endif
     soap->ssl_flags |= SOAP_SSL_CLIENT;
     if (!soap->ctx && (soap->error = soap->fsslauth(soap)) != SOAP_OK)
     {
@@ -5741,7 +5729,9 @@ again:
       }
     }
     else
+    {
       SSL_clear(soap->ssl);
+    }
     if (soap->session)
     {
       if (!strcmp(soap->session_host, host) && soap->session_port == port)
@@ -5749,7 +5739,7 @@ again:
       SSL_SESSION_free(soap->session);
       soap->session = NULL;
     }
-#if (OPENSSL_VERSION_NUMBER >= 0x1000000aL)
+#if OPENSSL_VERSION_NUMBER >= 0x1000000aL
     if (!(soap->ssl_flags & SOAP_SSLv3) && !SSL_set_tlsext_host_name(soap->ssl, host))
     {
       soap_set_receiver_error(soap, "SSL/TLS error", "SNI failed", SOAP_SSL_ERROR);
@@ -5786,12 +5776,13 @@ again:
       retries = 1;
       SOAP_SOCKBLOCK(sk)
     }
-    /* Try connecting until success or timeout (when nonblocking) */
+    err = SSL_ERROR_NONE;
+    /* Try connecting until success or timeout */
     do
     {
       if ((r = SSL_connect(soap->ssl)) <= 0)
       {
-        int err = SSL_get_error(soap->ssl, r);
+        err = SSL_get_error(soap->ssl, r);
         if (err == SSL_ERROR_WANT_CONNECT || err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
         {
           int s;
@@ -5800,12 +5791,7 @@ again:
           else
             s = tcp_select(soap, sk, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
           if (s < 0)
-          {
-            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL_connect() select error in tcp_connect\n"));
-            soap_set_receiver_error(soap, soap_ssl_error(soap, r, err), "SSL_connect() select error in tcp_connect()", SOAP_TCP_ERROR);
-            soap->fclosesocket(soap, sk);
-            return soap->socket = SOAP_INVALID_SOCKET;
-          }
+            break;
           if (s == 0 && retries-- <= 0)
           {
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL/TLS connect timeout\n"));
@@ -5816,16 +5802,20 @@ again:
         }
         else
         {
-          soap_set_receiver_error(soap, soap_ssl_error(soap, r, err), "SSL_connect() error in tcp_connect()", SOAP_SSL_ERROR);
-          soap->fclosesocket(soap, sk);
-          return soap->socket = SOAP_INVALID_SOCKET;
+          soap->errnum = soap_socket_errno(sk);
+          break;
         }
       }
     } while (!SSL_is_init_finished(soap->ssl));
+    if (r <= 0)
+    {
+      soap_set_sender_error(soap, soap_ssl_error(soap, r, err), "SSL/TLS handshake failed", SOAP_SSL_ERROR);
+      soap->fclosesocket(soap, sk);
+      return soap->socket = SOAP_INVALID_SOCKET;
+    }
     /* Check server credentials when required */
     if ((soap->ssl_flags & SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION))
     {
-      int err;
       if ((err = SSL_get_verify_result(soap->ssl)) != X509_V_OK)
       {
         soap_set_sender_error(soap, X509_verify_cert_error_string(err), "SSL/TLS certificate presented by peer cannot be verified in tcp_connect()", SOAP_SSL_ERROR);
@@ -5836,7 +5826,7 @@ again:
       {
         X509_NAME *subj;
         STACK_OF(CONF_VALUE) *val = NULL;
-#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
+#if OPENSSL_VERSION_NUMBER >= 0x0090800fL
         GENERAL_NAMES *names = NULL;
 #else
         int ext_count;
@@ -5849,7 +5839,7 @@ again:
           soap->fclosesocket(soap, sk);
           return soap->socket = SOAP_INVALID_SOCKET;
         }
-#if (OPENSSL_VERSION_NUMBER < 0x0090800fL)
+#if OPENSSL_VERSION_NUMBER < 0x0090800fL
         ext_count = X509_get_ext_count(peer);
         if (ext_count > 0)
         {
@@ -5867,13 +5857,13 @@ again:
               data = ext->value->data;
               if (data)
               {
-#if (OPENSSL_VERSION_NUMBER > 0x00907000L)
+#if OPENSSL_VERSION_NUMBER > 0x00907000L
                 void *ext_data;
                 if (meth->it)
                   ext_data = ASN1_item_d2i(NULL, &data, ext->value->length, ASN1_ITEM_ptr(meth->it));
                 else
                 {
-#if (OPENSSL_VERSION_NUMBER > 0x0090800fL)
+#if OPENSSL_VERSION_NUMBER > 0x0090800fL
                   ext_data = meth->d2i(NULL, (const unsigned char **)&data, ext->value->length);
 #else
                   ext_data = meth->d2i(NULL, &data, ext->value->length);
@@ -6031,20 +6021,26 @@ again:
       retries = 1;
       SOAP_SOCKBLOCK(sk)
     }
+    /* Try connecting until success or timeout */
     while ((r = gnutls_handshake(soap->session)))
     {
-      int s;
       /* GNUTLS repeat handhake when GNUTLS_E_AGAIN */
-      if (retries-- <= 0)
-        break;
       if (r == GNUTLS_E_AGAIN || r == GNUTLS_E_INTERRUPTED)
       {
+        int s;
         if (!gnutls_record_get_direction(soap->session))
           s = tcp_select(soap, sk, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
         else
           s = tcp_select(soap, sk, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
         if (s < 0)
           break;
+        if (s == 0 && retries-- <= 0)
+        {
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL/TLS connect timeout\n"));
+          soap_set_receiver_error(soap, "Timeout", "SSL_connect() failed in tcp_connect()", SOAP_TCP_ERROR);
+          soap->fclosesocket(soap, sk);
+          return soap->socket = SOAP_INVALID_SOCKET;
+        }
       }
       else
       {
@@ -6060,11 +6056,11 @@ again:
     }
     if ((soap->ssl_flags & SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION))
     {
-      const char *err = ssl_verify(soap, host);
-      if (err)
+      const char *s = ssl_verify(soap, host);
+      if (s)
       {
         soap->fclosesocket(soap, sk);
-        soap->error = soap_set_sender_error(soap, "SSL/TLS verify error", err, SOAP_SSL_ERROR);
+        soap->error = soap_set_sender_error(soap, "SSL/TLS verify error", s, SOAP_SSL_ERROR);
         return soap->socket = SOAP_INVALID_SOCKET;
       }
     }
@@ -6098,54 +6094,56 @@ again:
       retries = 1;
       SOAP_SOCKBLOCK(sk)
     }
-    err = gsk_secure_socket_open(soap->ctx, &soap->ssl);
-    if (err == GSK_OK)
-      err = gsk_attribute_set_numeric_value(soap->ssl, GSK_FD, sk);
-    if (err == GSK_OK)
-      err = gsk_attribute_set_buffer(soap->ssl, GSK_KEYRING_LABEL, soap->cafile, 0); /* Certificate label */
-    if (err == GSK_OK)
-      err = gsk_attribute_set_enum(soap->ssl, GSK_SESSION_TYPE, GSK_CLIENT_SESSION);
-    if (err == GSK_OK)
-      err = gsk_attribute_set_buffer(soap->ssl, GSK_V3_CIPHER_SPECS_EXPANDED, "0035002F000A", 0);
-    if (err == GSK_OK)
-      err = gsk_attribute_set_enum(soap->ssl, GSK_V3_CIPHERS, GSK_V3_CIPHERS_CHAR4);
-    if (err == GSK_OK)
-      err = gsk_attribute_set_callback(soap->ssl, GSK_IO_CALLBACK, &local_io);
-    if (err != GSK_OK)
+    r = gsk_secure_socket_open(soap->ctx, &soap->ssl);
+    if (r == GSK_OK)
+      r = gsk_attribute_set_numeric_value(soap->ssl, GSK_FD, sk);
+    if (r == GSK_OK)
+      r = gsk_attribute_set_buffer(soap->ssl, GSK_KEYRING_LABEL, soap->cafile, 0); /* Certificate label */
+    if (r == GSK_OK)
+      r = gsk_attribute_set_enum(soap->ssl, GSK_SESSION_TYPE, GSK_CLIENT_SESSION);
+    if (r == GSK_OK)
+      r = gsk_attribute_set_buffer(soap->ssl, GSK_V3_CIPHER_SPECS_EXPANDED, "0035002F000A", 0);
+    if (r == GSK_OK)
+      r = gsk_attribute_set_enum(soap->ssl, GSK_V3_CIPHERS, GSK_V3_CIPHERS_CHAR4);
+    if (r == GSK_OK)
+      r = gsk_attribute_set_callback(soap->ssl, GSK_IO_CALLBACK, &local_io);
+    if (r != GSK_OK)
     {
-      soap_set_receiver_error(soap, gsk_strerror(err), "SYSTEM SSL error in tcp_connect()", SOAP_SSL_ERROR);
+      soap_set_receiver_error(soap, gsk_strerror(r), "SYSTEM SSL error in tcp_connect()", SOAP_SSL_ERROR);
       return soap->socket = SOAP_INVALID_SOCKET;
     }
-    /* Try connecting until success or timeout (when nonblocking) */
-    while ((err = gsk_secure_socket_init(soap->ssl)) != GSK_OK)
+    /* Try connecting until success or timeout */
+    while ((r = gsk_secure_socket_init(soap->ssl)) != GSK_OK)
     {
-      if (err == GSK_WOULD_BLOCK_READ || err == GSK_WOULD_BLOCK_WRITE)
+      if (r == GSK_WOULD_BLOCK_READ || r == GSK_WOULD_BLOCK_WRITE)
       {
-        if (err == GSK_WOULD_BLOCK_READ)
-          r = tcp_select(soap, sk, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
+        int s;
+        if (r == GSK_WOULD_BLOCK_READ)
+          s = tcp_select(soap, sk, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
         else
-          r = tcp_select(soap, sk, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
-        if (r < 0)
-        {
-          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL_connect/select error in tcp_connect\n"));
-          soap_set_receiver_error(soap, gsk_strerror(err), "gsk_secure_socket_init failed in tcp_connect()", SOAP_TCP_ERROR);
-          soap->fclosesocket(soap, sk);
-          return soap->socket = SOAP_INVALID_SOCKET;
-        }
-        if (r == 0 && retries-- <= 0)
+          s = tcp_select(soap, sk, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
+        if (s < 0)
+          break;
+        if (s == 0 && retries-- <= 0)
         {
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL/TLS connect timeout\n"));
-          soap_set_receiver_error(soap, "Timeout", "in tcp_connect()", SOAP_TCP_ERROR);
+          soap_set_receiver_error(soap, "Timeout", "SSL_connect() failed in tcp_connect()", SOAP_TCP_ERROR);
           soap->fclosesocket(soap, sk);
           return soap->socket = SOAP_INVALID_SOCKET;
         }
       }
       else
       {
-        soap_set_receiver_error(soap, gsk_strerror(err), "gsk_secure_socket_init() failed in tcp_connect()", SOAP_SSL_ERROR);
-        soap->fclosesocket(soap, sk);
-        return soap->socket = SOAP_INVALID_SOCKET;
+        soap->errnum = soap_socket_errno(sk);
+        break;
       }
+    }
+    if (r != GSK_OK)
+    {
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL_connect/select error in tcp_connect\n"));
+      soap_set_receiver_error(soap, gsk_strerror(r), "SSL/TLS handshake failed", SOAP_SSL_ERROR);
+      soap->fclosesocket(soap, sk);
+      return soap->socket = SOAP_INVALID_SOCKET;
     }
 #endif
     soap->imode |= SOAP_ENC_SSL;
@@ -6444,11 +6442,7 @@ tcp_disconnect(struct soap *soap)
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connection lost...\n"));
             soap->fclosesocket(soap, soap->socket);
             soap->socket = SOAP_INVALID_SOCKET;
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
             ERR_clear_error();
-#else
-            ERR_remove_state(0);
-#endif
             SSL_free(soap->ssl);
             soap->ssl = NULL;
             return SOAP_OK;
@@ -6470,11 +6464,7 @@ tcp_disconnect(struct soap *soap)
     }
     SSL_free(soap->ssl);
     soap->ssl = NULL;
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     ERR_clear_error();
-#else
-    ERR_remove_state(0);
-#endif
   }
 #endif
 #ifdef WITH_GNUTLS
@@ -6731,24 +6721,28 @@ soap_poll(struct soap *soap)
       r = -1;
   }
   else if (soap_valid_socket(soap->master))
-    r = tcp_select(soap, soap->master, SOAP_TCP_SELECT_SND, 0);
+  {
+    r = tcp_select(soap, soap->master, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, 0);
+  }
   else
+  {
     return SOAP_OK; /* OK when no socket! */
+  }
   if (r > 0)
   {
+    int t;
 #ifdef WITH_OPENSSL
     if ((soap->imode & SOAP_ENC_SSL))
     {
       if (soap_valid_socket(soap->socket)
        && (r & SOAP_TCP_SELECT_SND)
        && (!(r & SOAP_TCP_SELECT_RCV)
-        || SSL_peek(soap->ssl, soap->tmpbuf, 1) > 0))
+        || SSL_peek(soap->ssl, (char*)&t, 1) > 0))
         return SOAP_OK;
     }
     else
 #endif
     {
-      int t;
       if (soap_valid_socket(soap->socket)
        && (r & SOAP_TCP_SELECT_SND)
        && (!(r & SOAP_TCP_SELECT_RCV)
@@ -6758,13 +6752,11 @@ soap_poll(struct soap *soap)
   }
   else if (r < 0)
   {
-    if ((soap_valid_socket(soap->master) || soap_valid_socket(soap->socket)) && soap_socket_errno(soap->master) != SOAP_EINTR)
-    {
-      soap_set_receiver_error(soap, tcp_error(soap), "select failed in soap_poll()", SOAP_TCP_ERROR);
-      return soap->error = SOAP_TCP_ERROR;
-    }
+    if ((soap_valid_socket(soap->master) && soap_socket_errno(soap->master) != SOAP_EINTR)
+     || (soap_valid_socket(soap->socket) && soap_socket_errno(soap->socket) != SOAP_EINTR))
+      return soap_set_receiver_error(soap, tcp_error(soap), "select failed in soap_poll()", SOAP_TCP_ERROR);
   }
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Polling: other end down on socket=%d select=%d\n", (int)soap->socket, r));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_poll: other end down on socket=%d select=%d\n", (int)soap->socket, r));
   return SOAP_EOF;
 #else
   (void)soap;
@@ -6773,6 +6765,47 @@ soap_poll(struct soap *soap)
 }
 #endif
 
+/******************************************************************************/
+
+#ifndef WITH_NOIO
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_ready(struct soap *soap)
+{
+#ifndef WITH_LEAN
+  int r;
+  if (!soap_valid_socket(soap->socket))
+    return SOAP_OK; /* OK when no socket! */
+  r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, 0);
+  if (r > 0 && (r & SOAP_TCP_SELECT_ERR))
+    r = -1;
+  if (r < 0 && soap_socket_errno(soap->socket) != SOAP_EINTR)
+    return soap_set_receiver_error(soap, tcp_error(soap), "select failed in soap_ready()", SOAP_TCP_ERROR);
+  if (r > 0)
+  {
+    char t;
+#ifdef WITH_OPENSSL
+    if ((soap->imode & SOAP_ENC_SSL))
+    {
+      if (SSL_peek(soap->ssl, &t, 1) > 0)
+        return SOAP_OK;
+    }
+    else
+#endif
+    {
+      if (recv(soap->socket, &t, 1, MSG_PEEK) > 0)
+        return SOAP_OK;
+    }
+  }
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_ready: other end not ready to send on socket=%d select=%d\n", (int)soap->socket, r));
+  return SOAP_EOF;
+#else
+  (void)soap;
+  return SOAP_OK;
+#endif
+}
+#endif
 /******************************************************************************/
 
 #ifndef WITH_NOIO
@@ -7164,11 +7197,14 @@ soap_done(struct soap *soap)
       soap->ctx = NULL;
     }
   }
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
   ERR_clear_error();
-#else
+# if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+  /* OpenSSL libraries handle thread init and deinit */
+# elif OPENSSL_VERSION_NUMBER >= 0x10000000L
+  ERR_remove_thread_state(NULL);
+# else
   ERR_remove_state(0);
-#endif
+# endif
 #endif
 #ifdef WITH_GNUTLS
   if (soap->state == SOAP_INIT)
@@ -7310,7 +7346,7 @@ http_parse(struct soap *soap)
         if (soap->error == SOAP_EOF)
         {
           soap->error = SOAP_OK;
-          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EOF in HTTP header, continue anyway\n"));
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EOF in HTTP header, try to continue anyway\n"));
           break;
         }
         return soap->error;
@@ -7405,9 +7441,13 @@ http_parse(struct soap *soap)
         return soap->error = err;
     }
     else if (err)
+    {
       return soap->error = err;
+    }
     else if (s)
+    {
       return soap->error = 405;
+    }
     return SOAP_OK;
   }
   if ((soap->status >= 200 && soap->status <= 299) /* OK, Accepted, etc */
@@ -7595,9 +7635,9 @@ http_parse_header(struct soap *soap, const char *key, const char *val)
   }
 #ifdef WITH_COOKIES
   else if (!soap_tag_cmp(key, "Cookie")
-   || !soap_tag_cmp(key, "Cookie2")
-   || !soap_tag_cmp(key, "Set-Cookie")
-   || !soap_tag_cmp(key, "Set-Cookie2"))
+        || !soap_tag_cmp(key, "Cookie2")
+        || !soap_tag_cmp(key, "Set-Cookie")
+        || !soap_tag_cmp(key, "Set-Cookie2"))
   {
     soap_getcookies(soap, val);
   }
@@ -8126,6 +8166,7 @@ http_response(struct soap *soap, int status, ULONG64 count)
 #ifdef WITH_COOKIES
   if (soap_putsetcookies(soap))
     return soap->error;
+  soap_free_cookies(soap);
 #endif
   return soap->fposthdr(soap, NULL, NULL);
 }
@@ -8251,8 +8292,8 @@ soap_url_query(struct soap *soap, const char *s, const char *t)
       (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), s, n);
       if (t)
       {
-        size_t m = strlen(soap->msgbuf);
-        (void)soap_encode_url(t, soap->msgbuf + m, sizeof(soap->msgbuf) - m);
+        int m = (int)strlen(soap->msgbuf); /* msgbuf length is max SOAP_TMPLEN or just 1024 bytes */
+        (void)soap_encode_url(t, soap->msgbuf + m, (int)sizeof(soap->msgbuf) - m);
       }
       (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "&", 1);
     }
@@ -8262,23 +8303,23 @@ soap_url_query(struct soap *soap, const char *s, const char *t)
 /******************************************************************************/
 
 SOAP_FMAC1
-size_t
+int
 SOAP_FMAC2
-soap_encode_url(const char *s, char *t, size_t len)
+soap_encode_url(const char *s, char *t, int len)
 {
   int c;
-  size_t n = len;
-  if (s)
+  int n = len;
+  if (s && n > 0)
   {
     while ((c = *s++) && --n > 0)
     {
       if (c == '-'
-          || c == '.'
-          || (c >= '0' && c <= '9')
-          || (c >= 'A' && c <= 'Z')
-          || c == '_'
-          || (c >= 'a' && c <= 'z')
-          || c == '~')
+       || c == '.'
+       || (c >= '0' && c <= '9')
+       || (c >= 'A' && c <= 'Z')
+       || c == '_'
+       || (c >= 'a' && c <= 'z')
+       || c == '~')
       {
         *t++ = c;
       }
@@ -8295,8 +8336,8 @@ soap_encode_url(const char *s, char *t, size_t len)
         break;
       }
     }
+    *t = '\0';
   }
-  *t = '\0';
   return len - n;
 }
 
@@ -8309,7 +8350,7 @@ soap_encode_url_string(struct soap *soap, const char *s)
 {
   if (s)
   {
-    size_t n = 3*strlen(s)+1;
+    int n = 3 * (int)strlen(s) + 1;
     char *t = (char*)soap_malloc(soap, n);
     if (t)
     {
@@ -8649,65 +8690,54 @@ soap_putsetcookies(struct soap *soap)
   const char *t;
   for (p = soap->cookies; p; p = p->next)
   {
-    if (p->modified
+    if ((p->modified
 #ifdef WITH_OPENSSL
      || (!p->env && !soap->ssl == !p->secure)
 #endif
-       )
+     ) && p->name && p->value && *p->name && *p->value)
     {
       s = tmp;
-      if (p->name)
-        s += soap_encode_url(p->name, s, 4064 - (s-tmp));
-      if (p->value && *p->value)
-      {
-        *s++ = '=';
-        s += soap_encode_url(p->value, s, 4064 - (s-tmp));
-      }
-      if (p->domain && (int)strlen(p->domain) < 4064 - (s-tmp))
+      s += soap_encode_url(p->name, s, 3967);
+      *s++ = '=';
+      s += soap_encode_url(p->value, s, 3968 - (int)(s-tmp));
+      t = p->domain ? p->domain : soap->cookie_domain;
+      if (t && (int)strlen(t) < 3968 - (int)(s-tmp))
       {
         soap_strcpy(s, 4096 - (s-tmp), ";Domain=");
-        soap_strcpy(s + 8, 4088 - (s-tmp), p->domain);
+        s += 8;
+        soap_strcpy(s, 4096 - (s-tmp), t);
+        s += strlen(s);
       }
-      else if (soap->cookie_domain && (int)strlen(soap->cookie_domain) < 4064 - (s-tmp))
+      t = p->path ? p->path : soap->cookie_path;
+      if (t && (int)strlen(t) < 3976 - (int)(s-tmp))
       {
-        soap_strcpy(s, 4096 - (s-tmp), ";Domain=");
-        soap_strcpy(s + 8, 4088 - (s-tmp), soap->cookie_domain);
-      }
-      s += strlen(s);
-      soap_strcpy(s, 4096 - (s-tmp), ";Path=/");
-      s += strlen(s);
-      if (p->path)
-        t = p->path;
-      else
-        t = soap->cookie_path;
-      if (t)
-      {
+        soap_strcpy(s, 4096 - (s-tmp), ";Path=/");
+        s += 7;
         if (*t == '/')
           t++;
-        if ((int)strlen(t) < 4064 - (s-tmp))
+        if (strchr(t, '%')) /* already URL encoded? */
         {
-          if (strchr(t, '%'))   /* already URL encoded? */
-          {
-            soap_strcpy(s, 4096 - (s-tmp), t);
-            s += strlen(s);
-          }
-          else
-            s += soap_encode_url(t, s, 4064 - (s-tmp));
+          soap_strcpy(s, 4096 - (s-tmp), t);
+          s += strlen(s);
+        }
+        else
+        {
+          s += soap_encode_url(t, s, 4096 - (int)(s-tmp));
         }
       }
-      if (p->version > 0 && s-tmp < 4064)
+      if (p->version > 0 && s-tmp < 3983)
       {
         (SOAP_SNPRINTF(s, 4096 - (s-tmp), 29), ";Version=%u", p->version);
         s += strlen(s);
       }
-      if (p->maxage >= 0 && s-tmp < 4064)
+      if (p->maxage >= 0 && s-tmp < 4012)
       {
         (SOAP_SNPRINTF(s, 4096 - (s-tmp), 29), ";Max-Age=%ld", p->maxage);
         s += strlen(s);
       }
 #if !defined(WITH_LEAN)
 #if defined(HAVE_GMTIME_R) || defined(HAVE_GMTIME)
-      if (p->maxage >= 0 && s-tmp < 4056)
+      if (p->maxage >= 0 && s-tmp < 4041)
       {
         time_t n = time(NULL) + p->maxage;
         struct tm T, *pT = &T;
@@ -8725,7 +8755,7 @@ soap_putsetcookies(struct soap *soap)
       }
 #endif
 #endif
-      if (s-tmp < 4073
+      if (s-tmp < 4079
        && (p->secure
 #ifdef WITH_OPENSSL
        || soap->ssl
@@ -8735,7 +8765,7 @@ soap_putsetcookies(struct soap *soap)
         soap_strcpy(s, 4096 - (s-tmp), ";Secure");
         s += strlen(s);
       }
-      if (s-tmp < 4071)
+      if (s-tmp < 4086)
         soap_strcpy(s, 4096 - (s-tmp), ";HttpOnly");
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Set-Cookie: %s\n", tmp));
       soap->error = soap->fposthdr(soap, "Set-Cookie", tmp);
@@ -8754,9 +8784,9 @@ SOAP_FMAC2
 soap_putcookies(struct soap *soap, const char *domain, const char *path, int secure)
 {
   struct soap_cookie **p, *q;
+  char *s, tmp[4096];
   unsigned int version = 0;
   time_t now = time(NULL);
-  char *s, tmp[4096];
   if (!domain || !path)
     return SOAP_OK;
   s = tmp;
@@ -8833,7 +8863,7 @@ soap_putcookies(struct soap *soap, const char *domain, const char *path, int sec
         if (s + n >= tmp + sizeof(tmp))
         {
           if (s == tmp)
-            return SOAP_OK; /* header too big, canot split */
+            return SOAP_OK; /* header too big, cannot split */
           /* split up HTTP header */
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Cookie: %s\n", tmp));
           soap->error = soap->fposthdr(soap, "Cookie", tmp);
@@ -8852,14 +8882,14 @@ soap_putcookies(struct soap *soap, const char *domain, const char *path, int sec
           version = q->version;
           s += strlen(s);
         }
-        if (q->name)
+        if (q->name && (s-tmp) + strlen(q->name) + (size_t)15 < sizeof(tmp))
         {
-          s += soap_encode_url(q->name, s, tmp+sizeof(tmp)-s-16);
+          s += soap_encode_url(q->name, s, (int)(tmp+sizeof(tmp)-s)-15);
         }
-        if (q->value && *q->value)
+        if (q->value && *q->value && (s-tmp) + strlen(q->value) + (size_t)16 < sizeof(tmp))
         {
           *s++ = '=';
-          s += soap_encode_url(q->value, s, tmp+sizeof(tmp)-s-16);
+          s += soap_encode_url(q->value, s, (int)(tmp+sizeof(tmp)-s)-16);
         }
         if (q->path && (s-tmp) + strlen(q->path) + (size_t)36 < sizeof(tmp))
         {
@@ -9691,10 +9721,7 @@ soap_init_send(struct soap *soap)
 #endif
 #endif
   if ((soap->mode & SOAP_IO))
-  {
-    soap->bufidx = 0;
-    soap->buflen = 0;
-  }
+    soap->buflen = soap->bufidx = 0;
   soap->chunksize = 0;
   soap->ns = 0;
   soap->null = 0;
@@ -11593,8 +11620,8 @@ soap_copy_context(struct soap *copy, const struct soap *soap)
   }
 #ifdef WITH_SELF_PIPE
   pipe(copy->pipe_fd);
-  SOAP_SOCKNONBLOCK(copy->pipe_fd[0]);
-  SOAP_SOCKNONBLOCK(copy->pipe_fd[1]);
+  SOAP_SOCKNONBLOCK(copy->pipe_fd[0])
+  SOAP_SOCKNONBLOCK(copy->pipe_fd[1])
 #endif
   return copy;
 }
@@ -11840,8 +11867,8 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
 #endif
 #ifdef WITH_SELF_PIPE
   pipe(soap->pipe_fd);
-  SOAP_SOCKNONBLOCK(soap->pipe_fd[0]);
-  SOAP_SOCKNONBLOCK(soap->pipe_fd[1]);
+  SOAP_SOCKNONBLOCK(soap->pipe_fd[0])
+  SOAP_SOCKNONBLOCK(soap->pipe_fd[1])
 #endif
   soap->version = 0;
   soap->imode = imode;
@@ -12647,12 +12674,14 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
           }
         }
       }
+#ifndef WITH_NOEMPTYNAMESPACES
       else if (!soap->nlist || *soap->nlist->id || (soap->nlist->ns && *soap->nlist->ns))
       {
         (void)soap_push_ns(soap, SOAP_STR_EOS, SOAP_STR_EOS, 0, 0);
         if (soap_attribute(soap, "xmlns", SOAP_STR_EOS))
           return soap->error;
       }
+#endif
     }
     else
 #endif
@@ -13177,7 +13206,7 @@ soap_element_start_end_out(struct soap *soap, const char *tag)
          || soap_send_raw(soap, "\"", 1))
           return soap->error;
       }
-      else if ((soap->mode & SOAP_XML_STRICT))
+      else
       {
         if (soap_send_raw(soap, "=\"\"", 3))
           return soap->error;
@@ -13609,9 +13638,9 @@ soap_element_begin_in(struct soap *soap, const char *tag, int nillable, const ch
     soap->error = soap_match_tag(soap, soap->tag, tag);
     if (!soap->error)
     {
-      soap->peeked = 0;
       if (type && *soap->type && soap_match_tag(soap, soap->type, type))
         return soap->error = SOAP_TYPE;
+      soap->peeked = 0;
       if (!nillable && soap->null && (soap->mode & SOAP_XML_STRICT))
         return soap->error = SOAP_NULL;
       if (soap->body)
@@ -13620,7 +13649,7 @@ soap_element_begin_in(struct soap *soap, const char *tag, int nillable, const ch
         if (soap->level > soap->maxlevel)
           return soap->error = SOAP_LEVEL;
       }
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Begin tag found (level=%u) '%s'='%s'\n", soap->level, soap->tag, tag ? tag : SOAP_STR_EOS ));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Begin tag found (level=%u) '%s'='%s'\n", soap->level, soap->tag, tag ? tag : SOAP_STR_EOS));
       soap->error = SOAP_OK;
     }
   }
@@ -18799,8 +18828,10 @@ soap_getline(struct soap *soap, char *buf, int len)
     {
       return soap->error = SOAP_CHK_EOF;
     }
-    if (i <= 0)
+    else if (i <= 1)
+    {
       return soap->error = SOAP_HDR;
+    }
   }
   return SOAP_OK;
 }
@@ -20170,13 +20201,10 @@ soap_begin_recv(struct soap *soap)
   }
   soap->imode &= ~(SOAP_ENC_DIME | SOAP_ENC_MIME | SOAP_ENC_MTOM | SOAP_ENC_ZLIB);
   soap->mode = soap->imode;
-  if (!soap->keep_alive)
-  {
-    soap->buflen = 0;
-    soap->bufidx = 0;
-  }
   if (!(soap->mode & SOAP_IO_KEEPALIVE))
     soap->keep_alive = 0;
+  if (!soap->keep_alive)
+    soap->buflen = soap->bufidx = 0;
   soap->null = 0;
   soap->position = 0;
   soap->mustUnderstand = 0;
@@ -20416,17 +20444,40 @@ soap_begin_recv(struct soap *soap)
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Invoking http method handler\n"));
       switch (soap->status)
       {
-        case SOAP_GET:     soap->error = soap->fget(soap);   break;
-        case SOAP_PUT:     soap->error = soap->fput(soap);   break;
-        case SOAP_PATCH:   soap->error = soap->fpatch(soap); break;
-        case SOAP_DEL:     soap->error = soap->fdel(soap);   break;
-        case SOAP_HEAD:    soap->error = soap->fhead(soap);  break;
-        case SOAP_OPTIONS: soap->error = soap->fopt(soap);   break;
-        default: return 405;
+        case SOAP_GET:
+          if (soap_http_skip_body(soap) || soap_end_recv(soap))
+            return soap->error;
+          soap->error = soap->fget(soap);
+          break;
+        case SOAP_PUT:
+          soap->error = soap->fput(soap);
+          break;
+        case SOAP_PATCH:
+          soap->error = soap->fpatch(soap);
+          break;
+        case SOAP_DEL:
+          if (soap_http_skip_body(soap) || soap_end_recv(soap))
+            return soap->error;
+          soap->error = soap->fdel(soap);
+          break;
+        case SOAP_HEAD:
+          if (soap_http_skip_body(soap) || soap_end_recv(soap))
+            return soap->error;
+          soap->error = soap->fhead(soap);
+          break;
+        case SOAP_OPTIONS:
+          if (soap_http_skip_body(soap) || soap_end_recv(soap))
+            return soap->error;
+          soap->error = soap->fopt(soap);
+          break;
+        default:
+          if (soap_http_skip_body(soap) || soap_end_recv(soap))
+            return soap->error;
+          return 405;
       }
       if (soap->error == SOAP_OK)
         return soap->error = SOAP_STOP; /* prevents further processing */
-      if (soap->error != SOAP_FORM || !soap->fform) /* continue if form handler returned SOAP_FORM */
+      if (soap->error != SOAP_FORM || !soap->fform) /* continue if handler returned SOAP_FORM */
         return soap->error;
       soap->error = SOAP_OK;
     }
@@ -20436,7 +20487,7 @@ soap_begin_recv(struct soap *soap)
       soap->error = soap->fform(soap);
       if (soap->error == SOAP_OK)
         return soap->error = SOAP_STOP; /* prevents further processing */
-      if (soap->status != SOAP_POST || soap->error != 404) /* continue with POST if form handler returned HTTP not found */
+      if (soap->status != SOAP_POST || soap->error != 404) /* continue with POST if handler returned HTTP not found */
         return soap->error;
       soap->error = SOAP_OK;
     }
@@ -20537,6 +20588,44 @@ soap_http_has_body(struct soap *soap)
 /******************************************************************************/
 
 SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_http_skip_body(struct soap *soap)
+{
+  ULONG64 k = soap->length;
+  /* check HTTP body, return "" if none */
+  if (!k && !(soap->mode & SOAP_ENC_ZLIB) && (soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
+    return SOAP_OK;
+  /* do not consume DIME or MIME attachments, leave this to soap_end_recv */
+  if ((soap->mode & SOAP_ENC_DIME) || (soap->mode & SOAP_ENC_MIME))
+    return SOAP_OK;
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Skipping HTTP body (mode=0x%x)\n", soap->mode));
+  if (k && !(soap->mode & SOAP_ENC_ZLIB))
+  {
+    size_t i;
+    soap->length = 0;
+    for (i = 0; i < k; i++)
+    {
+      soap_wchar c = soap_get1(soap);
+      if ((int)c == EOF)
+        break;
+    }
+  }
+  else
+  {
+    for (;;)
+    {
+      soap_wchar c = soap_get1(soap);
+      if ((int)c == EOF)
+        break;
+    }
+  }
+  return SOAP_OK;
+}
+
+/******************************************************************************/
+
+SOAP_FMAC1
 char *
 SOAP_FMAC2
 soap_http_get_body(struct soap *soap, size_t *len)
@@ -20573,21 +20662,14 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
   /* check HTTP body, return "" if none */
   if (!k && !(soap->mode & SOAP_ENC_ZLIB) && (soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
     return soap_strdup(soap, prefix);
-  /* do not consume DIME or MIME attachments */
-  if ((soap->mode & SOAP_ENC_DIME))
-  {
-    soap->error = SOAP_DIME_ERROR;
-    return NULL;
-  }
-  if ((soap->mode & SOAP_ENC_MIME))
-  {
-    soap->error = SOAP_MIME_ERROR;
-    return NULL;
-  }
+  /* do not consume DIME or MIME attachments, leave this to soap_end_recv */
+  if ((soap->mode & SOAP_ENC_DIME) || (soap->mode & SOAP_ENC_MIME))
+    return soap_strdup(soap, prefix);
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Parsing HTTP body, prefixed with '%s' (mode=0x%x)\n", prefix, soap->mode));
   if (k && !(soap->mode & SOAP_ENC_ZLIB))
   {
     char *t;
+    soap->length = 0;
     /* http content length != 0 and uncompressed body */
     if ((SOAP_MAXALLOCSIZE != 0 && n + k > SOAP_MAXALLOCSIZE) || n + k > (ULONG64)((size_t)-2))
     {
@@ -22076,12 +22158,8 @@ soap_recv_empty_response(struct soap *soap)
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Receiving empty response\n"));
     if (soap_begin_recv(soap) == SOAP_OK)
     {
-#ifndef WITH_LEAN
-      const char *s = soap_http_get_body(soap, NULL);
-      if (s && *s)
-        soap_set_receiver_error(soap, "HTTP Error", s, soap->status);
-#endif
-      (void)soap_end_recv(soap);
+      if (soap_http_skip_body(soap) || soap_end_recv(soap))
+        return soap_closesock(soap);
     }
     else if (soap->error == 200 || soap->error == 201 || soap->error == 202)
     {

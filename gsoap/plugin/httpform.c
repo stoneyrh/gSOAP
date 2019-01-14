@@ -107,13 +107,13 @@ static int http_form_parse_header(struct soap *soap, const char*, const char*);
 int http_form(struct soap *soap, struct soap_plugin *p, void *arg)
 {
   p->id = http_form_id;
-  p->data = (void*)malloc(sizeof(struct http_form_data));
+  p->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_form_data));
   p->fdelete = http_form_delete;
   if (!p->data)
     return SOAP_EOM;
   if (http_form_init(soap, (struct http_form_data*)p->data, (int (*)(struct soap*))arg))
   {
-    free(p->data); /* error: could not init */
+    SOAP_FREE(soap, p->data); /* error: could not init */
     return SOAP_EOM; /* return error */
   }
   return SOAP_OK;
@@ -131,7 +131,7 @@ static int http_form_init(struct soap *soap, struct http_form_data *data, int (*
 static void http_form_delete(struct soap *soap, struct soap_plugin *p)
 {
   (void)soap;
-  free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
+  SOAP_FREE(soap, p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
 }
 
 static int http_form_parse_header(struct soap *soap, const char *key, const char *val)

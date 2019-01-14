@@ -49,4 +49,5 @@ extern class istream;
 
 #include "includes.h"
 
+extern class MapOfStringToString;
 extern class SetOfString;

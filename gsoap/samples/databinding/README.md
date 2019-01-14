@@ -332,13 +332,20 @@ the <b>`use`</b> part unspecified.  The third part is omitted to let wsdl2h use
 `xsd__duration *` for pointers or `std::shared_ptr<xsd__duration>` if smart
 pointers are enabled.
 
-To map <i>`xsd:string`</i> to `wchar_t*` wide strings:
+To map <i>`xsd:string`</i> to `wchar_t*` wide strings for C source code output:
 
     xsd__string = | wchar_t* | wchar_t*
 
-Note that the first part is empty, because `wchar_t` is a C type and does not
-need to be declared.  A <b>`ptruse`</b> part is also defined in this example, but does
-not need to be because the <b>`use`</b> part `wchar_t*` is already a pointer.
+For C++ we can use the `std::wstring` wide string:
+
+    xsd__string = | std::wstring
+
+Note that the first part is empty, because these types do not require a
+declaration.  A <b>`ptruse`</b> part is also defined for `wchar_t*`, but this
+is actually needed because the wsdl2h tool recognizes that the <b>`use`</b>
+part `wchar_t*` is already a pointer.  By contrast, when using 8-bit strings,
+it is recommended to use the `SOAP_C_UTFSTRING` flag to enable UTF-8 formatted
+strings.
 
 When the auto-generated declaration should be preserved but the <b>`use`</b> or
 <b>`ptruse`</b> parts replaced, then we use an ellipsis for the declaration part:
@@ -379,7 +386,38 @@ serializer implementation file written in C, which should be compiled with the
 application.  You can compile these in C++ (rename files to <i>`.cpp`</i> if
 needed).
 
-We will discuss the custom serializers that are available to you.
+A custom serializer is declared in an interface header file for soapcpp2 using
+`extern typedef`.  The typedef name declared is serializable, whereas the
+type on which it is based is not serializable.  This declaration can be
+combined with `volatile` when the type should not be redeclared, see
+[volatile classes and structs](#toxsd9-2).  For example, the custom serializer
+for `struct tm` is the type `xsd__datetime` declared as follows in
+`gsoap/custom/struct_tm.h`:
+
+~~~{.cpp}
+    extern typedef volatile struct tm
+    {
+        int   tm_sec;   ///< seconds (0 - 60)
+        int   tm_min;   ///< minutes (0 - 59)
+        int   tm_hour;  ///< hours (0 - 23)
+        int   tm_mday;  ///< day of month (1 - 31)
+        int   tm_mon;   ///< month of year (0 - 11)
+        int   tm_year;  ///< year - 1900
+        int   tm_wday;  ///< day of week (Sunday = 0) (NOT USED)
+        int   tm_yday;  ///< day of year (0 - 365) (NOT USED)
+        int   tm_isdst; ///< is summer time in effect?
+        char* tm_zone;  ///< abbreviation of timezone (NOT USED)
+    } xsd__dateTime;
+~~~
+
+Another example is `xsd__duration` as a custom serializer for the C++11 type
+`std::chrono::nanoseconds`:
+
+~~~{.cpp}
+    extern typedef class std::chrono::nanoseconds xsd__duration;
+~~~
+
+Next, we present all pre-defined custom serializers that are available to you.
 
 🔝 [Back to table of contents](#)
 
@@ -991,13 +1029,12 @@ to the <i>`urn:types`</i> schema:
 ~~~{.cpp}
     //gsoap ns schema namespace: urn:types
     class ns:record        // binding 'ns:' to a type name
-    {
-     public:
-      std::string name;
-      uint64_t    SSN;
-      ns:record   *spouse; // using 'ns:' with the type name
-      ns:record();         // using 'ns:' here too
-      ~ns:record();        // and here
+    { public:
+        std::string name;
+        uint64_t    SSN;
+        ns:record   *spouse; // using 'ns:' with the type name
+        ns:record();         // using 'ns:' here too
+        ~ns:record();        // and here
     };
 ~~~
 
@@ -1045,12 +1082,12 @@ translated to the XML tag name <i>`s-a:my-way`</i> by translating the prefix `s_
 and the local name `my_way`.
 
 Struct/class member and parameter name translation can be overruled by using
-[backtick XML tags](#toxsd9-5) (with gSOAP 2.8.30 and greater).
+[backtick XML tags](#toxsd9-5-1) (with gSOAP 2.8.30 and greater).
 
 🔝 [Back to table of contents](#)
 
-C++ Bool and C alternatives                                            {#toxsd3}
----------------------------
+C++ bool and C alternative                                             {#toxsd3}
+-------------------------- 
 
 The C++ `bool` type is bound to built-in XSD type <i>`xsd:boolean`</i>.
 
@@ -1711,16 +1748,16 @@ The serializer uses the `struct tm` members directly for the XML value space of
 ~~~{.cpp}
     struct tm
     {
-      int    tm_sec;   // seconds (0 - 60)
-      int    tm_min;   // minutes (0 - 59)
-      int    tm_hour;  // hours (0 - 23)
-      int    tm_mday;  // day of month (1 - 31)
-      int    tm_mon;   // month of year (0 - 11)
-      int    tm_year;  // year - 1900
-      int    tm_wday;  // day of week (Sunday = 0) (NOT USED)
-      int    tm_yday;  // day of year (0 - 365) (NOT USED)
-      int    tm_isdst; // is summer time in effect?
-      char*  tm_zone;  // abbreviation of timezone (NOT USED)
+        int    tm_sec;   // seconds (0 - 60)
+        int    tm_min;   // minutes (0 - 59)
+        int    tm_hour;  // hours (0 - 23)
+        int    tm_mday;  // day of month (1 - 31)
+        int    tm_mon;   // month of year (0 - 11)
+        int    tm_year;  // year - 1900
+        int    tm_wday;  // day of week (Sunday = 0) (NOT USED)
+        int    tm_yday;  // day of year (0 - 365) (NOT USED)
+        int    tm_isdst; // is summer time in effect?
+        char*  tm_zone;  // abbreviation of timezone (NOT USED)
     };
 ~~~
 
@@ -1756,8 +1793,8 @@ microsecond-precise clock:
 ~~~{.cpp}
     struct timeval
     {
-      time_t       tv_sec;  // seconds since Jan. 1, 1970
-      suseconds_t  tv_usec; // and microseconds
+        time_t       tv_sec;  // seconds since Jan. 1, 1970
+        suseconds_t  tv_usec; // and microseconds
     };
 ~~~
 
@@ -1928,15 +1965,14 @@ naming convention or by using [colon notation](#toxsd1):
 ~~~{.cpp}
     //gsoap ns schema namespace: urn:types
     class ns__record
-    {
-     public:
-      std::string  name;
-      uint64_t     SSN;
-      ns__record  *spouse;
-      ns__record();
-      ~ns__record();
-     protected:
-      struct soap  *soap;
+    { public:
+        std::string  name;
+        uint64_t     SSN;
+        ns__record  *spouse;
+        ns__record();
+        ~ns__record();
+      protected:
+        struct soap  *soap;
     };
 ~~~
 
@@ -1967,35 +2003,470 @@ that can be used without the `struct` keyword.
 
 ### Serializable versus transient types and data members             {#toxsd9-1}
 
-Public data members of a class or struct are serialized.  Private and protected
-members are transient and not serializable.
+Public data members of a class or struct are serializable when their types are
+serializable.  Private and protected members are transient and not
+serializable.
 
 Also `const` and `static` members are not serializable, with the exception of
 `const char*` and `const wchar_t*`.  Types and specific class/struct members
-can also be made transient with the `extern` qualifier:
+can be made transient with the `extern` qualifier for types and by marking
+members with `[` and `]`:
 
 ~~~{.cpp}
-    extern class std::ostream;     // declare 'std::ostream' transient
+    extern class std::ostream;     // declare std::ostream transient
     class ns__record
-    {
-     public:
-      extern int       num;        // not serialized
-      std::ostream     out;        // not serialized
-      static const int MAX = 1024; // not serialized
+    { public:
+      [ int              num; ]      // not serialized: member is marked transient with [ ]
+        std::ostream     out;        // not serialized: std:ostream is transient
+        static const int MAX = 1024; // not serialized: static const member
+      private:
+        std::string      id;         // not serialized: private member
     };
 ~~~
 
 By declaring `std::ostream` transient with `extern` you can use this type
-wherever you need it without soapcpp2 complaining that this class is not
-defined.
+wherever you need it without soapcpp2 complaining that this class and any other 
+class or type declared as `extern` is not defined.  Do not use `extern` with
+`typedef`, because this declares a custom serializer, see
+[adding custom serializers](#custom).
+
+Marking members transient with `[` and `]` makes them transient (and visually
+makes them stand out).  This has otherwise no effect on the generated code for
+the class or struct to be used in your application code.
+
+🔝 [Back to table of contents](#)
+
+### Derived types in C++                                           {#toxsd9-1-1}
+
+Extensible and restricted types in XML schemas are derived types from single
+simple and complex base types.  XML schema derived types are naturally
+represented by C++ derived classes using single inheritance.  Besides the
+concept of extensions versus restrictions, there are two kinds of derived
+types: complexTypes with simpleContent, meaning types with XML CDATA values,
+and complexTypes with complexContent, meaning types with sub-elements.  Both
+are permitted to have one or more XML attributes.
+
+A complexType with simpleContent is defined as a wrapper to contain XML CDATA
+values and any number of attributes, see
+[wrapper class/struct with simpleContent](#toxsd10-4).
+Wrapper class/struct types can form a hierarchy of derived types in C++ using
+inheritance.  For example:
+
+~~~{.cpp}
+    class xsd__anyType
+    { public:
+        std::string __item; // string to hold any simpleContent
+    };
+    class ns__data : public xsd__anyType
+    { public:
+      @ std::string value 1; // extends xsd:anyType with a required attribute
+    };
+~~~
+
+The `ns__data` class maps to a complexType in the soapcpp2-generated XML schema:
+
+<div class="alt">
+~~~{.xml}
+    <complexType name="string">
+      <simpleContent>
+        <extension base="xsd:string">
+          <attribute name="value" type="xsd:string" use="required"/>
+        </extension>
+      </simpleContent>
+    </complexType>
+~~~
+</div>
+
+The XML value space consists of an element with the string contents an optional
+attribute:
+
+<div class="alt">
+~~~{.xml}
+    <ns:data value="abc">xyz</ns:data>
+~~~
+</div>
+
+By contrast, a complexType with complexContent typically extends a given base
+complexType.  For example:
+
+~~~{.cpp}
+    class ns__base
+    { public:
+        std::string name   1;
+        int         number 1;
+    };
+    class ns__derived : public ns__base
+    { public:
+      @ std::string value 1; // extends ns:base with an attribute
+        std::string text  1; // extends ns:base with an element
+    };
+~~~
+
+The `ns__base` and `ns__derived` classes maps to complexTypes in the soapcpp2-generated XML schema:
+
+<div class="alt">
+~~~{.xml}
+    <complexType name="base">
+      <sequence>
+        <element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        <element name="number" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+      </sequence>
+    </complexType>
+    <complexType name="derived">
+      <complexContent>
+        <extension base="ns:base">
+          <sequence>
+            <element name="text" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+          </sequence>
+        </extension>
+      </complexContent>
+      <attribute name="value" type="xsd:string" use="required"/>
+    </complexType>
+~~~
+</div>
+
+The XML value space of `ns__derived` consists of three requires child elements
+and an optional attribute:
+
+<div class="alt">
+~~~{.xml}
+    <ns:derived value="abc">
+      <name>def</name>
+      <number>123</number>
+      <text>xyz</text>
+    </ns:derived>
+~~~
+</div>
+
+Derived types can be used for two main purposes in XML schema by extending or
+restricting base types.  One purpose is to reuse a base type when defining a
+derived type, such that common parts do not need to be replicated.  The second
+purpose is to be able to use a derived type in place of a base type in XML, which
+is indicated by an <i>`xsi:type`</i> attribute with the qualified name of the
+derived type.  Consider for example the following class that uses the
+previously declared base types `xsd__anyType` and `ns__base`:
+
+~~~{.cpp}
+    class ns__record
+    { public:
+        xsd__anyType *base1 1; // required element
+        ns__base     *base2 1; // required element
+    };
+~~~
+
+We can assign base type values to the `ns_record` members:
+
+~~~{.cpp}
+    ns__record record;
+    record.base1 = soap_new_xsd__anyType(soap);
+    record.base2 = soap_new_ns__base(soap);
+    soap_write_ns__record(soap, &record);
+~~~
+
+This produces the following XML fragment populated with default values (empty
+text for strings and zeros for numbers), where element <i>`base1`</i> has a
+simpleContent value and element <i>`base2`</i> has two child elements:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <base1></base1>
+      <base2>
+        <name></name>
+        <number>0</number>
+      </base2>
+    </ns:record>
+~~~
+</div>
+
+We can also assign derived type values to the `ns_record` members:
+
+~~~{.cpp}
+    ns__record record;
+    record.base1 = soap_new_ns__data(soap);
+    record.base2 = soap_new_ns__derived(soap);
+    soap_write_ns__record(soap, &record);
+~~~
+
+This produces the following XML fragment populated with default values (empty
+text for strings and zeros for numbers), where element <i>`base1`</i> has
+schema type <i>`ns:data`</i> with simpleContent and an attribute, and
+<i>`base2`</i> has schema type <i>`ns:derived`</i> with three child elements
+and an attribute:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <base1 xsi:type="ns:data" value=""></base1>
+      <base2 xsi:type="ns:derived" value="">
+        <name></name>
+        <number>0</number>
+        <text></text>
+      </base2>
+    </ns:record>
+~~~
+</div>
+
+Deserialization automatically allocates and assigns a `ns__base` class instance to a
+`ns__base` pointer when deserializing the <i>`ns:base`</i> schema type and allocates and
+assigns a `ns__derived` class instance to a `ns__base` pointer when deserializing the
+<i>`ns:derived`</i> type when an element with <i>`xsi:type="ns:derived"`</i> is
+parsed.  All classes are extended by soapcpp2 by a `soap_type()` method that
+returns the unique `SOAP_TYPE_T` value of the class `T`.  This makes it easy to
+check whether the deserialized data contains a derived type to implement
+type-safe code, for example:
+
+~~~{.cpp}
+    ns__record record;
+    soap_read_ns__record(soap, &record);
+    if (record.base1->soap_type() == SOAP_TYPE_ns__data)
+      std::cout << "Derived ns:data "
+                << dynamic_cast<ns__data*>(record.base1)->value
+                << std::endl;
+    else
+      std::cout << "Base xsd:anyType" << std::endl;
+    if (record.base2->soap_type() == SOAP_TYPE_ns__derived)
+      std::cout << "Derived ns:derived "
+                << dynamic_cast<ns__derived*>(record.base2)->value
+                << std::endl;
+    else
+      std::cout << "Base ns:base" << std::endl;
+~~~
+
+This example should use the `SOAP_XML_STRICT` mode flag to initialize the
+`soap` context to ensure that all required values are present in the
+deserialized structures.
+
+🔝 [Back to table of contents](#)
+
+### Derived types in C                                             {#toxsd9-1-2}
+
+While single inheritance works well in C++ to represent derived types as we
+discussed in the previous section, this will obviously not work in C.  Two
+methods to serialize derived types in C are presented here.  The first method
+uses `void*` to serialize anything.  The second method is more accurate and is
+relatively new in gSOAP.
+
+To serialize any type is possible with [tagged void pointer members](#toxsd9-12) to
+serialize data pointed to by a `void*` member, which can be any serializable
+type, such as derived types.  For `void*` deserialization to work the XML
+parsed must contain an <i>`xsi:type`</i> attribute with a schema type.  Only
+then can the deserializer instantiate the corresponding serializable C/C++
+type.  Base types serialized do not require an <i>`xsi:type`</i> to indicate
+the base schema type, so this approach is not guaranteed to work and requires a
+workaround with an anonymous wrapper struct/class that contains both the base
+type and a `void*`.  For example:
+
+~~~{.cpp}
+    struct ns__base // a base type
+    {
+        char *name   1;
+        int   number 1;
+    };
+    struct ns__derived // extends ns__base with two additional members
+    {
+        char  *name   1;
+        int    number 1;
+        char  *text   1;
+      @ char *value   1;
+    };
+    struct __ns__base // a wrapper, not visible in XML
+    {
+        int __type;              // the SOAP_TYPE_T pointed to by __self
+        void *__self;            // points to any type
+        struct ns__base *__self; // wraps ns__base for the current element tag
+    }
+    class ns__record
+    {
+      struct __ns__base base;
+    };
+~~~
+
+The `__ns__base` wrapper wraps the `ns__base` type to (de)serialize the
+<i>`base`</i> element that has no <i>`xsi:type`</i> attribute and uses `void*`
+to (de)serialize the <i>`base`</i> element that has <i>`xsi:type`</i>
+attribute.  This works fine at the XML parsing level, but the generated
+XML schema components do not accurately represent the derived type, because it
+lacks the extension/restriction of the derived type (and the `__ns__base`
+wrapper is invisible).
+
+Using `void*` to represent derived types in a base type wrapper is not very
+accurate because we can serialize anything, not just derived types of a given
+base type.  The wrapper may also hold two values: the base type value and a
+derived type value.  Furthermore, using arrays or containers that hold base and
+derived types becomes quite tricky because an array item could hold both the
+base and derived type.
+
+As of gSOAP version 2.8.75, `wsdl2h -F` option `-F` generates base type structs
+extended with transient pointer members to its derived types.  To serialize the
+base type itself, all of the pointer members are NULL. If one of the pointer
+members points to a derived type the derived type is serialized instead.
+Deserialization is automatic, in that the base type is deserialized if the
+element has no <i>`xsi:type`</i> attribute or the attribute is the base schema
+type, and a derived type is deserialized if the element has an
+<i>`xsi>type`</i> attribute with the derived schema type.
+
+This method is fully automated for the wsdl2h tool to generate an interface
+header file for soapcpp2 with the type derivations in C.  To use this method to
+generate code from WSDLs and XSDs, use `wsdl2h -F` option `-F`.  This also
+works in C++ if desired, but C++ inheritance works fine without this method.
+
+Using this method with soapcpp2 alone using a manually-specified interface
+header file produces the specified type inheritance in the soapcpp2-generated
+WSDL and XML schema files as complexType extensions.
+
+The soapcpp2 tool warns if a derived type has multiple base types.  At most one
+base type for a derived type may be specified.
+
+This method with transient pointers to derived types makes it easy to use base
+and derived types in C:
+
+~~~{.cpp}
+    struct ns__base // a base type
+    {
+        char *name   1;
+        int   number 1;
+      [ struct ns__derived *ns__derived; ] // points to derived type if non-NULL
+    };
+    struct ns__derived // extends ns__base with two additional members
+    {
+        char  *name   1;
+        int    number 1;
+        char  *text   1;
+      @ char *value   1;
+    };
+    struct ns__record
+    {
+        struct ns__base base; // contains base type or derived type value
+    };
+~~~
+
+The `ns__base` struct includes the special member `ns__derived` that points to
+a `ns__derived` value.  This special member must be:
+
+- a transient member (i.e. non-serializable) by placing the declaration within
+  `[` and `]`, and
+- the member name must match the type name (to be more precise, at least the
+  initial part of the member name must match the type name as in the example
+  `ns__derived_` works too).
+
+To serialize the `ns__base` value requires the `ns__derived` member to be NULL.
+To serialize the `ns__derived` value requires the `ns__derived` member to point
+to the `ns__derived` value to serialize and the `ns__base` members are
+irrelevant.
+
+We can assign the base type value to the `ns_record::base` member:
+
+~~~{.cpp}
+    struct ns__record record;
+    soap_default_ns__record(soap, &record);
+    soap_write_ns__record(soap, &record);
+~~~
+
+This produces the following XML fragment populated with default values (empty
+text for strings and zeros for numbers), where element <i>`base`</i> has two
+child elements:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <base>
+        <name></name>
+        <number>0</number>
+      </base>
+    </ns:record>
+~~~
+</div>
+
+We can also assign the derived type value to the `ns_record::base` member:
+
+~~~{.cpp}
+    struct ns__record record;
+    soap_default_ns__record(soap, &record);
+    record.base.ns__derived = soap_new_ns__derived(soap, -1);
+    soap_write_ns__record(soap, &record);
+~~~
+
+This produces the following XML fragment populated with default values (empty
+text for strings and zeros for numbers), where element <i>`base`</i> has schema
+type <i>`ns:derived`</i> with three child elements and an attribute:
+
+<div class="alt">
+~~~{.xml}
+    <ns:record>
+      <base xsi:type="ns:derived" value="">
+        <name></name>
+        <number>0</number>
+        <text></text>
+      </base>
+    </ns:record>
+~~~
+</div>
+
+Deserialization automatically assigns values to the base members for the
+`ns__base` type and populates the `ns__derived` member when a derived type with
+<i>`xsi:type="ns:derived"`</i> is parsed.  This makes it easy to decompose the
+deserialized data:
+
+~~~{.cpp}
+    struct ns__record record;
+    soap_read_ns__record(soap, &record);
+    if (record.ns__derived)
+      printf("Derived type with name=%s number=%d text=%s value=%s\n",
+          record.ns__derived->name,
+          record.ns__derived->number,
+          record.ns__derived->text,
+          record.ns__derived->value);
+    else
+      printf("Base type with name=%s number=%d\n",
+          record.name,
+          record.number);
+~~~
+
+This example requires the `SOAP_XML_STRICT` mode flag to initialize the `soap`
+context to ensure that all required values are present in the deserialized
+structures, otherwise the `char*` strings may be NULL since XML validation
+constraints are not enforced on the XML input.
+
+Deeper levels of simulated inheritance are possible, for example:
+
+~~~{.cpp}
+    struct ns__base // a base type
+    {
+        char *name   1;
+        int   number 1;
+      [ struct ns__derived *ns__derived; ] // points to derived type if non-NULL
+    };
+    struct ns__derived // extends ns__base with two additional members
+    {
+        char  *name   1;
+        int    number 1;
+        char  *text   1;
+      @ char *value   1;
+      [ struct ns__derived_derived *ns__derived_derived; ] // points to derived_derived type if non-NULL
+    };
+    struct ns__derived_derived // extends ns__derived with an additional member
+    {
+        char  *name   1;
+        int    number 1;
+        char  *text   1;
+      @ char *value   1;
+      @ char *type    1;
+    };
+~~~
+
+This requires two pointer traversals from the base type `ns__base` via
+`ns__derived` to reach `ns__derived_derived`.
 
 🔝 [Back to table of contents](#)
 
 ### Volatile classes and structs                                     {#toxsd9-2}
 
-Classes and structs can be declared `volatile` with the gSOAP tools.  This means
-that they are already declared elsewhere in your project's source code and you
-do not want soapcpp2 to generate code with a second declaration of these types.
+Classes and structs can be declared `volatile` in the interface header file for
+soapcpp2, which only has meaning for the gSOAP tools.  This annotation means
+that these types are already declared elsewhere in your project's source code
+and you do not want soapcpp2 to generate code with a second declaration of
+these types.
 
 For example, `struct tm` is declared in the <i>`time.h`</i> library.  You can
 make it serializable and include a partial list of data members that you want
@@ -2004,12 +2475,12 @@ to serialize:
 ~~~{.cpp}
     volatile struct tm
     {
-      int    tm_sec;    // seconds (0 - 60)
-      int    tm_min;    // minutes (0 - 59)
-      int    tm_hour;   // hours (0 - 23)
-      int    tm_mday;   // day of month (1 - 31)
-      int    tm_mon;    // month of year (0 - 11)
-      int    tm_year;   // year - 1900
+        int tm_sec;  // seconds (0 - 60)
+        int tm_min;  // minutes (0 - 59)
+        int tm_hour; // hours (0 - 23)
+        int tm_mday; // day of month (1 - 31)
+        int tm_mon;  // month of year (0 - 11)
+        int tm_year; // year - 1900
     };
 ~~~
 
@@ -2060,13 +2531,13 @@ automatically by soapcpp2.
 ~~~{.cpp}
     mutable struct ns__tuple
     {
-      @std::string  id;
+      @ std::string id;
     };
 
     mutable struct ns__tuple
     {
-      std::string  name;
-      std::string  value;
+        std::string name;
+        std::string value;
     };
 ~~~
 
@@ -2078,7 +2549,7 @@ with a different type fails:
 ~~~{.cpp}
     mutable struct ns__tuple
     {
-      float        value; // BAD: value is already declared std::string
+        float value; // BAD: value is already declared std::string
     };
 ~~~
 
@@ -2096,10 +2567,9 @@ the member:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      std::string name = "Joe";
-      ...
+    { public:
+        std::string name = "Joe";
+        ...
     };
 ~~~
 
@@ -2107,10 +2577,9 @@ Alternatively, use C++11 default initialization syntax:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      std::string name { "Joe" };
-      ...
+    { public:
+        std::string name { "Joe" };
+        ...
     };
 ~~~
 
@@ -2149,40 +2618,53 @@ elements is declared as follows:
 
 ~~~{.cpp}
     class ns__record_with_default
-    {
-     public:
-      @std::string  a   = "A"; // optional XML attribute with default value "A"
-      @std::string  b 1 = "B"; // required XML attribute with default value "B"
-      @std::string *c   = "C"; // optional XML attribute with default value "C"
-       std::string  d 0 = "D"; // optional XML element with default value "D"
-       std::string  e   = "E"; // required XML element with default value "E"
-       std::string *f   = "F"; // optional XML element with default value "F"
-      ...
+    { public:
+      @ std::string  a   = "A"; // optional XML attribute with default value "A"
+      @ std::string  b 1 = "B"; // required XML attribute with default value "B"
+      @ std::string *c   = "C"; // optional XML attribute with default value "C"
+        std::string  d 0 = "D"; // optional XML element with default value "D"
+        std::string  e   = "E"; // required XML element with default value "E"
+        std::string *f   = "F"; // optional XML element with default value "F"
+       ...
     };
 ~~~
 
-Attributes are optional by default unless marked as required with the
-occurrence constraint `1`.  Elements are required unless the member type is a
-pointer or if the member is marked optional with occurrence constraint `0`.
+Attributes are considered optional by default, unless marked as required with
+the occurrence constraint `1`.  Elements are considered required unless the
+member type is a pointer or if the member is marked optional with occurrence
+constraint `0`.
 
 Instead of default values, fixed values indicate that the attribute or element
 must contain that value, and only that value, when provided in XML.  A fixed
 value is specified with a `==`.
+
+Attributes with default or fixed values may be omitted in XML.  When omitted,
+the default/fixed value is used at the receiving side, i.e. the deserializer
+assigns the default/fixed value when the attribute is absent.  Therefore, there
+is no need to make attributes with default/fixed values pointer based, because
+there is no way to distinguish an omitted attribute from a populated attribute
+on the receiving side.  The `c` member in the example above can be a
+non-pointer for this reason.  The wsdl2h tool does not generate pointers for
+attributes with default/fixed values.
+
+Elements with default or fixed values may be optional and the use of
+default/fixed values with elements differs from attributes.  The default/fixed
+value of an element is only used for elements that are empty.  Omitted optional
+elements are simply absent.  No default/fixed value is assigned.
 
 A record class (can be a struct in C) with fixed values for attributes and
 elements is declared as follows:
 
 ~~~{.cpp}
     class ns__record_with_fixed
-    {
-     public:
-      @std::string  g   == "G"; // optional XML attribute with fixed value "G"
-      @std::string  h 1 == "H"; // required XML attribute with fixed value "H"
-      @std::string *i   == "I"; // optional XML attribute with fixed value "I"
-       std::string  j 0 == "J"; // optional XML element with fixed value "J"
-       std::string  k   == "K"; // required XML element with fixed value "K"
-       std::string *l   == "L"; // optional XML element with fixed value "L"
-      ...
+    { public:
+      @ std::string  g   == "G"; // optional XML attribute with fixed value "G"
+      @ std::string  h 1 == "H"; // required XML attribute with fixed value "H"
+      @ std::string *i   == "I"; // optional XML attribute with fixed value "I"
+        std::string  j 0 == "J"; // optional XML element with fixed value "J"
+        std::string  k   == "K"; // required XML element with fixed value "K"
+        std::string *l   == "L"; // optional XML element with fixed value "L"
+        ...
     };
 ~~~
 
@@ -2208,18 +2690,17 @@ Member | Notes
 
 🔝 [Back to table of contents](#)
 
-### Attribute members and backtick XML tags                          {#toxsd9-5}
+### Attribute members                                                {#toxsd9-5}
 
 Class and struct data members are declared as XML attributes by annotating
 their type with a `@` qualifier:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      @std::string name;   // required (non-pointer means required)
-      @uint64_t    SSN;    // required (non-pointer means required)
-      ns__record  *spouse; // optional (pointer means minOccurs=0)
+    { public:
+      @ std::string name;    // required (non-pointer means required)
+      @ uint64_t    SSN;     // required (non-pointer means required)
+        ns__record  *spouse; // optional (pointer means minOccurs=0)
     };
 ~~~
 
@@ -2257,6 +2738,10 @@ convert values of type `T` to strings and back.
 Attribute data members can be pointers and smart pointers to these types, which
 permits attributes to be optional.
 
+🔝 [Back to table of contents](#)
+
+### Backtick XML tags                                                {#toxsd9-5-1}
+
 The XML tag name of a class/struct member is the name of the member with the
 usual XML tag translation, see [colon notation](#toxsd2).
 
@@ -2266,11 +2751,10 @@ attributes and elements, add the XML tag name in backticks (requires gSOAP
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      @std::string name    `full-name`;
-      @uint64_t    SSN     `tax-id`;
-      ns__record  *spouse  `married-to`;
+    { public:
+      @ std::string name    `full-name`;
+      @ uint64_t    SSN     `tax-id`;
+        ns__record *spouse  `married-to`;
     };
 ~~~
 
@@ -2304,7 +2788,7 @@ characters except white space and the backtick character.  A backtick tag can
 be combined with member constraints and default member initializers:
 
 ~~~{.cpp}
-    @uint64_t SSN `tax-id` 0:1 = 999;
+    @ uint64_t SSN `tax-id` 0:1 = 999;
 ~~~
 
 🔝 [Back to table of contents](#)
@@ -2342,11 +2826,10 @@ elements are qualified and local attributes are unqualified by default:
     //gsoap ns schema elementForm:   qualified
     //gsoap ns schema attributeForm: unqualified
     class ns__record
-    {
-     public:
-      @std::string name;
-      @uint64_t    SSN;
-      ns__record  *spouse;
+    { public:
+      @ std::string name;
+      @ uint64_t    SSN;
+        ns__record *spouse;
     };
 ~~~
 
@@ -2396,11 +2879,10 @@ overruled by adding a prefix to the member name by using colon notation:
     //gsoap ns schema elementForm:   qualified
     //gsoap ns schema attributeForm: unqualified
     class ns__record
-    {
-     public:
-      @std::string ns:name; // 'ns:' qualified
-      @uint64_t    SSN;
-      ns__record  *:spouse; // ':' unqualified (empty prefix)
+    { public:
+      @ std::string ns:name; // 'ns:' qualified
+      @ uint64_t    SSN;
+        ns__record *:spouse; // ':' unqualified (empty prefix)
     };
 ~~~
 
@@ -2443,7 +2925,7 @@ convention or using colon notation `prefix:name`.  However, this has a
 different effect by referring to global (root) elements and attributes, see
 [document root element definitions](#toxsd9-7).
 
-[Backtick tag names](#toxsd9-5) can be used in place of the member name
+[Backtick XML tags](#toxsd9-5-1) can be used in place of the member name
 annotations and will achieve the same effect as described when these tag names
 are (un)qualified (requires gSOAP 2.8.30 or greater).
 
@@ -2501,12 +2983,11 @@ their qualified name:
 ~~~{.cpp}
     typedef std::string _ns__name 1 : 100;
     class _ns__record
-    {
-     public:
-      @_QName      xsi__type; // built-in XSD attribute xsi:type
-      _ns__name    ns__name;  // ref to global ns:name element
-      uint64_t     SSN;
-      _ns__record *spouse;
+    { public:
+      @ _QName       xsi__type; // built-in XSD attribute xsi:type
+        _ns__name    ns__name;  // ref to global ns:name element
+        uint64_t     SSN;
+        _ns__record *spouse;
     };
 ~~~
 
@@ -2540,11 +3021,10 @@ element types that they refer to.  For example:
 ~~~{.cpp}
     typedef std::string _ns__name; // global element ns:name of type xsd:string
     class _ns__record
-    {
-     public:
-      int          ns__name;       // BAD: global element ns:name is NOT type int
-      _ns__record  ns__record;     // OK: ns:record is a global-level root element
-      ...
+    { public:
+        int         ns__name;   // BAD: global element ns:name is NOT type int
+        _ns__record ns__record; // OK: ns:record is a global-level root element
+        ...
     };
 ~~~
 
@@ -2562,12 +3042,11 @@ gSOAP 2.8.30 or greater):
 ~~~{.cpp}
     typedef std::string _ns__name 1 : 100;
     class _ns__record
-    {
-     public:
-      @_QName      t    <i>`xsi:type`</i>; // built-in XSD attribute xsi:type
-      _ns__name    s    <i>`ns:name`</i>;  // ref to global ns:name element
-      uint64_t     SSN;
-      _ns__record *spouse;
+    { public:
+      @ _QName       t    <i>`xsi:type`</i>; // built-in XSD attribute xsi:type
+        _ns__name    s    <i>`ns:name`</i>;  // ref to global ns:name element
+        uint64_t     SSN;
+        _ns__record *spouse;
     };
 ~~~
 
@@ -2617,11 +3096,10 @@ Consider for example:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      std::shared_ptr<std::string>  name;               // optional (pointer means minOccurs=0)
-      uint64_t                      SSN    0:1 = 999;   // force optional with default 999
-      ns__record                   *spouse nullptr 1:1; // force required and nillabe when absent
+    { public:
+        std::shared_ptr<std::string>  name;               // optional (pointer means minOccurs=0)
+        uint64_t                      SSN    0:1 = 999;   // force optional with default 999
+        ns__record                   *spouse nullptr 1:1; // force required and nillabe when absent
     };
 ~~~
 
@@ -2688,10 +3166,9 @@ For example, to use a vector data mamber to store names in a record:
 ~~~{.cpp}
     #import "import/stlvector.h"
     class ns__record
-    {
-     public:
-      std::vector<std::string>  names;
-      uint64_t                  SSN;
+    { public:
+        std::vector<std::string>  names;
+        uint64_t                  SSN;
     };
 ~~~
 
@@ -2702,10 +3179,9 @@ the form `minOccurs : maxOccurs`:
 ~~~{.cpp}
     #import "import/stlvector.h"
     class ns__record
-    {
-     public:
-      std::vector<std::string>  names 1:10;
-      uint64_t                  SSN;
+    { public:
+        std::vector<std::string>  names 1:10;
+        uint64_t                  SSN;
     };
 ~~~
 
@@ -2756,9 +3232,9 @@ tag:
 ~~~{.cpp}
     struct ns__record
     {
-      $int      sizeofnames; // array size
-      char*    *names;       // array of char* names
-      uint64_t  SSN;
+      $ int      sizeofnames; // array size
+        char*    *names;       // array of char* names
+        uint64_t  SSN;
     };
 ~~~
 
@@ -2782,9 +3258,9 @@ are of the form `minOccurs : maxOccurs`:
 ~~~{.cpp}
     struct ns__record
     {
-      $int      sizeofnames 1:10; // array size 1..10
-      char*    *names;            // array of one to ten char* names
-      uint64_t  SSN;
+      $ int      sizeofnames 1:10; // array size 1..10
+        char*   *names;            // array of one to ten char* names
+        uint64_t SSN;
     };
 ~~~
 
@@ -2806,13 +3282,13 @@ Arrays can also be declared as nested elements, similar to SOAP-encoded dynamic 
 ~~~{.cpp}
     struct ArrayOfstring
     {
-      char*    *__ptr 1:100; // array of 1..100 strings
-      int       __size;      // array size
+        char* *__ptr 1:100; // array of 1..100 strings
+        int    __size;      // array size
     };
     struct ns__record
     {
-      struct ArrayOfstring names; // array of char* names
-      uint64_t  SSN;
+        struct ArrayOfstring names; // array of char* names
+        uint64_t             SSN;
     };
 ~~~
 
@@ -2864,8 +3340,8 @@ Fixed-size arrays can be used to store a fixed number of values:
 ~~~{.cpp}
     struct ns__record
     {
-      char*     names[10]; // array of 10 char* names
-      uint64_t  SSN;
+        char*    names[10]; // array of 10 char* names
+        uint64_t SSN;
     };
 ~~~
 
@@ -2904,12 +3380,12 @@ member that is a struct with the collection of members to sequence:
 ~~~{.cpp}
     struct ns__record
     {
-      std::string   name;       // required name
-      struct __ns__optional
-      {
-        uint64_t    SSN;        // SSN in optional group
-        std::string phone;      // phone number in optional group
-      }            *__optional; // optional group
+        std::string   name;       // required name
+        struct __ns__optional
+        {
+            uint64_t    SSN;      // SSN in optional group
+            std::string phone;    // phone number in optional group
+        } *__optional;            // optional group
     };
 ~~~
 
@@ -2943,13 +3419,13 @@ To create repetitions of a sequence of members, use an array as follows:
 ~~~{.cpp}
     struct ns__record
     {
-      std::string   name;        // required name
-      $int          sizeofarray; // size of group array
-      struct __ns__array
-      {
-        uint64_t    SSN;         // SSN in group
-        std::string phone;       // phone number in group
-      }            *__array;     // group array
+        std::string   name;        // required name
+      $ int           sizeofarray; // size of group array
+        struct __ns__array
+        {
+            uint64_t    SSN;       // SSN in group
+            std::string phone;     // phone number in group
+        } *__array;                // group array
     };
 ~~~
 
@@ -2972,7 +3448,7 @@ This struct maps to a complexType in the soapcpp2-generated XML schema:
 The `name` member is a required element of the <i>`ns:record`</i> complexType.
 The <i>`ns:record`</i> complexType has a potentially unbounded sequence of
 `SSN` and `phone` elements.  You can specify array bounds instead of zero to
-unbounded, see [Container and array members and their occurrence constraints](#toxsd9-9).
+unbounded, see [container and array members and their occurrence constraints](#toxsd9-9).
 
 The XML value space consists of a sequence of SSN and phone elements:
 
@@ -3005,16 +3481,15 @@ selector tag:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      $int  xORnORs;    // variant selector with values SOAP_UNION_fieldname
-      union ns__choice
-      {
-        float x;
-        int   n;
-        char *s;
-      } u;
-      std::string name;
+    { public:
+      $ int  xORnORs;    // variant selector with values SOAP_UNION_fieldname
+        union ns__choice
+        {
+            float x;
+            int   n;
+            char *s;
+        } u;
+        std::string name;
     };
 ~~~
 
@@ -3053,19 +3528,18 @@ selector and union member in a struct:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      std::vector<
-      struct ns__data  // data with a choice of x, n, or s
-      {
-        $int  xORnORs; // variant selector with values SOAP_UNION_fieldname
-        union ns__choice
+    { public:
+        std::vector<
+        struct ns__data  // data with a choice of x, n, or s
         {
-          float x;
-          int   n;
-          char *s;
-        } u;
-      }> data;         // vector with data
+          $ int  xORnORs; // variant selector with values SOAP_UNION_fieldname
+            union ns__choice
+            {
+                float x;
+                int   n;
+                char *s;
+            } u;
+        }> data;         // vector with data
     };
 ~~~
 
@@ -3074,19 +3548,18 @@ and an equivalent definition with a dynamic array instead of a `std::vector`
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      $int  sizeOfdata; // size of dynamic array
-      struct ns__data   // data with a choice of x, n, or s
-      {
-        $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
-        union ns__choice
+    { public:
+      $ int  sizeOfdata; // size of dynamic array
+        struct ns__data   // data with a choice of x, n, or s
         {
-          float x;
-          int   n;
-          char *s;
-        } u;
-      } *data;          // points to the data array of length sizeOfdata
+          $ int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
+            union ns__choice
+            {
+                float x;
+                int   n;
+                char *s;
+            } u;
+        } *data;          // points to the data array of length sizeOfdata
     };
 ~~~
 
@@ -3139,19 +3612,18 @@ container (so you can also use this approach in C with structs):
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      $int  sizeOfdata; // size of dynamic array
-      struct __ns__data // contains choice of x, n, or s
-      {
-        $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
-        union ns__choice
+    { public:
+      $ int sizeOfdata;   // size of dynamic array
+        struct __ns__data // contains choice of x, n, or s
         {
-          float x;
-          int   n;
-          char *s;
-        } u;
-      } *__data;        // points to the data array of length sizeOfdata
+          $ int  xORnORs; // variant selector with values SOAP_UNION_fieldname
+            union ns__choice
+            {
+                float x;
+                int   n;
+                char *s;
+            } u;
+        } *__data;        // points to the data array of length sizeOfdata
     };
 ~~~
 
@@ -3203,10 +3675,9 @@ alternatively by an `$int` special member of any name as a type tag:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      $int  typeOfdata; // type tag with values SOAP_TYPE_T
-      void *data;       // points to some data of type T
+    { public:
+      $ int  typeOfdata; // type tag with values SOAP_TYPE_T
+        void *data;      // points to some data of type T
     };
 ~~~
 
@@ -3256,14 +3727,13 @@ requires wrapping the type tag and `void*` members in a struct:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      std::vector<
-      struct ns__data     // data with an xsd:anyType item
-      {
-        $int  typeOfitem; // type tag with values SOAP_TYPE_T
-        void *item;       // points to some item of type T
-      }> data;            // vector with data
+    { public:
+        std::vector<
+        struct ns__data      // data with an xsd:anyType item
+        {
+          $ int  typeOfitem; // type tag with values SOAP_TYPE_T
+            void *item;      // points to some item of type T
+        }> data;             // vector with data
     };
 ~~~
 
@@ -3272,14 +3742,13 @@ and an equivalent definition with a dynamic array instead of a `std::vector`
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      $int  sizeOfdata;   // size of dynamic array
-      struct ns__data     // data with an xsd:anyType item
-      {
-        $int  typeOfitem; // type tag with values SOAP_TYPE_T
-        void *item;       // points to some item of type T
-      } *data;            // points to the data array of length sizeOfdata
+    { public:
+      $ int sizeOfdata;      // size of dynamic array
+        struct ns__data      // data with an xsd:anyType item
+        {
+          $ int  typeOfitem; // type tag with values SOAP_TYPE_T
+            void *item;      // points to some item of type T
+        } *data;             // points to the data array of length sizeOfdata
     };
 ~~~
 
@@ -3326,14 +3795,13 @@ of a STL container (you can use this in C with structs):
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      $int  sizeOfdata;   // size of dynamic array
-      struct __data       // contains xsd:anyType item
-      {
-        $int  typeOfitem; // type tag with values SOAP_TYPE_T
-        void *item;       // points to some item of type T
-      } *__data;          // points to the data array of length sizeOfdata
+    { public:
+      $ int sizeOfdata;      // size of dynamic array
+        struct __data        // contains xsd:anyType item
+        {
+          $ int typeOfitem;  // type tag with values SOAP_TYPE_T
+            void *item;      // points to some item of type T
+        } *__data;           // points to the data array of length sizeOfdata
     };
 ~~~
 
@@ -3388,11 +3856,10 @@ For example, adding a `set` and `get` method to a class declaration:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      int set(struct soap*); // triggered before serialization
-      int get(struct soap*); // triggered after deserialization
-      ...
+    { public:
+        int set(struct soap*); // triggered before serialization
+        int get(struct soap*); // triggered after deserialization
+        ...
     };
 ~~~
 
@@ -3440,7 +3907,8 @@ C++:
   and all of its (deep) members are not managed by a `soap` context AND the deep
   structure is a tree (no cycles and co-referenced objects by way of multiple
   (non-smart) pointers pointing to the same data).  Can be safely used after
-  `soap_dup(NULL)` to delete the deep copy.  Does not delete the object itself.
+  `T * soap_dup_T(NULL, NULL, const T*)` to delete the deep copy returned.
+  Does not delete the object itself.
 
 When in C++ mode, soapcpp2 tool adds several methods to classes in addition to
 adding a default constructor and destructor (when these were not explicitly
@@ -3539,10 +4007,9 @@ array type:
 
 ~~~{.cpp}
     class ArrayOfT
-    {
-     public:
-      T   *__ptr;  // array pointer
-      int  __size; // array size
+    { public:
+        T   *__ptr;  // array pointer
+        int  __size; // array size
     };
 ~~~
 
@@ -3550,10 +4017,9 @@ where `T` is the array element type.  A multidimensional SOAP Array is:
 
 ~~~{.cpp}
     class ArrayOfT
-    {
-     public:
-      T   *__ptr;     // array pointer
-      int  __size[N]; // array size of each dimension
+    { public:
+        T   *__ptr;     // array pointer
+        int  __size[N]; // array size of each dimension
     };
 ~~~
 
@@ -3586,11 +4052,10 @@ the start of the index range for each dimension:
 
 ~~~{.cpp}
     class ArrayOfT
-    {
-     public:
-      T   *__ptr;       // array pointer
-      int  __size[N];   // array size of each dimension
-      int  __offset[N]; // array offsets to start each dimension
+    { public:
+        T   *__ptr;       // array pointer
+        int  __size[N];   // array size of each dimension
+        int  __offset[N]; // array offsets to start each dimension
     };
 ~~~
 
@@ -3598,10 +4063,9 @@ For example, we can define a matrix of floats as follows:
 
 ~~~{.cpp}
     class Matrix
-    {
-     public:
-      double *__ptr;
-      int     __size[2];
+    { public:
+        double *__ptr;
+        int     __size[2];
     };
 ~~~
 
@@ -3641,10 +4105,9 @@ A special case of a one-dimensional array is used to define <i>`xsd:hexBinary`</
 
 ~~~{.cpp}
     class xsd__hexBinary
-    {
-     public:
-      unsigned char *__ptr;  // points to raw binary data
-      int            __size; // size of data
+    { public:
+        unsigned char *__ptr;  // points to raw binary data
+        int            __size; // size of data
     };
 ~~~
 
@@ -3652,10 +4115,9 @@ and
 
 ~~~{.cpp}
     class xsd__base64Binary
-    {
-     public:
-      unsigned char *__ptr;  // points to raw binary data
-      int            __size; // size of data
+    { public:
+        unsigned char *__ptr;  // points to raw binary data
+        int            __size; // size of data
     };
 ~~~
 
@@ -3669,16 +4131,15 @@ declare a new `ns__binary` type that is a <i>`simpleType`</i> restriction of
 ~~~{.cpp}
     class ns__binary : public xsd__base64Binary
     {
-      ... // attribute members (@) and class methods
+        ... // attribute members (@) and class methods
     };
 ~~~
 ~~~{.cpp}
     class ns__binary
-    {
-     public:
-      unsigned char *__ptr;  // points to raw binary data
-      int            __size; // size of data
-      ...                    // attribute members (@) and class methods (optional)
+    { public:
+        unsigned char *__ptr;  // points to raw binary data
+        int            __size; // size of data
+        ...                    // attribute members (@) and class methods (optional)
     };
 ~~~
 
@@ -3697,13 +4158,12 @@ MTOM attachment and also be used for <i>`xsd:base64Binary`</i> type values:
 
 ~~~{.cpp}
     class xsd__base64Binary
-    {
-     public:
-      unsigned char *__ptr;   // points to raw binary data
-      int            __size;  // size of data
-      char          *id;      // NULL to generate an id, or set to a unique UUID
-      char          *type;    // MIME type of the data
-      char          *options; // optional description of MIME attachment
+    { public:
+        unsigned char *__ptr;   // points to raw binary data
+        int            __size;  // size of data
+        char          *id;      // NULL to generate an id, or set to a unique UUID
+        char          *type;    // MIME type of the data
+        char          *options; // optional description of MIME attachment
     };
 ~~~
 
@@ -3718,13 +4178,12 @@ preferred and declared as follows:
 ~~~{.cpp}
     //gsoap xop schema import: http://www.w3.org/2004/08/xop/include
     class _xop__Include
-    {
-     public:
-      unsigned char *__ptr;   // points to raw binary data
-      int            __size;  // size of data
-      char          *id;      // NULL to generate an id, or set to a unique UUID
-      char          *type;    // MIME type of the data
-      char          *options; // optional description of MIME attachment
+    { public:
+        unsigned char *__ptr;   // points to raw binary data
+        int            __size;  // size of data
+        char          *id;      // NULL to generate an id, or set to a unique UUID
+        char          *type;    // MIME type of the data
+        char          *options; // optional description of MIME attachment
     };
 ~~~
 
@@ -3740,10 +4199,9 @@ simpleContent:
 
 ~~~{.cpp}
     class ns__simple
-    {
-     public:
-      T   __item; // primitive type for the simpleContent
-      ...         // attribute members (@) and class methods (optional)
+    { public:
+        T   __item; // primitive type for the simpleContent
+        ...         // attribute members (@) and class methods (optional)
     };
 ~~~
 
@@ -3778,13 +4236,12 @@ Use of a DOM is optional and enabled by `#import "dom.h"` to use the DOM
     #import "dom.h"
 
     class ns__record
-    {
-     public:
-      @xsd__anyAttribute attributes; // optional DOM attributes
-      xsd__anyType      *name;       // optional DOM element (pointer means minOccurs=0)
-      xsd__anyType       address;    // required DOM element (minOccurs=1)
-      xsd__anyType       email   0;  // optional DOM element (minOccurs=0)
-      ...                            // other members
+    { public:
+      @ xsd__anyAttribute attributes;  // optional DOM attributes
+        xsd__anyType      *name;       // optional DOM element (pointer means minOccurs=0)
+        xsd__anyType       address;    // required DOM element (minOccurs=1)
+        xsd__anyType       email   0;  // optional DOM element (minOccurs=0)
+        ...                            // other members
     };
 ~~~
 
@@ -3806,12 +4263,11 @@ content:
     #import "dom.h"
 
     class ns__record
-    {
-     public:
-      @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
-      std::vector<xsd__anyType> __any   0;      // optional DOM elements (minOccurs=0)
-      xsd__anyType              __mixed 0;      // optional mixed content (minOccurs=0)
-      ...                                       // other members
+    { public:
+      @ xsd__anyAttribute        __anyAttribute;  // optional DOM attributes
+        std::vector<xsd__anyType> __any   0;      // optional DOM elements (minOccurs=0)
+        xsd__anyType              __mixed 0;      // optional mixed content (minOccurs=0)
+        ...                                       // other members
     };
 ~~~
 
@@ -3825,11 +4281,11 @@ In C you can use a dynamic arrary instead of `std::vector`:
 
     struct ns__record
     {
-      @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
-      $int                      __sizeOfany;    // size of the array
-      xsd__anyType             *__any;          // optional DOM elements (pointer means minOccurs=0)
-      xsd__anyType              __mixed 0;      // optional mixed content (minOccurs=0)
-      ...                                       // other members
+      @ xsd__anyAttribute        __anyAttribute; // optional DOM attributes
+      $ int                      __sizeOfany;    // size of the array
+        xsd__anyType             *__any;         // optional DOM elements (pointer means minOccurs=0)
+        xsd__anyType              __mixed 0;     // optional mixed content (minOccurs=0)
+        ...                                      // other members
     };
 ~~~
 
@@ -3840,9 +4296,9 @@ DOM class:
     #import "dom.h"
 
     class ns__record : public xsd__anyType
-    {
-      std::vector<xsd__anyType*> array; // array of objects of any class
-      ...                               // other members
+    { public:
+        std::vector<xsd__anyType*> array; // array of objects of any class
+        ...                               // other members
     };
 ~~~
 
@@ -3853,9 +4309,13 @@ to distinguish the XML content from the DOM base type.  This is important for
 the receiving end: without <i>`xsd:type`</i> attributes with type names, only base DOM
 objects are recognized and instantiated.
 
-Because C lacks OOP principles such as class inheritance and polymorphism, you
-will need to use the special [`void*` members](#toxsd9-12) to serialize data
-pointed to by a `void*` member.
+Because C lacks object-oriented programming concepts such as class inheritance
+and polymorphism, you should consider using [derived types in C and C++](#toxsd9-1-1).
+
+An alternative is to use the special [tagged void pointer members](#toxsd9-12)
+to serialize data pointed to by a `void*` member, which can be any serializable
+type, such as derived types.  This approach uses <i>`xsi:type`</i> attributes
+to identify the type of value serialized.
 
 To ensure that wsdl2h generates pointer-based `xsd__anyType` DOM nodes with
 <b>`wsdl2h -d`</b> using option <b>`-d`</b> for <i>`xsd:any`</i>, add the
@@ -3879,7 +4339,7 @@ hierarchy:
 
     class ns__record : public xsd__anyType
     {
-      ...
+        ...
     };
 ~~~
 
@@ -4400,7 +4860,7 @@ for a service operation as follows:
 ~~~
 
 Use `SOAP` (SOAP 1.1), `SOAP1.1`, `SOAP1.2`, and `HTTP` to switch SOAP versions
-or enable REST methods with HTTP POST.  See [Service directives](#directives-1)
+or enable REST methods with HTTP POST.  See [service directives](#directives-1)
 and [XML serialization](#non-soap).
 
 The soapcpp2 tool auto-generates client and server code.  At the client side,
@@ -4726,9 +5186,9 @@ assume we have the following struct:
 ~~~{.cpp}
     struct ns__record
     {
-      const char        *name 1; // required (minOccurs=1)
-      uint64_t          *SSN;    // optional (pointer means minOccurs=0)
-      struct ns__record *spouse; // optional (pointer means minOccurs=0)
+        const char        *name 1; // required (minOccurs=1)
+        uint64_t          *SSN;    // optional (pointer means minOccurs=0)
+        struct ns__record *spouse; // optional (pointer means minOccurs=0)
     };
 ~~~
 
@@ -4819,9 +5279,9 @@ making unmanaged deep copies.  Consider for example:
 ~~~{.cpp}
     struct ns__record
     {
-      const char         *name 1; // required (minOccurs=1)
-      uint64_t            SSN;    // required (non-pointer means minOccurs=1)
-      struct ns__record  *spouse; // optional (pointer means minOccurs=0)
+        const char         *name 1; // required (minOccurs=1)
+        uint64_t            SSN;    // required (non-pointer means minOccurs=1)
+        struct ns__record  *spouse; // optional (pointer means minOccurs=0)
     };
 ~~~
 
@@ -5025,11 +5485,10 @@ For example, assuming we have the following class:
 
 ~~~{.cpp}
     class ns__record
-    {
-     public:
-      std::string  name;   // required (non-pointer means minOccurs=1)
-      uint64_t    *SSN;    // optional (pointer means minOccurs=0)
-      ns__record  *spouse; // optional (pointer means minOccurs=0)
+    { public:
+        std::string  name;   // required (non-pointer means minOccurs=1)
+        uint64_t    *SSN;    // optional (pointer means minOccurs=0)
+        ns__record  *spouse; // optional (pointer means minOccurs=0)
     };
 ~~~
 
@@ -5079,11 +5538,11 @@ context pointer to a class/struct:
 
 ~~~{.cpp}
     class ns__record
-    {
-      ...
-      void create_more(); // needs a context to create more internal data
-     protected:
-      struct soap *soap;  // the context that manages this instance, or NULL
+    { public:
+        ...
+        void create_more(); // needs a context to create more internal data
+      protected:
+        struct soap *soap;  // the context that manages this instance, or NULL
     };
 ~~~
 
@@ -5183,10 +5642,10 @@ deep copies.  Consider for example:
 
 ~~~{.cpp}
     class ns__record
-    {
-      const char  *name 1; // required (minOccurs=1)
-      uint64_t     SSN;    // required (non-pointer means minOccurs=1)
-      ns__record  *spouse; // optional (pointer means minOccurs=1)
+    { public:
+        const char  *name 1; // required (minOccurs=1)
+        uint64_t     SSN;    // required (non-pointer means minOccurs=1)
+        ns__record  *spouse; // optional (pointer means minOccurs=1)
     };
 ~~~
 

@@ -540,6 +540,35 @@ static int soap_curl_connect_callback(struct soap *soap, const char *endpoint, c
     curl_easy_setopt(data->curl, CURLOPT_TIMEOUT, (long)soap->recv_timeout);
   else if (soap->recv_timeout < 0)
     curl_easy_setopt(data->curl, CURLOPT_TIMEOUT_MS, -(long)soap->recv_timeout/1000);
+  if (soap->proxy_host)
+  {
+    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->proxy_host) + 8 + 8), "http://%s:%d", soap->proxy_host,soap->proxy_port);
+    curl_easy_setopt(data->curl, CURLOPT_PROXY, (void*)soap->tmpbuf);
+    if (soap->proxy_userid)
+    {
+      size_t len_proxy_userid = strlen(soap->proxy_userid);
+      size_t len_proxy_passwd = soap->proxy_passwd ? strlen(soap->proxy_passwd) : 0;
+      if ((len_proxy_userid + len_proxy_passwd) * 3 + 2 < sizeof(soap->tmpbuf))
+      {
+        size_t pos = 0;
+        size_t i;
+        for (i = 0; i < len_proxy_userid; i++)
+        {
+          (SOAP_SNPRINTF(soap->tmpbuf + pos, sizeof(soap->tmpbuf) - pos, 4), "%%%02x", (int)((unsigned char)soap->proxy_userid[i]));
+          pos += 3;
+        }
+        soap->tmpbuf[pos] = ':';
+        pos++;
+        for (i = 0; i < len_proxy_passwd; i++)
+        {
+          (SOAP_SNPRINTF(soap->tmpbuf + pos, sizeof(soap->tmpbuf) - pos, 4), "%%%02x", (int)((unsigned char)soap->proxy_passwd[i]));
+          pos += 3;
+        }
+        soap->tmpbuf[pos] = '\0';
+        curl_easy_setopt(data->curl, CURLOPT_PROXYUSERPWD, (void*)soap->tmpbuf);
+      }
+    }
+  }
   soap->omode &= ~SOAP_IO;       /* reset IO modes */
   soap->omode |= SOAP_IO_BUFFER; /* buffer the output */
   soap->omode |= SOAP_ENC_PLAIN; /* no HTTP headers */

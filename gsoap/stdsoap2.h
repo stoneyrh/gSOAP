@@ -1,10 +1,10 @@
 /*
-        stdsoap2.h 2.8.74
+        stdsoap2.h 2.8.75
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20874
+#define GSOAP_VERSION 20875
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -583,7 +583,9 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALTIME_R
 # else /* Default assumptions for supported library functions when not including config.h */
 #  ifndef WITH_C_LOCALE
-#   define WITH_NO_C_LOCALE /* turn locale support off by default */
+#   ifndef WITH_NO_C_LOCALE
+#    define WITH_NO_C_LOCALE /* turn locale support off by default */
+#   endif
 #  endif
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -702,9 +704,11 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
-/* force inclusion of xlocale.h */
-#if defined(WITH_INCLUDE_XLOCALE_H) && !defined(HAVE_XLOCALE_H)
-# define HAVE_XLOCALE_H
+/* force inclusion of xlocale.h when WITH_INCLUDE_XLOCALE_H is defined by the user for systems that require xlocale.h */
+#ifdef WITH_INCLUDE_XLOCALE_H
+# ifndef HAVE_XLOCALE_H
+#  define HAVE_XLOCALE_H
+# endif
 #endif
 
 #ifdef WITH_C_LOCALE
@@ -1232,7 +1236,7 @@ extern "C" {
 #endif
 #ifndef SOAP_HDRLEN
 # ifndef WITH_LEAN
-#  define SOAP_HDRLEN  (8192) /* maximum length of HTTP header line (must be >4096 to read cookies) */
+#  define SOAP_HDRLEN  (8192) /* maximum length of HTTP header line (must be >=4096 to read cookies) */
 # else
 #  define SOAP_HDRLEN  (1024)
 # endif
@@ -3191,6 +3195,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_accept(struct soap*);
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_ssl_error(struct soap*, int ret, int err);
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_crl(struct soap*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_poll(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_ready(struct soap*);
 
 #if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *keyid, const char *password, const char *cafile, const char *capath, const char *dhfile, const char *randfile, const char *sid);
@@ -3435,6 +3440,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_out(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_out(struct soap*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_http_has_body(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_http_skip_body(struct soap*);
 SOAP_FMAC1 char * SOAP_FMAC2 soap_http_get_body(struct soap*, size_t *len);
 SOAP_FMAC1 char * SOAP_FMAC2 soap_http_get_form(struct soap*);
 SOAP_FMAC1 char * SOAP_FMAC2 soap_http_get_body_prefix(struct soap*, size_t *len, const char *prefix);
@@ -3613,7 +3619,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_clr_attr(struct soap *soap);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_extend_url(struct soap *soap, const char*, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_extend_url_query(struct soap *soap, const char*, const char*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_url_query(struct soap *soap, const char*, const char*);
-SOAP_FMAC1 size_t SOAP_FMAC2 soap_encode_url(const char*, char*, size_t);
+SOAP_FMAC1 int SOAP_FMAC2 soap_encode_url(const char*, char*, int);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_encode_url_string(struct soap*, const char*);
 #ifdef WITH_COOKIES
 SOAP_FMAC1 void SOAP_FMAC2 soap_getcookies(struct soap *soap, const char *val);

@@ -4,7 +4,7 @@
         Main compiler and code generator batch program.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -197,41 +197,41 @@ main(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-A] [-a] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-g] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S|-CS] [-A] [-a] [-b] [-c|-c++|-c++11] [-d path] [-Ec] [-Ed] [-Et] [-e] [-f N] [-g] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-L] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-T] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
             fprintf(stderr, "\
--1      generate SOAP 1.1 bindings\n\
--2      generate SOAP 1.2 bindings\n\
--0      no SOAP bindings, use REST\n\
--C      generate client-side code only\n\
--S      generate server-side code only\n\
--T      generate server auto-test code\n\
--Ec     generate extra functions for deep copying\n\
--Ed     generate extra functions for deep deletion\n\
--Et     generate extra functions for data traversals with walker functions\n\
--L      don't generate soapClientLib/soapServerLib\n\
+-0      no SOAP, generate REST source code\n\
+-1      generate SOAP 1.1 source code\n\
+-2      generate SOAP 1.2 source code\n\
 -A      require HTTP SOAPAction headers to invoke server-side operations\n\
 -a      use HTTP SOAPAction with WS-Addressing to invoke server-side operations\n\
 -b      serialize byte arrays char[N] as string\n\
+-C      generate client-side source code only\n\
 -c      generate C source code\n\
 -c++    generate C++ source code (default)\n\
 -c++11  generate C++ source code optimized for C++11 (compile with -std=c++11)\n\
 -dpath  use path to save files\n\
+-Ec     generate extra functions for deep copying\n\
+-Ed     generate extra functions for deep deletion\n\
+-Et     generate extra functions for data traversals with callback functions\n\
 -e      generate SOAP RPC encoding style bindings (also use -1 or -2)\n\
 -fN     multiple soapC files, with N serializer definitions per file (N>=10)\n\
 -g      generate XML sample messages in template format for testmsgr\n\
--h      display help info\n\
+-h      display help info and exit\n\
 -Ipath  use path(s) for #import (paths separated with '" SOAP_PATHSEP "')\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\
 -j      generate C++ service proxies and objects that share a soap struct\n\
+-L      don't generate soapClientLib/soapServerLib\n\
 -l      generate linkable modules (experimental)\n\
--m      generate Matlab(tm) code for MEX compiler (deprecated)\n\
+-m      generate source code for the Matlab(tm) MEX compiler (deprecated)\n\
 -n      use service name to rename service functions and namespace table\n\
 -pname  save files with new prefix name instead of 'soap'\n\
--Qname  use name as the C++ namespace for decls, including custom serializers\n\
--qname  use name as the C++ namespace for decls, excluding custom serializers\n\
+-Qname  use name as the C++ namespace, including custom serializers\n\
+-qname  use name as the C++ namespace, excluding custom serializers\n\
 -r      generate soapReadme.md report\n\
+-S      generate server-side source code only\n\
 -s      generate stub and skeleton functions with strict XML validation checks\n\
--t      generate code for fully xsi:type typed SOAP/XML messaging\n\
+-T      generate server auto-test source code\n\
+-t      generate source code for fully xsi:type typed SOAP/XML messages\n\
 -u      uncomment WSDL/schema output by suppressing XML comments\n\
 -V      display the current version and exit\n\
 -v      verbose output\n\
@@ -240,7 +240,7 @@ main(int argc, char **argv)
 -y      include C/C++ type access information in sample XML messages\n\
 -z1     compatibility: generate old-style C++ service proxies and objects\n\
 -z2     compatibility with 2.7.x: omit XML output for NULL pointers\n\
--z3     compatibility with <= 2.8.30: _param_N indexing; nillable pointers\n\
+-z3     compatibility up to 2.8.30: _param_N indexing; nillable pointers\n\
 infile  header file to parse (if none reads stdin)\n\
 \n");
             exit(0);
@@ -378,7 +378,7 @@ infile  header file to parse (if none reads stdin)\n\
     else
       filename = argv[i];
   }
-  fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n");
+  fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n");
   if (filename == NULL)
   { filename = "(stdin)";
     fprintf(fmsg, "Reading from stdin...\n");

@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.74" /* Current version */
-# define GSOAP_VERSION 20874
+# define VERSION "2.8.75" /* Current version */
+# define GSOAP_VERSION 20875
 #endif
 
 #ifdef WIN32
@@ -124,63 +124,65 @@ typedef enum Bool {False, True} Bool;
 typedef int Token;
 
 typedef enum Type
-{       Tnone,
-        Tvoid,
-        Tchar,          /* primitive types from here*/
-        Twchar,
-        Tshort,
-        Tint,
-        Tlong,
-        Tllong,
-        Tfloat,
-        Tdouble,
-        Tldouble,
-        Tuchar,
-        Tushort,
-        Tuint,
-        Tulong,
-        Tullong,
-        Tsize,
-        Ttime,
-        Tenum,
-        Tenumsc,
-        Tclass,         /* compound types from here */
-        Tstruct,
-        Tunion,
-        Tpointer,       /* pointer T* */
-        Treference,     /* reference T& */
-        Trvalueref,     /* C+11 rvalue reference T&& */
-        Tarray,         /* fixed size array T[N] */
-        Ttemplate,      /* template class<T> */
-        Tfun
+{
+  Tnone,
+  Tvoid,
+  Tchar,          /* primitive types from here*/
+  Twchar,
+  Tshort,
+  Tint,
+  Tlong,
+  Tllong,
+  Tfloat,
+  Tdouble,
+  Tldouble,
+  Tuchar,
+  Tushort,
+  Tuint,
+  Tulong,
+  Tullong,
+  Tsize,
+  Ttime,
+  Tenum,
+  Tenumsc,
+  Tclass,         /* compound types from here */
+  Tstruct,
+  Tunion,
+  Tpointer,       /* pointer T* */
+  Treference,     /* reference T& */
+  Trvalueref,     /* C+11 rvalue reference T&& */
+  Tarray,         /* fixed size array T[N] */
+  Ttemplate,      /* template class<T> */
+  Tfun
 } Type;
 
 #define TYPES (Tfun+1)  /* number of type (operators) enumerated above */
 
 typedef enum Storage
-{       Snone           = 0,
-        Sauto           = 0x000001,
-        Sregister       = 0x000002,
-        Sstatic         = 0x000004,
-        Sextern         = 0x000008,
-        Stypedef        = 0x000010,
-        Svirtual        = 0x000020,
-        Sconst          = 0x000040,
-        Sconstobj       = 0x000080,
-        Sfinal          = 0x000100,
-        Soverride       = 0x000200,
-        Sconstptr       = 0x000400,
-        Sfriend         = 0x000800,
-        Sinline         = 0x001000,
-        Sabstract       = 0x002000,
-        SmustUnderstand = 0x004000,
-        Sreturn         = 0x008000,
-        Sattribute      = 0x010000,
-        Sspecial        = 0x020000,
-        Sexplicit       = 0x040000,
-        Sprivate        = 0x080000,
-        Sprotected      = 0x100000,
-        Smutable        = 0x200000
+{
+  Snone           = 0,
+  Sauto           = 0x000001,
+  Sregister       = 0x000002,
+  Sstatic         = 0x000004,
+  Sextern         = 0x000008,
+  Stypedef        = 0x000010,
+  Svirtual        = 0x000020,
+  Sconst          = 0x000040,
+  Sconstobj       = 0x000080,
+  Sfinal          = 0x000100,
+  Soverride       = 0x000200,
+  Sconstptr       = 0x000400,
+  Sfriend         = 0x000800,
+  Sinline         = 0x001000,
+  Sabstract       = 0x002000,
+  SmustUnderstand = 0x004000,
+  Sreturn         = 0x008000,
+  Sattribute      = 0x010000,
+  Sspecial        = 0x020000,
+  Sexplicit       = 0x040000,
+  Sprivate        = 0x080000,
+  Sprotected      = 0x100000,
+  Smutable        = 0x200000
 } Storage;
 
 typedef enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
@@ -219,109 +221,118 @@ typedef enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
 #define mkstring()      mkpointer(mkchar())
 
 typedef struct Symbol
-{       char            *name;
-        Token           token;
-        struct Symbol   *next;
+{
+  char            *name;
+  Token           token;
+  struct Symbol   *next;
 } Symbol;
 
 Symbol  *install(const char*, Token), *lookup(const char*), *gensym(const char*), *gensymidx(const char*, int);
 
 typedef struct Tnode
-{       Type            type;
-        void            *ref;
-        Symbol          *id;    /* struct/class/union/enum name */
-        Symbol          *base;  /* base class name */
-        Symbol          *sym;   /* typedef name */
-        Symbol          *restriction;   /* restriction via typedef base id */
-        Symbol          *synonym;       /* synonymous typedef base name for typedef base id */
-        Symbol          *extsym;        /* typedef sym of external type w/ custom serializer */
-        struct Entry    *response; /* funcs only: points to response struct */
-        int             width;
-        int             transient;
-        const char      *imported;
-        struct Tnode    *next;
-        Bool            visited;
-        Bool            recursive;      /* recursive data type */
-        Bool            generated;
-        Bool            wsdl;
-        int             num;
-        Bool            hasmin;
-        Bool            hasmax;
-        Bool            incmin;
-        Bool            incmax;
-        LONG64          imin;
-        LONG64          imax;
-        double          rmin;
-        double          rmax;
-        int             property;
-        const char      *pattern;
+{
+  Type            type;
+  void            *ref;
+  Symbol          *id;    /* struct/class/union/enum name */
+  Symbol          *base;  /* base class name */
+  Symbol          *sym;   /* typedef name */
+  Symbol          *restriction;   /* restriction via typedef base id */
+  Symbol          *synonym;       /* synonymous typedef base name for typedef base id */
+  Symbol          *extsym;        /* typedef sym of external type w/ custom serializer */
+  struct Entry    *response; /* funcs only: points to response struct */
+  int             width;
+  int             transient;
+  const char      *imported;
+  struct Tnode    *next;
+  Bool            visited;
+  Bool            recursive;      /* recursive data type */
+  Bool            generated;
+  Bool            wsdl;
+  int             num;
+  Bool            hasmin;
+  Bool            hasmax;
+  Bool            incmin;
+  Bool            incmax;
+  LONG64          imin;
+  LONG64          imax;
+  double          rmin;
+  double          rmax;
+  int             property;
+  const char      *pattern;
 } Tnode;
 
-typedef union Value {
-        LONG64          i;
-        double          r;
-        const char      *s;
+typedef union Value
+{
+  LONG64          i;
+  double          r;
+  const char      *s;
 } Value;
 
-typedef struct IDinfo {
-        Tnode           *typ;
-        Storage         sto;
-        Bool            hasval;         /* if true, identifier has a default value */
-        Bool            ptrval;         /* if true, identifier is a pointer to a default value */
-        Bool            fixed;          /* if true and hasval, identifier has a fixed value */
-        Value           val;            /* ... with this value */
-        int             offset;
-        LONG64          minOccurs;
-        LONG64          maxOccurs;
-        Bool            nillable;
+typedef struct IDinf
+{
+  Tnode           *typ;
+  Storage         sto;
+  Bool            hasval;         /* if true, identifier has a default value */
+  Bool            ptrval;         /* if true, identifier is a pointer to a default value */
+  Bool            fixed;          /* if true and hasval, identifier has a fixed value */
+  Value           val;            /* ... with this value */
+  int             offset;
+  LONG64          minOccurs;
+  LONG64          maxOccurs;
+  Bool            nillable;
 } IDinfo;
 
-typedef struct Entry {
-        Symbol          *sym;
-        const char      *tag;
-        IDinfo          info;
-        Level           level;
-        const char      *filename;
-        int             lineno;
-        struct Entry    *next;
+typedef struct Entry
+{
+  Symbol          *sym;
+  const char      *tag;
+  IDinfo          info;
+  Level           level;
+  const char      *filename;
+  int             lineno;
+  struct Entry    *next;
 } Entry;
 
-typedef struct Table {
-        Symbol          *sym;
-        Level           level;
-        Entry           *list;
-        struct Table    *prev;
+typedef struct Table
+{
+  Symbol          *sym;
+  Level           level;
+  Entry           *list;
+  struct Table    *prev;
 } Table;
 
-typedef struct FNinfo {
-        Tnode   *ret;
-        Table   *args;
+typedef struct FNinfo
+{
+  Tnode   *ret;
+  Table   *args;
 } FNinfo;
 
-typedef struct IR {
-        LONG64 i;
-        double r;
+typedef struct IR
+{
+  LONG64 i;
+  double r;
 } IR;
 
-typedef struct Node {
-        Tnode           *typ;
-        Storage         sto;
-        Bool            hasval;         /* if true, this node has a default value */
-        Bool            fixed;          /* if true and hasval, this node has a fixed value */
-        Value           val;            /* ... this is the value */
-        Bool            hasmin;
-        Bool            hasmax;
-        Bool            incmin;
-        Bool            incmax;
-        LONG64          minOccurs;
-        LONG64          maxOccurs;
-        LONG64          imin;
-        LONG64          imax;
-        double          rmin;
-        double          rmax;
-        Bool            nillable;
-        int             property;
-        const char      *pattern;
+typedef struct Node
+{
+  Tnode           *typ;
+  Storage         sto;
+  Bool            hasval;         /* if true, this node has a default value */
+  Bool            fixed;          /* if true and hasval, this node has a fixed value */
+  Value           val;            /* ... this is the value */
+  Bool            hasmin;
+  Bool            hasmax;
+  Bool            incmin;
+  Bool            incmax;
+  LONG64          minOccurs;
+  LONG64          maxOccurs;
+  LONG64          imin;
+  LONG64          imax;
+  double          rmin;
+  double          rmax;
+  Bool            nillable;
+  int             property;
+  const char      *pattern;
 } Node;
 
 #define ACTION                  0x0000
@@ -340,53 +351,58 @@ typedef struct Node {
 #define PROTOCOL                0x2000
 
 typedef struct Data
-{       struct Data     *next;
-        const char      *name;
-        const char      *text;
+{
+  struct Data     *next;
+  const char      *name;
+  const char      *text;
 } Data;
 
 typedef struct Method
-{       struct Method   *next;
-        const char      *name;
-        short           mess; /* see #defines above */
-        const char      *part;
+{
+  struct Method   *next;
+  const char      *name;
+  short           mess; /* see #defines above */
+  const char      *part;
 } Method;
 
 typedef struct Service
-{       struct Service  *next;
-        const char      *ns;
-        const char      *name;
-        const char      *porttype;
-        const char      *portname;
-        const char      *binding;
-        const char      *definitions;
-        const char      *transport;
-        const char      *URL;
-        const char      *executable;
-        const char      *import;
-        const char      *URI;
-        const char      *URI2;
-        const char      *WSDL;
-        const char      *style;
-        const char      *encoding;
-        const char      *protocol;
-        int             xsi_type;
-        const char      *elementForm;
-        const char      *attributeForm;
-        const char      *documentation;
-        struct Method   *list;
-        struct Data     *data;
+{
+  struct Service  *next;
+  const char      *ns;
+  const char      *name;
+  const char      *porttype;
+  const char      *portname;
+  const char      *binding;
+  const char      *definitions;
+  const char      *transport;
+  const char      *URL;
+  const char      *executable;
+  const char      *import;
+  const char      *URI;
+  const char      *URI2;
+  const char      *WSDL;
+  const char      *style;
+  const char      *encoding;
+  const char      *protocol;
+  int             xsi_type;
+  const char      *elementForm;
+  const char      *attributeForm;
+  const char      *documentation;
+  struct Method   *list;
+  struct Data     *data;
 } Service;
 
 typedef struct XPath
-{       struct XPath    *next;
-        const char      *name;
-        const char      *path;
+{
+  struct XPath    *next;
+  const char      *name;
+  const char      *path;
 } XPath;
 
 typedef struct Pragma
-{       struct Pragma   *next;
-        const char      *pragma;
+{
+  struct Pragma   *next;
+  const char      *pragma;
 } Pragma;
 
 extern Entry *enter(Table*, Symbol*), *entry(Table*, Symbol*), *reenter(Table*, Symbol*), *enumentry(Symbol*);

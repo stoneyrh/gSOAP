@@ -3373,7 +3373,7 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned 
       break;
 #endif
     default:
-      return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, "SHA224/256/384/512 requires OpenSSL 0.9.8");
+      return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, "SHA224/256/384/512 requires OpenSSL 0.9.8 or greater");
   }
   /* populate the DigestValue element */
   reference->DigestValue = soap_s2base64(soap, (unsigned char*)HA, NULL, soap_smd_size(alg, NULL));

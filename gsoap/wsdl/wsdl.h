@@ -384,6 +384,7 @@ class wsdl__definitions
         bool                            updated;
         char*                           location;
         int                             redirs;
+        MapOfStringToString             builtinTypeMap;
         SetOfString                     builtinTypeSet;
         SetOfString                     builtinElementSet;
         SetOfString                     builtinAttributeSet;
@@ -406,11 +407,14 @@ class wsdl__definitions
         void                            print_fault();
         void                            builtinType(const char*);
         void                            builtinTypes(const SetOfString&);
+        void                            builtinTypeDerivation(xs__schema&, const char*, const char*);
+        void                            builtinTypeDerivations(const MapOfStringToString&);
         void                            builtinElement(const char*);
         void                            builtinElements(const SetOfString&);
         void                            builtinAttribute(const char*);
         void                            builtinAttributes(const SetOfString&);
         const SetOfString&              builtinTypes() const;
+        const MapOfStringToString&      builtinTypeDerivations() const;
         const SetOfString&              builtinElements() const;
         const SetOfString&              builtinAttributes() const;
         void                            appPtr(wadl__application*);

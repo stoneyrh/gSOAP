@@ -13,9 +13,27 @@
 gSOAP XML Web services tools
 Copyright (C) 2001-2008, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
-Genivia's license for commercial use.
+GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
-Product and source code licensed by Genivia, Inc., contact@genivia.com
+GPL license.
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place, Suite 330, Boston, MA 02111-1307 USA
+
+Author contact information:
+engelen@genivia.com / engelen@acm.org
+--------------------------------------------------------------------------------
+A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
@@ -26,17 +44,20 @@ const char server[] = "http://websrv.cs.fsu.edu/~engelen/calcserver.cgi";
 /* = "http://localhost:8080"; to test against samples/webserver */
 
 int main(int argc, char **argv)
-{ struct soap soap;
+{
+  struct soap soap;
   double a, b, result;
   if (argc < 4)
-  { fprintf(stderr, "Usage: [add|sub|mul|div|pow] num num\n");
+  {
+    fprintf(stderr, "Usage: [add|sub|mul|div|pow] num num\n");
     exit(0);
   }
   soap_init1(&soap, SOAP_XML_INDENT);
   a = strtod(argv[2], NULL);
   b = strtod(argv[3], NULL);
   switch (*argv[1])
-  { case 'a':
+  {
+    case 'a':
       soap_call_ns__add(&soap, server, "", a, b, &result);
       break;
     case 's':

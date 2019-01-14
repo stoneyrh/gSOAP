@@ -585,6 +585,8 @@ http_da_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src
 {
   (void)soap;
   dst->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_da_data));
+  if (!dst->data)
+    return SOAP_EOM;
   (void)soap_memcpy((void*)dst->data, sizeof(struct http_da_data), (const void*)src->data, sizeof(struct http_da_data));
   ((struct http_da_data*)dst->data)->smd_data.ctx = NULL;
   memset((void*)((struct http_da_data*)dst->data)->digest, 0, sizeof(((struct http_da_data*)dst->data)->digest));

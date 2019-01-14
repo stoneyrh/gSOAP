@@ -19,6 +19,7 @@ var group__group__with =
     [ "WITH_LEAN", "group__group__with.html#gaae03aa5dd66b0251c11ba8fc2fe29ecf", null ],
     [ "WITH_LEANER", "group__group__with.html#ga6c72f5017edb6930c54a8f70d9fb40b9", null ],
     [ "WITH_NO_C_LOCALE", "group__group__with.html#gac587d5d27bcbceffb66741f230333a67", null ],
+    [ "WITH_NOEMPTYNAMESPACES", "group__group__with.html#ga376e550466f3e75f529e113fcf36f86a", null ],
     [ "WITH_NOEMPTYSTRUCT", "group__group__with.html#gaa0f80155c2f036cd4da1735cafc9e60b", null ],
     [ "WITH_NOGLOBAL", "group__group__with.html#gab0e1c923db1547a75ad010a3172c065a", null ],
     [ "WITH_NOHTTP", "group__group__with.html#ga9e4012870cc520445f8bb0b08f8ae2bc", null ],

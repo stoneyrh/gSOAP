@@ -26,7 +26,7 @@ See the README.md for details.
 #define INVALID_BUFFER_LENGTH  ((DWORD)-1)
 
 /** plugin id */
-static const char wininet_id[] = "wininet-2.1";
+static const char wininet_id[] = "wininet-2.2";
 
 /** plugin private data */
 struct wininet_data
@@ -171,34 +171,44 @@ wininet_init(
     memset( a_pData, 0, sizeof(struct wininet_data) );
     a_pData->dwRequestFlags = a_dwRequestFlags;
 
+    /* connect through HTTP proxy */
+    char szProtyUrl[MAX_PATH];
+    if (soap->proxy_host)
+      _snprintf_s(szProtyUrl, MAX_PATH, _TRUNCATE, "http://%s:%d", soap->proxy_host, soap->proxy_port);
+
     /* start our internet session */
-    a_pData->hInternet = InternetOpenA( 
+    a_pData->hInternet = InternetOpenA(
         "gSOAP",
-        INTERNET_OPEN_TYPE_PRECONFIG,
-        NULL,
+        soap->proxy_host ? INTERNET_OPEN_TYPE_PROXY : INTERNET_OPEN_TYPE_PRECONFIG,
+        soap->proxy_host ? szProtyUrl : NULL,
         NULL,
         0 );
+
+    if (!a_pData->hInternet)
+    {
+      soap->error = SOAP_EOF;
+      soap->errnum = GetLastError();
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
+            "wininet %p: init, error %d (%s) in InternetOpen\n", 
+            soap, soap->errnum, wininet_error_message(soap,soap->errnum) ));
+      wininet_free_error_message( a_pData );
+      return FALSE;
+    }
+
+    if (soap->proxy_host && soap->proxy_userid)
+      InternetSetOption(a_pData->hInternet, INTERNET_OPTION_PROXY_USERNAME, (LPVOID)soap->proxy_userid, (DWORD)strlen(soap->proxy_userid));
+    if (soap->proxy_host && soap->proxy_passwd)
+      InternetSetOption(a_pData->hInternet, INTERNET_OPTION_PROXY_PASSWORD, (LPVOID)soap->proxy_passwd, (DWORD)strlen(soap->proxy_passwd));
 
     /* enable HTTP2 when available */
 #ifdef INTERNET_OPTION_ENABLE_HTTP_PROTOCOL
     DWORD httpProtocol = HTTP_PROTOCOL_FLAG_HTTP2;
     InternetSetOption(
-    a_pData->hInternet,
-    INTERNET_OPTION_ENABLE_HTTP_PROTOCOL,
-    &httpProtocol,
-    sizeof(httpProtocol) );
+        a_pData->hInternet,
+        INTERNET_OPTION_ENABLE_HTTP_PROTOCOL,
+        &httpProtocol,
+        sizeof(httpProtocol));
 #endif
-
-    if ( !a_pData->hInternet )
-    {
-        soap->error = SOAP_EOF;
-        soap->errnum = GetLastError();
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
-            "wininet %p: init, error %d (%s) in InternetOpen\n", 
-            soap, soap->errnum, wininet_error_message(soap,soap->errnum) ));
-        wininet_free_error_message( a_pData );
-        return FALSE;
-    }
 
     /* set the timeouts, if any of these fail the error isn't fatal */
     if ( soap->connect_timeout > 0 )

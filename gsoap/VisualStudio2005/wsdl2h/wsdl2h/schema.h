@@ -53,19 +53,22 @@ class xs__list;                         // forward declaration
 class xs__union;                        // forward declaration
 
 class xs__annotation
-{ public:
+{
+  public:
         std::vector<char*>              documentation;
 };
 
 class xs__assert
-{ public:
+{
+  public:
         @xsd__string                    test;
         @xsd__anyURI                    xpathDefaultNamespace;
         xs__annotation                  *annotation;
 };
 
 class xs__alternative
-{ public:
+{
+  public:
         @xsd__string                    test;
         @xsd__QName                     type;
         @xsd__anyURI                    xpathDefaultNamespace;
@@ -75,7 +78,8 @@ class xs__alternative
 enum xs__formChoice { unqualified, qualified };
 
 class xs__element
-{ public:
+{
+  public:
         @xsd__NCName                    name;
         @xsd__QName                     ref;
         @xsd__QName                     type;
@@ -122,7 +126,8 @@ class xs__element
 enum xs__attribute_use { optional, prohibited, required, default_, fixed_ };
 
 class xs__attribute
-{ public:
+{
+  public:
         @xsd__NCName                    name;
         @xsd__QName                     ref;
         @xsd__QName                     type;
@@ -156,7 +161,8 @@ class xs__attribute
 };
 
 class xs__all
-{ public:
+{
+  public:
         std::vector<xs__element>        element;
   public:
         int                             traverse(xs__schema&);
@@ -168,7 +174,8 @@ enum xs__processContents { strict, skip, lax };
 typedef char *xs__namespaceList;        // "##any" or "##other" or list of URI, "##targetNamespace", "##local"
 
 class xs__any
-{ public:
+{
+  public:
         @xs__namespaceList              namespace_              = "##any";
         @enum xs__processContents       processContents         = strict;
         @xsd__token                     minOccurs;              // xsd:nonNegativeInteger
@@ -180,10 +187,12 @@ class xs__any
 };
 
 class xs__contents
-{ public:
+{
+  public:
         $int                            __union;                        
         union xs__union_content
-        {       xs__element             *element;
+        {
+                xs__element             *element;
                 xs__group               *group;
                 xs__seqchoice           *choice;
                 xs__seqchoice           *sequence;
@@ -195,7 +204,8 @@ class xs__contents
 };
 
 class xs__seqchoice
-{ public:
+{
+  public:
         @xsd__token                     minOccurs;              // xsd:nonNegativeInteger
         @xsd__token                     maxOccurs;              // xsd:nonNegativeInteger|unbounded
         xs__annotation                  *annotation;
@@ -211,7 +221,8 @@ class xs__seqchoice
 };
 
 class xs__group
-{ public:
+{
+  public:
         @xsd__NCName                    name;
         @xsd__QName                     ref;
         @xsd__token                     minOccurs;              // xsd:nonNegativeInteger
@@ -235,13 +246,15 @@ class xs__group
 };
 
 class xs__anyAttribute
-{ public:
+{
+  public:
         @xs__namespaceList              namespace_              = "##any";
         @enum xs__processContents       processContents         = strict;
 };
 
 class xs__attributeGroup
-{ public:
+{
+  public:
         @xsd__NCName                    name;
         @xsd__QName                     ref;
         xs__annotation                  *annotation;
@@ -263,7 +276,8 @@ class xs__attributeGroup
 };
 
 class xs__enumeration
-{ public:
+{
+  public:
         @xsd__string                    value;
         @xsd__QName                     value_; // also get QName value if base type is QName
         xs__annotation                  *annotation;
@@ -272,14 +286,16 @@ class xs__enumeration
 };
 
 class xs__pattern
-{ public:
+{
+  public:
         @xsd__string                    value;
   public:
         int                             traverse(xs__schema&);
 };
 
 class xs__simpleContent
-{ public:
+{
+  public:
         xs__extension                   *extension;     // choice
         xs__restriction                 *restriction;   // choice
   public:
@@ -288,7 +304,8 @@ class xs__simpleContent
 };
 
 class xs__simpleType
-{ public:
+{
+  public:
         @xsd__NMTOKEN                   name;
         @xsd__string                    vc__minVersion;         // XSD 1.1 (unused)
         @xsd__string                    vc__maxVersion;         // XSD 1.1 (unused)
@@ -298,6 +315,8 @@ class xs__simpleType
         xs__union                       *union_;                // choice
   private:
         xs__schema                      *schemaRef;
+        std::vector<xsd__QName>         extensions;
+        std::vector<xsd__QName>         restrictions;
         int                             level;
         bool                            used;
   public:
@@ -308,10 +327,15 @@ class xs__simpleType
         int                             baseLevel();
         void                            mark();
         bool                            is_used() const;
+        void                            add_extension(xs__schema&, xsd__NCName);
+        void                            add_restriction(xs__schema&, xsd__NCName);
+        const std::vector<xsd__QName>&  get_extensions() const;
+        const std::vector<xsd__QName>&  get_restrictions() const;
 };
 
 class xs__extension
-{ public:
+{
+  public:
         @xsd__QName                     base;
         xs__group                       *group;
         xs__all                         *all;
@@ -336,19 +360,22 @@ class xs__extension
 };
 
 class xs__length
-{ public:
+{
+  public:
         @xsd__string                    value;
         @xsd__boolean                   fixed;
         xs__annotation                  *annotation;
 };
 
 class xs__whiteSpace
-{ public:
+{
+  public:
         @xsd__string                    value;
 };
 
 class xs__restriction
-{ public:
+{
+  public:
         @xsd__QName                     base;
         xs__simpleType                  *simpleType;            // used in <simpleType><restriction>
         xs__attributeGroup              *attributeGroup;        // not used in <simpleType><restriction>
@@ -393,7 +420,8 @@ class xs__restriction
 };
 
 class xs__list
-{ public:
+{
+  public:
         @xsd__QName                     itemType;
         xs__restriction                 *restriction;   // choice
         std::vector<xs__simpleType>     simpleType;     // choice
@@ -408,7 +436,8 @@ class xs__list
 };
 
 class xs__union
-{ public:
+{
+  public:
         @xsd__NMTOKENS                  memberTypes;            // check if NMTOKENS is ok???
         std::vector<xs__simpleType>     simpleType;
   public:
@@ -417,7 +446,8 @@ class xs__union
 };
 
 class xs__complexContent
-{ public:
+{
+  public:
         @xsd__boolean                   mixed                   = false;
         xs__extension                   *extension;
         xs__restriction                 *restriction;
@@ -428,7 +458,8 @@ class xs__complexContent
 };
 
 class xs__complexType
-{ public:
+{
+  public:
         @xsd__NMTOKEN                   name;
         @xsd__boolean                   abstract                = false;
         @xsd__boolean                   mixed                   = false;
@@ -449,6 +480,8 @@ class xs__complexType
         std::vector<xs__assert>         assert;                 // XSD 1.1
   private:
         xs__schema                      *schemaRef;
+        std::vector<xsd__QName>         extensions;
+        std::vector<xsd__QName>         restrictions;
         int                             level;
         bool                            used;
   public:
@@ -459,10 +492,15 @@ class xs__complexType
         int                             baseLevel();
         void                            mark();
         bool                            is_used() const;
+        void                            add_extension(xs__schema&, xsd__QName);
+        void                            add_restriction(xs__schema&, xsd__QName);
+        const std::vector<xsd__QName>&  get_extensions() const;
+        const std::vector<xsd__QName>&  get_restrictions() const;
 };
 
 class xs__import
-{ public:
+{
+  public:
         @xsd__anyURI                    namespace_;
         @xsd__anyURI                    schemaLocation;
         @xsd__anyURI                    location;		// work around a Microsoft bug
@@ -478,7 +516,8 @@ class xs__import
 };
 
 class xs__include
-{ public:
+{
+  public:
         @xsd__anyURI                    schemaLocation;
   private:
         xs__schema                      *schemaRef;
@@ -491,7 +530,8 @@ class xs__include
 };
 
 class xs__override
-{ public:
+{
+  public:
         @xsd__anyURI                    schemaLocation;
         std::vector<xs__attribute>      attribute;
         std::vector<xs__element>        element;
@@ -510,7 +550,8 @@ class xs__override
 };
 
 class xs__redefine
-{ public:
+{
+  public:
         @xsd__anyURI                    schemaLocation;
         std::vector<xs__group>          group;
         std::vector<xs__attributeGroup> attributeGroup;
@@ -527,7 +568,8 @@ class xs__redefine
 };
 
 class xs__schema
-{ public:
+{
+  public:
         @xsd__anyURI                    targetNamespace         = "";
         @xsd__string                    version;
         @xsd__NCName                    defaultAttributes;      // XSD 1.1
@@ -550,6 +592,7 @@ class xs__schema
         bool                            updated;
         char*                           location;
         int                             redirs;
+        MapOfStringToString             builtinTypeMap;
         SetOfString                     builtinTypeSet;
         SetOfString                     builtinElementSet;
         SetOfString                     builtinAttributeSet;
@@ -571,9 +614,11 @@ class xs__schema
         int                             error();
         void                            print_fault();
         void                            builtinType(const char*);
+        void                            builtinTypeDerivation(xs__schema&, const char*, const char*);
         void                            builtinElement(const char*);
         void                            builtinAttribute(const char*);
         const SetOfString&              builtinTypes() const;
+        const MapOfStringToString&      builtinTypeDerivations() const;
         const SetOfString&              builtinElements() const;
         const SetOfString&              builtinAttributes() const;
         bool                            empty() const;

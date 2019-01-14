@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Fault structure and functions</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Dec 11 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun Jan 13 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -405,7 +405,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Print the location in the message where and when the error occurred. </p>
-<p>This function prints the location in the inbound message being parsed where the error occurred. Only part of the message will be printed, depending on the <code><a class="el" href="group__group__soap.html#ga6ec95d997cc20a6a84dd4d76b3ea2fcc" title="User-definable size of the input and output message buffer soap::buf (65536 by default) ...">SOAP_BUFLEN</a></code> size and the size of the actual data packet received into the <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> buffer. This function is usually used after calling <code><a class="el" href="group__group__fault.html#ga931a4ab6df2553b48a0c270f8a0a88af" title="Print error message on the specified output. ">soap_print_fault</a></code> which makes sense when a message processing error occurred such as when <code><a class="el" href="group__group__errors.html#ga6b7afdaae55aa75bd611f2e37d2a6758" title="Check for XML parsing and validation errors, returns true if the specified error code is an XML error...">soap_xml_error_check</a>(soap-&gt;error)</code> is true. This function has no effect when <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a>:error</code> is <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> (zero). </p>
+<p>This function prints the location in the inbound message being parsed where the error occurred. Only part of the message will be printed, depending on the <code><a class="el" href="group__group__soap.html#ga6ec95d997cc20a6a84dd4d76b3ea2fcc" title="User-definable size of the input and output message buffer soap::buf (the value is 65536 by default) ...">SOAP_BUFLEN</a></code> size and the size of the actual data packet received into the <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> buffer. This function is usually used after calling <code><a class="el" href="group__group__fault.html#ga931a4ab6df2553b48a0c270f8a0a88af" title="Print error message on the specified output. ">soap_print_fault</a></code> which makes sense when a message processing error occurred such as when <code><a class="el" href="group__group__errors.html#ga6b7afdaae55aa75bd611f2e37d2a6758" title="Check for XML parsing and validation errors, returns true if the specified error code is an XML error...">soap_xml_error_check</a>(soap-&gt;error)</code> is true. This function has no effect when <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a>:error</code> is <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> (zero). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td><code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context </td></tr>
@@ -706,7 +706,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Print the location in the message where and when the error occurred. </p>
-<p>This function prints the location in the inbound message being parsed where the error occurred. Only part of the message will be printed, depending on the <code><a class="el" href="group__group__soap.html#ga6ec95d997cc20a6a84dd4d76b3ea2fcc" title="User-definable size of the input and output message buffer soap::buf (65536 by default) ...">SOAP_BUFLEN</a></code> size and the size of the actual data packet received into the <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> buffer. This function is usually used after calling <code><a class="el" href="group__group__fault.html#gaab984763de3f5fdd4363aa62b4f250c2" title="Print error message on the specified output stream. ">soap_stream_fault</a></code> which makes sense when a message processing error occurred such as when <code><a class="el" href="group__group__errors.html#ga6b7afdaae55aa75bd611f2e37d2a6758" title="Check for XML parsing and validation errors, returns true if the specified error code is an XML error...">soap_xml_error_check</a>(soap-&gt;error)</code> is true. This function has no effect when <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a>:error</code> is <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> (zero). </p>
+<p>This function prints the location in the inbound message being parsed where the error occurred. Only part of the message will be printed, depending on the <code><a class="el" href="group__group__soap.html#ga6ec95d997cc20a6a84dd4d76b3ea2fcc" title="User-definable size of the input and output message buffer soap::buf (the value is 65536 by default) ...">SOAP_BUFLEN</a></code> size and the size of the actual data packet received into the <code><a class="el" href="structsoap.html#acda1736fbaac07261226befe165a5681" title="Internal buffer with partial data received or partial data to be sent, where the data occupies soap::...">soap::buf</a></code> buffer. This function is usually used after calling <code><a class="el" href="group__group__fault.html#gaab984763de3f5fdd4363aa62b4f250c2" title="Print error message on the specified output stream. ">soap_stream_fault</a></code> which makes sense when a message processing error occurred such as when <code><a class="el" href="group__group__errors.html#ga6b7afdaae55aa75bd611f2e37d2a6758" title="Check for XML parsing and validation errors, returns true if the specified error code is an XML error...">soap_xml_error_check</a>(soap-&gt;error)</code> is true. This function has no effect when <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a>:error</code> is <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> (zero). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td><code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context </td></tr>
@@ -721,10 +721,10 @@ Functions</h2></td></tr>
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Dec 11 2018 14:04:26 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun Jan 13 2019 21:47:45 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

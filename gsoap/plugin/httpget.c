@@ -143,14 +143,14 @@ static int http_get_handler(struct soap *soap);
 int http_get(struct soap *soap, struct soap_plugin *p, void *arg)
 {
   p->id = http_get_id;
-  p->data = (void*)malloc(sizeof(struct http_get_data));
+  p->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_get_data));
   /* p->fcopy = http_get_copy; obsolete, see note with http_get_copy() */
   p->fdelete = http_get_delete;
   if (!p->data)
     return SOAP_EOM;
   if (http_get_init(soap, (struct http_get_data*)p->data, (int (*)(struct soap*))arg))
   {
-    free(p->data); /* error: could not init */
+    SOAP_FREE(soap, p->data); /* error: could not init */
     return SOAP_EOM; /* return error */
   }
   return SOAP_OK;
@@ -182,7 +182,7 @@ static int http_get_copy(struct soap *soap, struct soap_plugin *dst, struct soap
 static void http_get_delete(struct soap *soap, struct soap_plugin *p)
 {
   (void)soap;
-  free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
+  SOAP_FREE(soap, p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
 }
 
 static int http_get_parse(struct soap *soap)

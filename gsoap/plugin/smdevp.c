@@ -338,7 +338,7 @@ size_t
 SOAP_FMAC2
 soap_smd_size(int alg, const void *key)
 {
-  switch (alg & SOAP_SMD_ALGO)
+  switch ((alg & SOAP_SMD_ALGO))
   {
     case SOAP_SMD_SIGN:
     case SOAP_SMD_VRFY:
@@ -346,7 +346,7 @@ soap_smd_size(int alg, const void *key)
       return EVP_PKEY_size((EVP_PKEY*)key);
     case SOAP_SMD_HMAC:
     case SOAP_SMD_DGST:
-      switch (alg & SOAP_SMD_HASH)
+      switch ((alg & SOAP_SMD_HASH))
       {
         case SOAP_SMD_MD5:
           return SOAP_SMD_MD5_SIZE;
@@ -404,7 +404,7 @@ soap_smd_begin(struct soap *soap, int alg, const void *key, int keylen)
   soap_clr_attr(soap);
   /* load the local XML namespaces store */
   soap_set_local_namespaces(soap);
-  if (soap->mode & SOAP_XML_CANONICAL)
+  if ((soap->mode & SOAP_XML_CANONICAL))
     soap->ns = 0; /* for in c14n, we must have all xmlns bindings available */
   else if (!(alg & SOAP_SMD_PASSTHRU))
     soap->ns = 2; /* we don't want leading whitespace in serialized XML */
@@ -502,7 +502,7 @@ soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void
     return soap_set_receiver_error(soap, "soap_smd_init() failed", "No context", SOAP_SSL_ERROR);
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- SMD Init alg=%x (%p) --\n", alg, data->ctx));
   /* init the digest or signature computations */
-  switch (alg & SOAP_SMD_HASH)
+  switch ((alg & SOAP_SMD_HASH))
   {
     case SOAP_SMD_MD5:
       type = EVP_md5();
@@ -527,7 +527,7 @@ soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void
     default:
       return soap_smd_check(soap, data, 0, "soap_smd_init() failed: cannot load digest");
   }
-  switch (alg & SOAP_SMD_ALGO)
+  switch ((alg & SOAP_SMD_ALGO))
   {
     case SOAP_SMD_HMAC:
       HMAC_Init((HMAC_CTX*)data->ctx, key, keylen, type);
@@ -568,7 +568,7 @@ soap_smd_update(struct soap *soap, struct soap_smd_data *data, const char *buf, 
   if (!data->ctx)
     return soap_set_receiver_error(soap, "soap_smd_update() failed", "No context", SOAP_SSL_ERROR);
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- SMD Update alg=%x n=%lu (%p) --\n", data->alg, (unsigned long)len, data->ctx));
-  switch (data->alg & SOAP_SMD_ALGO)
+  switch ((data->alg & SOAP_SMD_ALGO))
   {
     case SOAP_SMD_HMAC:
       HMAC_Update((HMAC_CTX*)data->ctx, (const unsigned char*)buf, len);
@@ -614,7 +614,7 @@ soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *le
   if (buf)
   {
     /* finalize the digest or signature computation */
-    switch (data->alg & SOAP_SMD_ALGO)
+    switch ((data->alg & SOAP_SMD_ALGO))
     {
       case SOAP_SMD_HMAC:
         HMAC_Final((HMAC_CTX*)data->ctx, (unsigned char*)buf, &n);
