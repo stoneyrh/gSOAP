@@ -34,6 +34,8 @@ Features                                                             {#features}
   the user via standard system dialog boxes.
 - Timeouts for connect, receive, and send operations are obeyed when these are
   set BEFORE the plugin is registered with the engine.
+- HTTP proxy settings are also obeyed when these are set BEFORE the plugin is
+  registered with the engine.
 - Supports all `SOAP_IO` modes of gSOAP (see [limitations](#limitations)).
 - Can be used with C, C++, and MFC projects.
 - Can be used in both MBCS and UNICODE projects.
@@ -101,6 +103,10 @@ Note that the receive and send timeouts limit the time to receive and send
 data, respectively.  **This behavior differs from the gSOAP engine's timeouts
 that limit the socket receive and send operation idle times.**  The gSOAP
 engine uses `transfer_timeout` to limit the receive and send times.
+
+To specify HTTP proxy settings, set the `soap.proxy_host` and `soap.proxy_port`
+to the HTTP proxy host and port, respectively, and optionally set
+`soap.proxy_userid` and `soap.proxy_passwd` to authenticate to the proxy.
 
 Please make sure to compile all sources in C++ compilation mode. If you migrate
 to a project file such as `.vcproj`, please set `CompileAs="2"` in your

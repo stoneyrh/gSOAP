@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.75
+        stdsoap2.h 2.8.76
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20875
+#define GSOAP_VERSION 20876
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1231,7 +1231,7 @@ extern "C" {
 # ifndef WITH_LEAN
 #  define SOAP_TAGLEN  (1024) /* maximum length of XML element tag/attribute name or host/path name + 1 */
 # else
-#  define SOAP_TAGLEN    (256)
+#  define SOAP_TAGLEN   (256)
 # endif
 #endif
 #ifndef SOAP_HDRLEN
@@ -1243,7 +1243,7 @@ extern "C" {
 #endif
 #ifndef SOAP_TMPLEN
 # ifndef WITH_LEAN
-#  define SOAP_TMPLEN  (1024) /* maximum length of msgbuf and tmpbuf short message buffers, must be >=1024 */
+#  define SOAP_TMPLEN  (2048) /* maximum length of msgbuf and tmpbuf short message buffers, must be >=1024 */
 # else
 #  define SOAP_TMPLEN  (1024)
 # endif
@@ -1506,13 +1506,22 @@ extern const char soap_base64o[], soap_base64i[];
 #  define SOAP_SNPRINTF_SAFE(buf, len) void)sprintf((buf)
 # endif
 
-/* copy string (truncating the result) */
+/* copy string (truncating the result, strings must not be NULL) */
 #if _MSC_VER >= 1400
 # define soap_strcpy(buf, len, src) (void)strncpy_s((buf), (len), (src), _TRUNCATE)
 #elif defined(HAVE_STRLCPY)
 # define soap_strcpy(buf, len, src) (void)strlcpy((buf), (src), (len))
 #else
-# define soap_strcpy(buf, len, src) (void)((buf) == NULL || (len) <= 0 || (strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0') || 1)
+# define soap_strcpy(buf, len, src) (void)(strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0')
+#endif
+
+/* concat string (truncating the result, strings must not be NULL) */
+#if _MSC_VER >= 1400
+# define soap_strcat(buf, len, src) (void)strncat_s((buf), (len), (src), _TRUNCATE)
+#elif defined(HAVE_STRLCAT)
+# define soap_strcat(buf, len, src) (void)strlcat((buf), (src), (len))
+#else
+SOAP_FMAC1 void SOAP_FMAC2 soap_strcat(char *buf, size_t len, const char *src);
 #endif
 
 /* copy string up to n chars (sets string to empty on overrun and returns nonzero, zero if OK) */
@@ -1529,18 +1538,18 @@ extern const char soap_base64o[], soap_base64i[];
 # define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : 1))
 #endif
 
-/* copy memory (returns SOAP_ERANGE on overrun, zero if OK) */
+/* copy memory (returns SOAP_ERANGE on overrun, zero if OK, pointers must not be NULL) */
 #if _MSC_VER >= 1400
-# define soap_memcpy(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? memcpy_s((buf), (len), (src), (num)) : SOAP_ERANGE)
+# define soap_memcpy(buf, len, src, num) ((size_t)(len) >= (size_t)(num) ? memcpy_s((buf), (len), (src), (num)) : SOAP_ERANGE)
 #else
-# define soap_memcpy(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? !memcpy((buf), (src), (num)) : SOAP_ERANGE)
+# define soap_memcpy(buf, len, src, num) ((size_t)(len) >= (size_t)(num) ? !memcpy((buf), (src), (num)) : SOAP_ERANGE)
 #endif
 
-/* move memory (returns SOAP_ERANGE on overrun, zero if OK) */
+/* move memory (returns SOAP_ERANGE on overrun, zero if OK, pointers must not be NULL) */
 #if _MSC_VER >= 1400
-# define soap_memmove(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? memmove_s((buf), (len), (src), (num)) : SOAP_ERANGE)
+# define soap_memmove(buf, len, src, num) ((size_t)(len) >= (size_t)(num) ? memmove_s((buf), (len), (src), (num)) : SOAP_ERANGE)
 #else
-# define soap_memmove(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? !memmove((buf), (src), (num)) : SOAP_ERANGE)
+# define soap_memmove(buf, len, src, num) ((size_t)(len) >= (size_t)(num) ? !memmove((buf), (src), (num)) : SOAP_ERANGE)
 #endif
 
 /* gSOAP status and error codes */
@@ -3295,6 +3304,8 @@ SOAP_FMAC1 LONG64 SOAP_FMAC2 soap_code_int(const struct soap_code_map*, const ch
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_code_str(const struct soap_code_map*, long);
 SOAP_FMAC1 LONG64 SOAP_FMAC2 soap_code_bits(const struct soap_code_map*, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_code_list(struct soap*, const struct soap_code_map*, long);
+
+SOAP_FMAC1 int SOAP_FMAC2 soap_binary_search_string(const char**, size_t, const char*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_getline(struct soap*, char*, int);
 SOAP_FMAC1 int SOAP_FMAC2 soap_begin_serve(struct soap*);

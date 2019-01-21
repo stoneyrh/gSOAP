@@ -20,6 +20,11 @@ PLUGIN=../plugin
 SOCKLIB=
 #	SOCKLIB=-lsocket -lnsl
 #
+SSLFLAGS=
+#	SSLFLAGS=-I/opt/local/include
+SSLLIB=-lcrypto -lssl
+#	SSLLIB=-L/opt/local/lib -lcrypto -lssl
+#
 LIBS=-lm $(SOCKLIB)
 #
 COFLAGS=-O1
@@ -30,7 +35,7 @@ COFLAGS=-O1
 #	COFLAGS=-g
 CWFLAGS=-Wall -Wextra
 #
-CIFLAGS=-I.. -I$(PLUGIN)
+CIFLAGS=-I.. -I$(PLUGIN) $(SSLFLAGS)
 #
 CMFLAGS=
 #
@@ -41,7 +46,7 @@ release:
 		$(MAKE) -f MakefileManual wsdl2h
 secure:
 		$(MAKE) -f MakefileManual distclean
-		$(MAKE) -f MakefileManual CMFLAGS='-Wno-deprecated-declarations -DWITH_OPENSSL -DWITH_GZIP' LIBS="httpda.o smdevp.o -lcrypto -lssl -lz -lm $(SOCKLIB)" httpda.o smdevp.o wsdl2h
+		$(MAKE) -f MakefileManual CMFLAGS='-Wno-deprecated-declarations -DWITH_OPENSSL -DWITH_GZIP' LIBS="httpda.o smdevp.o -lz -lm $(SOCKLIB) $(SSLLIB)" httpda.o smdevp.o wsdl2h
 wsdl2h:		wsdlC.o wsdl2h.o wsdl.o wadl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o
 		$(CPP) -o wsdl2h wsdlC.o wsdl2h.o wsdl.o wadl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o $(LIBS)
 		-cp -f wsdl2h ../bin

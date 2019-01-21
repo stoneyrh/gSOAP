@@ -150,7 +150,7 @@ static int http_pipe_init_recv(struct soap *soap)
   /* if previous message exchange left data in the receive buffer, use that data */
   if (data->len && soap->keep_alive)
   {
-    soap_memcpy(soap->buf, sizeof(soap->buf), data->buf, data->len);
+    (void)soap_memcpy(soap->buf, sizeof(soap->buf), data->buf, data->len);
     soap->bufidx = 0;
     soap->buflen = data->len;
     DBGLOG(TEST,SOAP_MESSAGE(fdebug, "HTTP pipeline: restored %lu buffered bytes\n", (unsigned long)data->len));
@@ -172,7 +172,7 @@ static int http_pipe_final_recv(struct soap *soap)
     data->len = soap->buflen - soap->bufidx;
     if (data->len)
     {
-      soap_memcpy(data->buf, sizeof(data->buf), soap->buf + soap->bufidx, data->len);
+      (void)soap_memcpy(data->buf, sizeof(data->buf), soap->buf + soap->bufidx, data->len);
       DBGLOG(TEST,SOAP_MESSAGE(fdebug, "HTTP pipeline: saved %lu buffered bytes\n", (unsigned long)data->len));
     }
   }

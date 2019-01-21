@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The CURL plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Dec 3 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Jan 15 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -72,6 +72,7 @@ Configuration and settings</h1>
 <p>To use the CURL plugin, register the plugin with the current <code>soap</code> context using <code>soap_register_plugin(soap, soap_curl)</code>. This also creates a new CURL handle that is internally used by the plugin until the <code>soap</code> context is deleted. For C++ proxy classes generated with soapcpp2, register the plugin with the <code>soap</code> member of the proxy class.</p>
 <p>The gSOAP HTTP chunked transfer mode <code>SOAP_IO_CHUNK</code> and timeout settings are also used by the CURL plugin, when set, as follows:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="curlapi_8h.html">plugin/curlapi.h</a>&quot;</span></div><div class="line">...</div><div class="line">struct soap *soap;</div><div class="line">curl_global_init(CURL_GLOBAL_ALL);</div><div class="line">soap = soap_new1(SOAP_IO_CHUNK | SOAP_XML_INDENT);</div><div class="line">soap_register_plugin(soap, <a class="code" href="curlapi_8h.html#aa2eec8873794a63af03b1ab21d762955">soap_curl</a>);</div><div class="line">soap-&gt;connect_timeout = 60;  <span class="comment">// 1 minute</span></div><div class="line">soap-&gt;send_timeout = 10;     <span class="comment">// 10 seconds</span></div><div class="line">soap-&gt;recv_timeout = 10;     <span class="comment">// 10 seconds</span></div><div class="line">soap-&gt;transfer_timeout = 20; <span class="comment">// 20 seconds</span></div><div class="line">...</div><div class="line"><span class="comment">// client program runs</span></div><div class="line">...</div><div class="line">soap_destroy(soap);</div><div class="line">soap_end(soap);</div><div class="line">soap_free(soap);</div><div class="line">curl_global_cleanup();</div></div><!-- fragment --><p>It is strongly recommended to set timeouts. The timeout values specified here are just examples. Actual values depend on the application's performance characteristics.</p>
+<p>HTTP proxy settings are used by the CURL plugin. You can specify the HTTP proxy settings <code>soap-&gt;proxy_host</code> and <code>soap-&gt;proxy_port</code> with the HTTP proxy host and port, respectively, and specify the HTTP proxy access credentials <code>soap-&gt;proxy_userid</code> and <code>soap-&gt;proxy_passwd</code>.</p>
 <p>Also compression is used by the CURL plugin when enabled with <code>SOAP_ENC_ZLIB</code>:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="curlapi_8h.html">plugin/curlapi.h</a>&quot;</span></div><div class="line">...</div><div class="line">struct soap *soap;</div><div class="line">curl_global_init(CURL_GLOBAL_ALL);</div><div class="line">soap = soap_new1(SOAP_IO_CHUNK | SOAP_ENC_ZLIB | SOAP_XML_INDENT);</div><div class="line">soap_register_plugin(soap, <a class="code" href="curlapi_8h.html#aa2eec8873794a63af03b1ab21d762955">soap_curl</a>);</div><div class="line">...</div><div class="line"><span class="comment">// client program runs</span></div><div class="line">...</div><div class="line">soap_destroy(soap);</div><div class="line">soap_end(soap);</div><div class="line">soap_free(soap);</div><div class="line">curl_global_cleanup();</div></div><!-- fragment --><p>When an transmission error occurs, use <code>soap_curl_reset(soap)</code> to reset the plugin. This ensures that the gSOAP IO operations are reset and will behave again normally.</p>
 <p>Alternatively, you can create your own <code>CURL *curl</code> handle, configure it, and pass it to the plugin as follows:</p>
@@ -93,10 +94,10 @@ JSON REST example</h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Dec 3 2018 14:42:23 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Jan 15 2019 08:38:06 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

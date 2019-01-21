@@ -124,6 +124,11 @@ It is strongly recommended to set timeouts.  The timeout values specified here
 are just examples.  Actual values depend on the application's performance
 characteristics.
 
+HTTP proxy settings are used by the CURL plugin.  You can specify the HTTP proxy
+settings `soap->proxy_host` and `soap->proxy_port` with the HTTP proxy host
+and port, respectively, and specify the HTTP proxy access credentials
+`soap->proxy_userid` and `soap->proxy_passwd`.
+
 Also compression is used by the CURL plugin when enabled with `SOAP_ENC_ZLIB`:
 
 @code

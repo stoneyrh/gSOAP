@@ -617,7 +617,7 @@ char *xs__schema::absoluteLocation(const char *loc) const
   const char *s = strrchr(location, '/');
   if (!s)
     return soap_strdup(soap, loc);
-  if (strncmp(loc, "../", 3))
+  if (strchr(loc, '/') && strncmp(loc, "../", 3))
     return soap_strdup(soap, loc);
   while (!strncmp(loc, "../", 3) && s > location)
   {

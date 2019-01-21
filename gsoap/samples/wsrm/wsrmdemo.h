@@ -152,7 +152,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	it. The WS-RM CreateSequence, CloseSequence, and TerminateSequence do
 	NOT check the credentials of the client (only the sequence messages).
 	Of course, and incomplete sequence abnormally terminates when the
-	behavior is set to DiscardEntireSequence.
+	behavior is set to DiscardEntireSequence.  To upgrade to HTTP Digest
+        authentication, register the HTTP digest authentication plugin at the
+        client and server sides.
 
 	Note 3: HTTP compression can be enabled by compiling the sources with
 	-DWITH_ZLIB. Then use SOAP_ENC_ZLIB flag to send compressed messages.

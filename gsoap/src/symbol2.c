@@ -363,6 +363,19 @@ void gen_field(FILE*, int, Entry*, const char*, const char*, const char*, int, i
 void gen_val(FILE*, int, Tnode*, const char*, const char*, const char*, int);
 void gen_atts(FILE*, Table*, const char*, const char*, const char*);
 
+struct pair
+{
+  const char *action;
+  Entry *method;
+};
+
+int
+mapcomp(const void *a, const void *b)
+{
+  const struct pair *p = a, *q = b;
+  return strcmp(p->action, q->action);
+}
+
 /*
 install - add new symbol
 */
@@ -6984,7 +6997,7 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
 {
   Entry *p, *method, *catch_method, *param;
   Table *t;
-  const char *soap, *catch_action;
+  const char *soap;
   if (iflag)
     soap = "this";
   else
@@ -7089,22 +7102,54 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
   }
   fprintf(fd, "\n\nint %s::dispatch()\n{", name);
   if (!iflag)
-  { fprintf(fd, "\treturn dispatch(this->soap);\n}");
+  {
+    fprintf(fd, "\treturn dispatch(this->soap);\n}");
     fprintf(fd, "\n\nint %s::dispatch(struct soap* soap)\n{", name);
-    fprintf(fd, "\n\t%s_init(soap->imode, soap->omode);\n", name);
+    fprintf(fd, "\n\t%s_init(soap->imode, soap->omode);", name);
     soap = "soap";
   }
   if (sflag)
     fprintf(fd, "\n\t%s->mode |= SOAP_XML_STRICT;", soap);
-  fprintf(fd, "\n\tsoap_peek_element(%s);", soap);
-  catch_method = NULL;
-  catch_action = NULL;
-  for (method = table->list; method; method = method->next)
+  if (aflag)
   {
-    const char *action = NULL;
-    if (method->info.typ->type == Tfun && !(method->info.sto & Sextern) && has_ns_eq(ns->name, method->sym->name))
+    int i, num = 0;
+    struct pair *map;
+    for (method = table->list; method; method = method->next)
     {
-      if (aflag)
+      if (method->info.typ->type == Tfun && !(method->info.sto & Sextern) && has_ns_eq(ns->name, method->sym->name))
+      {
+        int found = 0;
+        Service *sp;
+        for (sp = services; sp; sp = sp->next)
+        {
+          if (has_ns_eq(sp->ns, method->sym->name))
+          {
+            Method *m;
+            for (m = sp->list; m; m = m->next)
+            {
+              if (is_eq_nons(m->name, method->sym->name))
+              {
+                if (m->mess == ACTION || m->mess == REQUEST_ACTION)
+                {
+                  ++num;
+                  found = 1;
+                }
+              }
+            }
+          }
+        }
+        if (Aflag && !found)
+        {
+          sprintf(errbuf, "Option -A requires a SOAPAction specified for operation %s where none is defined", ident(method->sym->name));
+          compliancewarn(errbuf);
+        }
+      }
+    }
+    map = (struct pair*)emalloc(num * sizeof(struct pair));
+    num = 0;
+    for (method = table->list; method; method = method->next)
+    {
+      if (method->info.typ->type == Tfun && !(method->info.sto & Sextern) && has_ns_eq(ns->name, method->sym->name))
       {
         Service *sp;
         for (sp = services; sp; sp = sp->next)
@@ -7117,52 +7162,73 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
               if (is_eq_nons(m->name, method->sym->name))
               {
                 if (m->mess == ACTION || m->mess == REQUEST_ACTION)
-                  action = m->part;
+                {
+                  map[num].action = m->part;
+                  map[num].method = method;
+                  ++num;
+                }
               }
             }
           }
         }
       }
-      if (is_invisible(method->sym->name))
+    }
+    if (num > 0)
+    {
+      qsort(map, num, sizeof(struct pair), mapcomp);
+      if (num > 4) /* binary search worthwhile when num > 4 */
       {
-        Entry *param = entry(classtable, method->sym);
-        if (param)
-          param = ((Table*)param->info.typ->ref)->list;
-        if (action)
+        fprintf(fd, "\n\tif (soap->action)\n\t{\n\t\tconst char *soap_action[] = { ");
+        for (i = 0; i < num; i++)
         {
-          if (*action == '"')
-          {
-            fprintf(fd, "\n\tif (");
-            if (param && !Aflag)
-              fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(param->sym->name));
-            else
-            {
-              catch_method = method;
-              catch_action = action;
-            }
-            fprintf(fd, "(%s->action && !strcmp(%s->action, %s))", soap, soap, action);
-          }
+          if (*map[i].action == '"')
+            fprintf(fd, "%s, ", map[i].action);
           else
-          {
-            fprintf(fd, "\n\tif (");
-            if (param && !Aflag)
-              fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(param->sym->name));
-            else
-            {
-              catch_method = method;
-              catch_action = action;
-            }
-            fprintf(fd, "(%s->action && !strcmp(%s->action, \"%s\"))", soap, soap, action);
-          }
-          if (iflag)
-            fprintf(fd, ")\n\t\treturn serve_%s(this);", ident(method->sym->name));
-          else
-            fprintf(fd, ")\n\t\treturn serve_%s(%s, this);", ident(method->sym->name), soap);
+            fprintf(fd, "\"%s\", ", map[i].action);
         }
-        else
+        fprintf(fd, " };");
+        fprintf(fd, "\n\t\tswitch (soap_binary_search_string(soap_action, %d, soap->action))\n\t\t{", num);
+        for (i = 0; i < num; i++)
         {
-          if (Aflag)
-            compliancewarn("Option -A requires a SOAPAction where none is defined");
+          fprintf(fd, "\n\t\t\tcase %d:\t", i);
+          if (iflag)
+            fprintf(fd, "\n\t\t\t\treturn serve_%s(this);", ident(map[i].method->sym->name));
+          else
+            fprintf(fd, "\n\t\t\t\treturn serve_%s(%s, this);", ident(map[i].method->sym->name), soap);
+        }
+        fprintf(fd, "\n\t\t}\n\t}");
+      }
+      else
+      {
+        fprintf(fd, "\n\tif (soap->action)\n\t{");
+        for (i = 0; i < num; i++)
+        {
+          if (*map[i].action == '"')
+            fprintf(fd, "\n\t\tif (!strcmp(soap->action, %s))", map[i].action);
+          else
+            fprintf(fd, "\n\t\tif (!strcmp(soap->action, \"%s\"))", map[i].action);
+          if (iflag)
+            fprintf(fd, "\n\t\t\treturn serve_%s(this);", ident(map[i].method->sym->name));
+          else
+            fprintf(fd, "\n\t\t\treturn serve_%s(%s, this);", ident(map[i].method->sym->name), soap);
+        }
+        fprintf(fd, "\n\t}");
+      }
+    }
+  }
+  if (!Aflag)
+  {
+    fprintf(fd, "\n\tsoap_peek_element(%s);", soap);
+    catch_method = NULL;
+    for (method = table->list; method; method = method->next)
+    {
+      if (method->info.typ->type == Tfun && !(method->info.sto & Sextern) && has_ns_eq(ns->name, method->sym->name))
+      {
+        if (is_invisible(method->sym->name))
+        {
+          Entry *param = entry(classtable, method->sym);
+          if (param)
+            param = ((Table*)param->info.typ->ref)->list;
           if (param)
           {
             fprintf(fd, "\n\tif (!soap_match_tag(%s, %s->tag, \"%s\")", soap, soap, ns_convert(param->sym->name));
@@ -7174,73 +7240,34 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
           else
           {
             catch_method = method;
-            catch_action = action;
-          }
-        }
-      }
-      else
-      {
-        if (action)
-        {
-          if (*action == '"')
-          {
-            fprintf(fd, "\n\tif (");
-            if (!Aflag)
-              fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(method->sym->name));
-            fprintf(fd, "(%s->action && !strcmp(%s->action, %s))", soap, soap, action);
-          }
-          else
-          {
-            fprintf(fd, "\n\tif (");
-            if (!Aflag)
-              fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(method->sym->name));
-            fprintf(fd, "(%s->action && !strcmp(%s->action, \"%s\"))", soap, soap, action);
           }
         }
         else
         {
-          if (Aflag)
-            compliancewarn("Option -A requires a SOAPAction where none is defined");
           fprintf(fd, "\n\tif (!soap_match_tag(%s, %s->tag, \"%s\")", soap, soap, ns_convert(method->sym->name));
+          if (iflag)
+            fprintf(fd, ")\n\t\treturn serve_%s(this);", ident(method->sym->name));
+          else
+            fprintf(fd, ")\n\t\treturn serve_%s(%s, this);", ident(method->sym->name), soap);
         }
-        if (iflag)
-          fprintf(fd, ")\n\t\treturn serve_%s(this);", ident(method->sym->name));
-        else
-          fprintf(fd, ")\n\t\treturn serve_%s(%s, this);", ident(method->sym->name), soap);
       }
     }
-  }
-  if (catch_method)
-  {
-    if (Aflag && catch_action)
+    if (catch_method)
     {
-      if (*catch_action == '"')
-      {
-        fprintf(fd, "\n\tif (");
-        fprintf(fd, "(%s->action && !strcmp(%s->action, %s))", soap, soap, catch_action);
-        if (iflag)
-          fprintf(fd, ")\n\t\treturn serve_%s(this);", ident(catch_method->sym->name));
-        else
-          fprintf(fd, ")\n\t\treturn serve_%s(%s, this);", ident(catch_method->sym->name), soap);
-      }
+      if (iflag)
+        fprintf(fd, "\n\treturn serve_%s(this);\n}", ident(catch_method->sym->name));
       else
-      {
-        fprintf(fd, "\n\tif (");
-        fprintf(fd, "(%s->action && !strcmp(%s->action, \"%s\"))", soap, soap, catch_action);
-        if (iflag)
-          fprintf(fd, ")\n\t\treturn serve_%s(this);", ident(catch_method->sym->name));
-        else
-          fprintf(fd, ")\n\t\treturn serve_%s(%s, this);", ident(catch_method->sym->name), soap);
-      }
+        fprintf(fd, "\n\treturn serve_%s(soap, this);\n}", ident(catch_method->sym->name));
+    }
+    else
+    {
       fprintf(fd, "\n\treturn %s->error = SOAP_NO_METHOD;\n}", soap);
     }
-    else if (iflag)
-      fprintf(fd, "\n\treturn serve_%s(this);\n}", ident(catch_method->sym->name));
-    else
-      fprintf(fd, "\n\treturn serve_%s(soap, this);\n}", ident(catch_method->sym->name));
   }
   else
+  {
     fprintf(fd, "\n\treturn %s->error = SOAP_NO_METHOD;\n}", soap);
+  }
   for (method = table->list; method; method = method->next)
     if (method->info.typ->type == Tfun && !(method->info.sto & Sextern) && !is_imported(method->info.typ) && has_ns_eq(ns->name, method->sym->name))
       gen_serve_method(fd, table, method, name);
@@ -10495,8 +10522,7 @@ soap_serve(Table *table)
   }
   if (!Cflag)
   {
-    Entry *method, *catch_method = NULL;
-    const char *catch_action = NULL;
+    Entry *method, *catch_method;
     if (rflag)
     {
       Service *sp;
@@ -10530,13 +10556,46 @@ soap_serve(Table *table)
     fprintf(fserver, "SOAP_FMAC5 int SOAP_FMAC6 %s_serve_request(struct soap *soap)\n{", nflag?prefix:"soap");
     if (sflag)
       fprintf(fserver, "\n\tsoap->mode |= SOAP_XML_STRICT;");
-    fprintf(fserver, "\n\tsoap_peek_element(soap);");
-    for (method = table->list; method; method = method->next)
+    if (aflag)
     {
-      const char *action = NULL;
-      if (method->info.typ->type == Tfun && !(method->info.sto & Sextern))
+      int i, num = 0;
+      struct pair *map;
+      for (method = table->list; method; method = method->next)
       {
-        if (aflag)
+        if (method->info.typ->type == Tfun && !(method->info.sto & Sextern))
+        {
+          int found = 0;
+          Service *sp;
+          for (sp = services; sp; sp = sp->next)
+          {
+            if (has_ns_eq(sp->ns, method->sym->name))
+            {
+              Method *m;
+              for (m = sp->list; m; m = m->next)
+              {
+                if (is_eq_nons(m->name, method->sym->name))
+                {
+                  if (m->mess == ACTION || m->mess == REQUEST_ACTION)
+                  {
+                    ++num;
+                    found = 1;
+                  }
+                }
+              }
+            }
+          }
+          if (Aflag && !found)
+          {
+            sprintf(errbuf, "Option -A requires a SOAPAction specified for operation %s where none is defined", ident(method->sym->name));
+            compliancewarn(errbuf);
+          }
+        }
+      }
+      map = (struct pair*)emalloc(num * sizeof(struct pair));
+      num = 0;
+      for (method = table->list; method; method = method->next)
+      {
+        if (method->info.typ->type == Tfun && !(method->info.sto & Sextern))
         {
           Service *sp;
           for (sp = services; sp; sp = sp->next)
@@ -10549,113 +10608,84 @@ soap_serve(Table *table)
                 if (is_eq_nons(m->name, method->sym->name))
                 {
                   if (m->mess == ACTION || m->mess == REQUEST_ACTION)
-                    action = m->part;
+                  {
+                    map[num].action = m->part;
+                    map[num].method = method;
+                    ++num;
+                  }
                 }
               }
             }
           }
         }
-        if (is_invisible(method->sym->name))
+      }
+      if (num > 0)
+      {
+        qsort(map, num, sizeof(struct pair), mapcomp);
+        if (num > 4) /* binary search worthwhile when num > 4 */
         {
-          Entry *param = entry(classtable, method->sym);
-          if (param)
-            param = ((Table*)param->info.typ->ref)->list;
-          if (action)
+          fprintf(fserver, "\n\tif (soap->action)\n\t{\n\t\tconst char *soap_action[] = { ");
+          for (i = 0; i < num; i++)
           {
-            if (*action == '"')
-            {
-              fprintf(fserver, "\n\tif (");
-              if (param && !Aflag)
-                fprintf(fserver, "(soap->action == NULL && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(param->sym->name));
-              else
-              {
-                catch_method = method;
-                catch_action = action;
-              }
-              fprintf(fserver, "(soap->action && !strcmp(soap->action, %s))", action);
-            }
+            if (*map[i].action == '"')
+              fprintf(fserver, "%s, ", map[i].action);
             else
-            {
-              fprintf(fserver, "\n\tif (");
-              if (param && !Aflag)
-                fprintf(fserver, "(soap->action == NULL && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(param->sym->name));
-              else
-              {
-                catch_method = method;
-                catch_action = action;
-              }
-              fprintf(fserver, "(soap->action && !strcmp(soap->action, \"%s\"))", action);
-            }
-            fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(method->sym->name));
+              fprintf(fserver, "\"%s\", ", map[i].action);
           }
-          else
-          {
-            if (Aflag)
-              compliancewarn("Option -A requires a SOAPAction where none is defined");
-            if (param)
-            {
-              fprintf(fserver, "\n\tif (!soap_match_tag(soap, soap->tag, \"%s\")", ns_convert(param->sym->name));
-              fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(method->sym->name));
-            }
-            else
-            {
-              catch_method = method;
-              catch_action = action;
-            }
-          }
+          fprintf(fserver, " };");
+          fprintf(fserver, "\n\t\tswitch (soap_binary_search_string(soap_action, %d, soap->action))\n\t\t{", num);
+          for (i = 0; i < num; i++)
+            fprintf(fserver, "\n\t\t\tcase %d:\treturn soap_serve_%s(soap);", i, ident(map[i].method->sym->name));
+          fprintf(fserver, "\n\t\t}\n\t}");
         }
         else
         {
-          if (action)
+          fprintf(fserver, "\n\tif (soap->action)\n\t{");
+          for (i = 0; i < num; i++)
           {
-            if (*action == '"')
-            {
-              fprintf(fserver, "\n\tif (");
-              if (!Aflag)
-                fprintf(fserver, "(soap->action == NULL && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(method->sym->name));
-              fprintf(fserver, "(soap->action && !strcmp(soap->action, %s))", action);
-            }
+            if (*map[i].action == '"')
+              fprintf(fserver, "\n\t\tif (!strcmp(soap->action, %s))", map[i].action);
             else
-            {
-              fprintf(fserver, "\n\tif (");
-              if (!Aflag)
-                fprintf(fserver, "(soap->action == NULL && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(method->sym->name));
-              fprintf(fserver, "(soap->action && !strcmp(soap->action, \"%s\"))", action);
-            }
+              fprintf(fserver, "\n\t\tif (!strcmp(soap->action, \"%s\"))", map[i].action);
+            fprintf(fserver, "\n\t\t\treturn soap_serve_%s(soap);", ident(map[i].method->sym->name));
           }
-          else
-          {
-            if (Aflag)
-              compliancewarn("Option -A requires a SOAPAction where none is defined");
-            fprintf(fserver, "\n\tif (!soap_match_tag(soap, soap->tag, \"%s\")", ns_convert(method->sym->name));
-          }
-          fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(method->sym->name));
+          fprintf(fserver, "\n\t}");
         }
       }
     }
-    if (catch_method)
+    if (!Aflag)
     {
-      if (Aflag && catch_action)
+      fprintf(fserver, "\n\tsoap_peek_element(soap);");
+      catch_method = NULL;
+      for (method = table->list; method; method = method->next)
       {
-        if (*catch_action == '"')
+        if (method->info.typ->type == Tfun && !(method->info.sto & Sextern))
         {
-          fprintf(fserver, "\n\tif (");
-          fprintf(fserver, "(soap->action && !strcmp(soap->action, %s))", catch_action);
-          fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(catch_method->sym->name));
+          if (is_invisible(method->sym->name))
+          {
+            Entry *param = entry(classtable, method->sym);
+            if (param)
+              param = ((Table*)param->info.typ->ref)->list;
+            if (param)
+              fprintf(fserver, "\n\tif (!soap_match_tag(soap, soap->tag, \"%s\"))\n\t\treturn soap_serve_%s(soap);", ns_convert(param->sym->name), ident(method->sym->name));
+            else
+              catch_method = method;
+          }
+          else
+          {
+            fprintf(fserver, "\n\tif (!soap_match_tag(soap, soap->tag, \"%s\"))\n\t\treturn soap_serve_%s(soap);", ns_convert(method->sym->name), ident(method->sym->name));
+          }
         }
-        else
-        {
-          fprintf(fserver, "\n\tif (");
-          fprintf(fserver, "(soap->action && !strcmp(soap->action, \"%s\"))", catch_action);
-          fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(catch_method->sym->name));
-        }
-        fprintf(fserver, "\n\treturn soap->error = SOAP_NO_METHOD;");
       }
-      else
+      if (catch_method)
         fprintf(fserver, "\n\treturn soap_serve_%s(soap);", ident(catch_method->sym->name));
+      else
+        fprintf(fserver, "\n\treturn soap->error = SOAP_NO_METHOD;");
     }
     else
+    {
       fprintf(fserver, "\n\treturn soap->error = SOAP_NO_METHOD;");
+    }
     fprintf(fserver, "\n}\n#endif");
     if (rflag)
     {

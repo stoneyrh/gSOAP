@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">gSOAP user guide</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Jan 13 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Mon Jan 21 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -1441,7 +1441,14 @@ wsdl2h -h</h3>
 wsdl2h -I</h3>
 <p>This option specifies a directory path to search for WSDL and XSD files.</p>
 <p>For example: </p><pre class="fragment">wsdl2h -I path file.wsdl
-</pre><p>This searches <em><code>path</code></em> for <em><code>.wsdl</code></em> and <em><code>.xsd</code></em> files that are imported by <em><code>file.wsdl</code></em>.</p>
+</pre><p>This searches <em><code>path</code></em> for <em><code>.wsdl</code></em> and <em><code>.xsd</code></em> files that are imported by <em><code>file.wsdl</code></em> and by other imported files.</p>
+<p>When a WSDL or XSD file imports another file then:</p>
+<ul>
+<li>a file name referenced by <code><a href="http://">http://</a></code> or by <code><a href="https://">https://</a></code> is retrieved from the specified URL.</li>
+<li>a file name referenced by <code><a href="file://">file://</a></code> is retrieved from the path specified relative to the directory in which <b><code>wsdl2h</code></b> is run and the <b><code>-I</code></b> option can be used to change that location to import from.</li>
+<li>a file name without a path (i.e. has no <code>/</code>) or a file name with path stating with <code>../</code> are considered files located at relative path locations with respect to the current WSDL and XSD that is importing this file</li>
+<li>otherwise, imported files are considered relative to the directory in which <b><code>wsdl2h</code></b> is run and the <b><code>-I</code></b> option can be used to change that location to import from.</li>
+</ul>
 <p>WSDL and XSD files that import other WSDL and XSD files typically use relative paths, at least that is recommended by best practices. If absolute paths are used then wsdl2h may fail to find the imported WSDLs and XSDs. This option resolves relative paths but does not help to resolve absolute paths. In the worst case one must edit the WSDLs and XSDs to refer to proper file locations.</p>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h3><a class="anchor" id="wsdl2h-i"></a>
@@ -4722,7 +4729,7 @@ All rights reserved.</em> </p>
 Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Jan 13 2019 21:47:45 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Mon Jan 21 2019 15:02:44 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

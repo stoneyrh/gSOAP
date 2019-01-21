@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.75
+        stdsoap2.c[pp] 2.8.76
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20875
+#define GSOAP_LIB_VERSION 20876
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.75 2019-01-14 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.76 2019-01-21 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.75 2019-01-14 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.76 2019-01-21 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -985,6 +985,8 @@ int
 SOAP_FMAC2
 soap_query_send_key(struct soap *soap, const char *s)
 {
+  if (!s)
+    return SOAP_OK;
   if (!soap->body && soap_send_raw(soap, "&", 1))
     return soap->error;
   soap->body = 0;
@@ -1001,6 +1003,8 @@ int
 SOAP_FMAC2
 soap_query_send_val(struct soap *soap, const char *s)
 {
+  if (!s)
+    return SOAP_OK;
   if (soap_send_raw(soap, "=", 1))
     return soap->error;
   (void)soap_encode_url(s, soap->msgbuf, (int)sizeof(soap->msgbuf)); /* msgbuf length is max SOAP_TMPLEN or just 1024 bytes */
@@ -1090,6 +1094,8 @@ soap_query_decode(char *buf, size_t len, const char *val)
       {
         case '+':
           *t++ = ' ';
+          s++;
+          break;
         case '\t':
         case '\n':
         case '\r':
@@ -1133,7 +1139,7 @@ frecv(struct soap *soap, char *s, size_t n)
     size_t l = strlen(soap->is);
     if (l > n)
       l = n;
-    (void)soap_memcpy(s, n, soap->is, l);
+    (void)soap_memcpy((void*)s, n, soap->is, l);
     soap->is += l;
     return l;
   }
@@ -1852,6 +1858,40 @@ soap_code_list(struct soap *soap, const struct soap_code_map *code_map, long cod
   }
   *t = '\0';
   return soap->tmpbuf;
+}
+
+/******************************************************************************/
+
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_binary_search_string(const char **a, size_t n, const char *s)
+{
+  size_t i, k;
+  for (i = 1, k = n; k > 1; k >>= 1)
+    i <<= 1;
+  k = i >> 1;
+  i--;
+  for (;;)
+  {
+    if (i >= n)
+    {
+      i -= k;
+    }
+    else
+    {
+      int r = strcmp(a[i], s);
+      if (r == 0)
+        return i;
+      if (r > 0)
+        i += k;
+      else
+        i -= k;
+    }
+    if (k == 0)
+      return -1;
+    k >>= 1;
+  }
 }
 
 /******************************************************************************/
@@ -3368,7 +3408,7 @@ soap_putsizesoffsets(struct soap *soap, const char *type, const int *size, const
       (SOAP_SNPRINTF(soap->type + l, sizeof(soap->type) - l - 1, 20), t, size[i]);
     }
   }
-  (void)soap_strncat(soap->type, sizeof(soap->type), "]", 1);
+  soap_strcat(soap->type, sizeof(soap->type), "]");
   return soap->type;
 }
 
@@ -3389,7 +3429,7 @@ soap_putoffsets(struct soap *soap, const int *offset, int dim)
       size_t l = strlen(soap->arrayOffset);
       (SOAP_SNPRINTF(soap->arrayOffset + l, sizeof(soap->arrayOffset) - l - 1, 20), ",%d", offset[i]);
     }
-    (void)soap_strncat(soap->arrayOffset, sizeof(soap->arrayOffset), "]", 1);
+    soap_strcat(soap->arrayOffset, sizeof(soap->arrayOffset), "]");
   }
   return soap->arrayOffset;
 }
@@ -4540,11 +4580,11 @@ ssl_auth_init(struct soap *soap)
 #else
     soap_strcpy(soap->tmpbuf, sizeof(soap->tmpbuf), "NORMAL:+VERS-ALL");
     if (!(soap->ssl_flags & SOAP_TLSv1_0))
-      soap_strncat(soap->tmpbuf, sizeof(soap->tmpbuf)-16, ":-VERS-TLS1.0", 13);
+      soap_strcat(soap->tmpbuf, sizeof(soap->tmpbuf), ":-VERS-TLS1.0");
     if (!(soap->ssl_flags & SOAP_TLSv1_1))
-      soap_strncat(soap->tmpbuf, sizeof(soap->tmpbuf)-29, ":-VERS-TLS1.1", 13);
+      soap_strcat(soap->tmpbuf, sizeof(soap->tmpbuf), ":-VERS-TLS1.1");
     if (!(soap->ssl_flags & SOAP_TLSv1_2))
-      soap_strncat(soap->tmpbuf, sizeof(soap->tmpbuf)-42, ":-VERS-TLS1.2", 13);
+      soap_strcat(soap->tmpbuf, sizeof(soap->tmpbuf), ":-VERS-TLS1.2");
     if (gnutls_priority_set_direct(soap->session, soap->tmpbuf, NULL) != GNUTLS_E_SUCCESS)
       return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set protocol priority", SOAP_SSL_ERROR);
 #endif
@@ -8232,20 +8272,22 @@ soap_extend_url(struct soap *soap, const char *s, const char *t)
     {
       if (*t == '?')
       {
-        (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "&", 1);
-        (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), t + 1, strlen(t) - 1);
+        soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), "&");
+        soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), t + 1);
       }
       else /* *t == '/' */
       {
         size_t l = r - soap->msgbuf;
         *r = '\0';
-        (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), t, strlen(t));
+        soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), t);
         if (s)
-          (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), s + l, strlen(s + l));
+          soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), s + l);
       }
     }
     else
-      (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), t, strlen(t));
+    {
+      soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), t);
+    }
   }
   return soap->msgbuf;
 }
@@ -8259,9 +8301,9 @@ soap_extend_url_query(struct soap *soap, const char *s, const char *t)
 {
   (void)soap_extend_url(soap, s, t); /* fills and returns soap->msgbuf */
   if (strchr(soap->msgbuf, '?'))
-    (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "&", 1);
+    soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), "&");
   else
-    (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "?", 1);
+    soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), "?");
   return soap->msgbuf;
 }
 
@@ -8289,13 +8331,13 @@ soap_url_query(struct soap *soap, const char *s, const char *t)
     }
     else
     {
-      (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), s, n);
+      soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), s);
       if (t)
       {
         int m = (int)strlen(soap->msgbuf); /* msgbuf length is max SOAP_TMPLEN or just 1024 bytes */
         (void)soap_encode_url(t, soap->msgbuf + m, (int)sizeof(soap->msgbuf) - m);
       }
-      (void)soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "&", 1);
+      soap_strcat(soap->msgbuf, sizeof(soap->msgbuf), "&");
     }
   }
 }
@@ -12286,7 +12328,7 @@ soap_version(struct soap *soap)
           SOAP_FREE(soap, p[1].out);
         p[1].out = (char*)SOAP_MALLOC(soap, sizeof(soap_enc1));
         if (p[1].out)
-          (void)soap_strncpy(p[1].out, sizeof(soap_enc1), soap_enc1, sizeof(soap_enc1) - 1);
+          (void)soap_memcpy(p[1].out, sizeof(soap_enc1), soap_enc1, sizeof(soap_enc1));
       }
       else if (!strcmp(ns, soap_env2))
       {
@@ -12295,7 +12337,7 @@ soap_version(struct soap *soap)
           SOAP_FREE(soap, p[1].out);
         p[1].out = (char*)SOAP_MALLOC(soap, sizeof(soap_enc2));
         if (p[1].out)
-          (void)soap_strncpy(p[1].out, sizeof(soap_enc2), soap_enc2, sizeof(soap_enc2) - 1);
+          (void)soap_memcpy(p[1].out, sizeof(soap_enc2), soap_enc2, sizeof(soap_enc2));
       }
     }
   }
@@ -12753,7 +12795,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       size_t l = strlen(soap->tmpbuf);
       (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l - 1, 20), ",%d", soap->positions[i]);
     }
-    (void)soap_strncat(soap->tmpbuf, sizeof(soap->tmpbuf), "]", 1);
+    soap_strcat(soap->tmpbuf, sizeof(soap->tmpbuf), "]");
     if (soap_attribute(soap, "SOAP-ENC:position", soap->tmpbuf))
       return soap->error;
   }
@@ -12810,6 +12852,26 @@ soap_element_begin_out(struct soap *soap, const char *tag, int id, const char *t
     return soap->error;
   return soap_element_start_end_out(soap, NULL);
 }
+
+/******************************************************************************/
+
+#if _MSC_VER < 1400 && !defined(HAVE_STRLCAT)
+SOAP_FMAC1
+void
+SOAP_FMAC2
+soap_strcat(char *t, size_t n, const char *s)
+{
+  size_t k = strlen(t);
+  if (k < n)
+  {
+    t += k;
+    n -= k;
+    while (--n > 0 && *s)
+      *t++ = *s++;
+    *t = '\0';
+  }
+}
+#endif
 
 /******************************************************************************/
 
@@ -17538,17 +17600,16 @@ soap_QName2s(struct soap *soap, const char *s)
           r = s;
         n++;
       }
-      /* normal prefix: pass string as is */
-      if (r && *s != '"')
+      if (*s != '"') /* non-quoted: pass string as is */
       {
 #ifndef WITH_LEAN
-        if ((soap->mode & SOAP_XML_CANONICAL) && !(soap->mode & SOAP_XML_CANONICAL_NA))
+        if (r && (soap->mode & SOAP_XML_CANONICAL) && !(soap->mode & SOAP_XML_CANONICAL_NA))
           soap_utilize_ns(soap, s, 1);
 #endif
         r = s;
         m = n + 1;
       }
-      else /* URL-based string prefix */
+      else /* prefix quoted URI-based string */
       {
         q = strchr(s + 1, '"');
         if (q)
@@ -21546,7 +21607,7 @@ soap_http_content_type(struct soap *soap, int status)
       else
         n = strlen(s);
       l = strlen(soap->tmpbuf);
-      if (sizeof(soap->tmpbuf) - l > n)
+      if (sizeof(soap->tmpbuf) > l + n)
         (void)soap_strncpy(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, s, n);
       if (soap->mime.start)
       {
@@ -21559,8 +21620,8 @@ soap_http_content_type(struct soap *soap, int status)
         (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(r) + 15), "\"; start-info=\"%s", r);
       }
       l = strlen(soap->tmpbuf);
-      if (sizeof(soap->tmpbuf) - l > 1)
-        (void)soap_strncpy(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, "\"", 1);
+      if (sizeof(soap->tmpbuf) > l)
+        soap_strcpy(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, "\"");
     }
     else
     {

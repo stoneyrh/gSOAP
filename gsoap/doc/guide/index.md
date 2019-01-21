@@ -5641,7 +5641,21 @@ For example:
     wsdl2h -I path file.wsdl
 
 This searches <i>`path`</i> for <i>`.wsdl`</i> and <i>`.xsd`</i> files that are
-imported by <i>`file.wsdl`</i>.
+imported by <i>`file.wsdl`</i> and by other imported files.
+
+When a WSDL or XSD file imports another file then:
+
+- a file name referenced by `http://` or by `https://` is retrieved from the
+  specified URL.
+- a file name referenced by `file://` is retrieved from the path specified
+  relative to the directory in which <b>`wsdl2h`</b> is run and the <b>`-I`</b>
+  option can be used to change that location to import from.
+- a file name without a path (i.e. has no `/`) or a file name with path stating
+  with `../` are considered files located at relative path locations with
+  respect to the current WSDL and XSD that is importing this file
+- otherwise, imported files are considered relative to the directory in which
+  <b>`wsdl2h`</b> is run and the <b>`-I`</b> option can be used to change that
+  location to import from.
 
 WSDL and XSD files that import other WSDL and XSD files typically use relative
 paths, at least that is recommended by best practices.  If absolute paths are
