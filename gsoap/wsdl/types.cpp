@@ -1162,7 +1162,7 @@ const char *Types::deftname(enum Type type, bool mk_pointer, bool is_pointer, co
     char *s = (char*)emalloc(l + n + 4);
     soap_strcpy(s, l + n + 4, r);
     soap_strcpy(s + l, n + 4,  "<");
-    soap_strcpy(s + l + 1, n + 3, buf);
+    (void)soap_memcpy(s + l + 1, n + 3, buf, n + 1);
     soap_strcpy(s + l + n + 1, 3, "> ");
     smptypemap[t] = s;
   }

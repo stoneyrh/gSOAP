@@ -8477,7 +8477,7 @@ soap_set_cookie(struct soap *soap, const char *name, const char *value, const ch
       if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
         q->name = (char*)SOAP_MALLOC(soap, l);
       if (q->name)
-        soap_strcpy(q->name, l, name);
+        (void)soap_memcpy(q->name, l, name, l);
       q->value = NULL;
       q->domain = NULL;
       q->path = NULL;
@@ -9198,7 +9198,7 @@ soap_getcookies(struct soap *soap, const char *val)
         if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
           p->name = (char*)SOAP_MALLOC(soap, l);
         if (p->name)
-          soap_strcpy(p->name, l, tmp);
+          (void)soap_memcpy(p->name, l, tmp, l);
         s = soap_decode_val(tmp, sizeof(tmp), s);
         if (*tmp)
         {
@@ -10235,7 +10235,7 @@ soap_enter(struct soap *soap, const char *id, int t, size_t n)
     ip->flist = NULL;
     ip->smart = NULL;
     ip->shaky = 0;
-    soap_strcpy((char*)ip->id, l + 1, id);
+    (void)soap_memcpy((char*)ip->id, l + 1, id, l + 1);
     h = soap_hash(id); /* h = (HASH(id) % SOAP_IDHASH) so soap->iht[h] is safe */
     ip->next = soap->iht[h];
     soap->iht[h] = ip;
@@ -14457,7 +14457,7 @@ soap_peek_element(struct soap *soap)
       tp = (struct soap_attribute*)SOAP_MALLOC(soap, sizeof(struct soap_attribute) + l);
       if (!tp)
         return soap->error = SOAP_EOM;
-      soap_strcpy((char*)tp->name, l + 1, soap->tmpbuf);
+      (void)soap_memcpy((char*)tp->name, l + 1, soap->tmpbuf, l + 1);
       tp->value = NULL;
       tp->size = 0;
       tp->ns = NULL;
