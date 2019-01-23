@@ -29,16 +29,6 @@ engelen@genivia.com / engelen@acm.org
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
-
-Build:
-        soapcpp2 -ipwsdl wsdl.h
-        g++ -o wsdl2h wsdl2h.cpp types.cpp service.cpp wsdl.cpp schema.cpp wsdlC.cpp stdsoap2.cpp
-        
-TODO:
-        Resolve relative versus absolute import paths for reading imported WSDL/schema (use URL local addresses)
-        Do not generate abstract complexTypes, but include defs in derived types
-        Handle simpleType derivation from base64
-
 */
 
 #include "includes.h"

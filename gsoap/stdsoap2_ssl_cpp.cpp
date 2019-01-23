@@ -4435,14 +4435,7 @@ ssl_auth_init(struct soap *soap)
   }
   /* enable all TSLv1 protocols and disable SSLv3 by default if no SSL/TLS flags are set */
   if (!(soap->ssl_flags & SOAP_SSLv3_TLSv1))
-  {
-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
-    unsigned long  osslver=OpenSSL_version_num();
-    if (osslver < 0x10101000L)
-      addflags =  SOAP_TLSv1_2 | SOAP_TLSv1_1 | SOAP_TLSv1_2;
-#endif
     soap->ssl_flags = SOAP_TLSv1;
-  }
 #if OPENSSL_VERSION_NUMBER >= 0x10101000L
   if ((soap->ssl_flags & SOAP_SSLv3))
     minv = SSL3_VERSION;
