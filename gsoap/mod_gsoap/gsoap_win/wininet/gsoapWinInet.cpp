@@ -557,7 +557,7 @@ wininet_fsend(
         (struct wininet_data *) soap_lookup_plugin( soap, wininet_id );
 
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
-        "wininet %p: fsend, data len = %lu bytes\n", soap, a_uiBufferLen ));
+        "wininet %p: fsend, data len = %zu bytes\n", soap, a_uiBufferLen ));
 
     /* allow the request to be sent with a NULL buffer */
     if ( a_uiBufferLen == 0 )
@@ -637,7 +637,7 @@ wininet_fsend(
             if ( !pData->pBuffer )
             {
                 DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
-                            "wininet %p: fsend, realloc of size %lu failed\n", 
+                            "wininet %p: fsend, realloc of size %zu failed\n", 
                             soap, pData->uiBufferLenMax ));
                 return SOAP_EOM;
             }
@@ -826,7 +826,7 @@ wininet_frecv(
     BOOL        bResult;
 
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
-        "wininet %p: frecv, available buffer len = %lu\n", 
+        "wininet %p: frecv, available buffer len = %zu\n", 
         soap, a_uiBufferLen ));
 
     /* 
@@ -863,7 +863,7 @@ wininet_frecv(
     while ( bResult && dwBytesRead && uiTotalBytesRead < a_uiBufferLen );
 
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
-        "wininet %p: recv, received %lu bytes\n", soap, uiTotalBytesRead ));
+        "wininet %p: recv, received %zu bytes\n", soap, uiTotalBytesRead ));
 
     soap->length += uiTotalBytesRead;
 

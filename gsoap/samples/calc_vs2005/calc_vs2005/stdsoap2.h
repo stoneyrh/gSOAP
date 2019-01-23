@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.76
+        stdsoap2.h 2.8.77
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20876
+#define GSOAP_VERSION 20877
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -3305,7 +3305,7 @@ SOAP_FMAC1 const char* SOAP_FMAC2 soap_code_str(const struct soap_code_map*, lon
 SOAP_FMAC1 LONG64 SOAP_FMAC2 soap_code_bits(const struct soap_code_map*, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_code_list(struct soap*, const struct soap_code_map*, long);
 
-SOAP_FMAC1 int SOAP_FMAC2 soap_binary_search_string(const char**, size_t, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_binary_search_string(const char**, int, const char*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_getline(struct soap*, char*, int);
 SOAP_FMAC1 int SOAP_FMAC2 soap_begin_serve(struct soap*);

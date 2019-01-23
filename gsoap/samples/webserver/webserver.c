@@ -107,6 +107,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
         -z              enables compression
         -c              enables chunking
         -k              enables keep-alive
+        -p              enables HTTP pipelining
         -i              enables non-threaded iterative server
         -v              enables verbose mode
         -o<num>         pool of <num> threads (cannot be used with option -i)
@@ -133,7 +134,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "httpget.h"
 #include "httppost.h"
 #include "httpform.h"
-/* #include "httppipe.h" */ /* optionally enable HTTP pipelining at the cost of increased memory usage */
+#include "httppipe.h"   /* optionally enable HTTP pipelining at the cost of increased memory usage */
 #include "logging.h"
 #include "threads.h"
 #ifdef WITH_OPENSSL
@@ -182,6 +183,7 @@ static const struct option default_options[] =
   { "z.compress", NULL, },
   { "c.chunking", NULL, },
   { "k.keepalive", NULL, },
+  { "e.pipeline", NULL, },
   { "i.iterative", NULL, },
   { "v.verbose", NULL, },
   { "o.pool", "threads", 6, (char*)"none"},
@@ -198,15 +200,16 @@ static const struct option default_options[] =
 #define OPTION_z        0
 #define OPTION_c        1
 #define OPTION_k        2
-#define OPTION_i        3
-#define OPTION_v        4
-#define OPTION_o        5
-#define OPTION_t        6
-#define OPTION_s        7
-#define OPTION_d        8
-#define OPTION_p        9
-#define OPTION_l        10
-#define OPTION_port     11
+#define OPTION_e        3
+#define OPTION_i        4
+#define OPTION_v        5
+#define OPTION_o        6
+#define OPTION_t        7
+#define OPTION_s        8
+#define OPTION_d        9
+#define OPTION_p        10
+#define OPTION_l        11
+#define OPTION_port     12
 
 /******************************************************************************\
  *
@@ -217,6 +220,7 @@ static const struct option default_options[] =
 static struct option *options = NULL;
 static time_t start;
 static int secure = 0;          /* =0: no SSL, =1: support SSL */
+static int pipeline = 0;        /* =0: no HTTP pipeline, =1: HTTP pipeline */
 
 static const char *minutes[60] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 static const char *hours[24] = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"};
@@ -349,9 +353,19 @@ int main(int argc, char **argv)
   if (soap_register_plugin_arg(&soap, http_form, (void*)http_form_handler))
     soap_print_fault(&soap, stderr);
 #ifdef HTTPPIPE_H
-  /* Register HTTP PIPE plugin */
-  if (soap_register_plugin(&soap, http_pipe))
-    soap_print_fault(&soap, stderr);
+  if (options[OPTION_e].selected)
+  {
+    /* Register HTTP PIPE plugin */
+    if (soap_register_plugin(&soap, http_pipe))
+    {
+      soap_print_fault(&soap, stderr);
+    }
+    else
+    {
+      pipeline = 1;                   /* HTTP pipelining cannot be turned on/off while the webserver runs */
+      options[OPTION_k].selected = 1; /* also enable keep-alive */
+    }
+  }
 #endif
 #ifdef LOGGING_H
   /* Register logging plugin */
@@ -400,6 +414,8 @@ void server_loop(struct soap *soap)
     SOAP_SOCKET sock;
     int newpoolsize;
     
+    options[OPTION_e].selected = pipeline; /* HTTP pipelining cannot be turned on/off while the webserver runs */
+
     if (options[OPTION_c].selected)
       soap_set_omode(soap, SOAP_IO_CHUNK); /* use chunked HTTP content (fast) */
     if (options[OPTION_k].selected)
@@ -1192,62 +1208,67 @@ int info(struct soap *soap)
 {
   size_t stat_get, stat_post, stat_fail, *hist_min, *hist_hour, *hist_day;
   size_t stat_sent, stat_recv;
-  const char *t0, *t1, *t2, *t3, *t4, *t5, *t6, *t7;
+  const char *t0, *t1, *t2, *t3, *t4, *t5, *t6, *t7, *t8;
   char buf[4096]; /* a small buffer that is large enough to hold parts of HTML content */
   struct soap_plugin *p;
   time_t now = time(NULL), elapsed = now - start;
   struct tm T;
+  options[OPTION_e].selected = pipeline; /* HTTP pipelining cannot be turned on/off while the webserver runs */
   query_options(soap, options);
   if ((soap->omode & SOAP_IO_KEEPALIVE))
     t0 = "<td align='center' bgcolor='green'>YES</td>";
   else
     t0 = "<td align='center' bgcolor='red'>NO</td>";
+  if (pipeline)
+    t1 = "<td align='center' bgcolor='green'>YES</td>";
+  else
+    t1 = "<td align='center' bgcolor='red'>NO</td>";
 #ifdef WITH_COOKIES
-  t1 = "<td align='center' bgcolor='green'>YES</td>";
+  t2 = "<td align='center' bgcolor='green'>YES</td>";
   /* soap_env_cookie_value() returns value of a cookie received (from client) */
   if (soap_env_cookie_value(soap, "visit", NULL, NULL))
-    t2 = "<td align='center' bgcolor='green'>PASS</td>";
+    t3 = "<td align='center' bgcolor='green'>PASS</td>";
   else
-    t2 = "<td align='center' bgcolor='yellow'>WAIT</td>";
+    t3 = "<td align='center' bgcolor='yellow'>WAIT</td>";
 #else
-  t1 = "<td align='center' bgcolor='red'>NO</td>";
-  t2 = "<td align='center' bgcolor='blue'>N/A</td>";
+  t2 = "<td align='center' bgcolor='red'>NO</td>";
+  t3 = "<td align='center' bgcolor='blue'>N/A</td>";
 #endif
   if (secure)
   {
-    t3 = "<td align='center' bgcolor='green'>YES</td>";
+    t4 = "<td align='center' bgcolor='green'>YES</td>";
     if (soap->imode & SOAP_ENC_SSL)
-      t4 = "<td align='center' bgcolor='green'>PASS</td>";
+      t5 = "<td align='center' bgcolor='green'>PASS</td>";
     else
-      t4 = "<td align='center' bgcolor='red'>FAIL</td>";
+      t5 = "<td align='center' bgcolor='red'>FAIL</td>";
   }
   else
   {
-    t3 = "<td align='center' bgcolor='red'>NO</td>";
-    t4 = "<td align='center' bgcolor='blue'>N/A</td>";
+    t4 = "<td align='center' bgcolor='red'>NO</td>";
+    t5 = "<td align='center' bgcolor='blue'>N/A</td>";
   }
 #ifdef WITH_ZLIB
   if (options[OPTION_z].selected)
   {
-    t5 = "<td align='center' bgcolor='green'>YES</td>";
+    t6 = "<td align='center' bgcolor='green'>YES</td>";
     if (soap->omode & SOAP_ENC_ZLIB)
-      t6 = "<td align='center' bgcolor='green'>PASS</td>";
+      t7 = "<td align='center' bgcolor='green'>PASS</td>";
     else
-      t6 = "<td align='center' bgcolor='yellow'>WAIT</td>";
+      t7 = "<td align='center' bgcolor='yellow'>WAIT</td>";
   }
   else
   {
-    t5 = "<td align='center' bgcolor='red'>NO</td>";
-    t6 = "<td align='center' bgcolor='blue'>N/A</td>";
+    t6 = "<td align='center' bgcolor='red'>NO</td>";
+    t7 = "<td align='center' bgcolor='blue'>N/A</td>";
   }
 #else
-  t5 = "<td align='center' bgcolor='red'>NO</td>";
-  t6 = "<td align='center' bgcolor='blue'>N/A</td>";
+  t6 = "<td align='center' bgcolor='red'>NO</td>";
+  t7 = "<td align='center' bgcolor='blue'>N/A</td>";
 #endif
   if (options[OPTION_c].selected || (soap->omode & SOAP_IO) == SOAP_IO_CHUNK)
-    t7 = "<td align='center' bgcolor='green'>YES</td>";
+    t8 = "<td align='center' bgcolor='green'>YES</td>";
   else
-    t7 = "<td align='center' bgcolor='red'>NO</td>";
+    t8 = "<td align='center' bgcolor='red'>NO</td>";
 #ifdef WITH_COOKIES
   soap->cookie_domain = options[OPTION_d].value; /* set domain of this server */
   soap->cookie_path = options[OPTION_p].value;   /* set root path of the cookies */
@@ -1296,6 +1317,7 @@ int info(struct soap *soap)
 <tr height='10'><td height='10' background='bl.gif'></td><td height='10'><i>Function</i></td><td align='center' height='10'><i>Result</i></td><td height='10' background='obls.gif'></td></tr>\
 <tr><td background='bl.gif'></td><td>HTTP operational</td><td align='center' bgcolor='green'>YES</td><td width='10' background='ls.gif'></td></tr>\
 <tr><td background='bl.gif'></td><td>HTTP keep alive enabled</td>%s<td width='10' background='ls.gif'></td></tr>\
+<tr><td background='bl.gif'></td><td>HTTP pipeline enabled</td>%s<td width='10' background='ls.gif'></td></tr>\
 <tr><td background='bl.gif'></td><td>HTTP cookies enabled</td>%s<td width='10' background='ls.gif'></td></tr>\
 <tr><td background='bl.gif'></td><td>HTTP cookies test</td>%s<td width='10' background='ls.gif'></td></tr>\
 <tr><td background='bl.gif'></td><td>HTTPS (OpenSSL) enabled</td>%s<td width='10' background='ls.gif'></td></tr>\
@@ -1304,7 +1326,7 @@ int info(struct soap *soap)
 <tr><td background='bl.gif'></td><td>HTTP compression test</td>%s<td width='10' background='ls.gif'></td></tr>\
 <tr><td background='bl.gif'></td><td>HTTP chunking enabled</td>%s<td width='10' background='ls.gif'></td></tr>\
 <tr height='10'><td width='10' height='10' background=otrs.gif></td><td height='10' background='ts.gif'></td><td height='10' background='ts.gif'></td><td width='10' height='10' background='otls.gif'></td></tr>\
-</table>", t0, t1, t2, t3, t4, t5, t6, t7);
+</table>", t0, t1, t2, t3, t4, t5, t6, t7, t8);
   if (soap_send(soap, buf))
     return soap->error;
   soap_http_get_stats(soap, &stat_get, &stat_post, &stat_fail, &hist_min, &hist_hour, &hist_day);

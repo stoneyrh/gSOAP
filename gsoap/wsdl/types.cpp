@@ -1531,6 +1531,10 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
     const xs__simpleType *ref = simpleType.restriction->simpleTypePtr();
     while (ref && ref->restriction)
       ref = ref->restriction->simpleTypePtr();
+    if (simpleType.restriction->complexTypePtr())
+    {
+      fprintf(stderr, "\nWarning: %s\"%s\":%s simpleType restriction has invalid base %s complexType\n", anonymous ? "local element/attribute " : "", URI ? URI : "", name ? name : "", base ? base : "");
+    }
     if (ref && ref->list)
     {
       const char *baseURI = NULL;
@@ -1623,12 +1627,12 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
     else
     {
       if (!base)
-        base = "xsd:string";
+        base = "xs:string";
       const char *baseURI = NULL;
       if (simpleType.restriction->simpleTypePtr() && simpleType.restriction->simpleTypePtr()->schemaPtr())
         baseURI = simpleType.restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
       if (!anonymous)
-        fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction of %s.\n///\n", URI ? URI : "", name, base);
+        fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction of type %s.\n///\n", URI ? URI : "", name, base);
       document(simpleType.annotation);
       document(simpleType.restriction->annotation);
       if (simpleType.restriction->assertion && simpleType.restriction->assertion->test)
@@ -1730,7 +1734,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             }
           }
           else
+          {
             fprintf(stream, "//\tunrecognized: enumeration \"%s\" has no value\n", name ? name : "");
+          }
         }
         if (!anonymous)
         {
@@ -2014,7 +2020,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
     {
       if (!anonymous)
       {
-        fprintf(stream, "/// @brief \"%s\":%s is a simpleType list restriction of %s.\n///\n", URI ? URI : "", name, simpleType.list->restriction->base);
+        fprintf(stream, "/// @brief \"%s\":%s is a simpleType list restriction of type %s.\n///\n", URI ? URI : "", name, simpleType.list->restriction->base);
         if (!Lflag)
           fprintf(stream, "/// @note This enumeration is a bitmask, so a set of values is supported (using | and & bit-ops on the bit vector).\n");
       }
@@ -2047,7 +2053,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
               fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value, false), simpleType.list->restriction->base, (*enumeration).value);
           }
           else
+          {
             fprintf(stream, "//\tunrecognized: bitmask enumeration \"%s\" has no value\n", t);
+          }
         }
         if (!anonymous)
         {
@@ -2082,7 +2090,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       {
         if (!anonymous)
         {
-          fprintf(stream, "/// @brief \"%s\":%s is a simpleType list of %s.\n///\n", URI ? URI : "", name, simpleType.list->itemType);
+          fprintf(stream, "/// @brief \"%s\":%s is a simpleType list of values of type %s.\n///\n", URI ? URI : "", name, simpleType.list->itemType);
           if (!Lflag)
             fprintf(stream, "/// @note This enumeration is a bitmask, so a set of values is supported (using | and & bit-ops on the bit vector).\n");
         }
@@ -2115,7 +2123,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                 fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value, false), p->restriction->base, (*enumeration).value);
             }
             else
+            {
               fprintf(stream, "//\tunrecognized: bitmask enumeration \"%s\" has no value\n", t);
+            }
           }
           if (!anonymous)
           {
@@ -2143,13 +2153,13 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       {
         const char *base;
         if (!strcmp(simpleType.list->itemType, "xs:QName"))
-          base = "xsd:QName";
+          base = "xs:QName";
         else
-          base = "xsd:string";
+          base = "xs:string";
         const char *s = tname(NULL, NULL, base);
         if (!anonymous)
         {
-          fprintf(stream, "/// @brief \"%s\":%s is a simpleType containing a whitespace separated list of %s.\n///\n", URI ? URI : "", name, simpleType.list->itemType);
+          fprintf(stream, "/// @brief \"%s\":%s is a simpleType containing a whitespace separated list of values of type %s.\n///\n", URI ? URI : "", name, simpleType.list->itemType);
           t = deftname(TYPEDEF, false, is_ptr(NULL, NULL, base), prefix, URI, name, s);
         }
         document(simpleType.annotation);
@@ -2200,7 +2210,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                   fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value, false), (*simple).restriction->base, (*enumeration).value);
               }
               else
+              {
                 fprintf(stream, "//\tunrecognized: bitmask enumeration \"%s\" has no value\n", t);
+              }
             }
           }
         }
@@ -2231,9 +2243,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
   {
     if (simpleType.union_->memberTypes)
     {
-      const char *s = tname(NULL, NULL, "xsd:string");
+      const char *s = tname(NULL, NULL, "xs:string");
       if (!anonymous)
-        t = deftname(TYPEDEF, false, is_ptr(NULL, NULL, "xsd:string"), prefix, URI, name, s);
+        t = deftname(TYPEDEF, false, is_ptr(NULL, NULL, "xs:string"), prefix, URI, name, s);
       fprintf(stream, "/// @brief Union of values from member types \"%s\".\n", cstring(simpleType.union_->memberTypes));
       if (t)
         fprintf(stream, "typedef %s %s;\n\n", s, t);
@@ -2245,9 +2257,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
     }
     else if (!simpleType.union_->simpleType.empty())
     {
-      const char *s = tname(NULL, NULL, "xsd:string");
+      const char *s = tname(NULL, NULL, "xs:string");
       if (!anonymous)
-        t = deftname(TYPEDEF, false, is_ptr(NULL, NULL, "xsd:string"), prefix, URI, name, s);
+        t = deftname(TYPEDEF, false, is_ptr(NULL, NULL, "xs:string"), prefix, URI, name, s);
       for (vector<xs__simpleType>::const_iterator simpleType1 = simpleType.union_->simpleType.begin(); simpleType1 != simpleType.union_->simpleType.end(); ++simpleType1)
       {
         if ((*simpleType1).restriction)
@@ -2265,10 +2277,14 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       }
     }
     else
+    {
       fprintf(stream, "//\tunrecognized\n");
+    }
   }
   else
+  {
     fprintf(stream, "//\tunrecognized simpleType\n");
+  }
 }
 
 void Types::gen(const char *URI, const char *name, const xs__complexType& complexType, bool anonymous)
@@ -2306,7 +2322,12 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
   if (complexType.simpleContent)
   {
     if (!anonymous)
-      fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with simpleContent.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "");
+    {
+      if (complexType.simpleContent->restriction)
+        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with simpleContent restriction of type %s.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "", complexType.simpleContent->restriction->base ? complexType.simpleContent->restriction->base : "xs:string");
+      else
+        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with simpleContent extension of type %s.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "", complexType.simpleContent->extension->base ? complexType.simpleContent->extension->base : "xs:string");
+    }
     document(complexType.annotation);
     if (!complexType.assert.empty())
     {
@@ -2335,99 +2356,6 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     operations(t);
     if (complexType.simpleContent->restriction)
     {
-      if (anonymous)
-      {
-        if (cflag)
-          fprintf(stream, "    struct %s\n    {\n", t);
-        else
-          fprintf(stream, "    class %s\n    { public:\n", t);
-      }
-      else if (cflag)
-        fprintf(stream, "struct %s\n{\n", t);
-      else if (pflag && !Fflag && complexType.name)
-        fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", t);
-      else
-        fprintf(stream, "class %s\n{ public:\n", t);
-      const char *base = "xs:string";
-      const char *baseURI = NULL;
-      const xs__complexType *p = &complexType;
-      do
-      {
-        if (!p->simpleContent)
-          break;
-        if (p->simpleContent->restriction)
-        {
-          if (p->simpleContent->restriction->complexTypePtr())
-            p = p->simpleContent->restriction->complexTypePtr();
-          else
-          {
-            base = p->simpleContent->restriction->base;
-            if (p->simpleContent->restriction->simpleTypePtr() && p->simpleContent->restriction->simpleTypePtr()->schemaPtr())
-              baseURI = p->simpleContent->restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
-            break;
-          }
-        }
-        else if (p->simpleContent->extension)
-        {
-          if (p->simpleContent->extension->complexTypePtr())
-            p = p->simpleContent->extension->complexTypePtr();
-          else
-          {
-            base = p->simpleContent->extension->base;
-            if (p->simpleContent->extension->simpleTypePtr() && p->simpleContent->extension->simpleTypePtr()->schemaPtr())
-              baseURI = p->simpleContent->extension->simpleTypePtr()->schemaPtr()->targetNamespace;
-            break;
-          }
-        }
-        else
-          break;
-      }
-      while (p);
-      fprintf(stream, "/// __item wraps \"%s\" simpleContent.\n", base);
-      fprintf(stream, elementformat, tname(NULL, baseURI, base), "__item");
-      fprintf(stream, ";\n");
-      p = &complexType;
-      bool flag = true;
-      do
-      {
-        if (!p->simpleContent)
-          break;
-        if (p->simpleContent->restriction)
-        {
-          gen(URI, p->simpleContent->restriction->attribute, members);
-          if (p->simpleContent->restriction->anyAttribute && flag)
-          {
-            gen(URI, *p->simpleContent->restriction->anyAttribute);
-            flag = false;
-          }
-          if (p->simpleContent->restriction->complexTypePtr())
-            p = p->simpleContent->restriction->complexTypePtr();
-          else
-            break;
-        }
-        else if (p->simpleContent->extension)
-        {
-          gen(URI, p->simpleContent->extension->attribute, members);
-          gen(URI, p->simpleContent->extension->attributeGroup, members);
-          if (p->simpleContent->extension->anyAttribute && flag)
-          {
-            gen(URI, *p->simpleContent->extension->anyAttribute);
-            flag = false;
-          }
-          if (p->simpleContent->extension->complexTypePtr())
-            p = p->simpleContent->extension->complexTypePtr();
-          else
-            break;
-        }
-        else
-          break;
-      }
-      while (p);
-    }
-    else if (complexType.simpleContent->extension)
-    {
-      const char *base = "xs:string";
-      const char *baseURI = NULL;
       if (cflag || Fflag || fflag || anonymous)
       {
         if (anonymous)
@@ -2438,105 +2366,111 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
             fprintf(stream, "    class %s\n    { public:\n", t);
         }
         else if (cflag)
+        {
           fprintf(stream, "struct %s\n{\n", t);
+        }
         else if (pflag && !Fflag && complexType.name)
+        {
           fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", t);
+        }
         else
+        {
           fprintf(stream, "class %s\n{ public:\n", t);
-        const xs__complexType *p = &complexType;
-        do
-        {
-          if (!p->simpleContent)
-            break;
-          if (p->simpleContent->restriction)
-          {
-            if (p->simpleContent->restriction->complexTypePtr())
-              p = p->simpleContent->restriction->complexTypePtr();
-            else
-            {
-              base = p->simpleContent->restriction->base;
-              if (p->simpleContent->restriction->simpleTypePtr() && p->simpleContent->restriction->simpleTypePtr()->schemaPtr())
-                baseURI = p->simpleContent->restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
-              break;
-            }
-          }
-          else if (p->simpleContent->extension)
-          {
-            if (p->simpleContent->extension->complexTypePtr())
-              p = p->simpleContent->extension->complexTypePtr();
-            else
-            {
-              base = p->simpleContent->extension->base;
-              if (p->simpleContent->extension->simpleTypePtr() && p->simpleContent->extension->simpleTypePtr()->schemaPtr())
-                baseURI = p->simpleContent->extension->simpleTypePtr()->schemaPtr()->targetNamespace;
-              break;
-            }
-          }
-          else
-            break;
         }
-        while (p);
-        fprintf(stream, "/// __item wraps \"%s\" simpleContent.\n", base);
-        fprintf(stream, elementformat, tname(NULL, baseURI, base), "__item");
-        fprintf(stream, ";\n");
-        p = &complexType;
-        bool flag = true;
-        do
+        const xs__complexType *p = complexType.simpleContent->restriction->complexTypePtr();
+        if (p && !p->simpleContent)
         {
-          if (!p->simpleContent)
-            break;
-          if (p->simpleContent->restriction)
-          {
-            gen(URI, p->simpleContent->restriction->attribute, members);
-            if (p->simpleContent->restriction->anyAttribute && flag)
-              gen(URI, *p->simpleContent->restriction->anyAttribute);
-            break;
-          }
-          else if (p->simpleContent->extension)
-          {
-            gen(URI, p->simpleContent->extension->attribute, members);
-            gen(URI, p->simpleContent->extension->attributeGroup, members);
-            if (p->simpleContent->extension->anyAttribute && flag)
-            {
-              gen(URI, *p->simpleContent->extension->anyAttribute);
-              flag = false;
-            }
-            if (p->simpleContent->extension->complexTypePtr())
-              p = p->simpleContent->extension->complexTypePtr();
-            else
-              break;
-          }
-          else
-            break;
+          fprintf(stderr, "\nWarning: %s\"%s\":%s complexType with simpleContent restriction has invalid base %s complexType with no simpleContent\n", anonymous ? "local element " : "", URI ? URI : "", name ? name : "", complexType.simpleContent->restriction->base ? complexType.simpleContent->restriction->base : "");
         }
-        while (p);
+        gen_inh(URI, &complexType, anonymous);
       }
       else
       {
-        base = complexType.simpleContent->extension->base;
-        if (
-        /* TODO: in future, may want to add check here for base type == class
-          complexType.simpleContent->extension->simpleTypePtr()
-          ||
-        */
-          complexType.simpleContent->extension->complexTypePtr())
+        const char *base = complexType.simpleContent->restriction->base;
+        const char *baseURI = NULL;
+        const xs__complexType *p = complexType.simpleContent->restriction->complexTypePtr();
+        if (p)
         {
-          if (complexType.simpleContent->extension->complexTypePtr()->schemaPtr())
-            baseURI = complexType.simpleContent->extension->complexTypePtr()->schemaPtr()->targetNamespace;
+          if (complexType.simpleContent->restriction->simpleTypePtr() && complexType.simpleContent->restriction->simpleTypePtr()->schemaPtr())
+            baseURI = complexType.simpleContent->restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
+          else if (complexType.simpleContent->restriction->complexTypePtr() && complexType.simpleContent->restriction->complexTypePtr()->schemaPtr())
+            baseURI = complexType.simpleContent->restriction->complexTypePtr()->schemaPtr()->targetNamespace;
           fprintf(stream, "class %s : public %s\n{ public:\n", t, cname(NULL, baseURI, base));
           soapflag = true;
+          if (p && !p->simpleContent)
+          {
+            fprintf(stderr, "\nWarning: \"%s\":%s complexType with simpleContent restriction has invalid base %s complexType with no simpleContent\n", URI ? URI : "", name ? name : "", complexType.simpleContent->restriction->base ? complexType.simpleContent->restriction->base : "");
+          }
+          gen_inh(URI, p, anonymous);
         }
         else
+        {
+          if (pflag && !Fflag && complexType.name)
+            fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", t);
+          else
+            fprintf(stream, "class %s\n{ public:\n", t);
+          fprintf(stream, "/// __item wraps simpleContent of type %s.\n", base);
+          fprintf(stream, elementformat, tname(NULL, baseURI, base), "__item");
+          fprintf(stream, ";\n");
+        }
+      }
+    }
+    else if (complexType.simpleContent->extension)
+    {
+      if (cflag || Fflag || fflag || anonymous)
+      {
+        if (anonymous)
+        {
+          if (cflag)
+            fprintf(stream, "    struct %s\n    {\n", t);
+          else
+            fprintf(stream, "    class %s\n    { public:\n", t);
+        }
+        else if (cflag)
+        {
+          fprintf(stream, "struct %s\n{\n", t);
+        }
+        else if (pflag && !Fflag && complexType.name)
+        {
+          fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", t);
+        }
+        else
+        {
+          fprintf(stream, "class %s\n{ public:\n", t);
+        }
+        const xs__complexType *p = complexType.simpleContent->extension->complexTypePtr();
+        if (p && !p->simpleContent)
+        {
+          fprintf(stderr, "\nWarning: %s\"%s\":%s complexType with simpleContent extension has invalid base %s complexType with no simpleContent\n", anonymous ? "local element " : "", URI ? URI : "", name ? name : "", complexType.simpleContent->extension->base ? complexType.simpleContent->extension->base : "");
+        }
+        gen_inh(URI, &complexType, anonymous);
+      }
+      else
+      {
+        const char *base = complexType.simpleContent->extension->base;
+        const char *baseURI = NULL;
+        const xs__complexType *p = complexType.simpleContent->extension->complexTypePtr();
+        if (p)
         {
           if (complexType.simpleContent->extension->simpleTypePtr() && complexType.simpleContent->extension->simpleTypePtr()->schemaPtr())
             baseURI = complexType.simpleContent->extension->simpleTypePtr()->schemaPtr()->targetNamespace;
           else if (complexType.simpleContent->extension->complexTypePtr() && complexType.simpleContent->extension->complexTypePtr()->schemaPtr())
             baseURI = complexType.simpleContent->extension->complexTypePtr()->schemaPtr()->targetNamespace;
+          fprintf(stream, "class %s : public %s\n{ public:\n", t, cname(NULL, baseURI, base));
+          soapflag = true;
+          if (p && !p->simpleContent)
+          {
+            fprintf(stderr, "\nWarning: \"%s\":%s complexType with simpleContent extension has invalid base %s complexType with no simpleContent\n", URI ? URI : "", name ? name : "", complexType.simpleContent->extension->base ? complexType.simpleContent->extension->base : "");
+          }
+          gen_inh(URI, p, anonymous);
+        }
+        else
+        {
           if (pflag && !Fflag && complexType.name)
             fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", t);
           else
             fprintf(stream, "class %s\n{ public:\n", t);
-          fprintf(stream, "/// __item wraps \"%s\" simpleContent.\n", base);
+          fprintf(stream, "/// __item wraps simpleContent of type %s.\n", base);
           fprintf(stream, elementformat, tname(NULL, baseURI, base), "__item");
           fprintf(stream, ";\n");
         }
@@ -2547,14 +2481,16 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       }
     }
     else
+    {
       fprintf(stream, "//\tunrecognized\n");
+    }
   }
   else if (complexType.complexContent)
   {
     if (complexType.complexContent->restriction)
     {
       if (!anonymous)
-        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent restriction of %s.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "", complexType.complexContent->restriction->base);
+        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent restriction of type %s.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "", complexType.complexContent->restriction->base ? complexType.complexContent->restriction->base : "xs:string");
       document(complexType.annotation);
       document(complexType.complexContent->annotation);
       document(complexType.complexContent->restriction->annotation);
@@ -2631,6 +2567,15 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       }
       else
       {
+        const xs__complexType *p = complexType.complexContent->restriction->complexTypePtr();
+        if (complexType.complexContent->restriction->simpleTypePtr())
+        {
+          fprintf(stderr, "\nWarning: %s\"%s\":%s complexType with complexContent restriction has invalid base %s simpleType\n", anonymous ? "local element " : "", URI ? URI : "", name ? name : "", complexType.complexContent->restriction->base ? complexType.complexContent->restriction->base : "");
+        }
+        if (p && p->simpleContent)
+        {
+          fprintf(stderr, "\nWarning: %s\"%s\":%s complexType with complexContent restriction has invalid base %s complexType with simpleContent\n", anonymous ? "local element " : "", URI ? URI : "", name ? name : "", complexType.complexContent->restriction->base ? complexType.complexContent->restriction->base : "");
+        }
         if (anonymous)
         {
           if (cflag)
@@ -2659,7 +2604,6 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
           gen(URI, *complexType.complexContent->restriction->anyAttribute);
           flag = false;
         }
-        const xs__complexType *p = complexType.complexContent->restriction->complexTypePtr();
         while (p)
         {
           const char *pURI;
@@ -2669,12 +2613,17 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
             pURI = URI;
           const char *b = cname(NULL, pURI, p->name);
           if (zflag && zflag <= 5)
+          {
             fprintf(stream, "/// RESTRICTED FROM %s:\n", b);
-          else if (comment_nest == 0)
-            fprintf(stream, "/*  RESTRICTED FROM %s:\n", b);
+          }
           else
-            fprintf(stream, "    RESTRICTED FROM %s:\n", b);
-          comment_nest++;
+          {
+            if (comment_nest == 0)
+              fprintf(stream, "/*  RESTRICTED FROM %s:\n", b);
+            else
+              fprintf(stream, "    RESTRICTED FROM %s:\n", b);
+            comment_nest++;
+          }
           if (p->complexContent && p->complexContent->restriction)
           {
             gen(URI, p->complexContent->restriction->attribute, members);
@@ -2704,13 +2653,18 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
               gen(URI, *p->anyAttribute);
             p = NULL;
           }
-          comment_nest--;
           if (zflag && zflag <= 5)
+          {
             fprintf(stream, "//  END OF RESTRICTED FROM %s\n", b);
-          else if (comment_nest == 0)
-            fprintf(stream, "    END OF RESTRICTED FROM %s */\n", b);
+          }
           else
-            fprintf(stream, "    END OF RESTRICTED FROM %s\n", b);
+          {
+            comment_nest--;
+            if (comment_nest == 0)
+              fprintf(stream, "    END OF RESTRICTED FROM %s */\n", b);
+            else
+              fprintf(stream, "    END OF RESTRICTED FROM %s\n", b);
+          }
         }
       }
     }
@@ -2719,7 +2673,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       const char *base = complexType.complexContent->extension->base;
       xs__complexType *p = complexType.complexContent->extension->complexTypePtr();
       if (!anonymous)
-        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent extension of %s.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "", base);
+        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent extension of type %s.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "", base ? base : "xs:string");
       document(complexType.annotation);
       document(complexType.complexContent->annotation);
       document(complexType.complexContent->extension->annotation);
@@ -2738,6 +2692,9 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
             documentation((*a).test);
       }
       operations(t);
+      const char *baseURI = NULL;
+      if (p && p->schemaPtr())
+        baseURI = p->schemaPtr()->targetNamespace;
       if (anonymous)
       {
         if (cflag)
@@ -2746,16 +2703,21 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
           fprintf(stream, "    class %s\n    { public:\n", t);
       }
       else if (cflag)
+      {
         fprintf(stream, "struct %s\n{\n", t);
+      }
       else if (Fflag || fflag)
+      {
         fprintf(stream, "class %s\n{ public:\n", t);
+      }
       else // TODO: what to do if base class is in another namespace and elements must be qualified in XML payload?
       {
-        const char *baseURI = NULL;
-        if (p && p->schemaPtr())
-          baseURI = p->schemaPtr()->targetNamespace;
         fprintf(stream, "class %s : public %s\n{ public:\n", t, cname(NULL, baseURI, base));
         soapflag = true;
+      }
+      if (complexType.complexContent->extension->simpleTypePtr())
+      {
+        fprintf(stderr, "\nWarning: %s\"%s\":%s complexType with complexContent extension has invalid base simpleType %s\n", anonymous ? "local element " : "", URI ? URI : "", name ? name : "", base ? base : "");
       }
       gen_inh(URI, p, anonymous);
       if (complexType.complexContent->extension->group)
@@ -2772,7 +2734,9 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
         gen(URI, *complexType.complexContent->extension->anyAttribute);
     }
     else
+    {
       fprintf(stream, "//\tunrecognized\n");
+    }
   }
   else
   {
@@ -2805,11 +2769,17 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
         fprintf(stream, "    class %s\n    { public:\n", t);
     }
     else if (cflag)
+    {
       fprintf(stream, "struct %s\n{\n", t);
+    }
     else if (pflag && !Fflag && complexType.name)
+    {
       fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", t);
+    }
     else
+    {
       fprintf(stream, "class %s\n{ public:\n", t);
+    }
     if (complexType.all)
       gen(URI, *complexType.all, NULL, NULL, members);
     else if (complexType.choice)
@@ -2852,12 +2822,12 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       fprintf(stream, "/// @note Mixed content is user-definable.\n///       Consult the protocol documentation to change or insert declarations.\n///       Use wsdl2h option -d for DOM (soap_dom_element) to store mixed content.\n");
     if (dflag)
     {
-      fprintf(stream, elementformat, pname(with_union, false, NULL, NULL, "xsd:any"), "__mixed");
+      fprintf(stream, elementformat, pname(with_union, false, NULL, NULL, "xs:any"), "__mixed");
       fprintf(stream, "0;\t///< Store mixed content as xsd:any (by default a xsd__anyType DOM soap_dom_element linked node structure).\n");
     }
     else
     {
-      fprintf(stream, elementformat, tname(NULL, NULL, "xsd:any"), "__mixed");
+      fprintf(stream, elementformat, tname(NULL, NULL, "xs:any"), "__mixed");
       fprintf(stream, "0;\t///< Store mixed content as an xsd:any (an XML string by default).\n");
     }
   }
@@ -3356,7 +3326,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         s = tnameptr(false, typeprefix, typeURI, type);
       if (cflag || sflag)
       {
-        fprintf(stream, "/// Size of the dynamic array of %s is %s..%s.\n", s, min ? min : "1", max);
+        fprintf(stream, "/// Size of the dynamic array of values of type %s is %s..%s.\n", s, min ? min : "1", max);
         fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name, &members));
         fprintf(stream, " %s", fake_union ? "0" : min ? min : "1");
         if (is_integer(max))
@@ -3923,18 +3893,18 @@ void Types::gen(const char *URI, const xs__any& any, const char *minOccurs, cons
         {
           fprintf(stream, sizeformat, vname("$SIZE"), "");
           fprintf(stream, "0;\n");
-          fprintf(stream, elementformat, pname(true, false, NULL, NULL, "xsd:any"), "__any");
+          fprintf(stream, elementformat, pname(true, false, NULL, NULL, "xs:any"), "__any");
         }
         else
-          fprintf(stream, elementformat, tname(NULL, NULL, "xsd:any"), "__any");
+          fprintf(stream, elementformat, tname(NULL, NULL, "xs:any"), "__any");
       }
       else if (with_union)
-        fprintf(stream, pointertemplateformat, vname("$CONTAINER"), tname(NULL, NULL, "xsd:any"), "__any");
+        fprintf(stream, pointertemplateformat, vname("$CONTAINER"), tname(NULL, NULL, "xs:any"), "__any");
       else
-        fprintf(stream, templateformat, vname("$CONTAINER"), tname(NULL, NULL, "xsd:any"), "__any");
+        fprintf(stream, templateformat, vname("$CONTAINER"), tname(NULL, NULL, "xs:any"), "__any");
     }
     else
-      fprintf(stream, elementformat, pname(with_union, false, NULL, NULL, "xsd:any"), "__any");
+      fprintf(stream, elementformat, pname(with_union, false, NULL, NULL, "xs:any"), "__any");
     if (dflag)
       fprintf(stream, "0;\t///< Store any element content in DOM soap_dom_element node.\n");
     else
@@ -3951,7 +3921,7 @@ void Types::gen(const char *URI, const xs__anyAttribute& anyAttribute)
     fprintf(stream, "/// @note Schema extensibility is user-definable.\n///       Consult the protocol documentation to change or insert declarations.\n///       Use wsdl2h option -x to remove this attribute.\n///       Use wsdl2h option -d for xsd__anyAttribute DOM (soap_dom_attribute).\n");
   if (!xflag)
   {
-    const char *t = tname(NULL, NULL, "xsd:anyAttribute");
+    const char *t = tname(NULL, NULL, "xs:anyAttribute");
     fprintf(stream, attributeformat, t, "__anyAttribute");
     if (dflag)
       fprintf(stream, ";\t///< Store anyAttribute content in DOM soap_dom_attribute linked node structure.\n");
@@ -3970,20 +3940,60 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
     pURI = p->schemaPtr()->targetNamespace;
   else
     pURI = URI;
-  const char *b = cname(NULL, pURI, p->name);
-  if (p->complexContent && p->complexContent->extension)
+  const char *b = p->name ? cname(NULL, pURI, p->name) : NULL;
+  if (p->simpleContent && p->simpleContent->restriction)
+    gen_inh(URI, p->simpleContent->restriction->complexTypePtr(), anonymous);
+  else if (p->simpleContent && p->simpleContent->extension)
+    gen_inh(URI, p->simpleContent->extension->complexTypePtr(), anonymous);
+  else if (p->complexContent && p->complexContent->extension)
     gen_inh(URI, p->complexContent->extension->complexTypePtr(), anonymous);
+  if (b)
+  {
+    if (cflag || Fflag || fflag || anonymous)
+    {
+      fprintf(stream, "/// INHERITED FROM %s:\n", b);
+    }
+    else
+    {
+      if (comment_nest == 0)
+        fprintf(stream, "/*  INHERITED FROM %s:\n", b);
+      else
+        fprintf(stream, "    INHERITED FROM %s:\n", b);
+      comment_nest++;
+    }
+  }
   if (cflag || Fflag || fflag || anonymous)
-    fprintf(stream, "/// INHERITED FROM %s:\n", b);
-  else if (comment_nest == 0)
-    fprintf(stream, "/*  INHERITED FROM %s:\n", b);
-  else
-    fprintf(stream, "    INHERITED FROM %s:\n", b);
-  comment_nest++;
-  if (cflag || Fflag || fflag)
     pURI = URI; // if base ns != derived ns then qualify elts and atts
   SetOfString members;
-  if (p->complexContent && p->complexContent->extension)
+  if (p->simpleContent && p->simpleContent->restriction)
+  {
+    if (!p->simpleContent->restriction->complexTypePtr())
+    {
+      const char *base = p->simpleContent->restriction->base;
+      if (!base)
+        base = "xs:string";
+      fprintf(stream, "/// __item wraps simpleContent of type %s.\n", base);
+      fprintf(stream, elementformat, tname(NULL, pURI, base), "__item");
+      fprintf(stream, ";\n");
+    }
+  }
+  else if (p->simpleContent && p->simpleContent->extension)
+  {
+    if (!p->simpleContent->extension->complexTypePtr())
+    {
+      const char *base = p->simpleContent->extension->base;
+      if (!base)
+        base = "xs:string";
+      fprintf(stream, "/// __item wraps simpleContent of type %s.\n", base);
+      fprintf(stream, elementformat, tname(NULL, pURI, base), "__item");
+      fprintf(stream, ";\n");
+    }
+    gen(pURI, p->simpleContent->extension->attribute, members);
+    gen(pURI, p->simpleContent->extension->attributeGroup, members);
+    if (p->simpleContent->extension->anyAttribute)
+      gen(pURI, *p->simpleContent->extension->anyAttribute);
+  }
+  else if (p->complexContent && p->complexContent->extension)
   {
     if (p->complexContent->extension->group)
       gen(pURI, *p->complexContent->extension->group, NULL, NULL, members);
@@ -4025,14 +4035,22 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
     if (p->anyAttribute)
       gen(pURI, *p->anyAttribute);
   }
-  modify(b);
-  comment_nest--;
-  if (cflag || Fflag || fflag || anonymous)
-    fprintf(stream, "//  END OF INHERITED FROM %s\n", b);
-  else if (comment_nest == 0)
-    fprintf(stream, "    END OF INHERITED FROM %s */\n", b);
-  else
-    fprintf(stream, "    END OF INHERITED FROM %s\n", b);
+  if (b)
+  {
+    modify(b);
+    if (cflag || Fflag || fflag || anonymous)
+    {
+      fprintf(stream, "//  END OF INHERITED FROM %s\n", b);
+    }
+    else
+    {
+      comment_nest--;
+      if (comment_nest == 0)
+        fprintf(stream, "    END OF INHERITED FROM %s */\n", b);
+      else
+        fprintf(stream, "    END OF INHERITED FROM %s\n", b);
+    }
+  }
 }
 
 void Types::gen_soap_array(const char *t, const char *item, const char *type)
@@ -4045,7 +4063,7 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
     dims = strrchr(tmp, '[');
   if (dims)
     *dims++ = '\0';
-  fprintf(stream, "/// SOAP encoded array of %s.\n", tmp ? tmp : "xs:anyType");
+  fprintf(stream, "/// SOAP encoded array of values of type %s.\n", tmp ? tmp : "xs:anyType");
   if (cflag)
     fprintf(stream, "struct %s\n{\n", t);
   else if (pflag && !Fflag && *t)
@@ -4075,7 +4093,7 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
     else
     {
       const char *s = tname(NULL, NULL, tmp);
-      fprintf(stream, "/// Pointer to dynamic array of %s type elements <%s>.\n", s, item ? item : "item");
+      fprintf(stream, "/// Pointer to dynamic array of elements <%s> of type %s.\n", item ? item : "item", s);
       fprintf(stream, arrayformat, s, item ? aname(NULL, NULL, item) : "");
       fprintf(stream, ";\n");
     }

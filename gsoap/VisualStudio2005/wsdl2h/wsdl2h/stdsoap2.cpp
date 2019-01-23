@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.76
+        stdsoap2.c[pp] 2.8.77
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20876
+#define GSOAP_LIB_VERSION 20877
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.76 2019-01-21 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.77 2019-01-23 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.76 2019-01-21 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.77 2019-01-23 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1865,9 +1865,9 @@ soap_code_list(struct soap *soap, const struct soap_code_map *code_map, long cod
 SOAP_FMAC1
 int
 SOAP_FMAC2
-soap_binary_search_string(const char **a, size_t n, const char *s)
+soap_binary_search_string(const char **a, int n, const char *s)
 {
-  size_t i, k;
+  int i, k;
   for (i = 1, k = n; k > 1; k >>= 1)
     i <<= 1;
   k = i >> 1;
@@ -4435,7 +4435,14 @@ ssl_auth_init(struct soap *soap)
   }
   /* enable all TSLv1 protocols and disable SSLv3 by default if no SSL/TLS flags are set */
   if (!(soap->ssl_flags & SOAP_SSLv3_TLSv1))
+  {
+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+    unsigned long  osslver=OpenSSL_version_num();
+    if (osslver < 0x10101000L)
+      addflags =  SOAP_TLSv1_2 | SOAP_TLSv1_1 | SOAP_TLSv1_2;
+#endif
     soap->ssl_flags = SOAP_TLSv1;
+  }
 #if OPENSSL_VERSION_NUMBER >= 0x10101000L
   if ((soap->ssl_flags & SOAP_SSLv3))
     minv = SSL3_VERSION;
@@ -4447,7 +4454,7 @@ ssl_auth_init(struct soap *soap)
     minv = TLS1_2_VERSION;
   else if ((soap->ssl_flags & SOAP_TLSv1_3))
     minv = TLS1_3_VERSION;
-  if ((soap->ssl_flags & SOAP_TLSv1_3))
+  if ((soap->ssl_flags & SOAP_TLSv1_3) && OpenSSL_version_num() >= 0x10101000L)
     maxv = TLS1_3_VERSION;
   else if ((soap->ssl_flags & SOAP_TLSv1_2))
     maxv = TLS1_2_VERSION;

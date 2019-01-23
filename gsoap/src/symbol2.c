@@ -7500,7 +7500,7 @@ gen_params_ref(FILE *fd, Table *params, Entry *result, int flag)
   if (!result || is_transient(result->info.typ))
     fprintf(fd, ")");
   else
-    fprintf(fd, "%s%s%s)", (flag || params) ? ", " : "", c_storage(result->info.sto), c_type_id(result->info.typ, result->sym->name));
+    fprintf(fd, "%s%s%s)", (flag || (params && params->list)) ? ", " : "", c_storage(result->info.sto), c_type_id(result->info.typ, result->sym->name));
 }
 
 void
@@ -7515,7 +7515,7 @@ gen_params(FILE *fd, Table *params, Entry *result, int flag)
   if (!result || is_transient(result->info.typ))
     fprintf(fd, ")");
   else
-    fprintf(fd, "%s%s%s)", (flag || params) ? ", " : "", c_storage(result->info.sto), c_type_id(result->info.typ, result->sym->name));
+    fprintf(fd, "%s%s%s)", (flag || (params && params->list)) ? ", " : "", c_storage(result->info.sto), c_type_id(result->info.typ, result->sym->name));
 }
 
 void
@@ -7530,7 +7530,7 @@ gen_args(FILE *fd, Table *params, Entry *result, int flag)
   if (!result || is_transient(result->info.typ))
     fprintf(fd, ")");
   else
-    fprintf(fd, "%s%s)", (flag || params) ? ", " : "", ident(result->sym->name));
+    fprintf(fd, "%s%s)", (flag || (params && params->list)) ? ", " : "", ident(result->sym->name));
 }
 
 void

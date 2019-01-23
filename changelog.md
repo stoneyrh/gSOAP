@@ -1228,7 +1228,7 @@ Version 2.8.53 (08/29/2017)
 Version 2.8.54 (09/17/2017)
 ---
 
-- Added Google Map Directions and Distance Matrix API XML examples, updating and replacing the old gsoap/samples/googleapi example.
+- Added Google Map Directions and Distance Matrix API XML examples, updating and replacing the old `gsoap/samples/googleapi` example.
 - Added Google Map Distance Matrix API JSON example gsoap/xml-rpc-json/json-GoogleDistanceMatrix.cpp.
 - Added wsdl2h option `-S` to specify a name for the soap context member variable of generated classes (C++ only), use `-S ''` to remove the `soap` member variable.
 - Improved handling of empty SOAP Body responses by client applications using doc/lit style messaging, returns `SOAP_OK` instead of HTTP 200 error code.
@@ -1433,13 +1433,20 @@ Version 2.8.75 (1/14/2019)
 - Updated call to OpenSSL `ERR_remove_state` (deprecated) by `ERR_remove_thread_state`.
 - Fixed a bug in HTTP cookie handling by the engine.  HTTP cookies are disabled by default, but enabled with the `-DWITH_COOKIES` compile-time flag or when using the C/C++ `libgsoapck`/`libgsoapck++` and `libgsoapssl`/`libgsoapssl++` libraries.  Removed `-DWITH_COOKIES` from the `libgsoapssl`/`libgsoapssl++` build, disabling HTTP cookies by default for this library.  Instead, compile `stdsoap2.c`/`stdsoap2.cpp` and `dom.c`/`dom.cpp` with `-DWITH_IPV6` `-DWITH_OPENSSL` `-DWITH_GZIP` `-DWITH_DOM` `-DWITH_COOKIES` to obtain the same functionality as the old `libgsoapssl`/`libgsoapssl++` libraries.
 
-Version 2.8.76 (1/21/2019) {#latest}
+Version 2.8.76 (1/21/2019)
 ---
 
 - Improved soapcpp2 option `-a`.
 - Updated to remove GCC 8.2 warnings.
 - Updated wsdl2h WSDL and schema imports of files on relative paths: file name without path or file name with path stating with ../ are considered relative locations with respect to the current WSDL and schema that is importing, otherwise imported files are considered relative to the directory in which wsdl2h is run (the `-I` option can be used to change that location).
 - Minor improvements.
+
+Version 2.8.77 (1/23/2019) {#latest}
+---
+
+- Updated wsdl2h to display warnings for invalid complexType and simpleType extensions/restrictions but generates valid code in such cases by inference, the update also fixes a valid extension case.
+- Updated `gsoap/samples/async` examples.
+- Fixed compilation error for soapcpp2 options `-i` and `-j` caused by special case with empty input arguments to service operations.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

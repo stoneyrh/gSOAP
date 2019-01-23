@@ -7,7 +7,7 @@
         $ soapcpp2 -c -CL -r -wx async.h
         $ cc -o asyncrest asyncrest.c stdsoap2.c soapC.c
 
-        Run by starting the webserver at port 8080, then run async-rest:
+        Run by starting the webserver at port 8080, then run asyncrest:
         $ ../webserver/webserver 8080 &
         $ ./asyncrest
 
@@ -38,6 +38,7 @@ engelen@genivia.com / engelen@acm.org
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
+
 #include "soapH.h"
 #include "async.nsmap"
 
@@ -104,8 +105,7 @@ int main()
   if_error_then_die(soap);
   if (soap_recv_empty_response(soap))
     if_error_then_die(soap);
-  (void)soap_write_ns__record(soap_writer, &record);
-  printf("\n\n");
+  printf("OK\n\n");
 
   printf("Asynchronous HTTP POST send & recv:\n");
   if (soap_POST_send_ns__record(soap, ENDPOINT "/product", &record))
@@ -128,6 +128,8 @@ int main()
   soap_destroy(soap);
   soap_end(soap);
   soap_free(soap);
+
+  return 0;
 }
 
 void if_error_then_die(struct soap *soap)

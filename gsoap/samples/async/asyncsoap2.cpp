@@ -1,15 +1,16 @@
 /*
-        asyncsoap.cpp
+        asyncsoap2.cpp
 
         Example synchronous versus asynchronous SOAP messaging without threads
 
         Compilation:
         $ soapcpp2 -j -C -r -wx async.h
-        $ c++ -o asyncsoap asyncsoap.cpp stdsoap2.cpp soapC.cpp soapasyncProxy.cpp
+        $ c++ -o asyncsoap2 asyncsoap2.cpp stdsoap2.cpp soapC.cpp soapasyncProxy.cpp
 
-        Run by starting the webserver at port 8080, then run asyncsoap:
-        $ ../webserver/webserver 8080 &
-        $ ./asyncsoap
+        Run by starting the webserver with HTTP pipeline and keep-alived
+        enabled at port 8080, then run asyncsoap2:
+        $ ../webserver/webserver -ek 8080 &
+        $ ./asyncsoap2
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -39,18 +40,36 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
+#include "plugin/threads.h"
 #include "soapasyncProxy.h"
 #include "async.nsmap"
 
 #define ENDPOINT "http://localhost:8080"
 #define SOAPACTION NULL
 
+#define CHECK(op) if (op) exit(EXIT_FAILURE)
+
 void if_error_then_die(struct soap *soap);
+
+void *async_receiver(void *arg);
+
+MUTEX_TYPE start_lock;
+MUTEX_TYPE ready_lock;
+COND_TYPE start;
+COND_TYPE ready;
 
 int main()
 {
+  THREAD_TYPE tid;
   asyncProxy async; /* optionally use SOAP_IO_KEEPALIVE here to improve performance */
   double a, b, r;
+
+  MUTEX_SETUP(start_lock);
+  MUTEX_SETUP(ready_lock);
+  COND_SETUP(start);
+  COND_SETUP(ready);
+
+  CHECK(THREAD_CREATEX(&tid, async_receiver, &async));
 
   async.soap->connect_timeout = 10;  /* 10 sec connect timeout */
   async.soap->transfer_timeout = 10; /* 10 second max message transfer time */
@@ -70,33 +89,40 @@ int main()
     if_error_then_die(async.soap);
   printf("%g * %g = %g\n\n", a, b, r);
 
+  soap_set_mode(async.soap, SOAP_IO_KEEPALIVE); /* try to keep the connection alive */
+
   printf("Asynchronous SOAP send & recv:\n");
   if (async.send_add(ENDPOINT, SOAPACTION, a, b))
     if_error_then_die(async.soap);
-  while (soap_ready(async.soap) == SOAP_EOF)
-  {
-    printf("Doing some work...\n");
-    usleep(10000); /* sleep 10ms */
-  }
-  if_error_then_die(async.soap);
-  if (async.recv_add(&r))
-    if_error_then_die(async.soap);
-  printf("%g + %g = %g\n\n", a, b, r);
+
+  CHECK(COND_SIGNAL(start));              /* connection established, start async_receiver */
+
+  CHECK(MUTEX_LOCK(ready_lock));
+  printf("Doing some work...\n");
+  printf("%g + %g = ", a, b);
+  CHECK(COND_WAIT(ready, ready_lock));    /* we may want to use a non-blocking wait instead of blocking */
+  CHECK(MUTEX_UNLOCK(ready_lock));
+
+  soap_clr_mode(async.soap, SOAP_IO_KEEPALIVE); /* optional, to inform the server the next message is the last */
 
   printf("Asynchronous SOAP send & recv:\n");
   if (async.send_mul(ENDPOINT, SOAPACTION, a, b))
     if_error_then_die(async.soap);
-  while (soap_ready(async.soap) == SOAP_EOF)
-  {
-    printf("Doing some work...\n");
-    usleep(10000); /* sleep 10ms */
-  }
-  if_error_then_die(async.soap);
-  if (async.recv_mul(&r))
-    if_error_then_die(async.soap);
-  printf("%g * %g = %g\n\n", a, b, r);
+
+  CHECK(MUTEX_LOCK(ready_lock));
+  printf("Doing some work...\n");
+  printf("%g * %g = ", a, b);
+  CHECK(COND_WAIT(ready, ready_lock));    /* we may want to use a non-blocking wait instead of blocking */
+  CHECK(MUTEX_UNLOCK(ready_lock));
+
+  THREAD_JOIN(tid);
 
   async.destroy();
+
+  MUTEX_CLEANUP(start_lock);
+  MUTEX_CLEANUP(ready_lock);
+  COND_CLEANUP(start);
+  COND_CLEANUP(ready);
 
   return 0;
 }
@@ -108,4 +134,33 @@ void if_error_then_die(struct soap *soap)
     soap_print_fault(soap, stderr);
     exit(EXIT_FAILURE);
   }
+}
+
+void *async_receiver(void *arg)
+{
+  asyncProxy *async;
+  double r;
+
+  CHECK(MUTEX_LOCK(start_lock));
+  CHECK(COND_WAIT(start, start_lock));
+  async = ((asyncProxy*)arg)->copy();
+  CHECK(MUTEX_UNLOCK(start_lock));
+
+  if (async->recv_add(&r))
+    if_error_then_die(async->soap);
+  printf("%g\n\n", r);
+
+  CHECK(COND_SIGNAL(ready));
+
+  if (async->recv_mul(&r))
+    if_error_then_die(async->soap);
+  printf("%g\n\n", r);
+
+  CHECK(COND_SIGNAL(ready));
+
+  async->destroy();
+
+  delete async;
+
+  return NULL;
 }
