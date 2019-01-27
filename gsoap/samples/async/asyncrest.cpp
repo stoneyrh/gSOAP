@@ -80,7 +80,7 @@ int main()
     if_error_then_die(soap);
   while (soap_ready(soap) == SOAP_EOF)
   {
-    printf("Doing some work...\n");
+    printf("Doing some work until server is ready...\n");
     usleep(10000); /* sleep 10ms */
   }
   if_error_then_die(soap);
@@ -99,7 +99,7 @@ int main()
     if_error_then_die(soap);
   while (soap_ready(soap) == SOAP_EOF)
   {
-    printf("Doing some work...\n");
+    printf("Doing some work until server is ready...\n");
     usleep(10000); /* sleep 10ms */
   }
   if_error_then_die(soap);
@@ -112,7 +112,7 @@ int main()
     if_error_then_die(soap);
   while (soap_ready(soap) == SOAP_EOF)
   {
-    printf("Doing some work...\n");
+    printf("Doing some work until server is ready...\n");
     usleep(10000); /* sleep 10ms */
   }
   if_error_then_die(soap);

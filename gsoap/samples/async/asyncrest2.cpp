@@ -7,7 +7,7 @@
         $ soapcpp2 -CL -r -wx async.h
         $ c++ -o asyncrest2 asyncrest2.cpp stdsoap2.cpp soapC.cpp
 
-        Run by starting the webserver with HTTP pipeline and keep-alived
+        Run by starting the webserver with HTTP pipeline and keep-alive
         enabled at port 8080, then run asyncrest:s
         $ ../webserver/webserver -ek 8080 &
         $ ./asyncrest2
@@ -102,8 +102,10 @@ int main()
 
   CHECK(COND_SIGNAL(start));              /* connection established, start async_receiver */
 
+  printf("Doing some work for one second...\n");
+  sleep(1);
+  CHECK(COND_SIGNAL(start));
   CHECK(MUTEX_LOCK(ready_lock));
-  printf("Doing some work...\n");
   CHECK(COND_WAIT(ready, ready_lock));    /* we may want to use a non-blocking wait instead of blocking */
   CHECK(MUTEX_UNLOCK(ready_lock));
 
@@ -113,8 +115,10 @@ int main()
    || soap_end_send(soap))
     if_error_then_die(soap);
 
+  printf("Doing some work for one second...\n");
+  sleep(1);
+  CHECK(COND_SIGNAL(start));
   CHECK(MUTEX_LOCK(ready_lock));
-  printf("Doing some work...\n");
   CHECK(COND_WAIT(ready, ready_lock));    /* we may want to use a non-blocking wait instead of blocking */
   CHECK(MUTEX_UNLOCK(ready_lock));
 
@@ -124,12 +128,16 @@ int main()
   if (soap_POST_send_ns__record(soap, ENDPOINT "/product", &record))
     if_error_then_die(soap);
 
+  printf("Doing some work for one second...\n");
+  sleep(1);
+  CHECK(COND_SIGNAL(start));
   CHECK(MUTEX_LOCK(ready_lock));
-  printf("Doing some work...\n");
-  CHECK(COND_WAIT(ready, ready_lock));    /* we may want to use a non-blocking wait instead of blocking */
+  CHECK(COND_WAIT(ready, ready_lock));  /* we may want to use a non-blocking wait instead of blocking */
   CHECK(MUTEX_UNLOCK(ready_lock));
 
   THREAD_JOIN(tid);
+
+  soap_force_closesock(soap);           /* optional, soap_free() or a new connection will close the old anyway */
 
   soap_destroy(soap_writer);
   soap_end(soap_writer);
@@ -175,19 +183,42 @@ void *async_receiver(void *arg)
   (void)soap_write_ns__record(soap_writer, &record);
   printf("\n\n");
 
+  CHECK(MUTEX_LOCK(start_lock));
+  CHECK(COND_WAIT(start, start_lock));
+  CHECK(MUTEX_UNLOCK(start_lock));
   CHECK(COND_SIGNAL(ready));
 
-  if (soap_recv_empty_response(soap))
-    if_error_then_die(soap);
-  printf("OK\n\n");
+  if (soap_valid_socket(soap->socket))
+  {
+    if (soap_recv_empty_response(soap))
+      if_error_then_die(soap);
+    printf("OK\n\n");
+  }
+  else
+  {
+    printf("Connection closed, server rejected keep-alive!\n");
+  }
 
+  CHECK(MUTEX_LOCK(start_lock));
+  CHECK(COND_WAIT(start, start_lock));
+  CHECK(MUTEX_UNLOCK(start_lock));
   CHECK(COND_SIGNAL(ready));
 
-  if (soap_POST_recv_ns__record(soap, &record))
-    if_error_then_die(soap);
-  (void)soap_write_ns__record(soap_writer, &record);
-  printf("\n\n");
+  if (soap_valid_socket(soap->socket))
+  {
+    if (soap_POST_recv_ns__record(soap, &record))
+      if_error_then_die(soap);
+    (void)soap_write_ns__record(soap_writer, &record);
+    printf("\n\n");
+  }
+  else
+  {
+    printf("Connection closed, server rejected keep-alive!\n");
+  }
 
+  CHECK(MUTEX_LOCK(start_lock));
+  CHECK(COND_WAIT(start, start_lock));
+  CHECK(MUTEX_UNLOCK(start_lock));
   CHECK(COND_SIGNAL(ready));
 
   soap_destroy(soap_writer);

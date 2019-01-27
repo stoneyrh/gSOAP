@@ -1,16 +1,16 @@
 /*
-        asyncsoap2.cpp
+        asyncsoap3.c
 
-        Example synchronous versus asynchronous SOAP messaging without threads
+        Example synchronous versus asynchronous pipelined SOAP messaging
 
         Compilation:
-        $ soapcpp2 -j -C -r -wx async.h
-        $ c++ -o asyncsoap2 asyncsoap2.cpp stdsoap2.cpp soapC.cpp soapasyncProxy.cpp
+        $ soapcpp2 -c -CL -r -wx async.h
+        $ cc -o asyncsoap3 asyncsoap2.c stdsoap2.c soapC.c soapClient.c
 
         Run by starting the webserver with HTTP pipeline and keep-alive
-        enabled at port 8080, then run asyncsoap2:
+        enabled at port 8080, then run asyncsoap3:
         $ ../webserver/webserver -ek 8080 &
-        $ ./asyncsoap2
+        $ ./asyncsoap3
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -41,7 +41,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 #include "plugin/threads.h"
-#include "soapasyncProxy.h"
+#include "soapH.h"
 #include "async.nsmap"
 
 #define ENDPOINT "http://localhost:8080"
@@ -61,7 +61,7 @@ COND_TYPE ready;
 int main()
 {
   THREAD_TYPE tid;
-  asyncProxy async; /* optionally use SOAP_IO_KEEPALIVE here to improve performance */
+  struct soap *soap = soap_new();
   double a, b, r;
 
   MUTEX_SETUP(start_lock);
@@ -69,61 +69,47 @@ int main()
   COND_SETUP(start);
   COND_SETUP(ready);
 
-  CHECK(THREAD_CREATEX(&tid, async_receiver, &async));
+  CHECK(THREAD_CREATEX(&tid, async_receiver, soap));
 
-  async.soap->connect_timeout = 10;  /* 10 sec connect timeout */
-  async.soap->transfer_timeout = 10; /* 10 second max message transfer time */
-  async.soap->send_timeout = 5;      /* 5 second max socket recv idle time */
-  async.soap->recv_timeout = 5;      /* 5 second max socket send idle time */
+  soap->connect_timeout = 10;  /* 10 sec connect timeout */
+  soap->transfer_timeout = 10; /* 10 second max message transfer time */
+  soap->send_timeout = 5;      /* 5 second max socket recv idle time */
+  soap->recv_timeout = 5;      /* 5 second max socket send idle time */
 
   a = 2.0;
   b = 3.0;
 
   printf("Synchronous SOAP call:\n");
-  if (async.add(ENDPOINT, SOAPACTION, a, b, &r))
-    if_error_then_die(async.soap);
+  if (soap_call_ns__add(soap, ENDPOINT, SOAPACTION, a, b, &r))
+    if_error_then_die(soap);
   printf("%g + %g = %g\n\n", a, b, r);
 
   printf("Synchronous SOAP call:\n");
-  if (async.mul(ENDPOINT, SOAPACTION, a, b, &r))
-    if_error_then_die(async.soap);
+  if (soap_call_ns__mul(soap, ENDPOINT, SOAPACTION, a, b, &r))
+    if_error_then_die(soap);
   printf("%g * %g = %g\n\n", a, b, r);
 
-  soap_set_mode(async.soap, SOAP_IO_KEEPALIVE); /* try to keep the connection alive */
+  soap_set_mode(soap, SOAP_IO_KEEPALIVE); /* try to keep the connection alive */
 
   printf("Asynchronous SOAP send & recv:\n");
-  if (async.send_add(ENDPOINT, SOAPACTION, a, b))
-    if_error_then_die(async.soap);
+  if (soap_send_ns__add(soap, ENDPOINT, SOAPACTION, a, b))
+    if_error_then_die(soap);
 
   CHECK(COND_SIGNAL(start));              /* connection established, start async_receiver */
 
-  printf("Doing some work for one second...\n");
-  printf("%g + %g = ", a, b);
-  sleep(1);
-  CHECK(COND_SIGNAL(start));
-  CHECK(MUTEX_LOCK(ready_lock));
-  CHECK(COND_WAIT(ready, ready_lock));    /* we may want to use a non-blocking wait instead of blocking */
-  CHECK(MUTEX_UNLOCK(ready_lock));
-
-  soap_clr_mode(async.soap, SOAP_IO_KEEPALIVE); /* optional, to inform the server the next message is the last */
+  /* soap_clr_mode(soap, SOAP_IO_KEEPALIVE); */ /* with pipelining do not cancel keep-alive */
 
   printf("Asynchronous SOAP send & recv:\n");
-  if (async.send_mul(ENDPOINT, SOAPACTION, a, b))
-    if_error_then_die(async.soap);
-
-  printf("Doing some work for one second...\n");
-  printf("%g * %g = ", a, b);
-  sleep(1);
-  CHECK(COND_SIGNAL(start));
-  CHECK(MUTEX_LOCK(ready_lock));
-  CHECK(COND_WAIT(ready, ready_lock));  /* we may want to use a non-blocking wait instead of blocking */
-  CHECK(MUTEX_UNLOCK(ready_lock));
+  if (soap_send_ns__mul(soap, ENDPOINT, SOAPACTION, a, b))
+    if_error_then_die(soap);
 
   THREAD_JOIN(tid);
 
-  async.soap_force_close_socket();      /* optional, destructor or a new connection will close the old anyway */
+  soap_force_closesock(soap);           /* optional, soap_free() or a new connection will close the old anyway */
 
-  async.destroy();
+  soap_destroy(soap);
+  soap_end(soap);
+  soap_free(soap);
 
   MUTEX_CLEANUP(start_lock);
   MUTEX_CLEANUP(ready_lock);
@@ -144,42 +130,32 @@ void if_error_then_die(struct soap *soap)
 
 void *async_receiver(void *arg)
 {
-  asyncProxy *async;
+  struct soap *soap;
   double r;
 
   CHECK(MUTEX_LOCK(start_lock));
   CHECK(COND_WAIT(start, start_lock));
-  async = ((asyncProxy*)arg)->copy();
+  soap = soap_copy((struct soap*)arg);
   CHECK(MUTEX_UNLOCK(start_lock));
 
-  if (async->recv_add(&r))
-    if_error_then_die(async->soap);
-  printf("%g\n\n", r);
+  if (soap_recv_ns__add(soap, &r))
+    if_error_then_die(soap);
+  printf("result = %g\n", r);
 
-  CHECK(MUTEX_LOCK(start_lock));
-  CHECK(COND_WAIT(start, start_lock));
-  CHECK(MUTEX_UNLOCK(start_lock));
-  CHECK(COND_SIGNAL(ready));
-
-  if (soap_valid_socket(async->soap->socket))
+  if (soap_valid_socket(soap->socket))
   {
-    if (async->recv_mul(&r))
-      if_error_then_die(async->soap);
-    printf("%g\n\n", r);
+    if (soap_recv_ns__mul(soap, &r))
+      if_error_then_die(soap);
+    printf("result = %g\n", r);
   }
   else
   {
     printf("Connection closed, server rejected keep-alive!\n");
   }
 
-  CHECK(MUTEX_LOCK(start_lock));
-  CHECK(COND_WAIT(start, start_lock));
-  CHECK(MUTEX_UNLOCK(start_lock));
-  CHECK(COND_SIGNAL(ready));
-
-  async->destroy();
-
-  delete async;
+  soap_destroy(soap);
+  soap_end(soap);
+  soap_free(soap);
 
   return NULL;
 }

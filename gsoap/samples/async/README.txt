@@ -1,39 +1,74 @@
-Simple examples illustrating asynchronous messaging with SOAP and REST:
+Simple examples illustrating asynchronous messaging with SOAP and REST.
+
+The SOAP examples are a calculator web service and invoke 'add' and 'mul'
+service operations.  The REST examples use GET, PUT, and POST of and XML
+record to the REST server.  The web server used by these examples is the
+gSOAP demo web server located in gsoap/samples/webserver, which should be build
+to run the examples.  The gSOAP webserver optionally uses the httppipe HTTP
+pipelining plugin to support HTTP pipelining.
+
+Examples:
 
 - asyncsoap.c   C example SOAP asynchronous messaging with one thread
 - asyncsoap.cpp C++ example SOAP asynchronous messaging with one thread
 - asyncrest.c   C example REST asynchronous messaging with one thread
 - asyncrest.cpp C++ example REST asynchronous messaging with one thread
 
-- asyncsoap2.c   C example SOAP asynchronous messaging with two threads
-- asyncsoap2.cpp C++ example SOAP asynchronous messaging with two threads
-- asyncrest2.c   C example REST asynchronous messaging with two threads
-- asyncrest2.cpp C++ example REST asynchronous messaging with two threads
+- asyncsoap2.c   C example SOAP asynchronous messaging with threads
+- asyncsoap2.cpp C++ example SOAP asynchronous messaging with threads
+- asyncrest2.c   C example REST asynchronous messaging with threads
+- asyncrest2.cpp C++ example REST asynchronous messaging with threads
 
-These examples use the gSOAP webserver example located in the directory
-gsoap/samples/webserver, which should be build to run the example.  The gSOAP
-webserver optionally uses the httppipe HTTP pipelining plugin to support HTTP
-pipelining.
+- asyncsoap3.c   C example SOAP asynchronous pipelined messaging with threads
+- asyncsoap3.cpp C++ example SOAP asynchronous pipelined messaging with threads
+- asyncrest3.c   C example REST asynchronous pipelined messaging with threads
+- asyncrest3.cpp C++ example REST asynchronous pipelined messaging with threads
 
-To build the asynsoap C example:
-$ soapcpp2 -c -CL -r -wx async.h
-$ cc -o asyncsoap asyncsoap.c stdsoap2.c soapC.c soapClient.c
+To build the C examples:
 
-Start the webserver at port 8080, then run asyncsoap:
-$ ../webserver/webserver 8080 &
-$ ./asyncsoap
+    $ soapcpp2 -c -CL -r -wx async.h
+    $ cc -I. -I../.. -I../../plugin -o asyncsoap asyncsoap.c ../../stdsoap2.c soapC.c soapClient.c
+    $ cc -I. -I../.. -I../../plugin -o asyncrest asyncsoap.c ../../stdsoap2.c soapC.c
+    $ cc -I. -I../.. -I../../plugin -o asyncsoap2 asyncsoap2.c ../../stdsoap2.c soapC.c soapClient.c ../../plugin/threads.c
+    $ cc -I. -I../.. -I../../plugin -o asyncrest2 asyncsoap2.c ../../stdsoap2.c soapC.c threads.c ../../plugin/threads.c
+    $ cc -I. -I../.. -I../../plugin -o asyncsoap3 asyncsoap3.c ../../stdsoap2.c soapC.c soapClient.c ../../plugin/threads.c
+    $ cc -I. -I../.. -I../../plugin -o asyncrest3 asyncsoap3.c ../../stdsoap2.c soapC.c threads.c ../../plugin/threads.c
+
+To build the C++ examples:
+
+    $ soapcpp2 -j -CL -r -wx async.h
+    $ c++ -I. -I../.. -I../../plugin -o asyncsoap++ asyncsoap.cpp ../../stdsoap2.cpp soapC.cpp soapasyncProxy.cpp
+    $ -I. -I../.. -I../../plugin c++ -o asyncrest++ asyncrest.cpp ../../stdsoap2.cpp soapC.cpp
+    $ c++ -I. -I../.. -I../../plugin -o asyncsoap2++ asyncsoap2.cpp ../../stdsoap2.cpp soapC.cpp soapasyncProxy.cpp ../../plugin/threads.c
+    $ -I. -I../.. -I../../plugin c++ -o asyncrest2++ asyncrest2.cpp ../../stdsoap2.cpp soapC.cpp ../../plugin/threads.c
+    $ c++ -I. -I../.. -I../../plugin -o asyncsoap3++ asyncsoap3.cpp ../../stdsoap2.cpp soapC.cpp soapasyncProxy.cpp ../../plugin/threads.c
+    $ -I. -I../.. -I../../plugin c++ -o asyncrest3++ asyncrest3.cpp ../../stdsoap2.cpp soapC.cpp ../../plugin/threads.c
 
 See also the build instructions in the C/C++ source code of the examples.
 
-Asynchronous messaging splits the sending operation from the receive operation.
-Sends should be paired with receives.  By contrast, HTTP pipelining allows
-multiple sends to be followed by multiple receives.  HTTP pipelining requires
-at least two threads, one for sending and one for receiving.  HTTP servers may
-not implement HTTP pipelining that is required to handle multiple requests
-messages.
+Start the webserver at port 8080, then run and example such as asyncsoap:
+
+    $ ../webserver/webserver -e -k 8080 &
+    $ ./asyncsoap
+
+Where webserver options -e and -k enable pipelining and keep-alive,
+respectively.
+
+Non-pipelined asynchronous messaging splits the sending operation from the
+receive operation.  Sends should be paired with receives, meaning that no other
+send should occur on the same connection before the response is received.
+A connection may or may not be persistent, though the examples with threads
+require persistence to allow the receiving thread to receive responses over
+the single HTTP keep-alive connection.
+
+By contrast, HTTP pipelining allows multiple sends to be followed by multiple
+receives over a persistent connection, i.e. with HTTP keep-alive enabled.  HTTP
+pipelining requires at least two threads, one for sending and one for
+receiving.  HTTP servers may not implement HTTP pipelining that is required to
+handle multiple requests messages.
 
 HTTP pipelining may boost performance, though it is not widely supported and
-the performance gains may dissapoint.
+the performance gains are generally known to dissapoint.
 
 HTTP pipelining on the server side is easy with gSOAP, just add:
 
@@ -82,8 +117,3 @@ if the POST message contents do not depend on the server state, which is
 typical for SOAP/XML Web services that commonly use POST message exchanges.  In
 general, be forewarned that if any of the messages depend on the server state
 then HTTP pipelining is a bad idea.
-
-No client-side HTTP pipelining example is included here, please contact Genivia
-www.genivia.com if you are interested to see such examples in the future and we
-will add them.
-

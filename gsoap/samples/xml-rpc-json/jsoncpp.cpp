@@ -200,7 +200,8 @@ struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
 
 static bool coutput = false;            // -c      generate C code instead of C++
 static bool explain = false;            // -e      add explanatory comments to the generated code
-static bool genread = false;            // -i      generate code to inspect node graph parsed from JSON input
+static bool genread = false;            // -i      generate code to inspect JSON node graph with data type checks
+static bool nocheck = false;            // -k      generate code to inspect JSON node graph directly without checks
 static bool genvars = false;            // -l      generate code for option -i to store values in local variables
 static bool genmain = false;            // -m      generate stand-alone code by adding main()
 static bool minimal = false;            // -M      generate minimal code unadorned with initialization and cleanup
@@ -332,6 +333,12 @@ int main(int argc, char **argv)
               break;
             case 'i':
               genread = true;
+              if (!ifile)
+                ifile = "-";
+              break;
+            case 'k':
+              genread = true;
+              nocheck = true;
               if (!ifile)
                 ifile = "-";
               break;
@@ -903,17 +910,26 @@ static void in_gen_c(soap *ctx, value& v, std::string lhs, const std::string& pa
           }
           std::string newpath = path;
           newpath.append(".").append(putname(i.index()));
-          if (genvars)
-            indent(ctx, k) << "if ((j = nth_at(" << lhs << ", " << putstr(i.index()) << ")) >= 0)\n";
+          if (!nocheck)
+          {
+            if (genvars)
+              indent(ctx, k) << "if ((j = nth_at(" << lhs << ", " << putstr(i.index()) << ")) >= 0)\n";
+            else
+              indent(ctx, k) << "if (nth_at(" << lhs << ", " << putstr(i.index()) << ") >= 0)\n";
+            if (explain || genvars || i->is_struct() || i->is_array())
+              indent(ctx, k) << "{\n";
+            if (genvars)
+              indent(ctx, k + 2) << "struct value *" << lhsidx << " = nth_value(" << lhs << ", j);\n";
+            in_gen_c(ctx, *i, lhsidx, newpath, k + 2);
+            if (explain || genvars || i->is_struct() || i->is_array())
+              indent(ctx, k) << "}\n";
+          }
           else
-            indent(ctx, k) << "if (nth_at(" << lhs << ", " << putstr(i.index()) << ") >= 0)\n";
-          if (explain || genvars || i->is_struct() || i->is_array())
-            indent(ctx, k) << "{\n";
-          if (genvars)
-            indent(ctx, k + 2) << "struct value *" << lhsidx << " = nth_value(" << lhs << ", j);\n";
-          in_gen_c(ctx, *i, lhsidx, newpath, k + 2);
-          if (explain || genvars || i->is_struct() || i->is_array())
-            indent(ctx, k) << "}\n";
+          {
+            if (genvars)
+              indent(ctx, k) << "struct value *" << lhsidx << " = nth_value(" << lhs << ", j);\n";
+            in_gen_c(ctx, *i, lhsidx, newpath, k);
+          }
         }
       }
       break;
@@ -1100,14 +1116,23 @@ static void in_gen_cpp(soap *ctx, value& v, std::string lhs, const std::string& 
           }
           std::string newpath = path;
           newpath.append(".").append(putname(i.index()));
-          indent(ctx, k) << "if (" << lhs << ".has(" << putstr(i.index()) << "))\n";
-          if (explain || genvars || i->is_struct() || i->is_array())
-            indent(ctx, k) << "{\n";
-          if (genvars)
-            indent(ctx, k + 2) << "value& " << lhsidx << " = " << lhs << "[" << putstr(i.index()) << "];\n";
-          in_gen_cpp(ctx, *i, lhsidx, newpath, k + 2);
-          if (explain || genvars || i->is_struct() || i->is_array())
-            indent(ctx, k) << "}\n";
+          if (!nocheck)
+          {
+            indent(ctx, k) << "if (" << lhs << ".has(" << putstr(i.index()) << "))\n";
+            if (explain || genvars || i->is_struct() || i->is_array())
+              indent(ctx, k) << "{\n";
+            if (genvars)
+              indent(ctx, k + 2) << "value& " << lhsidx << " = " << lhs << "[" << putstr(i.index()) << "];\n";
+            in_gen_cpp(ctx, *i, lhsidx, newpath, k + 2);
+            if (explain || genvars || i->is_struct() || i->is_array())
+              indent(ctx, k) << "}\n";
+          }
+          else
+          {
+            if (genvars)
+              indent(ctx, k) << "value& " << lhsidx << " = " << lhs << "[" << putstr(i.index()) << "];\n";
+            in_gen_cpp(ctx, *i, lhsidx, newpath, k);
+          }
         }
       }
       break;

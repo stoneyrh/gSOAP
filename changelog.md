@@ -1441,12 +1441,19 @@ Version 2.8.76 (1/21/2019)
 - Updated wsdl2h WSDL and schema imports of files on relative paths: file name without path or file name with path stating with ../ are considered relative locations with respect to the current WSDL and schema that is importing, otherwise imported files are considered relative to the directory in which wsdl2h is run (the `-I` option can be used to change that location).
 - Minor improvements.
 
-Version 2.8.77 (1/23/2019) {#latest}
+Version 2.8.77 (1/23/2019)
 ---
 
 - Updated wsdl2h to display warnings for invalid complexType and simpleType extensions/restrictions but generates valid code in such cases by inference, the update also fixes a valid extension case.
 - Updated `gsoap/samples/async` examples.
 - Fixed compilation error for soapcpp2 options `-i` and `-j` caused by special case with empty input arguments to service operations.
+
+Version 2.8.78 (1/27/2019) {#latest}
+---
+
+- Added jsoncpp new option `-k`.
+- Updated soapcpp2 to remove C compiler warnings, a minor change to reorder the source code output.
+- Updated `gsoap/samples/async`.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
