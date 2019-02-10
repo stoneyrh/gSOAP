@@ -550,6 +550,11 @@ tas     = "http://www.onvif.org/ver10/advancedsecurity/wsdl"
 tdn     = "http://www.onvif.org/ver10/network/wsdl"
 tt      = "http://www.onvif.org/ver10/schema"
 
+#       to extend tt__EventFilter with TopicExpression (for C):
+# tt__EventFilter = $ struct wsnt__TopicExpressionType *wsnt__TopicExpression;
+#       to extend tt__EventFilter with TopicExpression (for C++):
+# tt__EventFilter = $ wsnt__TopicExpressionType *wsnt__TopicExpression;
+
 #       OASIS recommended prefixes
 
 wsnt    = "http://docs.oasis-open.org/wsn/b-2"

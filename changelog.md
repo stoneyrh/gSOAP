@@ -1448,12 +1448,19 @@ Version 2.8.77 (1/23/2019)
 - Updated `gsoap/samples/async` examples.
 - Fixed compilation error for soapcpp2 options `-i` and `-j` caused by special case with empty input arguments to service operations.
 
-Version 2.8.78 (1/27/2019) {#latest}
+Version 2.8.78 (1/27/2019)
 ---
 
 - Added jsoncpp new option `-k`.
 - Updated soapcpp2 to remove C compiler warnings, a minor change to reorder the source code output.
 - Updated `gsoap/samples/async`.
+
+Version 2.8.79 (2/10/2019) {#latest}
+---
+
+- Updated to remove OpenSSL deprecated API warnings.
+- Fixed a bug in wsdl2h option `-c` for C source code output, resulting in a missing `*` pointer for `_XML __any` member declaration when declared after the `$ int __size` array size member.  The bug may lead to validation errors in extensible types when extra elements are present in the XML payload received.  The fix produces the correct `_XML *__any` member declaration.
+- Minor improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

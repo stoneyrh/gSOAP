@@ -102,7 +102,7 @@ be interpreted as described in RFC-2119.
   REST/RPC, XML-RPC, Atom and RSS. JSON is supported as a library bundled with
   the XML-RPC library to switch between XML-RPC and JSON protocols (since these
   are similar, speaking data wise). For more details, see the
-  <i>`gsoap/samples/xml-rpc-json`</i> folder in the package and the
+  <i>`gsoap/samples/xml-rpc-json`</i> folder in the gSOAP package and the
   [XML-RPC and JSON](../../xml-rpc-json/html/index.html) documentation.
 
 * **SOAP**: implements the full range of SOAP 1.1/1.2 specifications,
@@ -203,7 +203,7 @@ To start using gSOAP, you will need:
   to build the soapcpp2 tool.  You can also build soapcpp2 without Bison and
   Flex installed, see <https://www.genivia.com/downloads.html> for details.
 
-The gSOAP source code distribution package includes:
+The gSOAP source code package includes:
 
 * The <b>`wsdl2h`</b> data binding tool that converts WSDLs and XSDs to
   generate interface header files for soapcpp2.  The source code of the wsdl2h
@@ -5968,6 +5968,15 @@ declared at the global scope.  This option places these structures
 with the types used by their members in the given C++ namespace, making them
 unavailable to the global scope.
 
+See \ref codenamespace for details on using C++ namespaces to build client and
+server applications, which requires a <i>`env.h`</i> file with SOAP Header and
+Fault definitions to be compiled with:
+
+     soapcpp2 -penv env.h
+
+The generated <i>`envC.cpp`</i> file holds the SOAP Header and Fault serializers and you can
+link this file with your client and server applications.
+
 This option has no effect for C source code output.
 
 🔝 [Back to table of contents](#)
@@ -6414,7 +6423,7 @@ developed for the same Web services API then the same interface header file can 
 
 The <i>`soapClientLib.cpp`</i> and <i>`soapServerLib.cpp`</i> can be used to build client and server libraries. The serialization functions are declared static to avoid link symbol conflicts. For this approach to compile, we also should create a separate interface header file <i>`env.h`</i> with SOAP Header and Fault structures with serializers that are non-static, i.e. globally declared and implemented, as described in Section \ref dylibs .
 
-The following files are part of the gSOAP source code distribution and are required to build gSOAP applications:
+The following files are part of the gSOAP source code package and are required to build gSOAP applications:
 
 * <i>`gsoap/stdsoap2.h`</i> the header file to include in your source code, but already included when including <i>`soapH.h`</i>.
 
@@ -7131,7 +7140,8 @@ option to the C/C++ compiler to rename this file to include instead of
 
 This option specifies a C++ namespace name for the generated source code,
 including for the custom serializers when used.  See also
-[<b>`soapcpp2 -q name`</b> option <b>`-q name`</b>](#soapcpp2-q).
+[<b>`soapcpp2 -q name`</b> option <b>`-q name`</b>](#soapcpp2-q) for details on
+specifying C++ namespaces.
 
 The source code files are saved with <i>`name`</i> as prefix instead of
 <i>`soap`</i>.  This means that all plugins and custom serializers
@@ -7168,6 +7178,15 @@ The source code files are saved with <i>`name`</i> as prefix instead of
 that are compiled and linked with the application should include <i>`nameH.h`</i>
 instead of <i>`soapH.h`</i>.  This can be done with the <b>`-D SOAP_H_FILE=nameH.h`</b>
 option to the C/C++ compiler to rename this file to include instead of <i>`soapH.h`</i>.
+
+See \ref codenamespace for details on using C++ namespaces to build client and
+server applications, which requires a <i>`env.h`</i> file with SOAP Header and
+Fault definitions to be compiled with:
+
+     soapcpp2 -penv env.h
+
+The generated <i>`envC.cpp`</i> file holds the SOAP Header and Fault serializers and you can
+link this file with your client and server applications.
 
 This option has no effect for C source code output.
 
@@ -7765,7 +7784,7 @@ Depending on your system configuration, such as with Unix, linking with <b>`-lso
 
 The <i>`myclient.cpp`</i> file should include <i>`soapH.h`</i> and must include or define a global namespace mapping table, unless `#WITH_NONAMESPACES` is used.
 
-For examples of SOAP and REST client applications, see <i>`gsoap/samples`</i> in the gSOAP source code distribution.
+For examples of SOAP and REST client applications, see <i>`gsoap/samples`</i> in the gSOAP source code package.
 The online getting-started guide covers example client and server applications in C and C++, visit <https://www.genivia.com/dev.html> to read more.  Various examples ranging from simple calculator service APIs to very large protocols spanning dozens of WSDLs can be found at <https://www.genivia.com/examples.html>
 
 To test client applications using an auto-generated echo test server, use <b>`soapcpp2 -T`</b> option <b>`-T`</b>, see the next section. You can also test a client application with the gSOAP [Test Messenger](../../testmsgr/html/index.html).
@@ -7813,7 +7832,7 @@ Then run on a port, say 8080:
 
 The 12288 value is a combination of the `#SOAP_XML_INDENT` (0x2000) and `#SOAP_XML_STRICT` (0x1000) integer flag values (8192 + 4096 = 12288).
 
-For examples of SOAP and REST Web service applications, see <i>`gsoap/samples`</i> in the gSOAP source code distribution.
+For examples of SOAP and REST Web service applications, see <i>`gsoap/samples`</i> in the gSOAP source code package.
 The online getting-started guide covers example client and server applications in C and C++, visit <https://www.genivia.com/dev.html> to read more.  Various examples ranging from simple calculator service APIs to very large protocols spanning dozens of WSDLs can be found at <https://www.genivia.com/examples.html>
 
 🔝 [Back to table of contents](#)
@@ -12386,7 +12405,7 @@ A receiver must be informed to recognize MTOM attachments by setting the
 attachment mechanism (SwA) will be used to store attachments.
 
 When using wsdl2h to build clients and/or services, you should use the
-<i>`typemap.dat`</i> file included in the distribution package. The
+<i>`typemap.dat`</i> file included in the gSOAP source code package. The
 <i>`typemap.dat`</i> file defines the XOP namespace and XML MIME namespaces as
 imported namespaces:
 
@@ -13569,7 +13588,7 @@ See Section \ref fault for more details on how to use these functions.
 
 Memory management with gSOAP is automatic.  The engine context manages all memory allocated to serialize data and for temporary storage.  Deserialized data is allocated in managed memory and data structures can be allocated in managed memory by the user when desired using `soap_new_T` functions generated by soapcpp2 for each serializable type `T`.  All memory managed by a context is deallocated with `::soap_destroy` to destroy managed C++ objects and `::soap_end` to delete all other managed data.  When a context is finalized or freed with `soap_done(struct soap*)` and `soap_free(struct soap*)` then managed memory is not released, so it is important to call the deallocation functions first.  This was done to allow managed data to outlive the context, such as deserialized objects, but this is rarely if ever used because deleting the outlived data explicitly is prone to mistakes.
 
-If you want to let deserialized data outlive a `::soap` context that you are about to free, then you can delegate management of the data to another `::soap` context with `soap_delegate_deletion(struct soap *soap_from, struct soap *soap_to)`. This moves all deserialized and temporary data to the other `::soap` context `soap_to`, which will delete its data and all the delegated data it is responsible for when you call `::soap_destroy` and `::soap_end`. This can be particularly useful for making client calls inside a server operation, i.e. a mixed server and client. The client call inside the server operation requires a new `::soap` context, e.g. copied from the server's with `::soap_copy`. Before destroying the client context with `::soap_free`, the data can be delegated to the server's context with `::soap_delegate_deletion`. See for example <i>`gsoap/samples/mashup/mashupserver.c`</i> in the gSOAP source code distribution.
+If you want to let deserialized data outlive a `::soap` context that you are about to free, then you can delegate management of the data to another `::soap` context with `soap_delegate_deletion(struct soap *soap_from, struct soap *soap_to)`. This moves all deserialized and temporary data to the other `::soap` context `soap_to`, which will delete its data and all the delegated data it is responsible for when you call `::soap_destroy` and `::soap_end`. This can be particularly useful for making client calls inside a server operation, i.e. a mixed server and client. The client call inside the server operation requires a new `::soap` context, e.g. copied from the server's with `::soap_copy`. Before destroying the client context with `::soap_free`, the data can be delegated to the server's context with `::soap_delegate_deletion`. See for example <i>`gsoap/samples/mashup/mashupserver.c`</i> in the gSOAP source code package.
 
 The functions related to memory management by the context are:
 
@@ -14416,7 +14435,9 @@ For example, the serialization of `MyData` can be done with the following code:
     }
 ~~~
 
-More information on custom serialization is available in the package in the <i>`gsoap/custom`</i> directory, where you can also find several custom serializers to use with your projects.
+More information on custom serialization is available in the gSOAP source code
+package in the <i>`gsoap/custom`</i> directory, where you can also find several
+custom serializers to use with your projects.
 
 🔝 [Back to table of contents](#)
 
@@ -15183,7 +15204,11 @@ may require significant storage space to hold large messages temporarily.
 
 The following sections explain how to authenticate with HTTP bearer, basic, digest, and NTLM.  Proxy authentication is also covered.
 
-You could also use the WinInet plugin available in the <i>`gsoap/mod_gsoap`</i> directory of the gSOAP package to simplify Internet access for gSOAP client applications and deal with encryption, proxies, and authentication, see the gSOAP [WinInet plugin](../../wininet/html/index.html) documentation.
+You could also use the WinInet plugin available in the <i>`gsoap/mod_gsoap`</i>
+directory of the gSOAP source code package to simplify Internet access for
+gSOAP client applications and deal with encryption, proxies, and
+authentication, see the gSOAP [WinInet plugin](../../wininet/html/index.html)
+documentation.
 
 The gSOAP CURL plugin can also be used to develop gSOAP client applications and CURL implements various HTTP authentication methods, see the gSOAP [CURL plugin](../../curl/html/index.html) documentation.
 
@@ -15774,13 +15799,13 @@ want to avoid storing trusted certificates in the default location on the file
 system when that is not secure. Therefore, a flat <i>`cacert.pem`</i> file or
 directory can be specified to store trusted certificates.
 
-The gSOAP distribution includes a <i>`cacerts.pem`</i> file with the certificates
+The gSOAP package includes a <i>`cacerts.pem`</i> file with the certificates
 of all certificate authorities. You can use this file to
 verify the authentication of servers that provide certificates issued by these
 CAs.
 
 The <i>`cacert.pem`</i>, <i>`client.pem`</i>, and <i>`server.pem`</i> files in the gSOAP
-distribution are examples of self-signed certificates.
+package are examples of self-signed certificates.
 The <i>`client.pem`</i> and <i>`server.pem`</i> contain the client/server
 private key concatenated with the certificate. The keyfiles
 (<i>`client.pem`</i> and <i>`server.pem`</i>) are created by concatenating the
@@ -15851,7 +15876,7 @@ Web Service to use encrypted transfers (if the service supports HTTPS). You need
 
 By default, server authentication is enabled and the <i>`cacerts.pem`</i> or
 `capath` (not used with GNUTLS) must be set so that the CA certificates of the server(s) are
-accessible at run time. The <i>`cacerts.pem`</i> file included in the package
+accessible at run time. The <i>`cacerts.pem`</i> file included in the gSOAP source code package
 contains the certificates of common CAs. This file must be supplied with the
 client, if server authentication is required. Alternatively, you can use the
 <i>`gsoap/plugin/cacerts.h`</i> and <i>`gsoap/plugin/cacerts.c`</i> code to embed CA certificates
@@ -15935,7 +15960,7 @@ See also API documentation Module \ref group_ssl for more details on the SSL/TLS
 
 You can also use the WinInet interface to establish secure HTTPS connections on
 Windows machines, available in the <i>`gsoap/mod_gsoap`</i> directory of the
-gSOAP package, see also Section \ref wininetplugin.  Or you can use the CURL
+gSOAP source code package, see also Section \ref wininetplugin.  Or you can use the CURL
 plugin to use CURL to establish secure HTTPS connections, see Section
 \ref curlplugin.
 
@@ -15958,7 +15983,7 @@ verification, via internally invoking `SSL_CTX_set_verify`:
 
 ## SSL certificates and key files        {#ssl}
 
-The gSOAP distribution includes a <i>`cacerts.pem`</i> file with the certificates
+The gSOAP package includes a <i>`cacerts.pem`</i> file with the certificates
 of all certificate authorities. You can use this file to
 verify the authentication of servers that provide certificates issued by these
 CAs. Just set the `cafile` parameter to the location of this file on your
@@ -15970,10 +15995,10 @@ Alternatively, you can use the <i>`gsoap/plugin/cacerts.h`</i> and
 <i>`gsoap/plugin/cacerts.c`</i> code to embed CA certificates in your client code.
 
 For systems based on Microsoft windows, the WinInet module can be used instead,
-see the `README.txt` located in the package under
+see the `README.txt` located in the gSOAP source code package under
 `mod_gsoap/gsoap_win/wininet`, see the gSOAP [WinInet plugin](../../wininet/html/index.html) documentation.
 
-The other <i>`.pem`</i> files in the gSOAP distribution are examples
+The other <i>`.pem`</i> files in the gSOAP package are examples
 of self-signed certificates for testing purposes (<i>`cacert.pem`</i>,
 <i>`client.pem`</i>, <i>`server.pem`</i>). The <i>`client.pem`</i> and <i>`server.pem`</i> contain the
 private key and certificate of the client or server, respectively. The keyfiles
@@ -16018,7 +16043,8 @@ Creating certificates should be done through a CA to obtain signed certificates.
 
 *  Modify openssl.cnf by changing the 'dir' value to HOME/CA
 
-*  Copy the README.txt, root.sh, and cert.sh scripts from the gSOAP distribution package located in the <i>`gsoap/samples/ssl`</i> directory to HOME/CA
+*  Copy the README.txt, root.sh, and cert.sh scripts from the gSOAP source code
+   package located in the <i>`gsoap/samples/ssl`</i> directory to HOME/CA
 
 *  Follow the README.txt instructions
 
@@ -16197,9 +16223,9 @@ cookie-based session control in your client.
 
 A cookie store with cookies is kept and returned to the appropriate servers when the client connects to these servers.
 Cookies are not automatically saved to a file by a client. An example cookie
-file manager is included as an extras in the distribution. You should
-explicitly remove all cookies before terminating a `::soap` context by
-calling `soap_free_cookies(soap)` or by calling `soap_done(soap)`.
+file manager is included as an extras in the gSOAP package. You can
+remove all cookies from a `::soap` context by
+calling `soap_free_cookies(soap)`, which also happens when you call `soap_done(soap)`.
 
 To avoid "cookie storms" caused by malicious servers that return an 
 unreasonable amount of cookies, gSOAP clients/servers are limited to
@@ -16485,7 +16511,7 @@ Or by creating libraries in C for the client/server objects as explained in
 subsequent sections
 
 Both approaches are demonstrated by examples in the gSOAP source code
-distribution package, the <i>`gsoap/samples/link`</i> (C only) and
+package, the <i>`gsoap/samples/link`</i> (C only) and
 <i>`gsoap/samples/link++`</i> (C++ with C++ namespaces) examples.
 
 🔝 [Back to table of contents](#)
@@ -17027,7 +17053,7 @@ Alternatively, you can compile with
 This exports all functions which are preceded by the macro `#SOAP_FMAC1` in
 the <i>`soapcpp2.cpp`</i> source file and macro `#SOAP_FMAC3` in the <i>`envC.cpp`</i> source file.
 
-Finally, note that the gSOAP distribution package contains a lot of <i>`.c`</i>
+Finally, note that the gSOAP source code package contains a lot of <i>`.c`</i>
 source code files.  Mixing C with C++ files is not recommended with Visual Studio and
 will lead to run-time errors when building DLLs.  Therefore, always rename <i>`.c`</i>
 source code files to <i>`.cpp`</i> source code files when creating DLLs.
@@ -17352,7 +17378,7 @@ To pass a `void*` argument to the plugin's registry function use:
 
 Additional documentation for the growing number of gSOAP plugins can be found
 at <https://www.genivia.com/doc>.  A number of example plugins are included in
-the gSOAP package's <i>`gsoap/plugin`</i> directory. Some of these plugins are
+the gSOAP source code package's <i>`gsoap/plugin`</i> directory. Some of these plugins are
 discussed in the next sections.
 
 See also API documentation Module \ref group_plugin .
@@ -17406,7 +17432,7 @@ documented in the gSOAP [XML DOM API documentation](../../dom/html/index.html).
 
 The message `::logging` plugin can be used to selectively log inbound and outbound messages to a file or stream. It also keeps access statistics to log the total number of bytes sent and received.
 
-To use the plugin, compile and link your application with <i>`logging.c`</i> located in the <i>`gsoap/plugin`</i> directory of the package.
+To use the plugin, compile and link your application with <i>`logging.c`</i> located in the <i>`gsoap/plugin`</i> directory of the gSOAP package.
 To enable the plugin in your code, register the plugin and set the streams as follows:
 
 ~~~{.cpp}
@@ -17450,7 +17476,7 @@ plugin also keeps statistics on the number of successful POST and GET
 exchanges and failed operations (HTTP faults, SOAP Faults, etc.). It also keeps
 hit histograms accumulated for up to a year of running time.
 
-To use the `::http_get` plugin, compile and link your application with <i>`httpget.c`</i> located in the <i>`gsoap/plugin`</i> directory of the package.
+To use the `::http_get` plugin, compile and link your application with <i>`httpget.c`</i> located in the <i>`gsoap/plugin`</i> directory of the gSOAP package.
 To enable the plugin in your code, register the plugin with your HTTP GET handler function as follows:
 
 ~~~{.cpp}
@@ -17630,9 +17656,18 @@ For client applications to use HTTP POST, use the `::soap_POST` operation:
     soap_free(soap);
 ~~~
 
-Similarly, `::soap_PUT`, `::soap_PATCH`, and `::soap_DELETE` commands are provided for PUT, PATCH, and DELETE handling.
+Similarly, `::soap_PUT`, `::soap_PATCH`, and `::soap_DELETE` commands are
+provided for PUT, PATCH, and DELETE handling.
 
-To support HTTP pipelining use the `::http_pipe` plugin, which can be used at the server side but also at the client side.
+To support HTTP pipelining we use the `::http_pipe` plugin, which can be used
+at the server side to enable HTTP pipelining automatically, when registered.
+The plugin can also be used at the client side, though this is only necessary
+in scenarios that require the client to receive multiple messages without
+intermittend sends, i.e. multiple sends followed by multiple receives by the
+same thread using the same `::soap` context.  However, clients should use
+multiple threads when HTTP pipelining is used to prevent blocking.  See
+the <i>`gsoap/samples/async`</i> folder in the gSOAP package for explanation
+and examples.
 
 See also `::http_post` and `::http_pipe`.
 

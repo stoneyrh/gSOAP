@@ -473,7 +473,7 @@ void Types::init()
   usetypemap["xsd__float"] = "float";
   if (cflag)
   {
-    deftypemap["xsd__hexBinary"] = "struct xsd__hexBinary\n{\n    unsigned char *__ptr;\n   int __size;\n};";
+    deftypemap["xsd__hexBinary"] = "struct xsd__hexBinary\n{\n    unsigned char *__ptr;\n    int __size;\n};";
     usetypemap["xsd__hexBinary"] = "struct xsd__hexBinary";
     ptrtypemap["xsd__hexBinary"] = "struct xsd__hexBinary";
   }
@@ -3893,10 +3893,12 @@ void Types::gen(const char *URI, const xs__any& any, const char *minOccurs, cons
         {
           fprintf(stream, sizeformat, vname("$SIZE"), "");
           fprintf(stream, "0;\n");
-          fprintf(stream, elementformat, pname(true, false, NULL, NULL, "xs:any"), "__any");
+          fprintf(stream, pointerformat, tname(NULL, NULL, "xs:any"), "__any");
         }
         else
+        {
           fprintf(stream, elementformat, tname(NULL, NULL, "xs:any"), "__any");
+        }
       }
       else if (with_union)
         fprintf(stream, pointertemplateformat, vname("$CONTAINER"), tname(NULL, NULL, "xs:any"), "__any");
@@ -3904,7 +3906,9 @@ void Types::gen(const char *URI, const xs__any& any, const char *minOccurs, cons
         fprintf(stream, templateformat, vname("$CONTAINER"), tname(NULL, NULL, "xs:any"), "__any");
     }
     else
+    {
       fprintf(stream, elementformat, pname(with_union, false, NULL, NULL, "xs:any"), "__any");
+    }
     if (dflag)
       fprintf(stream, "0;\t///< Store any element content in DOM soap_dom_element node.\n");
     else

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.78
+        stdsoap2.c[pp] 2.8.79
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20878
+#define GSOAP_LIB_VERSION 20879
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.78 2019-01-27 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.79 2019-02-10 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.78 2019-01-27 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.79 2019-02-10 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -3931,7 +3931,11 @@ soap_rand()
   int r;
   if (!soap_ssl_init_done)
     soap_ssl_init();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   RAND_pseudo_bytes((unsigned char*)&r, sizeof(int));
+#else
+  RAND_bytes((unsigned char*)&r, sizeof(int));
+#endif
   return r;
 }
 #endif
@@ -4390,32 +4394,56 @@ ssl_auth_init(struct soap *soap)
 #endif
   if ((soap->ssl_flags & SOAP_SSL_RSA))
   {
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L
     if (SSL_CTX_need_tmp_RSA(soap->ctx))
-#endif
     {
-      RSA *rsa = RSA_generate_key(SOAP_SSL_RSA_BITS, RSA_F4, NULL, NULL);
-      if (!rsa || !SSL_CTX_set_tmp_rsa(soap->ctx, rsa))
+      unsigned long e = RSA_F4;
+      BIGNUM *bne = BN_new();
+      RSA *rsa = RSA_new();
+      if (!bne || !rsa || !BN_set_word(bne, e) || !RSA_generate_key_ex(rsa, SOAP_SSL_RSA_BITS, bne, NULL) || !SSL_CTX_set_tmp_rsa(soap->ctx, rsa))
       {
+        if (bne)
+          BN_free(bne);
         if (rsa)
           RSA_free(rsa);
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set RSA key", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't generate RSA key", SOAP_SSL_ERROR);
       }
+      BN_free(bne);
       RSA_free(rsa);
     }
+#else
+    RSA *rsa = RSA_generate_key(SOAP_SSL_RSA_BITS, RSA_F4, NULL, NULL);
+    if (!rsa || !SSL_CTX_set_tmp_rsa(soap->ctx, rsa))
+    {
+      if (rsa)
+        RSA_free(rsa);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't generate RSA key", SOAP_SSL_ERROR);
+    }
+    RSA_free(rsa);
+#endif
   }
   else if (soap->dhfile)
   {
-    DH *dh = 0;
+    DH *dh = NULL;
     char *s;
     int n = (int)soap_strtoul(soap->dhfile, &s, 10);
     /* if dhfile is numeric, treat it as a key length to generate DH params which can take a while */
     if (n >= 512 && s && *s == '\0')
-#if defined(VXWORKS)
-      DH_generate_parameters_ex(dh, n, 2/*or 5*/, NULL); /* vxWorks compatible */
+    {
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L
+      dh = DH_new();
+      if (!DH_generate_parameters_ex(dh, n, 2/*or 5*/, NULL))
+      {
+        DH_free(dh);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't generate DH parameters", SOAP_SSL_ERROR);
+      }
+#elif defined(VXWORKS)
+      dh = DH_new();
+      DH_generate_parameters_ex(dh, n, 2/*or 5*/, NULL);
 #else
       dh = DH_generate_parameters(n, 2/*or 5*/, NULL, NULL);
 #endif
+    }
     else
     {
       BIO *bio;
@@ -5987,7 +6015,11 @@ again:
             name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, i));
             if (name)
             {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
               const char *tmp = (const char*)ASN1_STRING_data(name);
+#else
+              const char *tmp = (const char*)ASN1_STRING_get0_data(name);
+#endif
               if (!soap_tag_cmp(host, tmp))
               {
                 ok = 1;

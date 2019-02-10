@@ -439,9 +439,9 @@ gives unlimited permission to copy, distribute and modify it."
 
 ac_pwd='/Users/engelen/Projects/gsoap/packages/gsoap-2.8'
 srcdir='.'
-INSTALL='/usr/bin/install -c'
-MKDIR_P='./install-sh -c -d'
-AWK='awk'
+INSTALL='/usr/local/bin/ginstall -c'
+MKDIR_P='/usr/local/bin/gmkdir -p'
+AWK='gawk'
 test -n "$AWK" || AWK=awk
 # The default lists apply if the user does not specify any file.
 ac_need_defaults=:
@@ -695,8 +695,8 @@ S["SOAPCPP2_DEBUG"]=""
 S["DEBUG_COMPILE_FALSE"]=""
 S["DEBUG_COMPILE_TRUE"]="#"
 S["LIBOBJS"]=" ${LIBOBJDIR}mktime$U.o"
-S["EGREP"]="/usr/bin/grep -E"
-S["GREP"]="/usr/bin/grep"
+S["EGREP"]="/usr/local/bin/ggrep -E"
+S["GREP"]="/usr/local/bin/ggrep"
 S["platform"]="MACOSX"
 S["SAMPLE_EXTRA_LIBS"]="-lm"
 S["AR"]="ar"
@@ -747,9 +747,9 @@ S["am__tar"]="$${TAR-tar} chof - \"$$tardir\""
 S["AMTAR"]="$${TAR-tar}"
 S["am__leading_dot"]="."
 S["SET_MAKE"]=""
-S["AWK"]="awk"
+S["AWK"]="gawk"
 S["mkdir_p"]="$(MKDIR_P)"
-S["MKDIR_P"]="./install-sh -c -d"
+S["MKDIR_P"]="/usr/local/bin/gmkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]=""
 S["install_sh"]="${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/install-sh"

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.78
+        stdsoap2.h 2.8.79
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20878
+#define GSOAP_VERSION 20879
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -933,6 +933,9 @@ extern intmax_t __strtoull(const char*, char**, int);
 # include <openssl/err.h>
 # include <openssl/rand.h>
 # include <openssl/ssl.h>
+# include <openssl/rsa.h>
+# include <openssl/dh.h>
+# include <openssl/asn1.h>
 # include <openssl/x509v3.h>
 # ifndef ALLOW_OLD_VERSIONS
 #  if (OPENSSL_VERSION_NUMBER < 0x00905100L)
