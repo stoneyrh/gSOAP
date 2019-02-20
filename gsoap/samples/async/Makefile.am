@@ -11,7 +11,7 @@ include ../Makefile.c_rules
 SOAP_NS = async.nsmap
 
 asyncsoap_SOURCES = asyncsoap.c $(SOAPHEADER) $(SOAP_C_CLIENT)
-asyncsoap_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
+asyncsoap_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lpthread
 
 asyncrest_SOURCES = asyncrest.c $(SOAPHEADER) $(SOAP_C_CORE)
-asyncrest_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
+asyncrest_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lpthread

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.79
+        stdsoap2.c[pp] 2.8.80
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20879
+#define GSOAP_LIB_VERSION 20880
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.79 2019-02-10 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.80 2019-02-20 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.79 2019-02-10 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.80 2019-02-20 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -12888,6 +12888,7 @@ soap_element_begin_out(struct soap *soap, const char *tag, int id, const char *t
 /******************************************************************************/
 
 #if _MSC_VER < 1400 && !defined(HAVE_STRLCAT)
+/* concat string (truncating the result, strings must not be NULL) */
 SOAP_FMAC1
 void
 SOAP_FMAC2
@@ -12902,6 +12903,30 @@ soap_strcat(char *t, size_t n, const char *s)
       *t++ = *s++;
     *t = '\0';
   }
+}
+#endif
+
+/******************************************************************************/
+
+#if _MSC_VER < 1400
+/* concat string up to m chars (leaves destination intact on overrun and returns nonzero, zero if OK) */
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_strncat(char *t, size_t n, const char *s, size_t m)
+{
+  size_t k;
+  if (!t || !s)
+    return 1;
+  k = strlen(t);
+  if (n <= k + m)
+    return 1;
+  t += k;
+  n -= k;
+  while (--n > 0 && *s)
+    *t++ = *s++;
+  *t = '\0';
+  return 0;
 }
 #endif
 
@@ -21214,7 +21239,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
   int port;
   ULONG64 count;
   soap->error = SOAP_OK;
-  soap_strcpy(host, sizeof(soap->host), soap->host); /* save previous host name: if != then reconnect */
+  soap_memcpy(host, sizeof(host), soap->host, sizeof(soap->host)); /* save previous host name: if != then reconnect */
   port = soap->port; /* save previous port to compare */
   soap->status = http_command;
   soap_set_endpoint(soap, endpoint);
@@ -22282,10 +22307,10 @@ soap_strerror(struct soap *soap)
   {
 #ifndef WIN32
 # ifdef HAVE_STRERROR_R
-#  if defined(_GNU_SOURCE) && !defined(__ANDROID__)
-    return strerror_r(err, soap->msgbuf, sizeof(soap->msgbuf)); /* GNU-specific */
-#  else
+#  if ((!defined(_POSIX_C_SOURCE) || !defined(_XOPEN_SOURCE) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !_GNU_SOURCE) || defined(__ANDROID__)
     strerror_r(err, soap->msgbuf, sizeof(soap->msgbuf)); /* XSI-compliant */
+#  else
+    return strerror_r(err, soap->msgbuf, sizeof(soap->msgbuf)); /* GNU-specific */
 #  endif
 # else
     return strerror(err);

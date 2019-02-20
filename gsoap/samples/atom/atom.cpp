@@ -116,7 +116,7 @@ struct Namespace namespaces[] = {
 
 /// soap_make: populate primitive values, e.g. integers, returns pointer to managed heap-allocated data of type T
 template<class T>
-T * soap_make(struct soap *soap, T val) throw (std::bad_alloc)
+T * soap_make(struct soap *soap, T val)
 {
   T *p = (T*)soap_malloc(soap, sizeof(T));
   if (p == NULL)
@@ -126,7 +126,7 @@ T * soap_make(struct soap *soap, T val) throw (std::bad_alloc)
 }
 
 /// soap_make_string: return managed heap-allocated and populated std::string
-std::string *soap_make_string(struct soap *soap, const char *s) throw (std::bad_alloc)
+std::string *soap_make_string(struct soap *soap, const char *s)
 {
   if (!s)
     return NULL;
@@ -138,7 +138,7 @@ std::string *soap_make_string(struct soap *soap, const char *s) throw (std::bad_
 }
 
 /// soap_make_text: return managed heap-allocated and populated a__text
-a__text *soap_make_text(struct soap *soap, const char *s, const char *lang = NULL) throw (std::bad_alloc)
+a__text *soap_make_text(struct soap *soap, const char *s, const char *lang = NULL)
 {
   if (!s)
     return NULL;
@@ -152,7 +152,7 @@ a__text *soap_make_text(struct soap *soap, const char *s, const char *lang = NUL
 }
 
 /// soap_make_uri: return managed heap-allocated and populated a__uri
-a__uri *soap_make_uri(struct soap *soap, const char *s, const char *lang = NULL) throw (std::bad_alloc)
+a__uri *soap_make_uri(struct soap *soap, const char *s, const char *lang = NULL)
 {
   if (!s)
     return NULL;
@@ -166,7 +166,7 @@ a__uri *soap_make_uri(struct soap *soap, const char *s, const char *lang = NULL)
 }
 
 /// soap_make_dateTime: return managed heap-allocated and populated a__dateTime
-a__dateTime *soap_make_now(struct soap *soap) throw (std::bad_alloc)
+a__dateTime *soap_make_now(struct soap *soap)
 {
   a__dateTime *p = (a__dateTime*)soap_new_a__dateTime(soap);
   if (p == NULL)
@@ -178,7 +178,7 @@ a__dateTime *soap_make_now(struct soap *soap) throw (std::bad_alloc)
 }
 
 /// soap_make_gen: return managed heap-allocated and populated a__generator
-a__generator *soap_make_gen(struct soap *soap, const char *s, const char *u = NULL, const char *v = NULL, const char *lang = NULL) throw (std::bad_alloc)
+a__generator *soap_make_gen(struct soap *soap, const char *s, const char *u = NULL, const char *v = NULL, const char *lang = NULL)
 {
   if (!s)
     return NULL;

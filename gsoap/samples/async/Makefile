@@ -329,9 +329,9 @@ BUILT_SOURCES = $(SOAP_C_SRC)
 CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
 SOAP_NS = async.nsmap
 asyncsoap_SOURCES = asyncsoap.c $(SOAPHEADER) $(SOAP_C_CLIENT)
-asyncsoap_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
+asyncsoap_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lpthread
 asyncrest_SOURCES = asyncrest.c $(SOAPHEADER) $(SOAP_C_CORE)
-asyncrest_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
+asyncrest_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lpthread
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

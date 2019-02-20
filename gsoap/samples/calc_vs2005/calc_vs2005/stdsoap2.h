@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.79
+        stdsoap2.h 2.8.80
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20879
+#define GSOAP_VERSION 20880
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1515,7 +1515,7 @@ extern const char soap_base64o[], soap_base64i[];
 #elif defined(HAVE_STRLCPY)
 # define soap_strcpy(buf, len, src) (void)strlcpy((buf), (src), (len))
 #else
-# define soap_strcpy(buf, len, src) (void)(strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0')
+# define soap_strcpy(buf, len, src) (void)(strncpy((buf), (src), (len)), (buf)[(len) - 1] = '\0')
 #endif
 
 /* concat string (truncating the result, strings must not be NULL) */
@@ -1527,18 +1527,18 @@ extern const char soap_base64o[], soap_base64i[];
 SOAP_FMAC1 void SOAP_FMAC2 soap_strcat(char *buf, size_t len, const char *src);
 #endif
 
-/* copy string up to n chars (sets string to empty on overrun and returns nonzero, zero if OK) */
+/* copy string up to num chars (sets string to empty on overrun and returns nonzero, zero if OK) */
 #if _MSC_VER >= 1400
 # define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? strncpy_s((buf), (len), (src), (num)) : ((buf)[0] = '\0', 1)))
 #else
 # define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : ((buf)[0] = '\0', 1)))
 #endif
 
-/* concat string up to n chars (truncates on overrun and returns nonzero, zero if OK) */
+/* concat string up to n chars (leaves destination intact on overrun and returns nonzero, zero if OK) */
 #if _MSC_VER >= 1400
 # define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? strncat_s((buf), (len), (src), (num)) : 1))
 #else
-# define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : 1))
+SOAP_FMAC1 int SOAP_FMAC2 soap_strncat(char *buf, size_t len, const char *src, size_t num);
 #endif
 
 /* copy memory (returns SOAP_ERANGE on overrun, zero if OK, pointers must not be NULL) */
@@ -3175,23 +3175,6 @@ typedef void soap_walker(struct soap*, void*, int, const char*, const char*);
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap);
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap);
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap*);
-SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultcode(struct soap*);
-SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultsubcode(struct soap*);
-SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultstring(struct soap*);
-SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultdetail(struct soap*);
-SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_subcode(struct soap*);
-SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_string(struct soap*);
-SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_detail(struct soap*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serializefault(struct soap*);
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_putheader(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_getfault(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_putfault(struct soap*);
-
 SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_init(void);
 SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_noinit(void);
 SOAP_FMAC1 int SOAP_FMAC2 soap_GET(struct soap*, const char*, const char*);
@@ -3658,6 +3641,22 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_putcookies(struct soap *soap, const char *domain,
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultcode(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultsubcode(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultstring(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultdetail(struct soap*);
+SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_subcode(struct soap*);
+SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_string(struct soap*);
+SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_detail(struct soap*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serializefault(struct soap*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_getfault(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putfault(struct soap*);
 
 #ifdef __cplusplus
 

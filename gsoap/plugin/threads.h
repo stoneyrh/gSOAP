@@ -56,6 +56,7 @@ The threads.h and threads.c code define the following portable API:
 - THREAD_ID              returns current thread ID of type THREAD_TYPE*
 - THREAD_CREATE(t,f,a)   start thread (THREAD_TYPE*)t for f(a), return 0 if OK
 - THREAD_CREATEX(t,f,a)  Windows only: start joinable thread (THREAD_TYPE*)t for f(a), return 0 if OK
+- THREAD_CLOSE(t)        Windows only: close and destroy thread ID (a handle) when done
 - THREAD_DETACH(t)       detach thread (THREAD_TYPE*)t
 - THREAD_JOIN(t)         wait to join (THREAD_TYPE*)t
 - THREAD_EXIT            exit the current thread
@@ -104,8 +105,8 @@ The threads.h and threads.c code define the following portable API:
 #if defined(WIN32)
 # define THREAD_TYPE		HANDLE
 # define THREAD_ID		GetCurrentThreadId()
-# define THREAD_CREATE(x,y,z)	((*(x) = (HANDLE)_beginthread((void(__cdecl*)(void*))(y), 8*4096, (z))) == (HANDLE)-1L)
-# define THREAD_CREATEX(x,y,z)  ((*(x) = (HANDLE)_beginthreadex((void(__cdecl*)(void*))(y), 8*4096, (z))) == (HANDLE)-1L)
+# define THREAD_CREATE(x,y,z)	((*(x) = (HANDLE)_beginthread((void(__cdecl*)(void*))(y), 0, (z))) == (HANDLE)-1L)
+# define THREAD_CREATEX(x,y,z)  ((*(x) = (HANDLE)_beginthreadex(NULL, 0, (void(__cdecl*)(void*))(y), (z), 0, NULL)) == (HANDLE)0L)
 # define THREAD_CLOSE(x)	CloseHandle(x)
 # define THREAD_DETACH(x)	
 # define THREAD_JOIN(x)		(WaitForSingleObject((x), INFINITE) == (DWORD)0xFFFFFFFF)

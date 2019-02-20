@@ -13233,7 +13233,7 @@ define                        | result
 `#WITH_NOIDREF`               | removes id and href/ref multi-reference data, more aggressive than using the `#SOAP_XML_TREE` runtime flag 
 `#WITH_NOHTTP`                | removes the HTTP stack to reduce code size 
 `#WITH_NOZONE`                | disables and ignores the timezone in `xsd:dateTime` values
-`#WITH_WITH_NOEMPTYNAMESPACES`| disables xmlns="" default empty namespaces from XML messages
+`#WITH_NOEMPTYNAMESPACES`     | disables xmlns="" default empty namespaces from XML messages
 `#WITH_NOEMPTYSTRUCT`         | inserts a dummy member in empty structs to allow compilation 
 `#WITH_NOGLOBAL`              | omit SOAP Header and Fault serialization code, prevents duplicate definitions with generated soapXYZLib code 
 `#WITH_NONAMESPACES`          | disables dependence on global `namespaces` table, a table must be set explicitly with `::soap_set_namespaces` see also Section \ref nstable  

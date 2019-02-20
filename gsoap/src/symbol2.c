@@ -93,23 +93,24 @@ static char soapProxyC[1024];
 static char soapServiceH[1024];
 static char soapServiceC[1024];
 static char soapTester[1024];
-static char pathsoapTester[1024];
-static char pathsoapStub[1024];
-static char pathsoapH[1024];
-static char pathsoapC[1024];
-static char pathsoapClient[1024];
-static char pathsoapServer[1024];
-static char pathsoapClientLib[1024];
-static char pathsoapServerLib[1024];
-static char pathsoapReadme[1024];
-static char pathsoapProxyH[1024];
-static char pathsoapProxyC[1024];
-static char pathsoapServiceH[1024];
-static char pathsoapServiceC[1024];
 static char soapMatlab[1024];
-static char pathsoapMatlab[1024];
 static char soapMatlabHdr[1024];
-static char pathsoapMatlabHdr[1024];
+
+static char pathsoapTester[4096];
+static char pathsoapStub[4096];
+static char pathsoapH[4096];
+static char pathsoapC[4096];
+static char pathsoapClient[4096];
+static char pathsoapServer[4096];
+static char pathsoapClientLib[4096];
+static char pathsoapServerLib[4096];
+static char pathsoapReadme[4096];
+static char pathsoapProxyH[4096];
+static char pathsoapProxyC[4096];
+static char pathsoapServiceH[4096];
+static char pathsoapServiceC[4096];
+static char pathsoapMatlab[4096];
+static char pathsoapMatlabHdr[4096];
 
 int tagcmp(const char *s, const char *t);
 int tagncmp(const char *s, const char *t, size_t n);
@@ -1175,7 +1176,6 @@ compile(Table *table)
           fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_putfault(struct soap *soap)\n{\n\tsoap_fault(soap);\n\tif (soap->fault)\n\t\treturn soap->fault->soap_put(soap, \"SOAP-ENV:Fault\", \"\");\n\treturn SOAP_EOM;\n}");
           fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_getfault(struct soap *soap)\n{\n\tsoap_fault(soap);\n\tif (soap->fault)\n\t\treturn soap->fault->soap_get(soap, \"SOAP-ENV:Fault\", NULL) == NULL;\n\treturn SOAP_EOM;\n}");
         }
-        fprintf(fhead, "\n\nSOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultcode(struct soap *soap);");
         fprintf(fout, "\n\nSOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultcode(struct soap *soap)\n{\n\tsoap_fault(soap);\n\tif (soap->fault == NULL)\n\t\treturn NULL;\n\tif (soap->version == 2 && soap->fault->SOAP_ENV__Code)\n\t\treturn (const char**)(void*)&soap->fault->SOAP_ENV__Code->SOAP_ENV__Value;\n\treturn (const char**)(void*)&soap->fault->faultcode;\n}");
         fprintf(fout, "\n\nSOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultsubcode(struct soap *soap)\n{\n\tsoap_fault(soap);\n\tif (soap->fault == NULL)\n\t\treturn NULL;\n\tif (soap->version == 2 && soap->fault->SOAP_ENV__Code)\n\t{\tif (soap->fault->SOAP_ENV__Code->SOAP_ENV__Subcode == NULL)\n\t\t{\tsoap->fault->SOAP_ENV__Code->SOAP_ENV__Subcode = soap_new_SOAP_ENV__Code(soap, -1);\n\t\t\tif (soap->fault->SOAP_ENV__Code->SOAP_ENV__Subcode == NULL)\n\t\t\t\treturn NULL;\n\t\t}\n\t\treturn (const char**)(void*)&soap->fault->SOAP_ENV__Code->SOAP_ENV__Subcode->SOAP_ENV__Value;\n\t}\n\treturn (const char**)(void*)&soap->fault->faultcode;\n}");
         fprintf(fout, "\n\nSOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_subcode(struct soap *soap)\n{\n\tconst char **s = soap_faultsubcode(soap);\n\treturn s ? *s : NULL;\n}");
@@ -1477,7 +1477,7 @@ compile(Table *table)
                   if (!strcmp(ref->id->name, "std::vector") || !strcmp(ref->id->name, "std::deque"))
                     fprintf(fout, "\n\t\t\t%s::iterator i = ((%s)p)->begin() + index;", c_type(typ), c_type_id(typ, "*"));
                   else
-                    fprintf(fout, "\n\t\t\t%s::iterator i = ((%s)p)->begin();\n\t\t\twhile (index--)\n\t\t\t\t++i;", c_type(typ), c_type_id(typ, "*"));
+                    fprintf(fout, "\n\t\t\t%s::iterator i = ((%s)p)->begin();\n\t\t\twhile (index-- > 0)\n\t\t\t\t++i;", c_type(typ), c_type_id(typ, "*"));
                   if (is_smart_shared(ref))
                     fprintf(fout, "\n\t\t\tif (!*x)\n\t\t\t\t*(%s)(*x = &*i) = %s<%s>(**(%s)q);\n\t\t\telse\n\t\t\t\t*i = *(%s)*x;", c_type_id(ref, "*"), make_shared(ref), c_type(ref->ref), c_type_id(ref->ref, "**"), c_type_id(ref, "*"));
                   else
@@ -1490,7 +1490,7 @@ compile(Table *table)
                   else if (!strcmp(typ->id->name, "std::set"))
                     fprintf(fout, "\n\t\t\t((%s)p)->insert(*(%s)q);", c_type_id(typ, "*"), c_type_id(ref, "*"));
                   else
-                    fprintf(fout, "\n\t\t\t%s::iterator i = ((%s)p)->begin();\n\t\t\twhile (index--)\n\t\t\t\t++i;\n\t\t\t*i = *(%s)q;", c_type(typ), c_type_id(typ, "*"), c_type_id(ref, "*"));
+                    fprintf(fout, "\n\t\t\t%s::iterator i = ((%s)p)->begin();\n\t\t\twhile (index-- > 0)\n\t\t\t\t++i;\n\t\t\t*i = *(%s)q;", c_type(typ), c_type_id(typ, "*"), c_type_id(ref, "*"));
                 }
               }
               fprintf(fout, "\n\t\t}\n\t\tbreak;");
@@ -3205,7 +3205,7 @@ generate_schema(Table *t)
   const char *protocol = NULL;
   const char *import = NULL;
   Service *sp = NULL;
-  char buf[1024];
+  char buf[4096];
   FILE *fd;
   get_namespace_prefixes();
   for (ns = nslist; ns; ns = ns->next)

@@ -596,8 +596,18 @@ char *wsdl__definitions::absoluteLocation(const char *loc) const
   while (!strncmp(loc, "../", 3) && s > location)
   {
     while (--s >= location)
+    {
       if (*s == '/')
-        break;
+      {
+        if (s[1] != '.')
+          break;
+        if (s[2] == '.' && s[3] == '/')
+        {
+          s += 3;
+          break;
+        }
+      }
+    }
     loc += 3;
   }
   size_t n = s - location + 1;

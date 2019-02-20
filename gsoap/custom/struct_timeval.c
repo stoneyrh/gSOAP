@@ -144,20 +144,8 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__dateTime(struct soap *soap, const char *s,
     a->tv_usec = 0;
     if (*t == '.')
     {
-      float f;
-#if defined(WITH_C_LOCALE) && defined(HAVE_STRTOD_L)
-# ifdef WIN32
-      f = (float)_strtod_l(t, NULL, SOAP_LOCALE(soap));
-# else
-      f = (float)strtod_l(t, NULL, SOAP_LOCALE(soap));
-# endif
-#elif defined(HAVE_STRTOD)
-      f = (float)strtod(t, NULL);
-#elif defined(WITH_C_LOCALE) && defined(HAVE_STRTOF_L)
-      f = strtof_l((char*)t, NULL, SOAP_LOCALE(soap));
-#elif defined(HAVE_STRTOF)
-      f = strtof((char*)t, NULL);
-#endif
+      float f = 0.0;
+      (void)soap_s2float(soap, t, &f);
       a->tv_usec = (long)(1e6 * f + 0.5);
       for (t++; *t; t++)
         if (*t < '0' || *t > '9')

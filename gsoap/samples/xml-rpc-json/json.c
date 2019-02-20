@@ -452,7 +452,7 @@ int json_recv(struct soap *soap, struct value *v)
       {
         char *s;
         const char *t = NULL;
-        register size_t k;
+        size_t k;
         if (soap_append_lab(soap, NULL, 0))
           return soap->error = SOAP_EOM;
         s = soap->labbuf + soap->labidx;

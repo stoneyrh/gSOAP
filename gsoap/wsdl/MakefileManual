@@ -12,7 +12,7 @@
 CC=gcc
 CPP=g++
 #
-SOAPCPP=../bin/soapcpp2
+SOAPCPP=../src/soapcpp2
 STDSOAPH=../stdsoap2.h
 STDSOAPC=../stdsoap2.cpp
 PLUGIN=../plugin

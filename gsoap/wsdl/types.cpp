@@ -4720,7 +4720,7 @@ static const char *xstring(const char *s)
   {
     if (*s < 32 || *s >= 127)
     {
-      (SOAP_SNPRINTF(t, 5, 4), "&#%.2x;", (unsigned char)*s);
+      (SOAP_SNPRINTF(t, 6, 4), "&#%.2x;", (unsigned char)*s);
       t += 5;
     }
     else if (*s == '<')

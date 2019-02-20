@@ -47,6 +47,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapcpp2_yacc.tab.h"
 #endif
 
+extern int isatty(int); /* silence warnings */
+
 #ifdef WITH_BISON
 YYSTYPE yylval;
 #undef YY_NEED_STRLEN

@@ -396,7 +396,7 @@ json_gdm_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 json_currentTime_SOURCES = json-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 json_currentTimeServer_SOURCES = json-currentTimeServer.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
-json_currentTimeServer_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
+json_currentTimeServer_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS) -lpthread
 xml_rpc_currentTime_SOURCES = xml-rpc-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 xml_rpc_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)

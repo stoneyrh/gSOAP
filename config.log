@@ -14,7 +14,7 @@ hostname = RE.fios-router.home
 uname -m = x86_64
 uname -r = 16.7.0
 uname -s = Darwin
-uname -v = Darwin Kernel Version 16.7.0: Sun Oct 28 22:30:19 PDT 2018; root:xnu-3789.73.27~1/RELEASE_X86_64
+uname -v = Darwin Kernel Version 16.7.0: Thu Dec 20 21:53:35 PST 2018; root:xnu-3789.73.31~1/RELEASE_X86_64
 
 /usr/bin/uname -p = i386
 /bin/uname -X     = unknown
@@ -23,15 +23,15 @@ uname -v = Darwin Kernel Version 16.7.0: Sun Oct 28 22:30:19 PDT 2018; root:xnu-
 /usr/bin/arch -k       = unknown
 /usr/convex/getsysinfo = unknown
 /usr/bin/hostinfo      = Mach kernel version:
-	 Darwin Kernel Version 16.7.0: Sun Oct 28 22:30:19 PDT 2018; root:xnu-3789.73.27~1/RELEASE_X86_64
+	 Darwin Kernel Version 16.7.0: Thu Dec 20 21:53:35 PST 2018; root:xnu-3789.73.31~1/RELEASE_X86_64
 Kernel configured for up to 8 processors.
 4 processors are physically available.
 8 processors are logically available.
 Processor type: x86_64h (Intel x86-64h Haswell)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 16.00 gigabytes
-Default processor set: 445 tasks, 1806 threads, 8 processors
-Load average: 1.74, Mach factor: 6.24
+Default processor set: 411 tasks, 1675 threads, 8 processors
+Load average: 3.86, Mach factor: 4.54
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -205,8 +205,8 @@ configure:4621: checking lex library
 configure:4635: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-094a2a.o
-      _main in conftest-094a2a.o
+      _yylex in conftest-bddba3.o
+      _main in conftest-bddba3.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4635: $? = 1
@@ -5173,7 +5173,7 @@ configure:6102: checking for gethostbyname_r
 configure:6102: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-9249f3.o
+      _main in conftest-452a4c.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:6102: $? = 1
@@ -5460,8 +5460,8 @@ config.status:1336: cd gsoap/samples/gmt       && sed -e '/# am--include-marker/
 make: Nothing to be done for `am--depfiles'.
 config.status:1341: $? = 0
 config.status:1336: cd gsoap/samples/googleapi       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmHR2UFg:646: warning: overriding commands for target `soapC.cpp'
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmHR2UFg:643: warning: ignoring old commands for target `soapC.cpp'
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmqyATYt:646: warning: overriding commands for target `soapC.cpp'
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmqyATYt:643: warning: ignoring old commands for target `soapC.cpp'
 make: Nothing to be done for `am--depfiles'.
 config.status:1341: $? = 0
 config.status:1336: cd gsoap/samples/hello       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles

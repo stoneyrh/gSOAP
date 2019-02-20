@@ -1438,7 +1438,7 @@ Version 2.8.76 (1/21/2019)
 
 - Improved soapcpp2 option `-a`.
 - Updated to remove GCC 8.2 warnings.
-- Updated wsdl2h WSDL and schema imports of files on relative paths: file name without path or file name with path stating with ../ are considered relative locations with respect to the current WSDL and schema that is importing, otherwise imported files are considered relative to the directory in which wsdl2h is run (the `-I` option can be used to change that location).
+- Updated wsdl2h WSDL and schema imports of files specified by relative paths: file name without path or file name with path stating with ../ are considered relative locations with respect to the current WSDL and schema that is importing, otherwise imported files are considered relative to the directory in which wsdl2h is run (the `-I` option can be used to change that location).
 - Minor improvements.
 
 Version 2.8.77 (1/23/2019)
@@ -1455,12 +1455,20 @@ Version 2.8.78 (1/27/2019)
 - Updated soapcpp2 to remove C compiler warnings, a minor change to reorder the source code output.
 - Updated `gsoap/samples/async`.
 
-Version 2.8.79 (2/10/2019) {#latest}
+Version 2.8.79 (2/10/2019)
 ---
 
 - Updated to remove OpenSSL deprecated API warnings.
 - Fixed a bug in wsdl2h option `-c` for C source code output, resulting in a missing `*` pointer for `_XML __any` member declaration when declared after the `$ int __size` array size member.  The bug may lead to validation errors in extensible types when extra elements are present in the XML payload received.  The fix produces the correct `_XML *__any` member declaration.
 - Minor improvements.
+
+Version 2.8.80 (2/20/2019) {#latest}
+---
+
+- Updated to remove VS2017 compiler warnings and to fix `soap_faultcode` (or similar) link errors.
+- Updated to remove GCC 8.2 warnings.
+- Updated examples to link against libpthread when required.
+- Improved wsdl2h handling of relative file paths.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -127,7 +127,7 @@ class value_const_iterator : public std::iterator<std::bidirectional_iterator_ta
   int index() const
   {
     if (_value->__type == SOAP_TYPE__struct)
-      return _member - ((_struct*)_value->ref)->member;
+      return (int)(_member - ((_struct*)_value->ref)->member);
     if (_value->__type == SOAP_TYPE__array)
       return _index;
     return 0;
@@ -278,7 +278,7 @@ class value_iterator : public std::iterator<std::bidirectional_iterator_tag,stru
   int index() const
   {
     if (_value->__type == SOAP_TYPE__struct)
-      return _member - ((_struct*)_value->ref)->member;
+      return (int)(_member - ((_struct*)_value->ref)->member);
     if (_value->__type == SOAP_TYPE__array)
       return _index;
     return 0;
@@ -412,9 +412,9 @@ class _array_const_iterator
   bool                          operator==(const _array_const_iterator& that) const { return _value == that._value; }
   bool                          operator!=(const _array_iterator& that)       const { return !operator==(that); }
   bool                          operator!=(const _array_const_iterator& that) const { return !operator==(that); }
-  int                           index() const      { return _value - _start; } ///< get array index
-  const struct value&           operator*() const  { return *_value; }         ///< get array value
-  const struct value*           operator->() const { return _value; }          ///< get array value
+  int                           index() const      { return (int)(_value - _start); } ///< get array index
+  const struct value&           operator*() const  { return *_value; }                ///< get array value
+  const struct value*           operator->() const { return _value; }                 ///< get array value
   _array_const_iterator&        operator++()       { _value++; return *this; }
   _array_const_iterator         operator++(int)    { _array_const_iterator i = *this; _value++; return i; }
   _array_const_iterator&        operator+=(int k)  { _value += k; return *this; }
@@ -435,9 +435,9 @@ class _array_iterator
   bool                          operator==(const _array_const_iterator& that) const { return _value == that._value; }
   bool                          operator!=(const _array_iterator& that)       const { return !operator==(that); }
   bool                          operator!=(const _array_const_iterator& that) const { return !operator==(that); }
-  int                           index() const      { return _value - _start; } ///< get array index
-  struct value&                 operator*() const  { return *_value; }         ///< get array value
-  struct value*                 operator->() const { return _value; }          ///< get array value
+  int                           index() const      { return (int)(_value - _start); } ///< get array index
+  struct value&                 operator*() const  { return *_value; }                ///< get array value
+  struct value*                 operator->() const { return _value; }                 ///< get array value
   _array_iterator&              operator++()       { _value++; return *this; }
   _array_iterator               operator++(int)    { _array_iterator i = *this; _value++; return i; }
   _array_iterator&              operator+=(int k)  { _value += k; return *this; }
@@ -458,9 +458,9 @@ class params_const_iterator
   bool                          operator==(const params_const_iterator& that) const { return _param == that._param; }
   bool                          operator!=(const params_iterator& that)       const { return !operator==(that); }
   bool                          operator!=(const params_const_iterator& that) const { return !operator==(that); }
-  int                           index() const      { return _param - _start; } ///< get parameter index
-  const struct value&           operator*() const  { return _param->value; }   ///< get parameter value
-  const struct value*           operator->() const { return &_param->value; }  ///< get parameter value
+  int                           index() const      { return (int)(_param - _start); } ///< get parameter index
+  const struct value&           operator*() const  { return _param->value; }          ///< get parameter value
+  const struct value*           operator->() const { return &_param->value; }         ///< get parameter value
   params_const_iterator&        operator++()       { _param++; return *this; }
   params_const_iterator         operator++(int)    { params_const_iterator i = *this; _param++; return i; }
   params_const_iterator&        operator+=(int k)  { _param += k; return *this; }
@@ -481,9 +481,9 @@ class params_iterator
   bool                          operator==(const params_const_iterator& that) const { return _param == that._param; }
   bool                          operator!=(const params_iterator& that)       const { return !operator==(that); }
   bool                          operator!=(const params_const_iterator& that) const { return !operator==(that); }
-  int                           index() const      { return _param - _start; } ///< get parameter index
-  struct value&                 operator*() const  { return _param->value; }   ///< get parameter value
-  struct value*                 operator->() const { return &_param->value; }  ///< get parameter value
+  int                           index() const      { return (int)(_param - _start); } ///< get parameter index
+  struct value&                 operator*() const  { return _param->value; }          ///< get parameter value
+  struct value*                 operator->() const { return &_param->value; }         ///< get parameter value
   params_iterator&              operator++()       { _param++; return *this; }
   params_iterator               operator++(int)    { params_iterator i = *this; _param++; return i; }
   params_iterator&              operator+=(int k)  { _param += k; return *this; }
