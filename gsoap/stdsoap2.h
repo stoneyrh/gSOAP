@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.80
+        stdsoap2.h 2.8.81
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20880
+#define GSOAP_VERSION 20881
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -255,6 +255,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 #  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
+#  define HAVE_SOCKLEN_T
 # elif defined(WIN32)
 #  ifdef __BORLANDC__
 #   ifdef __clang__
@@ -334,6 +335,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_LOCALE_H
 #  define HAVE_XLOCALE_H
 #  define HAVE_RANDOM
+#  define HAVE_SOCKLEN_T
 # elif defined(_AIX43)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -344,12 +346,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_SYS_TIMEB_H
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
+#  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define HAVE_LOCALE_H
+#  define HAVE_SOCKLEN_T
 # elif defined(_AIX41)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -415,6 +419,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALE_H
 #  define HAVE_XLOCALE_H
 #  define HAVE_RANDOM
+#  define HAVE_SOCKLEN_T
 # elif defined(__VMS)
 #  include <ioctl.h>
 #  define HAVE_SNPRINTF
@@ -431,34 +436,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
-# elif defined(__GLIBC__) || defined(__GNU__)
-#  define HAVE_POLL
-#  define HAVE_SNPRINTF
-#  define HAVE_STRRCHR
-#  define HAVE_STRTOD
-#  define HAVE_SSCANF
-#  define HAVE_STRTOL
-#  define HAVE_STRTOUL
-#  define HAVE_STRTOLL
-#  define HAVE_STRTOULL
-#  define HAVE_SYS_TIMEB_H
-#  define HAVE_GETTIMEOFDAY
-#  define HAVE_FTIME
-#  define HAVE_RAND_R
-#  define HAVE_GMTIME_R
-#  define HAVE_ASCTIME_R
-#  define HAVE_LOCALTIME_R
-#  define HAVE_STRERROR_R
-#  define HAVE_TIMEGM
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
-#  define HAVE_ISNAN
-#  define HAVE_ISINF
-#  if !defined(__GNUC__) || __GNUC__ >= 4 /* gcc 3 and earlier often refuse to compile _l functions */
-#   define HAVE_STRTOD_L
-#   define HAVE_SSCANF_L
-#   define HAVE_LOCALE_H
-#  endif
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -478,6 +455,36 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define SOAP_LONG_FORMAT "%ld"
 #  define SOAP_ULONG_FORMAT "%lu"
 #  define HAVE_LOCALE_H
+# elif defined(__GLIBC__) || defined(__GNU__) || defined(__GNUC__)
+#  define HAVE_POLL
+#  define HAVE_SNPRINTF
+#  define HAVE_STRRCHR
+#  define HAVE_STRTOD
+#  define HAVE_SSCANF
+#  define HAVE_STRTOL
+#  define HAVE_STRTOUL
+#  define HAVE_STRTOLL
+#  define HAVE_STRTOULL
+#  define HAVE_SYS_TIMEB_H
+#  define HAVE_GETTIMEOFDAY
+#  define HAVE_FTIME
+#  define HAVE_RAND_R
+#  define HAVE_GETHOSTBYNAME_R
+#  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
+#  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
+#  define HAVE_TIMEGM
+#  define HAVE_WCTOMB
+#  define HAVE_MBTOWC
+#  define HAVE_ISNAN
+#  define HAVE_ISINF
+#  if !defined(__GNUC__) || __GNUC__ >= 4 /* gcc 3 and earlier often refuse to compile _l functions */
+#   define HAVE_STRTOD_L
+#   define HAVE_SSCANF_L
+#   define HAVE_LOCALE_H
+#  endif
+#  define HAVE_SOCKLEN_T
 # elif defined(MAC_CARBON)
 #  define WITH_NOIO
 #  define HAVE_SNPRINTF
@@ -528,6 +535,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
+#  define HAVE_SOCKLEN_T
 # elif defined(AS400)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -567,6 +575,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
+#  define HAVE_SOCKLEN_T
 # elif defined(SUN_OS)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -990,7 +999,9 @@ extern "C" {
 #endif
 
 /* Portability (X/Open, BSD sockets etc): define SOAP_SOCKLEN_T as socklen_t or int or ... */
-#if defined(_AIX) || defined(AIX) || defined(HP_UX)
+#if defined(HAVE_SOCKLEN_T)
+# define SOAP_SOCKLEN_T socklen_t
+#elif defined(_AIX) || defined(AIX) || defined(HP_UX)
 # if defined(_AIX43)
 #  define SOAP_SOCKLEN_T socklen_t
 # else
@@ -998,12 +1009,12 @@ extern "C" {
 # endif
 #elif defined(SOCKLEN_T)
 # define SOAP_SOCKLEN_T SOCKLEN_T
-#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390) || defined(__ANDROID__) || defined(_XOPEN_SOURCE)
+#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(__ANDROID__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600
 # define SOAP_SOCKLEN_T socklen_t
-#elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS)
+#elif defined(IRIX) || defined(WIN32) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS)
 # define SOAP_SOCKLEN_T int
 #elif !defined(SOAP_SOCKLEN_T)
-# define SOAP_SOCKLEN_T size_t
+# define SOAP_SOCKLEN_T socklen_t
 #endif
 
 /* AIX DCE threads portability: define SOAP_FUNC_R_ERR gmtime_r and localtime_r err ret val as -1 */
@@ -1198,7 +1209,7 @@ extern "C" {
 
 #ifndef SOAP_BUFLEN
 # if !defined(WITH_LEAN)
-#  define SOAP_BUFLEN (65536) /* buffer length for socket packets, also used by gethostbyname_r and UDP messages, so don't make this too small */
+#  define SOAP_BUFLEN (65536) /* buffer length for socket packets, so don't make this too small */
 # else
 #  define SOAP_BUFLEN  (2048) /* lean size */
 # endif

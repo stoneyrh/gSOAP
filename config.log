@@ -30,8 +30,8 @@ Kernel configured for up to 8 processors.
 Processor type: x86_64h (Intel x86-64h Haswell)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 16.00 gigabytes
-Default processor set: 411 tasks, 1675 threads, 8 processors
-Load average: 3.86, Mach factor: 4.54
+Default processor set: 439 tasks, 1796 threads, 8 processors
+Load average: 1.72, Mach factor: 6.27
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -56,11 +56,13 @@ PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
 PATH: /usr/local/bin
 PATH: /Users/engelen/Library/Python/2.7/bin
+PATH: /Users/engelen/cov-analysis-macosx-2017.07/bin
 PATH: /Applications/microchip/xc32/v2.10/bin
 PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
 PATH: /usr/local/bin
 PATH: /Users/engelen/Library/Python/2.7/bin
+PATH: /Users/engelen/cov-analysis-macosx-2017.07/bin
 PATH: /Applications/microchip/xc32/v2.10/bin
 
 
@@ -205,8 +207,8 @@ configure:4621: checking lex library
 configure:4635: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-bddba3.o
-      _main in conftest-bddba3.o
+      _yylex in conftest-0565ee.o
+      _main in conftest-0565ee.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4635: $? = 1
@@ -4364,19 +4366,15 @@ configure:5442: $? = 0
 configure:5442: result: yes
 configure:5442: checking for zlib.h
 configure:5442: result: yes
-configure:5454: checking for an ANSI C-conforming const
-configure:5520: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5520: $? = 0
-configure:5527: result: yes
-configure:5535: checking for size_t
-configure:5535: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5535: $? = 0
-configure:5535: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:83:21: error: expected expression
-if (sizeof ((size_t)))
-                    ^
+configure:5454: checking for socklen_t
+configure:5454: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5454: $? = 0
+configure:5454: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+conftest.c:56:24: error: expected expression
+if (sizeof ((socklen_t)))
+                       ^
 1 error generated.
-configure:5535: $? = 1
+configure:5454: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4423,6 +4421,82 @@ configure: failed program was:
 | #define HAVE_POLL_H 1
 | #define HAVE_OPENSSL_SSL_H 1
 | #define HAVE_ZLIB_H 1
+| /* end confdefs.h.  */
+| 
+| #if HAVE_SYS_SOCKET_H
+| # include <sys/socket.h>
+| #endif
+| 
+| 
+| int
+| main ()
+| {
+| if (sizeof ((socklen_t)))
+| 	    return 0;
+|   ;
+|   return 0;
+| }
+configure:5454: result: yes
+configure:5471: checking for an ANSI C-conforming const
+configure:5537: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5537: $? = 0
+configure:5544: result: yes
+configure:5552: checking for size_t
+configure:5552: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5552: $? = 0
+configure:5552: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+conftest.c:84:21: error: expected expression
+if (sizeof ((size_t)))
+                    ^
+1 error generated.
+configure:5552: $? = 1
+configure: failed program was:
+| /* confdefs.h */
+| #define PACKAGE_NAME "gsoap"
+| #define PACKAGE_TARNAME "gsoap"
+| #define PACKAGE_VERSION "2.8"
+| #define PACKAGE_STRING "gsoap 2.8"
+| #define PACKAGE_BUGREPORT ""
+| #define PACKAGE_URL ""
+| #define PACKAGE "gsoap"
+| #define VERSION "2.8"
+| #define YYTEXT_POINTER 1
+| #define STDC_HEADERS 1
+| #define HAVE_SYS_TYPES_H 1
+| #define HAVE_SYS_STAT_H 1
+| #define HAVE_STDLIB_H 1
+| #define HAVE_STRING_H 1
+| #define HAVE_MEMORY_H 1
+| #define HAVE_STRINGS_H 1
+| #define HAVE_INTTYPES_H 1
+| #define HAVE_STDINT_H 1
+| #define HAVE_UNISTD_H 1
+| #define HAVE_ARPA_INET_H 1
+| #define HAVE_LOCALE_H 1
+| #define HAVE_XLOCALE_H 1
+| #define HAVE_ERRNO_H 1
+| #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
+| #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
+| #define HAVE_NETDB_H 1
+| #define HAVE_NETINET_IN_H 1
+| #define HAVE_STDLIB_H 1
+| #define HAVE_STRING_H 1
+| #define HAVE_STRINGS_H 1
+| #define HAVE_STDINT_H 1
+| #define HAVE_INTTYPES_H 1
+| #define HAVE_TIME_H 1
+| #define HAVE_SYS_SOCKET_H 1
+| #define HAVE_SYS_TYPES_H 1
+| #define HAVE_SYS_TIME_H 1
+| #define HAVE_SYS_TIMEB_H 1
+| #define HAVE_UNISTD_H 1
+| #define HAVE_POLL_H 1
+| #define HAVE_OPENSSL_SSL_H 1
+| #define HAVE_ZLIB_H 1
+| #define HAVE_SOCKLEN_T 1
 | /* end confdefs.h.  */
 | #include <stdio.h>
 | #ifdef HAVE_SYS_TYPES_H
@@ -4465,22 +4539,22 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5535: result: yes
-configure:5546: checking whether time.h and sys/time.h may both be included
-configure:5566: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5566: $? = 0
-configure:5573: result: yes
-configure:5581: checking whether struct tm is in sys/time.h or time.h
-configure:5601: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5601: $? = 0
-configure:5608: result: time.h
-configure:5616: checking for struct tm.tm_gmtoff
-configure:5616: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5616: $? = 0
-configure:5616: result: yes
-configure:5629: checking for struct tm.__tm_gmtoff
-configure:5629: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:58:13: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
+configure:5552: result: yes
+configure:5563: checking whether time.h and sys/time.h may both be included
+configure:5583: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5583: $? = 0
+configure:5590: result: yes
+configure:5598: checking whether struct tm is in sys/time.h or time.h
+configure:5618: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5618: $? = 0
+configure:5625: result: time.h
+configure:5633: checking for struct tm.tm_gmtoff
+configure:5633: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5633: $? = 0
+configure:5633: result: yes
+configure:5646: checking for struct tm.__tm_gmtoff
+configure:5646: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+conftest.c:59:13: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
 if (ac_aggr.__tm_gmtoff)
             ^~~~~~~~~~~
             tm_gmtoff
@@ -4488,7 +4562,7 @@ if (ac_aggr.__tm_gmtoff)
         long    tm_gmtoff;      /* offset from CUT in seconds */
                 ^
 1 error generated.
-configure:5629: $? = 1
+configure:5646: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4535,6 +4609,7 @@ configure: failed program was:
 | #define HAVE_POLL_H 1
 | #define HAVE_OPENSSL_SSL_H 1
 | #define HAVE_ZLIB_H 1
+| #define HAVE_SOCKLEN_T 1
 | #define TIME_WITH_SYS_TIME 1
 | #define HAVE_STRUCT_TM_TM_GMTOFF 1
 | /* end confdefs.h.  */
@@ -4552,8 +4627,8 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5629: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:58:20: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
+configure:5646: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+conftest.c:59:20: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
 if (sizeof ac_aggr.__tm_gmtoff)
                    ^~~~~~~~~~~
                    tm_gmtoff
@@ -4561,7 +4636,7 @@ if (sizeof ac_aggr.__tm_gmtoff)
         long    tm_gmtoff;      /* offset from CUT in seconds */
                 ^
 1 error generated.
-configure:5629: $? = 1
+configure:5646: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4608,6 +4683,7 @@ configure: failed program was:
 | #define HAVE_POLL_H 1
 | #define HAVE_OPENSSL_SSL_H 1
 | #define HAVE_ZLIB_H 1
+| #define HAVE_SOCKLEN_T 1
 | #define TIME_WITH_SYS_TIME 1
 | #define HAVE_STRUCT_TM_TM_GMTOFF 1
 | /* end confdefs.h.  */
@@ -4625,20 +4701,20 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5629: result: no
-configure:5651: checking for sys/time.h
-configure:5651: result: yes
-configure:5651: checking for unistd.h
-configure:5651: result: yes
-configure:5672: checking for alarm
-configure:5672: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5672: $? = 0
-configure:5672: result: yes
-configure:5685: checking for working mktime
-configure:5887: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5887: $? = 0
-configure:5887: ./conftest
-configure:5887: $? = 1
+configure:5646: result: no
+configure:5668: checking for sys/time.h
+configure:5668: result: yes
+configure:5668: checking for unistd.h
+configure:5668: result: yes
+configure:5689: checking for alarm
+configure:5689: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5689: $? = 0
+configure:5689: result: yes
+configure:5702: checking for working mktime
+configure:5904: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5904: $? = 0
+configure:5904: ./conftest
+configure:5904: $? = 1
 configure: program exited with status 1
 configure: failed program was:
 | /* confdefs.h */
@@ -4686,6 +4762,7 @@ configure: failed program was:
 | #define HAVE_POLL_H 1
 | #define HAVE_OPENSSL_SSL_H 1
 | #define HAVE_ZLIB_H 1
+| #define HAVE_SOCKLEN_T 1
 | #define TIME_WITH_SYS_TIME 1
 | #define HAVE_STRUCT_TM_TM_GMTOFF 1
 | #define HAVE_SYS_TIME_H 1
@@ -4883,14 +4960,14 @@ configure: failed program was:
 |     }
 |   return ! (irix_6_4_bug () && spring_forward_gap () && year_2050_test ());
 | }
-configure:5897: result: no
-configure:5908: checking return type of signal handlers
-configure:5926: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:58:8: error: indirection requires pointer operand ('void' invalid)
+configure:5914: result: no
+configure:5925: checking return type of signal handlers
+configure:5943: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+conftest.c:59:8: error: indirection requires pointer operand ('void' invalid)
 return *(signal (0, 0)) (0) == 1;
        ^~~~~~~~~~~~~~~~~~~~
 1 error generated.
-configure:5926: $? = 1
+configure:5943: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4937,6 +5014,7 @@ configure: failed program was:
 | #define HAVE_POLL_H 1
 | #define HAVE_OPENSSL_SSL_H 1
 | #define HAVE_ZLIB_H 1
+| #define HAVE_SOCKLEN_T 1
 | #define TIME_WITH_SYS_TIME 1
 | #define HAVE_STRUCT_TM_TM_GMTOFF 1
 | #define HAVE_SYS_TIME_H 1
@@ -4953,230 +5031,230 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5933: result: void
-configure:5943: checking for strftime
-configure:5943: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5943: $? = 0
-configure:5943: result: yes
-configure:5999: checking for random
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for gettimeofday
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for ftime
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for localtime_r
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for timegm
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for gmtime
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for gmtime_r
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for asctime
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for asctime_r
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for memset
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:86:6: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
+configure:5950: result: void
+configure:5960: checking for strftime
+configure:5960: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5960: $? = 0
+configure:5960: result: yes
+configure:6016: checking for random
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for gettimeofday
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for ftime
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for localtime_r
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for timegm
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for gmtime
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for gmtime_r
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for asctime
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for asctime_r
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for memset
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:87:6: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
 char memset ();
      ^
-conftest.c:86:6: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
+conftest.c:87:6: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for select
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for socket
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for snprintf
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:89:6: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for select
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for socket
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for snprintf
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:90:6: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
 char snprintf ();
      ^
-conftest.c:89:6: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
+conftest.c:90:6: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strchr
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:90:6: warning: incompatible redeclaration of library function 'strchr' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strchr
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:91:6: warning: incompatible redeclaration of library function 'strchr' [-Wincompatible-library-redeclaration]
 char strchr ();
      ^
-conftest.c:90:6: note: 'strchr' is a builtin with type 'char *(const char *, int)'
+conftest.c:91:6: note: 'strchr' is a builtin with type 'char *(const char *, int)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strerror
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:91:6: warning: incompatible redeclaration of library function 'strerror' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strerror
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:92:6: warning: incompatible redeclaration of library function 'strerror' [-Wincompatible-library-redeclaration]
 char strerror ();
      ^
-conftest.c:91:6: note: 'strerror' is a builtin with type 'char *(int)'
+conftest.c:92:6: note: 'strerror' is a builtin with type 'char *(int)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strerror_r
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strlcpy
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:93:6: warning: incompatible redeclaration of library function 'strlcpy' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strerror_r
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strlcpy
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:94:6: warning: incompatible redeclaration of library function 'strlcpy' [-Wincompatible-library-redeclaration]
 char strlcpy ();
      ^
-conftest.c:93:6: note: 'strlcpy' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+conftest.c:94:6: note: 'strlcpy' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strlcat
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:94:6: warning: incompatible redeclaration of library function 'strlcat' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strlcat
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:95:6: warning: incompatible redeclaration of library function 'strlcat' [-Wincompatible-library-redeclaration]
 char strlcat ();
      ^
-conftest.c:94:6: note: 'strlcat' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+conftest.c:95:6: note: 'strlcat' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strrchr
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:95:6: warning: incompatible redeclaration of library function 'strrchr' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strrchr
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:96:6: warning: incompatible redeclaration of library function 'strrchr' [-Wincompatible-library-redeclaration]
 char strrchr ();
      ^
-conftest.c:95:6: note: 'strrchr' is a builtin with type 'char *(const char *, int)'
+conftest.c:96:6: note: 'strrchr' is a builtin with type 'char *(const char *, int)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strstr
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:96:6: warning: incompatible redeclaration of library function 'strstr' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strstr
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:97:6: warning: incompatible redeclaration of library function 'strstr' [-Wincompatible-library-redeclaration]
 char strstr ();
      ^
-conftest.c:96:6: note: 'strstr' is a builtin with type 'char *(const char *, const char *)'
+conftest.c:97:6: note: 'strstr' is a builtin with type 'char *(const char *, const char *)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtol
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtoul
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtoll
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtoull
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtold
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtod
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtof
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtold_l
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtod_l
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for strtof_l
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for sscanf
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:107:6: warning: incompatible redeclaration of library function 'sscanf' [-Wincompatible-library-redeclaration]
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtol
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtoul
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtoll
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtoull
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtold
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtod
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtof
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtold_l
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtod_l
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for strtof_l
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for sscanf
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:108:6: warning: incompatible redeclaration of library function 'sscanf' [-Wincompatible-library-redeclaration]
 char sscanf ();
      ^
-conftest.c:107:6: note: 'sscanf' is a builtin with type 'int (const char *restrict, const char *restrict, ...)'
+conftest.c:108:6: note: 'sscanf' is a builtin with type 'int (const char *restrict, const char *restrict, ...)'
 1 warning generated.
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for sscanf_l
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for snprintf
-configure:5999: result: yes
-configure:5999: checking for sprintf_l
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for wctomb
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for mbtowc
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for poll
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for newlocale
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for uselocale
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:5999: checking for freelocale
-configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5999: $? = 0
-configure:5999: result: yes
-configure:6010: checking for isnan
-configure:6010: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:6010: $? = 0
-configure:6010: result: yes
-configure:6019: checking for isinf
-configure:6019: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:6019: $? = 0
-configure:6019: result: yes
-configure:6102: checking for gethostbyname_r
-configure:6102: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for sscanf_l
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for snprintf
+configure:6016: result: yes
+configure:6016: checking for sprintf_l
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for wctomb
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for mbtowc
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for poll
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for newlocale
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for uselocale
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6016: checking for freelocale
+configure:6016: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6016: $? = 0
+configure:6016: result: yes
+configure:6027: checking for isnan
+configure:6027: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6027: $? = 0
+configure:6027: result: yes
+configure:6036: checking for isinf
+configure:6036: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6036: $? = 0
+configure:6036: result: yes
+configure:6119: checking for gethostbyname_r
+configure:6119: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-452a4c.o
+      _main in conftest-b8221f.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
-configure:6102: $? = 1
+configure:6119: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -5223,6 +5301,7 @@ configure: failed program was:
 | #define HAVE_POLL_H 1
 | #define HAVE_OPENSSL_SSL_H 1
 | #define HAVE_ZLIB_H 1
+| #define HAVE_SOCKLEN_T 1
 | #define TIME_WITH_SYS_TIME 1
 | #define HAVE_STRUCT_TM_TM_GMTOFF 1
 | #define HAVE_SYS_TIME_H 1
@@ -5311,32 +5390,32 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:6102: result: no
-configure:6113: checking for stdlib.h
-configure:6113: result: yes
-configure:6123: checking for GNU libc compatible malloc
-configure:6147: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:6147: $? = 0
-configure:6147: ./conftest
-configure:6147: $? = 0
-configure:6157: result: yes
-configure:6227: checking for disable namespaces in library
-configure:6230: result: no
-configure:6249: checking for enable xlocale usage in library
-configure:6256: result: no
-configure:6271: checking for disable c locale usage in library
-configure:6274: result: no
-configure:6293: checking for enable ipv6 in library
-configure:6300: result: no
-configure:6315: checking for enable ipv6-v6only in library
-configure:6322: result: no
-configure:6361: checking for disable openssl in library
-configure:6364: result: no
-configure:6366: checking for enable gnutls in library
-configure:6377: result: no
-configure:6584: checking that generated files are newer than configure
-configure:6590: result: done
-configure:6629: creating ./config.status
+configure:6119: result: no
+configure:6130: checking for stdlib.h
+configure:6130: result: yes
+configure:6140: checking for GNU libc compatible malloc
+configure:6164: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6164: $? = 0
+configure:6164: ./conftest
+configure:6164: $? = 0
+configure:6174: result: yes
+configure:6244: checking for disable namespaces in library
+configure:6247: result: no
+configure:6266: checking for enable xlocale usage in library
+configure:6273: result: no
+configure:6288: checking for disable c locale usage in library
+configure:6291: result: no
+configure:6310: checking for enable ipv6 in library
+configure:6317: result: no
+configure:6332: checking for enable ipv6-v6only in library
+configure:6339: result: no
+configure:6378: checking for disable openssl in library
+configure:6381: result: no
+configure:6383: checking for enable gnutls in library
+configure:6394: result: no
+configure:6601: checking that generated files are newer than configure
+configure:6607: result: done
+configure:6646: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -5353,195 +5432,195 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on RE.fios-router.home
 
-config.status:1030: creating Makefile
-config.status:1030: creating gsoap.pc
-config.status:1030: creating gsoap++.pc
-config.status:1030: creating gsoapck.pc
-config.status:1030: creating gsoapck++.pc
-config.status:1030: creating gsoapssl.pc
-config.status:1030: creating gsoapssl++.pc
-config.status:1030: creating gsoap/Makefile
-config.status:1030: creating gsoap/src/Makefile
-config.status:1030: creating gsoap/wsdl/Makefile
-config.status:1030: creating gsoap/samples/Makefile
-config.status:1030: creating gsoap/samples/autotest/Makefile
-config.status:1030: creating gsoap/samples/aws/Makefile
-config.status:1030: creating gsoap/samples/calc/Makefile
-config.status:1030: creating gsoap/samples/calc++/Makefile
-config.status:1030: creating gsoap/samples/chaining/Makefile
-config.status:1030: creating gsoap/samples/chaining++/Makefile
-config.status:1030: creating gsoap/samples/databinding/Makefile
-config.status:1030: creating gsoap/samples/dime/Makefile
-config.status:1030: creating gsoap/samples/dom/Makefile
-config.status:1030: creating gsoap/samples/oneway/Makefile
-config.status:1030: creating gsoap/samples/oneway++/Makefile
-config.status:1030: creating gsoap/samples/factory/Makefile
-config.status:1030: creating gsoap/samples/factorytest/Makefile
-config.status:1030: creating gsoap/samples/gmt/Makefile
-config.status:1030: creating gsoap/samples/googleapi/Makefile
-config.status:1030: creating gsoap/samples/hello/Makefile
-config.status:1030: creating gsoap/samples/httpcookies/Makefile
-config.status:1030: creating gsoap/samples/lu/Makefile
-config.status:1030: creating gsoap/samples/magic/Makefile
-config.status:1030: creating gsoap/samples/mashup/Makefile
-config.status:1030: creating gsoap/samples/mashup++/Makefile
-config.status:1030: creating gsoap/samples/mtom/Makefile
-config.status:1030: creating gsoap/samples/mtom-stream/Makefile
-config.status:1030: creating gsoap/samples/polytest/Makefile
-config.status:1030: creating gsoap/samples/primes/Makefile
-config.status:1030: creating gsoap/samples/roll/Makefile
-config.status:1030: creating gsoap/samples/router/Makefile
-config.status:1030: creating gsoap/samples/atom/Makefile
-config.status:1030: creating gsoap/samples/rss/Makefile
-config.status:1030: creating gsoap/samples/ssl/Makefile
-config.status:1030: creating gsoap/samples/template/Makefile
-config.status:1030: creating gsoap/samples/udp/Makefile
-config.status:1030: creating gsoap/samples/varparam/Makefile
-config.status:1030: creating gsoap/samples/wsa/Makefile
-config.status:1030: creating gsoap/samples/wsrm/Makefile
-config.status:1030: creating gsoap/samples/wsse/Makefile
-config.status:1030: creating gsoap/samples/wst/Makefile
-config.status:1030: creating gsoap/samples/xml-rpc-json/Makefile
-config.status:1030: creating gsoap/samples/rest/Makefile
-config.status:1030: creating gsoap/samples/testmsgr/Makefile
-config.status:1030: creating gsoap/samples/async/Makefile
-config.status:1030: creating config.h
-config.status:1211: config.h is unchanged
-config.status:1259: executing depfiles commands
-config.status:1336: cd gsoap       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1031: creating Makefile
+config.status:1031: creating gsoap.pc
+config.status:1031: creating gsoap++.pc
+config.status:1031: creating gsoapck.pc
+config.status:1031: creating gsoapck++.pc
+config.status:1031: creating gsoapssl.pc
+config.status:1031: creating gsoapssl++.pc
+config.status:1031: creating gsoap/Makefile
+config.status:1031: creating gsoap/src/Makefile
+config.status:1031: creating gsoap/wsdl/Makefile
+config.status:1031: creating gsoap/samples/Makefile
+config.status:1031: creating gsoap/samples/autotest/Makefile
+config.status:1031: creating gsoap/samples/aws/Makefile
+config.status:1031: creating gsoap/samples/calc/Makefile
+config.status:1031: creating gsoap/samples/calc++/Makefile
+config.status:1031: creating gsoap/samples/chaining/Makefile
+config.status:1031: creating gsoap/samples/chaining++/Makefile
+config.status:1031: creating gsoap/samples/databinding/Makefile
+config.status:1031: creating gsoap/samples/dime/Makefile
+config.status:1031: creating gsoap/samples/dom/Makefile
+config.status:1031: creating gsoap/samples/oneway/Makefile
+config.status:1031: creating gsoap/samples/oneway++/Makefile
+config.status:1031: creating gsoap/samples/factory/Makefile
+config.status:1031: creating gsoap/samples/factorytest/Makefile
+config.status:1031: creating gsoap/samples/gmt/Makefile
+config.status:1031: creating gsoap/samples/googleapi/Makefile
+config.status:1031: creating gsoap/samples/hello/Makefile
+config.status:1031: creating gsoap/samples/httpcookies/Makefile
+config.status:1031: creating gsoap/samples/lu/Makefile
+config.status:1031: creating gsoap/samples/magic/Makefile
+config.status:1031: creating gsoap/samples/mashup/Makefile
+config.status:1031: creating gsoap/samples/mashup++/Makefile
+config.status:1031: creating gsoap/samples/mtom/Makefile
+config.status:1031: creating gsoap/samples/mtom-stream/Makefile
+config.status:1031: creating gsoap/samples/polytest/Makefile
+config.status:1031: creating gsoap/samples/primes/Makefile
+config.status:1031: creating gsoap/samples/roll/Makefile
+config.status:1031: creating gsoap/samples/router/Makefile
+config.status:1031: creating gsoap/samples/atom/Makefile
+config.status:1031: creating gsoap/samples/rss/Makefile
+config.status:1031: creating gsoap/samples/ssl/Makefile
+config.status:1031: creating gsoap/samples/template/Makefile
+config.status:1031: creating gsoap/samples/udp/Makefile
+config.status:1031: creating gsoap/samples/varparam/Makefile
+config.status:1031: creating gsoap/samples/wsa/Makefile
+config.status:1031: creating gsoap/samples/wsrm/Makefile
+config.status:1031: creating gsoap/samples/wsse/Makefile
+config.status:1031: creating gsoap/samples/wst/Makefile
+config.status:1031: creating gsoap/samples/xml-rpc-json/Makefile
+config.status:1031: creating gsoap/samples/rest/Makefile
+config.status:1031: creating gsoap/samples/testmsgr/Makefile
+config.status:1031: creating gsoap/samples/async/Makefile
+config.status:1031: creating config.h
+config.status:1212: config.h is unchanged
+config.status:1260: executing depfiles commands
+config.status:1337: cd gsoap       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/src       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/src       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/wsdl       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/wsdl       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/autotest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/autotest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/aws       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/aws       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/calc       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/calc       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/calc++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/calc++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/chaining       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/chaining       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/chaining++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/chaining++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/databinding       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/databinding       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/dime       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/dime       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/dom       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/dom       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/oneway       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/oneway       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/oneway++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/oneway++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/factory       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/factory       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/factorytest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/factorytest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/gmt       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/gmt       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/googleapi       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmqyATYt:646: warning: overriding commands for target `soapC.cpp'
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmqyATYt:643: warning: ignoring old commands for target `soapC.cpp'
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/googleapi       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmyVz1t9:646: warning: overriding commands for target `soapC.cpp'
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmyVz1t9:643: warning: ignoring old commands for target `soapC.cpp'
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/hello       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/hello       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/httpcookies       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/httpcookies       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/lu       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/lu       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/magic       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/magic       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/mashup       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/mashup       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/mashup++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/mashup++       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/mtom       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/mtom       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/mtom-stream       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/mtom-stream       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/polytest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/polytest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/primes       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/primes       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/roll       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/roll       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/router       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/router       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/atom       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/atom       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/rss       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/rss       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/ssl       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/ssl       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/template       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/template       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/udp       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/udp       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/varparam       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/varparam       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/wsa       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/wsa       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/wsrm       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/wsrm       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/wsse       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/wsse       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/wst       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/wst       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/xml-rpc-json       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/xml-rpc-json       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/rest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/rest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/testmsgr       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/testmsgr       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
-config.status:1336: cd gsoap/samples/async       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1342: $? = 0
+config.status:1337: cd gsoap/samples/async       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for `am--depfiles'.
-config.status:1341: $? = 0
+config.status:1342: $? = 0
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -5682,6 +5761,7 @@ ac_cv_prog_make_make_set=yes
 ac_cv_struct_tm=time.h
 ac_cv_type_signal=void
 ac_cv_type_size_t=yes
+ac_cv_type_socklen_t=yes
 am_cv_CC_dependencies_compiler_type=gcc3
 am_cv_CXX_dependencies_compiler_type=gcc3
 am_cv_make_support_nested_variables=yes
@@ -5880,6 +5960,7 @@ target_alias=''
 #define HAVE_POLL_H 1
 #define HAVE_OPENSSL_SSL_H 1
 #define HAVE_ZLIB_H 1
+#define HAVE_SOCKLEN_T 1
 #define TIME_WITH_SYS_TIME 1
 #define HAVE_STRUCT_TM_TM_GMTOFF 1
 #define HAVE_SYS_TIME_H 1

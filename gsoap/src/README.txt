@@ -139,7 +139,7 @@ COMMAND LINE OPTIONS
 -y	include C/C++ type access information in sample XML messages
 -z1	generate deprecated old-style C++ service proxies and objects
 -z2	compatibility with 2.7.x: omit XML output for NULL pointers
--z3     compatibility up to 2.8.30: _param_N indexing; nillable pointers
+-z3     compatibility up to 2.8.30: _param_N indexing and nillable pointers
 infile	header file to parse (or stdin)
 
 DOCUMENTATION

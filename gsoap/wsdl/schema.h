@@ -600,13 +600,13 @@ class xs__schema
   public:
                                         xs__schema();
                                         xs__schema(struct soap*);
-                                        xs__schema(struct soap*, const char*, const char*);
+                                        xs__schema(struct soap*, const char*, const char*, const char*);
         virtual                         ~xs__schema();
         int                             get(struct soap*);      // getter is triggered after parsing
         int                             preprocess();
         int                             insert(xs__schema&);
         int                             traverse();
-        int                             read(const char*, const char*);
+        int                             read(const char*, const char*, const char*);
         void                            sourceLocation(const char*);
         const char*                     sourceLocation();
         char*                           absoluteLocation(const char*) const;

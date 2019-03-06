@@ -310,11 +310,11 @@ Grammar
   225 tag: %empty
   226    | TAG
 
-  227 occurs: %empty
-  228       | LNG
-  229       | LNG ':'
-  230       | LNG ':' LNG
-  231       | ':' LNG
+  227 occurs: nullptr
+  228       | nullptr LNG
+  229       | nullptr LNG ':'
+  230       | nullptr LNG ':' LNG
+  231       | nullptr ':' LNG
 
   232 bounds: nullptr patt
   233       | nullptr patt value min
@@ -670,7 +670,7 @@ occurs <rec> (183)
 bounds <rec> (184)
     on left: 232 233 234 235, on right: 36
 nullptr <i> (185)
-    on left: 236 237, on right: 232 233 234 235
+    on left: 236 237, on right: 227 228 229 230 231 232 233 234 235
 patt <s> (186)
     on left: 238 239, on right: 232 233 234 235
 value <ir> (187)
@@ -7748,12 +7748,12 @@ State 447
 
    90 arg: ID arrayck tag . occurs init
 
-    LNG  shift, and go to state 457
-    ':'  shift, and go to state 458
+    null  shift, and go to state 398
 
-    $default  reduce using rule 227 (occurs)
+    $default  reduce using rule 236 (nullptr)
 
-    occurs  go to state 459
+    occurs   go to state 457
+    nullptr  go to state 458
 
 
 State 448
@@ -7790,7 +7790,7 @@ State 452
   249 minmax: ':' .
   251       | ':' . '<'
 
-    '<'  shift, and go to state 460
+    '<'  shift, and go to state 459
 
     LNG       reduce using rule 249 (minmax)
     DBL       reduce using rule 249 (minmax)
@@ -7808,7 +7808,7 @@ State 453
   252       | '<' . ':' '<'
   253       | '<' .
 
-    ':'  shift, and go to state 461
+    ':'  shift, and go to state 460
 
     LNG       reduce using rule 253 (minmax)
     DBL       reduce using rule 253 (minmax)
@@ -7835,7 +7835,7 @@ State 455
     '+'  shift, and go to state 442
     '-'  shift, and go to state 443
 
-    value  go to state 462
+    value  go to state 461
 
 
 State 456
@@ -7847,24 +7847,6 @@ State 456
 
 State 457
 
-  228 occurs: LNG .
-  229       | LNG . ':'
-  230       | LNG . ':' LNG
-
-    ':'  shift, and go to state 463
-
-    $default  reduce using rule 228 (occurs)
-
-
-State 458
-
-  231 occurs: ':' . LNG
-
-    LNG  shift, and go to state 464
-
-
-State 459
-
    90 arg: ID arrayck tag occurs . init
 
     '='  shift, and go to state 202
@@ -7872,23 +7854,37 @@ State 459
 
     $default  reduce using rule 222 (init)
 
-    init  go to state 465
+    init  go to state 462
 
 
-State 460
+State 458
+
+  227 occurs: nullptr .
+  228       | nullptr . LNG
+  229       | nullptr . LNG ':'
+  230       | nullptr . LNG ':' LNG
+  231       | nullptr . ':' LNG
+
+    LNG  shift, and go to state 463
+    ':'  shift, and go to state 464
+
+    $default  reduce using rule 227 (occurs)
+
+
+State 459
 
   251 minmax: ':' '<' .
 
     $default  reduce using rule 251 (minmax)
 
 
-State 461
+State 460
 
   247 min: '<' ':' .
   250 minmax: '<' ':' .
   252       | '<' ':' . '<'
 
-    '<'  shift, and go to state 466
+    '<'  shift, and go to state 465
 
     LNG       reduce using rule 250 (minmax)
     DBL       reduce using rule 250 (minmax)
@@ -7898,46 +7894,64 @@ State 461
     $default  reduce using rule 247 (min)
 
 
-State 462
+State 461
 
   234 bounds: nullptr patt value minmax value .
 
     $default  reduce using rule 234 (bounds)
 
 
-State 463
-
-  229 occurs: LNG ':' .
-  230       | LNG ':' . LNG
-
-    LNG  shift, and go to state 467
-
-    $default  reduce using rule 229 (occurs)
-
-
-State 464
-
-  231 occurs: ':' LNG .
-
-    $default  reduce using rule 231 (occurs)
-
-
-State 465
+State 462
 
    90 arg: ID arrayck tag occurs init .
 
     $default  reduce using rule 90 (arg)
 
 
-State 466
+State 463
+
+  228 occurs: nullptr LNG .
+  229       | nullptr LNG . ':'
+  230       | nullptr LNG . ':' LNG
+
+    ':'  shift, and go to state 466
+
+    $default  reduce using rule 228 (occurs)
+
+
+State 464
+
+  231 occurs: nullptr ':' . LNG
+
+    LNG  shift, and go to state 467
+
+
+State 465
 
   252 minmax: '<' ':' '<' .
 
     $default  reduce using rule 252 (minmax)
 
 
+State 466
+
+  229 occurs: nullptr LNG ':' .
+  230       | nullptr LNG ':' . LNG
+
+    LNG  shift, and go to state 468
+
+    $default  reduce using rule 229 (occurs)
+
+
 State 467
 
-  230 occurs: LNG ':' LNG .
+  231 occurs: nullptr ':' LNG .
+
+    $default  reduce using rule 231 (occurs)
+
+
+State 468
+
+  230 occurs: nullptr LNG ':' LNG .
 
     $default  reduce using rule 230 (occurs)

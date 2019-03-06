@@ -5450,6 +5450,23 @@ fi
 done
 
 
+
+ac_fn_c_check_type "$LINENO" "socklen_t" "ac_cv_type_socklen_t" "
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
+"
+if test "x$ac_cv_type_socklen_t" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_SOCKLEN_T 1
+_ACEOF
+
+
+fi
+
+
 # Checks for typedefs, structures, and compiler characteristics.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
 $as_echo_n "checking for an ANSI C-conforming const... " >&6; }

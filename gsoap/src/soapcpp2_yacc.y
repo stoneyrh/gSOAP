@@ -720,6 +720,7 @@ arg     : arrayck init {
                             p->info.minOccurs = $4.minOccurs;
                           }
                           p->info.maxOccurs = $4.maxOccurs;
+                          p->info.nillable = $4.nillable;
                           p->info.offset = sp->offset;
                           if ($5.hasval)
                             set_value(p, $2.typ, &$5);
@@ -1922,7 +1923,7 @@ init    : /* empty */   {
 tag     : /* empty */   { $$ = NULL; }
         | TAG           { $$ = $1; }
         ;
-occurs  : /* empty */   {
+occurs  : nullptr       {
                           $$.minOccurs = -1;
                           $$.maxOccurs = 1;
                           $$.hasmin = False;
@@ -1933,10 +1934,11 @@ occurs  : /* empty */   {
                           $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
+                          $$.nillable = $1;
                           $$.pattern = NULL;
                         }
-        | LNG           {
-                          $$.minOccurs = $1;
+        | nullptr LNG   {
+                          $$.minOccurs = $2;
                           $$.maxOccurs = 1;
                           if ($$.minOccurs < 0)
                             $$.minOccurs = -1;
@@ -1948,10 +1950,12 @@ occurs  : /* empty */   {
                           $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
+                          $$.nillable = $1;
                           $$.pattern = NULL;
                         }
-        | LNG ':'       {
-                          $$.minOccurs = $1;
+        | nullptr LNG ':'
+                        {
+                          $$.minOccurs = $2;
                           $$.maxOccurs = 1;
                           if ($$.minOccurs < 0)
                             $$.minOccurs = -1;
@@ -1963,11 +1967,13 @@ occurs  : /* empty */   {
                           $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
+                          $$.nillable = $1;
                           $$.pattern = NULL;
                         }
-        | LNG ':' LNG   {
-                          $$.minOccurs = $1;
-                          $$.maxOccurs = $3;
+        | nullptr LNG ':' LNG
+                        {
+                          $$.minOccurs = $2;
+                          $$.maxOccurs = $4;
                           if ($$.minOccurs < 0 || $$.maxOccurs < 0)
                           {
                             $$.minOccurs = -1;
@@ -1986,11 +1992,13 @@ occurs  : /* empty */   {
                           $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
+                          $$.nillable = $1;
                           $$.pattern = NULL;
                         }
-        | ':' LNG       {
+        | nullptr ':' LNG
+                        {
                           $$.minOccurs = -1;
-                          $$.maxOccurs = $2;
+                          $$.maxOccurs = $3;
                           if ($$.maxOccurs < 0)
                           {
                             $$.minOccurs = -1;
@@ -2004,6 +2012,7 @@ occurs  : /* empty */   {
                           $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
+                          $$.nillable = $1;
                           $$.pattern = NULL;
                         }
         ;

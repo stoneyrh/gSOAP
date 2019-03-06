@@ -94,7 +94,7 @@ xs__schema::xs__schema(struct soap *copy)
   redirs = 0;
 }
 
-xs__schema::xs__schema(struct soap *copy, const char *cwd, const char *loc)
+xs__schema::xs__schema(struct soap *copy, const char *cwd, const char *loc, const char *relloc)
 {
   soap = soap_copy(copy);
   soap->socket = SOAP_INVALID_SOCKET;
@@ -109,7 +109,7 @@ xs__schema::xs__schema(struct soap *copy, const char *cwd, const char *loc)
   updated = false;
   location = NULL;
   redirs = 0;
-  read(cwd, loc);
+  read(cwd, loc, relloc);
 }
 
 xs__schema::~xs__schema()
@@ -403,7 +403,7 @@ int xs__schema::traverse()
   return SOAP_OK;
 }
 
-int xs__schema::read(const char *cwd, const char *loc)
+int xs__schema::read(const char *cwd, const char *loc, const char *relloc)
 {
   const char *cwd_temp;
   if (!cwd)
@@ -478,9 +478,9 @@ int xs__schema::read(const char *cwd, const char *loc)
       soap->recvfd = open(loc, O_RDONLY, 0);
       if (soap->recvfd < 0)
       {
-        if (cwd)
+        if (loc && cwd)
         {
-          size_t l = strlen(cwd) + strlen(loc);
+          size_t l = strlen(cwd) + strlen(relloc);
           location = (char*)soap_malloc(soap, l + 2);
           soap_strcpy(location, l + 2, cwd);
           char *s = strrchr(location, '/');
@@ -494,7 +494,7 @@ int xs__schema::read(const char *cwd, const char *loc)
             size_t n = strlen(location);
             soap_strcpy(location + n, l + 2 - n, "/");
             ++n;
-            soap_strcpy(location + n, l + 2 - n, loc);
+            soap_strcpy(location + n, l + 2 - n, relloc);
             if (!strncmp(location, "file://", 7))
               location += 7;
             soap->recvfd = open(location, O_RDONLY, 0);
@@ -511,6 +511,21 @@ int xs__schema::read(const char *cwd, const char *loc)
           soap_strcpy(location + n, l + 2 - n, "/");
           ++n;
           soap_strcpy(location + n, l + 2 - n, loc);
+          if (!strncmp(location, "file://", 7))
+            location += 7;
+          soap->recvfd = open(location, O_RDONLY, 0);
+          if (vflag)
+            cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
+        }
+        if (relloc && soap->recvfd < 0 && import_path)
+        {
+          size_t l = strlen(import_path) + strlen(relloc);
+          location = (char*)soap_malloc(soap, l + 2);
+          soap_strcpy(location, l + 2, import_path);
+          size_t n = strlen(location);
+          soap_strcpy(location + n, l + 2 - n, "/");
+          ++n;
+          soap_strcpy(location + n, l + 2 - n, relloc);
           if (!strncmp(location, "file://", 7))
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
@@ -540,7 +555,7 @@ int xs__schema::read(const char *cwd, const char *loc)
     int r = SOAP_ERR;
     fprintf(stderr, "Redirected to '%s'...\n", soap->endpoint);
     if (redirs++ < 10)
-      r = read(cwd, soap->endpoint);
+      r = read(cwd, soap->endpoint, NULL);
     else
       fprintf(stderr, "\nMax redirects exceeded\n");
     redirs--;
@@ -559,7 +574,7 @@ int xs__schema::read(const char *cwd, const char *loc)
       soap->userid = auth_userid;
       soap->passwd = auth_passwd;
 #endif
-      r = read(cwd, loc);
+      r = read(cwd, loc, NULL);
 #ifdef HTTPDA_H
       http_da_release(soap, &info);
 #endif
@@ -608,20 +623,43 @@ const char *xs__schema::sourceLocation()
 
 char *xs__schema::absoluteLocation(const char *loc) const
 {
-  if (!location)
+  const char *base = location ? location : cwd_path;
+  if (!base)
     return soap_strdup(soap, loc);
   if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8))
     return soap_strdup(soap, loc);
   if (!strncmp(loc, "file://", 7))
     loc += 7;
-  const char *s = strrchr(location, '/');
+  const char *s = strrchr(base, '/');
+#ifdef WIN32
+  const char *t = strrchr(base, '\\');
+  if (!s || s < t)
+    s = t;
   if (!s)
     return soap_strdup(soap, loc);
-  if (strchr(loc, '/') && strncmp(loc, "../", 3))
-    return soap_strdup(soap, loc);
-  while (!strncmp(loc, "../", 3) && s > location)
+  while ((!strncmp(loc, "../", 3) || !strncmp(loc, "..\\", 3)) && s > base)
   {
-    while (--s >= location)
+    while (--s >= base)
+    {
+      if (*s == '/' || *s == '\\')
+      {
+        if (s[1] != '.')
+          break;
+        if (s[2] == '.' && (s[3] == '/' || s[3] == '\\'))
+        {
+          s += 3;
+          break;
+        }
+      }
+    }
+    loc += 3;
+  }
+#else
+  if (!s)
+    return soap_strdup(soap, loc);
+  while (!strncmp(loc, "../", 3) && s > base)
+  {
+    while (--s >= base)
     {
       if (*s == '/')
       {
@@ -636,10 +674,11 @@ char *xs__schema::absoluteLocation(const char *loc) const
     }
     loc += 3;
   }
-  size_t n = s - location + 1;
+#endif
+  size_t n = s - base + 1;
   size_t l = n + strlen(loc);
   char *abs = (char*)soap_malloc(soap, l + 1);
-  soap_strncpy(abs, l + 1, location, n);
+  soap_strncpy(abs, l + 1, base, n);
   soap_strcpy(abs + n, l + 1 - n, loc);
   return abs;
 }
@@ -739,6 +778,7 @@ int xs__include::preprocess(xs__schema &schema)
       // only read from include locations not read already, uses static std::map
       static map<const char*, xs__schema*, ltstr> included;
       map<const char*, xs__schema*, ltstr>::iterator i = included.end();
+      const char *relative_schemaLocation = soap_strdup(schema.soap, schemaLocation);
       schemaLocation = schema.absoluteLocation(schemaLocation);
       if (schema.targetNamespace)
       {
@@ -758,7 +798,7 @@ int xs__include::preprocess(xs__schema &schema)
         if (!schemaRef)
           return SOAP_EOF;
         included[schemaLocation] = schemaRef;
-        schemaRef->read(schema.sourceLocation(), schemaLocation);
+        schemaRef->read(schema.sourceLocation(), schemaLocation, relative_schemaLocation);
         if (schema.targetNamespace && (!schemaRef->targetNamespace || strcmp(schema.targetNamespace, schemaRef->targetNamespace)))
         {
           if (!Wflag)
@@ -815,7 +855,9 @@ int xs__redefine::preprocess(xs__schema &schema)
   {
     if (schemaLocation)
     {
-      schemaRef = new xs__schema(schema.soap, schema.sourceLocation(), schemaLocation);
+      const char *relative_schemaLocation = soap_strdup(schema.soap, schemaLocation);
+      schemaLocation = schema.absoluteLocation(schemaLocation);
+      schemaRef = new xs__schema(schema.soap, schema.sourceLocation(), schemaLocation, relative_schemaLocation);
       // redefine xs:all, xs:choice, or xs:sequence in a group
       for (vector<xs__group>::iterator gp = schemaRef->group.begin(); gp != schemaRef->group.end(); ++gp)
       {
@@ -1089,7 +1131,9 @@ int xs__override::preprocess(xs__schema &schema)
   {
     if (schemaLocation)
     {
-      schemaRef = new xs__schema(schema.soap, schema.sourceLocation(), schemaLocation);
+      const char *relative_schemaLocation = soap_strdup(schema.soap, schemaLocation);
+      schemaLocation = schema.absoluteLocation(schemaLocation);
+      schemaRef = new xs__schema(schema.soap, schema.sourceLocation(), schemaLocation, relative_schemaLocation);
       for (vector<xs__element>::iterator el = schemaRef->element.begin(); el != schemaRef->element.end(); ++el)
       {
         if ((*el).name)
@@ -1203,7 +1247,7 @@ xs__import::xs__import()
 {
   namespace_ = NULL;
   schemaLocation = NULL;
-  location = NULL; // work around a Microsoft bug
+  location = NULL; // work around a Microsoft WSDL bug uses @location instead of @schemaLocation in WSDLs
   schemaRef = NULL;
 }
 
@@ -1240,10 +1284,11 @@ int xs__import::preprocess(xs__schema &schema)
         // only read from import locations not read already, uses static std::map
         static map<const char*, xs__schema*, ltstr> included;
         map<const char*, xs__schema*, ltstr>::iterator i = included.find(schemaLocation);
+        const char *relative_schemaLocation = soap_strdup(schema.soap, schemaLocation);
         if (i == included.end())
         {
           included[schemaLocation] = schemaRef = new xs__schema(schema.soap);
-          schemaRef->read(schema.sourceLocation(), schemaLocation);
+          schemaRef->read(schema.sourceLocation(), schemaLocation, relative_schemaLocation);
         }
         else
         {

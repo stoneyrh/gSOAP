@@ -96,6 +96,14 @@ AC_SUBST(platform)
 AC_HEADER_STDC
 AC_CHECK_HEADERS([arpa/inet.h locale.h xlocale.h errno.h fcntl.h ctype.h limits.h float.h math.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h time.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h])
 
+
+AC_CHECK_TYPES([socklen_t],,,
+[
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+])
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_SIZE_T

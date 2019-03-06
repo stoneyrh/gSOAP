@@ -393,13 +393,13 @@ class wsdl__definitions
   public:
                                         wsdl__definitions();
                                         wsdl__definitions(struct soap*);
-                                        wsdl__definitions(struct soap*, const char*, const char*);
+                                        wsdl__definitions(struct soap*, const char*, const char*, const char*);
         virtual                         ~wsdl__definitions();
         int                             get(struct soap*);      // getter is triggered after parsing
         int                             preprocess();
         int                             traverse();
         int                             read(int, char**);
-        int                             read(const char *cwd, const char*);
+        int                             read(const char*, const char*, const char*);
         const char*                     sourceLocation();
         char*                           absoluteLocation(const char *loc) const;
         int                             error();

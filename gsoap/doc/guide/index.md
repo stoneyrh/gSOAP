@@ -6482,7 +6482,7 @@ option                     | result
 [`-y`](#soapcpp2-y)        | include C/C++ type access information in sample XML messages
 [`-z1`](#soapcpp2-z)       | compatibility: generate old-style C++ service proxies and objects
 [`-z2`](#soapcpp2-z)       | compatibility with 2.7.x: omit XML output for NULL pointers
-[`-z3`](#soapcpp2-z)       | compatibility up to 2.8.30: `_param_N` indexing; nillable pointers
+[`-z3`](#soapcpp2-z)       | compatibility up to 2.8.30: `_param_N` indexing and nillable pointers
 
 For example
 

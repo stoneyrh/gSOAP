@@ -406,7 +406,7 @@ int json_recv(struct soap *soap, struct value *v)
     }
     case '['/*']'*/:
     {
-      size_t i;
+      int i;
       if (++soap->level > soap->maxlevel)
         return soap->error = SOAP_LEVEL;
 #ifdef __cplusplus
@@ -423,7 +423,7 @@ int json_recv(struct soap *soap, struct value *v)
       if (c == /*'['*/']')
         return SOAP_OK;
       soap_unget(soap, c);
-      for (i = 0; i < soap->maxoccurs; i++)
+      for (i = 0; i < (int)soap->maxoccurs; i++)
       {
 #ifdef __cplusplus
         if (json_recv(soap, v->operator[](i)))
