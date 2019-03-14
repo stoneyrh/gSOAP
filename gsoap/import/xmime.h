@@ -59,4 +59,5 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap xmime schema import: http://www.w3.org/2004/06/xmlmime
+//gsoap xmime schema namespace: http://www.w3.org/2004/06/xmlmime
+//gsoap xmime schema import:    https://www.w3.org/2004/06/xmlmime

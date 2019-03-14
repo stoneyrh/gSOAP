@@ -49,5 +49,5 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap xlink schema import: http://www.w3.org/1999/xlink
-//gsoap xlink schema form:   unqualified
+//gsoap xlink schema namespace: http://www.w3.org/1999/xlink
+//gsoap xlink schema form:      unqualified

@@ -3115,9 +3115,9 @@ void Types::gen(const char *URI, const vector<xs__contents>& contents, SetOfStri
 
 void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minOccurs, const char *maxOccurs, SetOfString& members)
 {
-  const char *s = NULL;
   const char *min = minOccurs;
   const char *max = maxOccurs;
+  const char *s = NULL;
   char *t = NULL;
   bool tmp_union = with_union;
   with_union = false;
@@ -3161,10 +3161,7 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minO
         fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
       }
     }
-    if (cflag)
-      fprintf(stream, "    struct %s\n    {\n", t);
-    else
-      fprintf(stream, "    class %s\n    { public:\n", t);
+    fprintf(stream, "    struct %s\n    {\n", t); // do not use a class, may clash with member name
     SetOfString members1;
     gen(URI, sequence.__contents, members1);
   }

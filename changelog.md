@@ -1470,13 +1470,18 @@ Version 2.8.80 (2/20/2019)
 - Updated examples to link against libpthread when required.
 - Improved wsdl2h handling of relative file paths.
 
-Version 2.8.81 (3/6/2019) {#latest}
+Version 2.8.81 (3/6/2019)
 ---
 
 - Added the ability to specify `nullptr` web service operation arguments, similar to `nullptr` struct and class members.  This enables `xs:nillable="true"` elements corresponding to web service operation arguments.
 - Updated wsdl2h *`import schemaLocation`* logic to handle relative paths.
 - Updated to improve checking of `_GNU_SOURCE`, `_POSIX_C_SOURCE`, `_XOPEN_SOURCE` for GNU-specific non-XSI-compliant `gethostbyname_r` and `strerror_r` function.  If you run into compilation problems with these two functions, please contact Genivia technical support.
-- Updated DOM API for embedded serializable data types: `SOAP_DOM_ASIS` removes XML namespace bindings (`xmlns`) from the XML output of the embedded data type, which are normally added to ensure namespace prefixes are always valid.  `SOAP_DOM_ASIS` requires the DOM to specify the namespace bindings explicitly.
+- Updated DOM API for embedded serializable data types: `SOAP_DOM_ASIS` removes XML namespace bindings (`xmlns`) from the XML output of the embedded data type, which are normally added to ensure namespace prefixes are always valid when serializable data is embedded in XML.  Using `SOAP_DOM_ASIS` requires the DOM to include `xmlns` namespace bindings explicitly.
+
+Version 2.8.82 (3/14/2019) {#latest}
+---
+
+- Minor fixes and improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

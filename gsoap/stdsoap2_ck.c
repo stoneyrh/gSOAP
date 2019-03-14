@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.81
+        stdsoap2.c[pp] 2.8.82
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20881
+#define GSOAP_LIB_VERSION 20882
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.81 2019-03-06 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.82 2019-03-14 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.81 2019-03-06 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.82 2019-03-14 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4101,7 +4101,7 @@ soap_ssl_crl(struct soap *soap, const char *crlfile)
         return soap_set_receiver_error(soap, "SSL/TLS error", "Can't create X509_LOOKUP object", SOAP_SSL_ERROR);
       ret = X509_load_crl_file(lookup, crlfile, X509_FILETYPE_PEM);
       if (ret <= 0)
-        return soap_set_receiver_error(soap, soap_ssl_error(soap, ret, SSL_ERROR_NONE), "Can't read CRL PEM file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CRL PEM file", SOAP_SSL_ERROR);
     }
     X509_STORE_set_flags(store, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
 #endif
@@ -4210,14 +4210,10 @@ SOAP_FMAC2
 soap_ssl_error(struct soap *soap, int ret, int err)
 {
 #ifdef WITH_OPENSSL
-  const char *msg;
-  if (err == SSL_ERROR_NONE)
-    err = SSL_get_error(soap->ssl, ret);
-  msg = soap_code_str(h_ssl_error_codes, err);
-  if (msg)
-    (SOAP_SNPRINTF(soap->msgbuf, sizeof(soap->msgbuf), strlen(msg) + 1), "%s\n", msg);
-  else
+  const char *msg = soap_code_str(h_ssl_error_codes, err);
+  if (!msg)
     return ERR_error_string(err, soap->msgbuf);
+  (SOAP_SNPRINTF(soap->msgbuf, sizeof(soap->msgbuf), strlen(msg) + 1), "%s\n", msg);
   if (ERR_peek_error())
   {
     unsigned long r;
@@ -22042,7 +22038,7 @@ soap_set_fault(struct soap *soap)
       *s = "UTF content encoding error";
       break;
     case SOAP_STOP:
-      *s = "Stopped: no response sent or received (informative)";
+      *s = "Stopped: service request already handled by plugin (informative)";
       break;
 #endif
     case SOAP_EOF:

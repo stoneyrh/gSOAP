@@ -52,7 +52,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap xop schema import: http://www.w3.org/2004/08/xop/include
+//gsoap xop schema namespace:   http://www.w3.org/2004/08/xop/include
+//gsoap xop schema import:      https://www.w3.org/2004/08/xop/include
 
 struct _xop__Include
 { unsigned char *__ptr; ///< pointer to binary data
