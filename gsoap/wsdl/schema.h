@@ -315,6 +315,7 @@ class xs__simpleType
         xs__union                       *union_;                // choice
   private:
         xs__schema                      *schemaRef;
+        std::vector<xs__complexType*>   complextype_extensions;
         std::vector<xsd__QName>         extensions;
         std::vector<xsd__QName>         restrictions;
         int                             level;
@@ -327,7 +328,7 @@ class xs__simpleType
         int                             baseLevel();
         void                            mark();
         bool                            is_used() const;
-        void                            add_extension(xs__schema&, xsd__NCName);
+        void                            add_extension(xs__complexType*, xs__schema&, xsd__NCName);
         void                            add_restriction(xs__schema&, xsd__NCName);
         const std::vector<xsd__QName>&  get_extensions() const;
         const std::vector<xsd__QName>&  get_restrictions() const;
@@ -480,6 +481,7 @@ class xs__complexType
         std::vector<xs__assert>         assert;                 // XSD 1.1
   private:
         xs__schema                      *schemaRef;
+        std::vector<xs__complexType*>   complextype_extensions;
         std::vector<xsd__QName>         extensions;
         std::vector<xsd__QName>         restrictions;
         int                             level;
@@ -492,8 +494,8 @@ class xs__complexType
         int                             baseLevel();
         void                            mark();
         bool                            is_used() const;
-        void                            add_extension(xs__schema&, xsd__QName);
-        void                            add_restriction(xs__schema&, xsd__QName);
+        void                            add_extension(xs__complexType*, xs__schema&, xsd__NCName);
+        void                            add_restriction(xs__schema&, xsd__NCName);
         const std::vector<xsd__QName>&  get_extensions() const;
         const std::vector<xsd__QName>&  get_restrictions() const;
 };

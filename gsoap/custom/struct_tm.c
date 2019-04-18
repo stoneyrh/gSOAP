@@ -84,10 +84,18 @@ SOAP_FMAC3 const char * SOAP_FMAC4 soap_xsd__dateTime2s(struct soap *soap, const
 #else
     b = *gmtime(&t);
 #endif
+#ifndef WITH_NOZONE
     strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", &b);
+#else
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", &b);
+#endif
     return soap->tmpbuf;
   }
+#ifndef WITH_NOZONE
   strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", &a);
+#else
+  strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", &a);
+#endif
   return soap->tmpbuf;
 }
 

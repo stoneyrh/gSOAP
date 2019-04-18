@@ -338,7 +338,9 @@ int Types::read(const char *file)
     deftypemap[s] = "";
     usetypemap[s] = t;
     if (ptrtypemap.find((*i).second) != ptrtypemap.end())
+    {
       ptrtypemap[s] = ptrtypemap[(*i).second];
+    }
     else
     {
       MapOfStringToString::iterator j = ptrtypemap.find(s);
@@ -404,9 +406,13 @@ void Types::init()
   else
   {
     if (dflag)
+    {
       deftypemap["xsd__anyType"] = "";
+    }
     else if (!soap_context || !*soap_context)
+    {
       deftypemap["xsd__anyType"] = "class xsd__anyType\n{ public:\n    _XML __item;\n};";
+    }
     else
     {
       size_t l = strlen(soap_context) + 67;
@@ -520,18 +526,18 @@ void Types::init()
   usetypemap["xsd__unsignedShort"] = "unsigned short";
   if (cflag)
   {
-    deftypemap["SOAP_ENC__base64Binary"] = "struct SOAP_ENC__base64Binary { unsigned char *__ptr; int __size; };";
+    deftypemap["SOAP_ENC__base64Binary"] = "struct SOAP_ENC__base64Binary\n{\n    unsigned char *__ptr;\n    int __size;\n};";
     usetypemap["SOAP_ENC__base64Binary"] = "struct SOAP_ENC__base64Binary";
     ptrtypemap["SOAP_ENC__base64Binary"] = "struct SOAP_ENC__base64Binary";
-    deftypemap["SOAP_ENC__base64"] = "struct SOAP_ENC__base64 { unsigned char *__ptr; int __size; };";
+    deftypemap["SOAP_ENC__base64"] = "struct SOAP_ENC__base64\n{\n    unsigned char *__ptr;\n    int __size;\n};";
     usetypemap["SOAP_ENC__base64"] = "struct SOAP_ENC__base64";
     ptrtypemap["SOAP_ENC__base64"] = "struct SOAP_ENC__base64";
   }
   else
   {
-    deftypemap["SOAP_ENC__base64Binary"] = "class SOAP_ENC__base64Binary { public: unsigned char *__ptr; int __size; };";
+    deftypemap["SOAP_ENC__base64Binary"] = "class SOAP_ENC__base64Binary\n{ public:\n    unsigned char *__ptr;\n    int __size;\n};";
     usetypemap["SOAP_ENC__base64Binary"] = "SOAP_ENC__base64Binary";
-    deftypemap["SOAP_ENC__base64"] = "class SOAP_ENC__base64 { public: unsigned char *__ptr; int __size; };";
+    deftypemap["SOAP_ENC__base64"] = "class SOAP_ENC__base64\n{ public:\n    unsigned char *__ptr;\n    int __size;\n};";
     usetypemap["SOAP_ENC__base64"] = "SOAP_ENC__base64";
   }
   if (cflag)
@@ -559,13 +565,13 @@ void Types::init()
   usetypemap["SOAP_ENC__float"] = "SOAP_ENC__float";
   if (cflag)
   {
-    deftypemap["SOAP_ENC__hexBinary"] = "struct SOAP_ENC__hexBinary { unsigned char *__ptr; int __size; };";
+    deftypemap["SOAP_ENC__hexBinary"] = "struct SOAP_ENC__hexBinary\n{\n    unsigned char *__ptr;\n    int __size;\n};";
     usetypemap["SOAP_ENC__hexBinary"] = "struct SOAP_ENC__hexBinary";
     ptrtypemap["SOAP_ENC__hexBinary"] = "struct SOAP_ENC__hexBinary";
   }
   else
   {
-    deftypemap["SOAP_ENC__hexBinary"] = "class SOAP_ENC__hexBinary { public: unsigned char *__ptr; int __size; };";
+    deftypemap["SOAP_ENC__hexBinary"] = "class SOAP_ENC__hexBinary\n{ public:\n    unsigned char *__ptr;\n    int __size;\n};";
     usetypemap["SOAP_ENC__hexBinary"] = "SOAP_ENC__hexBinary";
   }
   deftypemap["SOAP_ENC__int"] = "typedef int SOAP_ENC__int;";
@@ -593,10 +599,6 @@ void Types::init()
   usetypemap["SOAP_ENC__unsignedLong"] = "SOAP_ENC__unsignedLong";
   deftypemap["SOAP_ENC__unsignedShort"] = "typedef unsigned short SOAP_ENC__unsignedShort;";
   usetypemap["SOAP_ENC__unsignedShort"] = "SOAP_ENC__unsignedShort";
-  deftypemap["SOAP_ENC__Array"] = "";
-  usetypemap["SOAP_ENC__Array"] = "struct { _XML *__ptr; int __size; }";
-  if (cflag)
-    ptrtypemap["SOAP_ENC__Array"] = "struct { _XML *__ptr; int __size; }";
   deftypemap["_SOAP_ENC__arrayType"] = "";
   deftypemap["SOAP_ENV__Header"] = "";
   usetypemap["SOAP_ENV__Header"] = "struct SOAP_ENV__Header";
@@ -1569,14 +1571,26 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         {
           fprintf(stream, "/// This type is extended by:\n");
           for (std::vector<xsd__QName>::const_iterator i = simpleType.get_extensions().begin(); i != simpleType.get_extensions().end(); ++i)
-            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          {
+            if (is_defined(NULL, NULL, *i))
+              fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+            else if (!Owflag)
+              fprintf(stream, "/// - %s (not used and removed, retain with option -Ow%d)\n", *i, Oflag);
+            else
+              fprintf(stream, "/// - %s (not used and removed)\n", *i);
+          }
           fprintf(stream, "///\n");
         }
         if (!simpleType.get_restrictions().empty())
         {
           fprintf(stream, "/// This type is restricted by:\n");
           for (std::vector<xsd__QName>::const_iterator i = simpleType.get_restrictions().begin(); i != simpleType.get_restrictions().end(); ++i)
-            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          {
+            if (is_defined(NULL, NULL, *i))
+              fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+            else
+              fprintf(stream, "/// - %s (not used and removed)\n", *i);
+          }
           fprintf(stream, "///\n");
         }
       }
@@ -1889,7 +1903,11 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             {
               fprintf(stream, " \"%%%sLf\"", format);
             }
-            else if (type == CTFLOAT || type == CTDOUBLE)
+            else if (type == CTDOUBLE)
+            {
+              fprintf(stream, " \"%%%slf\"", format);
+            }
+            else if (type == CTFLOAT)
             {
               fprintf(stream, " \"%%%sf\"", format);
             }
@@ -2342,14 +2360,26 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       {
         fprintf(stream, "/// This type is extended by:\n");
         for (std::vector<xsd__QName>::const_iterator i = complexType.get_extensions().begin(); i != complexType.get_extensions().end(); ++i)
-          fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+        {
+          if (is_defined(NULL, NULL, *i))
+            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          else if (!Owflag)
+            fprintf(stream, "/// - %s (not used and removed, retain with option -Ow%d)\n", *i, Oflag);
+          else
+            fprintf(stream, "/// - %s (not used and removed)\n", *i);
+        }
         fprintf(stream, "///\n");
       }
       if (!complexType.get_restrictions().empty())
       {
         fprintf(stream, "/// This type is restricted by:\n");
         for (std::vector<xsd__QName>::const_iterator i = complexType.get_restrictions().begin(); i != complexType.get_restrictions().end(); ++i)
-          fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+        {
+          if (is_defined(NULL, NULL, *i))
+            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          else
+            fprintf(stream, "/// - %s (not used and removed)\n", *i);
+        }
         fprintf(stream, "///\n");
       }
     }
@@ -2514,14 +2544,26 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
         {
           fprintf(stream, "/// This type is extended by:\n");
           for (std::vector<xsd__QName>::const_iterator i = complexType.get_extensions().begin(); i != complexType.get_extensions().end(); ++i)
-            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          {
+            if (is_defined(NULL, NULL, *i))
+              fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+            else if (!Owflag)
+              fprintf(stream, "/// - %s (not used and removed, retain with option -Ow%d)\n", *i, Oflag);
+            else
+              fprintf(stream, "/// - %s (not used and removed)\n", *i);
+          }
           fprintf(stream, "///\n");
         }
         if (!complexType.get_restrictions().empty())
         {
           fprintf(stream, "/// This type is restricted by:\n");
           for (std::vector<xsd__QName>::const_iterator i = complexType.get_restrictions().begin(); i != complexType.get_restrictions().end(); ++i)
-            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          {
+            if (is_defined(NULL, NULL, *i))
+              fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+            else
+              fprintf(stream, "/// - %s (not used and removed)\n", *i);
+          }
           fprintf(stream, "///\n");
         }
       }
@@ -2749,14 +2791,26 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       {
         fprintf(stream, "/// This type is extended by:\n");
         for (std::vector<xsd__QName>::const_iterator i = complexType.get_extensions().begin(); i != complexType.get_extensions().end(); ++i)
-          fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+        {
+          if (is_defined(NULL, NULL, *i))
+            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          else if (!Owflag)
+            fprintf(stream, "/// - %s (not used and removed, retain with option -Ow%d)\n", *i, Oflag);
+          else
+            fprintf(stream, "/// - %s (not used and removed)\n", *i);
+        }
         fprintf(stream, "///\n");
       }
       if (!complexType.get_restrictions().empty())
       {
         fprintf(stream, "/// This type is restricted by:\n");
         for (std::vector<xsd__QName>::const_iterator i = complexType.get_restrictions().begin(); i != complexType.get_restrictions().end(); ++i)
-          fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+        {
+          if (is_defined(NULL, NULL, *i))
+            fprintf(stream, "/// - %s as %s\n", *i, tnamenoptr(NULL, NULL, *i));
+          else
+            fprintf(stream, "/// - %s (not used and removed)\n", *i);
+        }
         fprintf(stream, "///\n");
       }
     }
@@ -2858,7 +2912,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     {
       if (!complexType.complexContent || !complexType.complexContent->extension || !complexType.complexContent->extension->complexTypePtr())
       {
-        fprintf(stream, "/// Pointer to soap context that manages this instance\n");
+        fprintf(stream, "/// Pointer to soap context that manages this instance.\n");
         fprintf(stream, pointerformat, "struct soap", soap_context);
         fprintf(stream, ";\n");
       }

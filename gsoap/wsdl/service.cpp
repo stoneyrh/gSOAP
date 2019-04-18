@@ -1849,7 +1849,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       {
         pflag = 1;
         if (!wflag && !Pflag && !fflag && (!cflag || Fflag))
-          fprintf(stderr, "\nNote: option -p auto-enabled to generate wrappers for built-in types derived from xsd__anyType to support polymorphism in XML by serializing any derived type of xsd:anyType as elements annotated by xsi:type attributes in XML, use option -P to suppress and disable this feature\n");
+          fprintf(stderr, "\nNote: option -p auto-enabled to generate wrappers for built-in types derived from xsd__anyType to support polymorphism in XML by (de)serializing any derived type of xsd:anyType (or xsd:anySimpleType) as elements annotated by xsi:type attributes in XML, use option -P to suppress and disable this feature\n");
         break;
       }
     }
@@ -1924,6 +1924,98 @@ void Definitions::compile(const wsdl__definitions& definitions)
     const char *s, *t;
     if (!cflag && !strcmp(*i, "xs:anyType"))
       continue;
+    // make an exception for the rarely-used xs:anySimpleType to equal xs:anyType to make coding easier
+    if (Qflag && !strcmp(*i, "xs:anySimpleType") && types.deftypemap.find("xsd__anySimpleType") == types.deftypemap.end())
+    {
+      if (pflag)
+      {
+        types.deftypemap["xsd__anySimpleType"] = "";
+        if (Fflag)
+        {
+          if (cflag)
+          {
+            types.usetypemap["xsd__anySimpleType"] = "struct xsd__anyType_";
+            types.ptrtypemap["xsd__anySimpleType"] = "struct xsd__anyType_*";
+          }
+          else
+          {
+            types.usetypemap["xsd__anySimpleType"] = "xsd__anyType_";
+            types.ptrtypemap["xsd__anySimpleType"] = "xsd__anyType_*";
+          }
+        }
+        else if (cflag)
+        {
+          types.usetypemap["xsd__anySimpleType"] = types.usetypemap["xsd__anyType"];
+        }
+        else
+        {
+          types.usetypemap["xsd__anySimpleType"] = "xsd__anyType*";
+          types.ptrtypemap["xsd__anySimpleType"] = "xsd__anyType*";
+        }
+      }
+      else
+      {
+        types.deftypemap["xsd__anySimpleType"] = "";
+        types.usetypemap["xsd__anySimpleType"] = types.usetypemap["xsd__anyType"];
+        types.ptrtypemap["xsd__anySimpleType"] = types.ptrtypemap["xsd__anyType"];
+      }
+    }
+    // make an exception for SOAP-ENC:Array
+    if (!strcmp(*i, "SOAP-ENC:Array") && types.deftypemap.find("SOAP_ENC__Array") == types.deftypemap.end())
+    {
+      if (pflag)
+      {
+        if (Fflag)
+        {
+          if (cflag)
+          {
+            types.deftypemap["SOAP_ENC__Array"] = "struct SOAP_ENC__Array\n{\n/// Pointer to array of elements <item> of type xs:anyType\n    struct xsd__anyType_ *__ptr;\n/// Size of the array\n    int __size;\n};";
+            types.usetypemap["SOAP_ENC__Array"] = "struct SOAP_ENC__Array";
+          }
+          else
+          {
+            types.deftypemap["SOAP_ENC__Array"] = "class SOAP_ENC__Array\n{ public:\n/// Pointer to array of elements <item> of type xs:anyType\n    xsd__anyType_ *__ptr;\n/// Size of the array\n    int __size;\n};";
+            types.usetypemap["SOAP_ENC__Array"] = "SOAP_ENC__Array";
+          }
+        }
+        else if (cflag)
+        {
+          types.deftypemap["SOAP_ENC__Array"] = soap_strdup(definitions.soap, (std::string("struct SOAP_ENC__Array\n{\n/// Pointer to array of elements <item> of type xs:anyType\n    ") + std::string(types.usetypemap["xsd__anyType"]) + std::string(" *__ptr;\n/// Size of the array\n    int __size;\n};")).c_str());
+          types.usetypemap["SOAP_ENC__Array"] = "struct SOAP_ENC__Array";
+        }
+        else
+        {
+          types.deftypemap["SOAP_ENC__Array"] = "class SOAP_ENC__Array : public xsd__anyType\n{ public:\n/// Pointer to array of elements <item> of type xs:anyType\n    xsd__anyType **__ptr;\n/// Size of the array\n    int __size;\n};";
+          types.usetypemap["SOAP_ENC__Array"] = "SOAP_ENC__Array";
+        }
+      }
+      else if (cflag)
+      {
+        if (dflag)
+        {
+          types.deftypemap["SOAP_ENC__Array"] = "struct SOAP_ENC__Array\n{\n/// Pointer to array of DOM nodes\n    xsd__anyType *__ptr;\n/// Size of the array\n    int __size;\n};";
+          types.usetypemap["SOAP_ENC__Array"] = "struct SOAP_ENC__Array";
+        }
+        else
+        {
+          types.deftypemap["SOAP_ENC__Array"] = "struct SOAP_ENC__Array\n{\n/// Pointer to array of XML strings\n    _XML *__ptr;\n/// Size of the array\n    int __size;\n};";
+          types.usetypemap["SOAP_ENC__Array"] = "struct SOAP_ENC__Array";
+        }
+      }
+      else
+      {
+        if (dflag)
+        {
+          types.deftypemap["SOAP_ENC__Array"] = "class SOAP_ENC__Array\n{ public:\n/// Pointer to array of DOM nodes\n    xsd__anyType *__ptr;\n/// Size of the array\n    int __size;\n};";
+          types.usetypemap["SOAP_ENC__Array"] = "SOAP_ENC__Array";
+        }
+        else
+        {
+          types.deftypemap["SOAP_ENC__Array"] = "class SOAP_ENC__Array\n{ public:\n/// Pointer to array of XML strings\n    _XML *__ptr;\n/// Size of the array\n    int __size;\n};";
+          types.usetypemap["SOAP_ENC__Array"] = "SOAP_ENC__Array";
+        }
+      }
+    }
     t = types.cname(NULL, NULL, *i);
     s = types.deftypemap[t];
     if (s)
@@ -1957,7 +2049,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
   for (SetOfString::const_iterator i = definitions.builtinTypes().begin(); i != definitions.builtinTypes().end(); ++i)
   {
     const char *s, *t;
-    if (!cflag && !strcmp(*i, "xs:anyType"))
+    if (!cflag && (!strcmp(*i, "xs:anyType") || (Qflag && !strcmp(*i, "xs:anySimpleType")) || !strcmp(*i, "SOAP-ENC:Array")))
       continue;
     t = types.cname(NULL, NULL, *i);
     s = types.deftypemap[t];
@@ -1984,12 +2076,16 @@ void Definitions::compile(const wsdl__definitions& definitions)
         }
       }
       else if (**i == '"')
+      {
         fprintf(stream, "//  Imported type \"%s\" defined by %s.\n\n", *i, t);
+      }
       else
+      {
         fprintf(stream, "//  xsd.h: should define type %s\n\n", t);
+      }
       types.deftname(TYPEDEF, false, false, NULL, NULL, *i, s);
     }
-    if (pflag && !cflag && !Fflag && !strncmp(*i, "xs:", 3))                // only xsi types are polymorph
+    if (pflag && !cflag && !Fflag)
     {
       s = types.wname(NULL, NULL, *i, NOLOOKUP);
       if (!mflag)
@@ -2242,13 +2338,13 @@ void Definitions::compile(const wsdl__definitions& definitions)
     // generate wrapper structs/classes for built-in XSD types with options -p and -F
     if (pflag && Fflag)
     {
-      banner("Wrappers for built-in XSD types with their derived types");
+      banner("Wrappers for built-in types with their derived types");
       for (SetOfString::const_iterator i = definitions.builtinTypes().begin(); i != definitions.builtinTypes().end(); ++i)
       {
-        if (!strncmp(*i, "xs:", 3) && strcmp(*i, "xs:anyType"))
+        if (strcmp(*i, "xs:anyType") && strcmp(*i, "xs:anySimpleType"))
         {
           const char *s = types.wname(NULL, NULL, *i, NOLOOKUP);
-          fprintf(stream, "/// Wrapper %s for built-in XSD type \"%s\".\n///\n", s, *i);
+          fprintf(stream, "/// Wrapper %s for built-in type \"%s\".\n///\n", s, *i);
           if (cflag)
           {
             if (!Lflag)
@@ -2304,7 +2400,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       fprintf(stream, ";\n");
       for (SetOfString::const_iterator i = definitions.builtinTypes().begin(); i != definitions.builtinTypes().end(); ++i)
       {
-        if (!strncmp(*i, "xs:", 3) && strcmp(*i, "xs:anyType"))
+        if (strcmp(*i, "xs:anyType") && strcmp(*i, "xs:anySimpleType"))
         {
           fprintf(stream, "/// A transient pointer to a derived type value that replaces the value of this root type xsd__anyType when non-NULL\n");
           fprintf(stream, derivedformat, types.wname(NULL, NULL, *i, LOOKUP), types.aname(NULL, NULL, *i));

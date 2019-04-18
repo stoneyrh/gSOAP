@@ -120,7 +120,11 @@ const char * soap_xsd__dateTime2s(struct soap *soap, QDateTime a)
     a = QDateTime(QDate(1, 1, 1), QTime(0, 0, 0), Qt::UTC);
   else
     a = a.toUTC();
-  QString str = a.toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
+#ifndef WITH_NOZONE
+  QString str = a.toString(QStringLiteral("yyyy-MM-ddTHH:mm:ss.zzzZ"));
+#else
+  QString str = a.toString(QStringLiteral("yyyy-MM-ddTHH:mm:ss.zzz"));
+#endif
   QByteArray ba = str.toLatin1();
   soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, ba.constData());
   return soap->tmpbuf;

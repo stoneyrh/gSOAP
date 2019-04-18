@@ -5080,7 +5080,7 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
     {
       if (eflag || (!has_ns(typ) && !is_untyped(typ)))
       {
-        if (all)
+        if (all && strcmp(typ->id->name, "SOAP_ENC__Array"))
         {
           d = get_Darraydims(typ)-1;
           for (i = 0; i < d; i++)
@@ -5131,7 +5131,7 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
           fprintf(fd, "    </complexType>\n");
         }
       }
-      else
+      else if (strcmp(typ->id->name, "SOAP_ENC__Array"))
       {
         if (q->info.maxOccurs == 1)
         {

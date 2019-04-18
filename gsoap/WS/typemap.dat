@@ -300,6 +300,10 @@ SOAP_ENV__Reason        = | struct SOAP_ENV__Reason
 # };\
 # | struct SOAP_ENV__Fault_
 
+#       Older gSOAP versions prior to 2.8.83 used a simple SOAP_ENC__Array type
+#       which can be re-enabled by uncommenting this line:
+# SOAP_ENC__Array = | struct { _XML *__ptr; int __size; } | struct { _XML *__ptr; int __size; }
+
 #       Temporary URI
 
 tempuri = "http://tempuri.org/"
@@ -550,10 +554,20 @@ tas     = "http://www.onvif.org/ver10/advancedsecurity/wsdl"
 tdn     = "http://www.onvif.org/ver10/network/wsdl"
 tt      = "http://www.onvif.org/ver10/schema"
 
-#       to extend tt__EventFilter with TopicExpression (for C):
+#       to extend tt__EventFilter with TopicExpression element (for C):
 # tt__EventFilter = $ struct wsnt__TopicExpressionType *wsnt__TopicExpression;
-#       to extend tt__EventFilter with TopicExpression (for C++):
+#       to extend tt__EventFilter with TopicExpression element (for C++):
 # tt__EventFilter = $ wsnt__TopicExpressionType *wsnt__TopicExpression;
+
+#       to extend _tds__Service_Capabilities with trt:ProfileCapabilities element (for C):
+# tds__Service_Capabilities = $ struct trt__ProfileCapabilities* trt__ProfileCapabilities;
+#       to extend _tds__Service_Capabilities with trt:ProfileCapabilities element (for C++):
+# _tds__Service_Capabilities = $ trt__ProfileCapabilities* trt__ProfileCapabilities_;
+
+#       to extend trt__ProfileCapabilities with @Rotation attribute (for C):
+# trt__ProfileCapabilities = $ @enum xsd__boolean Rotation;
+#       to extend trt__ProfileCapabilities with @Rotation attribute (for C++):
+# trt__ProfileCapabilities = $ @bool Rotation;
 
 #       OASIS recommended prefixes
 

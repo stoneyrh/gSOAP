@@ -5043,7 +5043,7 @@ void *process_request(struct soap *soap)
 }
 ~~~
 
-@see `::soap_copy_context`, `::soap_copy_stream`, `::soap_delegate_deletion`, `::soap_destroy`, `::soap_end`, `::soap_free`.
+@see `::soap_copy_context`, `::soap_copy_stream`, `::soap_free_stream`, `::soap_delegate_deletion`, `::soap_destroy`, `::soap_end`, `::soap_free`.
 */
 struct soap *soap_copy(struct soap *soap) ///< `::soap` context to copy
   /// @returns pointer to allocated and initialized `::soap` context or NULL when out of heap memory
@@ -5064,7 +5064,7 @@ soap_copy_context(&temp, soap);
 ...
 ~~~
 
-@see `::soap_copy`, `::soap_copy_stream`, `::soap_delegate_deletion`, `::soap_destroy`, `::soap_end`, `::soap_free`.
+@see `::soap_copy`, `::soap_copy_stream`, `::soap_free_stream`, `::soap_delegate_deletion`, `::soap_destroy`, `::soap_end`, `::soap_free`.
 */
 void soap_copy_context(
     struct soap *soap_destination, ///< destination `::soap` context to initialize
@@ -5072,7 +5072,7 @@ void soap_copy_context(
   ;
 
 /// Copy the input/output stream state of the given `::soap` context to another context
-/*
+/**
 This function copies the input/output state of the specified source context to the specified destination context.  Both contexts will share the same input/output streams , i.e. `::soap::is`, `::soap::os`, `::soap::socket`, `::soap::recvfd` and `::soap::sendfd` are shared and the current message buffer `::soap::buf` content is copied.  The destination context is set to the source context `::soap_mode` flags and timeouts.  To move the input/output state of one context to another, use this function and then call `::soap_free_stream` on the source context to clear its input/output state.
 
 @par Example:

@@ -77,10 +77,17 @@ SOAP_FMAC3 const char * SOAP_FMAC4 soap_xsd__time2s(struct soap *soap, ULONG64 a
   M = a % 60;
   a /= 60;
   H = a % 24;
+#ifndef WITH_NOZONE
   if (f)
     (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 17), "%02u:%02u:%02u.%06uZ", H, M, S, f);
   else
     (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 10), "%02u:%02u:%02uZ", H, M, S);
+#else
+  if (f)
+    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 16), "%02u:%02u:%02u.%06u", H, M, S, f);
+  else
+    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 9), "%02u:%02u:%02u", H, M, S);
+#endif
   return soap->tmpbuf;
 }
 

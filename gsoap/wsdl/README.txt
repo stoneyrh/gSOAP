@@ -165,9 +165,13 @@ COMMAND LINE OPTIONS
 -O2     optimize -O1 and omit unused schema types (unreachable from roots)
 -O3     optimize -O2 and omit unused schema root attributes
 -O4     optimize -O3 and omit unused schema root elements (use only with WSDLs)
+-Ow2    optimize -O2 while retaining all derived types of used base types
+-Ow3    optimize -O3 while retaining all derived types of used base types
+-Ow4    optimize -O4 while retaining all derived types of used base types
 -ofile  output to file
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType
 -p      create polymorphic types with C++ inheritance from base xsd__anyType
+-Q      make xsd__anySimpleType equal to xsd__anyType to use as the base type
 -qname  use name for the C++ namespace for all service declarations
 -R      generate REST operations for REST bindings specified in a WSDL
 -rhost[:port[:uid:pwd]]

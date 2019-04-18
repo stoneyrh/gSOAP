@@ -75,7 +75,11 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__date(struct soap *soap, struct tm
 
 SOAP_FMAC3 const char * SOAP_FMAC4 soap_xsd__date2s(struct soap *soap, struct tm a)
 {
+#ifndef WITH_NOZONE
   strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dZ", &a);
+#else
+  strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%d", &a);
+#endif
   return soap->tmpbuf;
 }
 

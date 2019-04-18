@@ -1914,6 +1914,9 @@ void xs__simpleType::mark()
       list->mark();
     else if (union_)
       union_->mark();
+    if (Owflag)
+      for (std::vector<xs__complexType*>::const_iterator i = complextype_extensions.begin(); i != complextype_extensions.end(); ++i)
+        (*i)->mark();
   }
 }
 
@@ -1922,8 +1925,9 @@ bool xs__simpleType::is_used() const
   return used;
 }
 
-void xs__simpleType::add_extension(xs__schema& schema, xsd__NCName name)
+void xs__simpleType::add_extension(xs__complexType *complexType, xs__schema& schema, xsd__NCName name)
 {
+  complextype_extensions.push_back(complexType);
   extensions.push_back(make_qname(schema, name));
 }
 
@@ -1964,13 +1968,13 @@ int xs__complexType::traverse(xs__schema &schema)
         xs__complexType *ct_base = simpleContent->extension->complexTypePtr();
         if (ct_base)
         {
-          ct_base->add_extension(schema, name);
+          ct_base->add_extension(this, schema, name);
         }
         else
         {
           xs__simpleType *st_base = simpleContent->extension->simpleTypePtr();
           if (st_base)
-            st_base->add_extension(schema, name);
+            st_base->add_extension(this, schema, name);
           else if (is_builtin_qname(simpleContent->extension->base))
             schema.builtinTypeDerivation(schema, simpleContent->extension->base, name);
         }
@@ -2002,7 +2006,7 @@ int xs__complexType::traverse(xs__schema &schema)
       {
         xs__complexType *ct_base = complexContent->extension->complexTypePtr();
         if (ct_base)
-          ct_base->add_extension(schema, name);
+          ct_base->add_extension(this, schema, name);
       }
       else if (complexContent->restriction)
       {
@@ -2132,6 +2136,9 @@ void xs__complexType::mark()
       (*at).mark();
     for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
       (*ag).mark();
+    if (Owflag)
+      for (std::vector<xs__complexType*>::const_iterator i = complextype_extensions.begin(); i != complextype_extensions.end(); ++i)
+        (*i)->mark();
   }
 }
 
@@ -2140,8 +2147,9 @@ bool xs__complexType::is_used() const
   return used;
 }
 
-void xs__complexType::add_extension(xs__schema& schema, xsd__NCName name)
+void xs__complexType::add_extension(xs__complexType *complexType, xs__schema& schema, xsd__NCName name)
 {
+  complextype_extensions.push_back(complexType);
   extensions.push_back(make_qname(schema, name));
 }
 
@@ -2864,7 +2872,7 @@ int xs__seqchoice::traverse(xs__schema &schema)
   schemaRef = &schema;
   for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
     (*c).traverse(schema);
-  if (Oflag)
+  if (Oflag > 0)
   {
     SetOfString members;
     for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); )

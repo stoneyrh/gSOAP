@@ -1478,10 +1478,20 @@ Version 2.8.81 (3/6/2019)
 - Updated to improve checking of `_GNU_SOURCE`, `_POSIX_C_SOURCE`, `_XOPEN_SOURCE` for GNU-specific non-XSI-compliant `gethostbyname_r` and `strerror_r` function.  If you run into compilation problems with these two functions, please contact Genivia technical support.
 - Updated DOM API for embedded serializable data types: `SOAP_DOM_ASIS` removes XML namespace bindings (`xmlns`) from the XML output of the embedded data type, which are normally added to ensure namespace prefixes are always valid when serializable data is embedded in XML.  Using `SOAP_DOM_ASIS` requires the DOM to include `xmlns` namespace bindings explicitly.
 
-Version 2.8.82 (3/14/2019) {#latest}
+Version 2.8.82 (3/14/2019)
 ---
 
 - Minor fixes and improvements.
+
+Version 2.8.83 (4/18/2019) {#latest}
+---
+
+- Added wsdl2h optimization options `-Ow2`, `-Ow3`, and `-Ow4` to optimize the generated source code by schema slicing, while retaining all derived extensions of base types.  The new optimization options are generally recommended instead of the more agressive `-O2`, `-O3`, and `-O4`, respectively, when derived type extensions of a base type are used in XML messages, which are referenced by *`xsi:type`* attributes in XML messages.  If base types are overridden by derived types indicated with *`xsi:type`* in XML, then the `-Ow` options should be used instead of the more aggressive `-O` options.
+- Added wsdl2h option `-Q` to make `xsd__anySimpleType` equal to `xsd__anyType` to use as the base type for derived types, so that elements of type *`xsd:anySimpleType`* can be serialized with a derived type, using inheritance in C++ and by using simulated inheritance in C using wsdl2h option `-F`.  On the other hand this option invalidates XML attributes of type *`xsd:anySimpleType`*.  The soapcpp2 tool warns about this invalid attribute type as a result.
+- Updated wsdl2h options `-p` and `-F` to generate additional wrappers for primitive types that aren't XSD primitive types, such as `SOAP-ENC:base64`.  This allows serialization of `xs:anyType` and `xs:anySimpleType` with additional derived types such as `SOAP-ENC:base64`.
+- Improved wsdl2h output for the infrequently-used `SOAP-ENC:Array` type.  To regress to the old behavior, add this line `SOAP_ENC__Array = | struct { _XML *__ptr; int __size; } | struct { _XML *__ptr; int __size; }` to your copy of typemap.dat and rerun wsdl2h with the updated typemap.dat definitions.
+- Fixed an issue with soapcpp2 option `-A` that resulted in error 13 `SOAP_NO_METHOD`.
+- Minor improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -64,8 +64,10 @@ int _flag = 0,
     Mflag = 0,
     mflag = 0,
     Oflag = 0,
+    Owflag = 0,
     Pflag = 0,
     pflag = 0,
+    Qflag = 0,
     Rflag = 0,
     sflag = 0,
     Uflag = 0,
@@ -183,13 +185,15 @@ int main(int argc, char **argv)
   {
     if (def.types.omitted)
     {
-      fprintf(stderr, "\nOptimization (-O%d): removes %zu definitions of unused schema components (%.1f%%)\n", Oflag, def.types.omitted, 100.0*def.types.omitted/def.types.total);
-      if (pflag)
-        fprintf(stderr, "\nWarning: option -O%d removes type definitions that may be used as xsd__anyType derivatives by type extension inheritance (enabled by default with option -p), use option -P to disable type derivation from xsd__anyType\n", Oflag);
+      fprintf(stderr, "\nOptimization (-O%s%d) removed %zu definitions of unused schema components (%.1f%%)\n", Owflag ? "w" : "", Oflag, def.types.omitted, 100.0*def.types.omitted/def.types.total);
+      if (pflag && !Owflag)
+        fprintf(stderr, "\nWarning: option -O%d removes type definitions that may be used as derived types of base types in XML (which are indicated by xsi:type attributes).  Use option -Ow%d instead of -O%d to retain all derived types of base types\n", Oflag, Oflag, Oflag);
+      else if (Fflag && !Owflag)
+        fprintf(stderr, "\nWarning: option -O%d removes type definitions that may be used as derived types of base types in XML (which are indicated by xsi:type attributes).  Use option -Ow%d instead of -O%d to retain all derived types of base types\n", Oflag, Oflag, Oflag);
     }
     else
     {
-      fprintf(stderr, "\nOptimization (-O%d): no unused schema components found\n", Oflag);
+      fprintf(stderr, "\nOptimization (-O%s%d) found no unused schema components to remove\n", Owflag ? "w" : "", Oflag);
     }
   }
   if (outfile)
@@ -360,6 +364,11 @@ static void options(int argc, char **argv)
             break;
           case 'O':
             a++;
+            if (*a == 'w')
+            {
+              Owflag = 1;
+              a++;
+            }
             if (Oflag)
               fprintf(stderr, "wsdl2h: Option -O specified twice\n");
             g = 0;
@@ -375,6 +384,9 @@ static void options(int argc, char **argv)
             break;
           case 'P':
             Pflag = 1;
+            break;
+          case 'Q':
+            Qflag = 1;
             break;
           case 'q':
             a++;
@@ -501,7 +513,7 @@ static void options(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-F] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-L] [-l] [-M] [-m] [-N name] [-n name] [-O1|-O2|-O3] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:uid:pwd] [-Sname] [-s] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-F] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-L] [-l] [-M] [-m] [-N name] [-n name] [-O1|-O2|-O3|-O4|-Ow2|-Ow3|-Ow4] [-P|-p] [-Q] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:uid:pwd] [-Sname] [-s] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b      bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -529,9 +541,13 @@ static void options(int argc, char **argv)
 -O2     optimize -O1 and omit unused schema types (unreachable from roots)\n\
 -O3     optimize -O2 and omit unused schema root attributes\n\
 -O4     optimize -O3 and omit unused schema root elements (use only with WSDLs)\n\
+-Ow2    optimize -O2 while retaining all derived types of used base types\n\
+-Ow3    optimize -O3 while retaining all derived types of used base types\n\
+-Ow4    optimize -O4 while retaining all derived types of used base types\n\
 -ofile  output to file\n\
 -P      don't create polymorphic types inherited from xsd__anyType\n\
 -p      create polymorphic types inherited from base xsd__anyType\n\
+-Q      make xsd__anySimpleType equal to xsd__anyType to use as the base type\n\
 -qname  use name for the C++ namespace of all declarations\n\
 -R      generate REST operations for REST bindings specified in a WSDL\n\
 -rhost[:port[:uid:pwd]]\n\

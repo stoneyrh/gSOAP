@@ -4835,9 +4835,13 @@ option                                    | result
 [`-O2`](#wsdl2h-O)                        | optimize `-O1` and omit unused schema types (unreachable from roots)
 [`-O3`](#wsdl2h-O)                        | optimize `-O2` and omit unused schema root attributes
 [`-O4`](#wsdl2h-O)                        | optimize `-O3` and omit unused schema root elements (use only with WSDLs)
+[`-Ow2`](#wsdl2h-O)                       | optimize `-O2` while retaining all derived types of used base types
+[`-Ow3`](#wsdl2h-O)                       | optimize `-O3` while retaining all derived types of used base types
+[`-Ow4`](#wsdl2h-O)                       | optimize `-O4` while retaining all derived types of used base types
 [`-o`](#wsdl2h-o) `file`                  | output to file 
 [`-P`](#wsdl2h-P)                         | don't create polymorphic types inherited from `xsd__anyType` 
 [`-p`](#wsdl2h-p)                         | create polymorphic types inherited from base `xsd__anyType` (automatic when the WSDL or XSD contains polymorphic definitions)
+[`-Q`](#wsdl2h-Q)                         | make `xsd__anySimpleType` equal to `xsd__anyType` to use as the base type
 [`-q`](#wsdl2h-q) `name`                  | use `name` for the C++ namespace of all declarations 
 [`-R`](#wsdl2h-R)                         | generate REST operations for REST bindings in the WSDL 
 [`-r`](#wsdl2h-r) `host[:port[:uid:pwd]]` | connect via proxy `host`, `port`, and proxy credentials `uid` and `pwd`
@@ -5799,14 +5803,15 @@ wsdl2h is relatively simple and does not import WSDLs and XSDs.
 
 This option optimizes the generated interface header file:
 
-- <b>`-O1`</b> omit duplicate choice/sequence members.
-- <b>`-O2`</b> optimize with <b>`-O1`</b> and omit unused schema types (types
-  that are unreachable from top-level schema element and attribute roots).
-- <b>`-O3`</b> optimize with <b>`-O2`</b> and omit unused schema root
-  attributes.
-- <b>`-O4`</b> optimize with <b>`-O3`</b> and omit unused schema root elements,
-  only retain the root elements used by WSDLs, so use this option only with
-  WSDLs (but WSDLs can be combined with XSDs).
+- <b>`-O1`</b> removes duplicate choice/sequence members;
+- <b>`-O2`</b> optimize with <b>`-O1`</b> and remove unused schema types (types
+  that are unreachable from top-level schema element and attribute roots);
+- <b>`-O3`</b> optimize with <b>`-O2`</b> and remove unused schema top-level
+  root attributes;
+- <b>`-O4`</b> optimize with <b>`-O3`</b> and remove unused schema top-level
+  root elements, only retain the root elements used by WSDLs.  Use this
+  option only when converting WSDLs (and their associated XSD schemas) to
+  source code, not when solely converting XSD schemas to source code.
 
 Option <b>`-O4`</b> is the most aggressive.  When used only for one or more
 XSDs as input to wsdl2h, the output will be empty because removing the root
@@ -5814,9 +5819,58 @@ elements (and attributes) results in removing all types from the schema.
 However, this option is safe to use with WSDLs to aggressively remove all
 unused schema components that are unreachable from the Web service operation
 parameter elements and types.  Option <b>`-O3`</b> is safe to use with one or
-more XSDs as input to wsdl2h, when developing an XML application that
-serializes data as XML root elements (<b>`wsdl2h -g`</b> option <b>`-g`</b> is
-recommended in this case).
+more XSDs as input to wsdl2h instead of WSDLs, for example when developing an
+XML application that serializes data as XML root elements (<b>`wsdl2h -g`</b>
+[option <b>`-g`</b>](#wsdl2h-g) is recommended in this case).
+
+Optimization by schema slicing removes unused types, which are types that are
+unreachable from top-level schema element and attribute roots.  A type is
+marked as *used* when:
+
+- it is explicitly used by one or more top-level elements and attributes;
+- it is used as a type by a child element or attribute of a complexType that is
+  marked as *used*;
+- it is used as the base type of an extension or restriction of a simpleType or
+  complexType that is marked as *used*.
+
+Marking proceeds recursively until no more types can be marked.  All remaining
+unused types are removed.  Top-level elements and attributes are selectively
+marked unused and removed depending on the level of optimization applied, with
+<b>`-O3`</b> removing unused top-level attributes and <b>`-O4`</b> removing
+unused top-level elements except for all elements used in the specified WSDLs.
+
+Aggressive optimization with options <b>`-O2`</b>, <b>`-O3`</b>, and
+<b>`-O4`</b> removes derived type extensions of a base type when the derived
+types are not marked as *used*.  However, in certain messaging scenarios this
+may have the undesired effect that this limits the choice of derived types that
+can be used to replace a base type in XML messages, because a derived type may
+have been removed when it is not marked as *used* elsewhere in the WSDLs and
+XSD schemas.  A derived type that replaces a base type in an XML message is
+indicated by a <i>`xsi:type`</i> attribute with the QName value of the derived
+type.  The wsdl2h tool generates a C++ class hierarchy to support type
+derivation, so assigning a derived type value instead of a base type value to a
+pointer member is automatically serialized in XML with the specified derived
+value (which is indicated by <i>`xsi:type`</i> attribute in the XML message).
+For C applications, we should use <b>`wsdl2h -c -F`</b>
+[option <b>`-c`</b>](#wsdl2h-c) and [option <b>`-F`</b>](#wsdl2h-F) to simulate
+inheritance in C.  In both cases it is recommended to use the following options
+to retain all derived type extensions of a base type that is marked as *used*:
+
+- <b>`-Ow2`</b> optimize with <b>`-O2`</b> to remove unused schema types, but
+  retain types that are derived types of base types that are marked as used.  .
+- <b>`-Ow3`</b> optimize with <b>`-O3`</b> to remove unused schema top-level
+  root attributes, but retain types that are derived types of base types that
+  are marked as used..
+- <b>`-Ow4`</b> optimize with <b>`-O4`</b> to remove unused schema top-level
+  root elements, but retain types that are derived types of base types that are
+  marked as used.
+
+This permits a base type value (typically a struct or class member that is a
+pointer to a base type) to be assigned a derived type in C++, which is
+serialized in XML with a <i>`xsi:type`</i> attribute to indicate the type of
+the derived value.  Likewise, XML data with derived type values are
+deserialized to C/C++ data automatically.  Inheritance is simulated in C,
+see [option <b>`-F`</b>](#wsdl2h-F).
 
 🔝 [Back to table of contents](#)
 
@@ -5938,6 +5992,96 @@ The `xsd__anyType_` values of items of the dynamic array (`item` points to an
 array of size `__sizeitem` which is a special member to indicate dynamic
 arrays) can be assigned base `xsd__anyType_` and derived types, see
 [<b>`wsdlh2 -F`</b> option <b>`-F`</b>](#wsdl2h-F).
+
+🔝 [Back to table of contents](#)
+
+### wsdl2h -Q {#wsdl2h-Q}
+
+This option makes `xsd__anySimpleType` equal to `xsd__anyType` to use as the
+base type for derivation.  This option is more effective when used with
+[<b>`wsdl2h -p`</b> option <b>`-p`</b>](#wsdl2h-p) for C++ applications and
+[<b>`wsdl2h -F`</b> option <b>`-F`</b>](#wsdl2h-F) for C applications.
+This option can also be used with [<b>`wsdl2h -d`</b> option <b>`-d`</b>](#wsdl2h-d)
+to make `xsd__anySimpleType` equal to a DOM node.
+
+Without option <b>`-Q`</b>, the `xsd__anySimpleType` type is just a C/C++
+string generated by wsdl2h:
+
+~~~{.cpp}
+    typedef char* xsd__anySimpleType;        // in case of C
+
+    typedef std::string xsd__anySimpleType;  // in case of C++
+~~~
+
+The reason for this choice is that some WSDLs and XSD schemas use
+<i>`xsd:anySimpleType`</i> to declare XML attributes of any type (because XML
+attributes must be simple types <i>`xsd:anyType`</i> is invalid to use for
+attributes).  The values of XML attributes of type <i>`xsd:anySimpleType`</i>
+can be any character data essentially.  There is no mechanism to indicate the
+actual type of the attribute value used, unlike elements that are annotated
+with <i>`xsi:type`</i> attribute with the derived type as its QName value.
+Therefore, by considering `xsd__anySimpleType` just strings we can provide any
+value for XML attributes of type <i>`xsd:anySimpleType`</i>.
+
+However, there are other uses of `xsd__anySimpleType` in XSD schemas, where
+essentially `xsd__anySimpleType` serves the same purpose as `xsd__anyType` to
+provide a base type for derived types, but restricts the derived types to
+simple types.
+
+Unfortunately, these two cases clash: we want to use C/C++ strings for XML
+attributes of type <i>`xsd:anySimpleType`</i> and also use
+<i>`xsd:anySimpleType`</i> as a base class for derived types.
+
+Option <b>`-Q`</b> enables the latter case by making `xsd__anySimpleType` equal
+to `xsd__anyType` so that elements of type <i>`xsd:anySimpleType`</i> can be
+serialized with a derived type, using inheritance in C++ and by using simulated
+inheritance in C using [<b>`wsdl2h -F`</b> option <b>`-F`</b>](#wsdl2h-F).
+  
+For example, option <b>`-Q`</b> changes this generated code for C++
+applications:
+
+~~~{.cpp}
+    class xsd__anyType
+    { public:
+        _XML __item;
+        struct soap *soap;
+    };
+
+    typedef std::string xsd__anySimpleType;
+
+    class ns__record : public xsd__anyType
+    { public:
+        xsd__anySimpleType value;  // non-polymorphic xsd:anySimpleType value
+    }
+~~~
+
+into:
+
+~~~{.cpp}
+    class xsd__anyType
+    { public:
+        _XML __item;
+        struct soap *soap;
+    };
+
+    class ns__record : public xsd__anyType
+    { public:
+        xsd__anyType *value;  // polymorphic xsd:anySimpleType value
+    }
+~~~
+
+where all other classes generated by wsdl2h [option <b>`-p`</b>](#wsdl2h-p) are
+derived from `xsd__anyType`, meaning that `value` can be assigned any one of
+these classes as long as the class is a simple type wrapper (wsdl2h generates
+comments to indicate that the polymorhpic value should be a
+<i>`xsd:anySimpleType`</i>).
+
+Similar code is generated by wsdl2h [option <b>`-F`</b>](#wsdl2h-F) for C
+applications.
+
+On the other hand this option invalidates XML attributes of type
+<i>`xsd:anySimpleType`</i>.  The soapcpp2 tool warns about this invalid
+attribute type as a result.
 
 🔝 [Back to table of contents](#)
 
@@ -6724,8 +6868,8 @@ For example:
 ~~~{.cpp}
     struct ns__record
     {
-      char bytes[3];
-      int ints[2];
+        char bytes[3];
+        int ints[2];
     };
 ~~~
 
@@ -6978,16 +7122,17 @@ interface header file.
 
 ### soapcpp2 -f {#soapcpp2-f}
 
-This option splits the serialization source code saved to <i>`soapC`</i> files into
-multiple <i>`soapC_NNN`</i> files as specified by the numeric parameter.  This
-option alleviates compilation issues with very large source code files.
+This option splits the serialization source code saved to <i>`soapC.c`</i> and
+<i>`soapC.cpp`</i> files into multiple <i>`soapC_NNN`</i> files as specified by
+the numeric parameter.  This option alleviates compilation issues with very
+large source code files.
 
 For example:
 
     soapcpp2 -f40 file.h
 
 This generates multiple <i>`soapC_NNN.cpp`</i> files each with 40 serializers, with
-<i>`NNN`</i> counting from `001` onward.
+<i>`NNN`</i> counting from <i>`001`</i> onward.
 
 The value of this option must be larger or equal to 10.
 
@@ -11651,7 +11796,7 @@ appropriate data associated with the exception and by returning the error `#SOAP
 For example:
 
 ~~~{.cpp}
-    soap_receiver_fault(soap, "Stack dump", NULL); 
+    soap_receiver_fault(soap, "Error message", NULL); 
     if (soap->version == 2) // SOAP 1.2 is used 
     {
       soap->fault->SOAP_ENV__Detail = soap_new_SOAP_ENV__Detail(soap, -1);
@@ -11666,12 +11811,47 @@ For example:
       soap->fault->detail->fault = sp;                              // point to stack 
       soap->fault->detail->__any = NULL;                            // no other XML data 
     } 
-    return SOAP_FAULT; // return from service operation call
+    return SOAP_FAULT; // return from service operation call with the fault
 ~~~
 
 Here, `::soap_receiver_fault` allocates a fault struct then we set the SOAP Fault details as shown.
 
-Service operations implementation in a Web service application can return various SOAP Faults.
+Note that SOAP 1.2 supports nested fault sub-codes.  These can be set as follows:
+
+~~~{.cpp}
+    struct SOAP_ENV__Code *subcode1 = soap_new_SOAP_ENV__Code(soap);
+    struct SOAP_ENV__Code *subcode2 = soap_new_SOAP_ENV__Code(soap);
+    soap_sender_fault(soap, "The requested profile token ProfileToken does not exist.", NULL); 
+    subcode1->SOAP_ENV__Value = (char*)"ter:InvalidArgs"; // a QName value
+    subcode1->SOAP_ENV__Subcode = subcode2;
+    subcode2->SOAP_ENV__Value = (char*)"ter:NoProfile"; // a QName value
+    subcode2->SOAP_ENV__Subcode = NULL;
+    soap->fault->SOAP_ENV__Code->SOAP_ENV__Subcode = subcode1;
+    return SOAP_FAULT;
+~~~
+
+This produces:
+
+<div class="alt">
+~~~{.xml}
+    <SOAP-ENV:Fault>
+      <SOAP-ENV:Code>
+        <SOAP-ENV:Value>SOAP-ENV:Sender</SOAP-ENV:Value>
+        <SOAP-ENV:Subcode>
+          <SOAP-ENV:Value>ter:InvalidArgs</SOAP-ENV:Value>
+          <SOAP-ENV:Subcode>
+            <SOAP-ENV:Value>ter:NoProfile </SOAP-ENV:Value>
+          </SOAP-ENV:Subcode>
+        </SOAP-ENV:Subcode>
+      </SOAP-ENV:Code>
+      <SOAP-ENV:Reason>
+        <SOAP-ENV:Text xml:lang="en">The requested profile token ProfileToken does not exist.</SOAP-ENV:Text>
+      </SOAP-ENV:Reason>
+    </SOAP-ENV:Fault>
+~~~
+</div>
+
+Service operations implementation in a Web service application can return various SOAP Faults customized in this way.
 
 SOAP Fault structures are declared `mutable`, which means that re-declarations of the structures are permitted and additional members are collected into one final structure by the soapcpp2 tool.
 

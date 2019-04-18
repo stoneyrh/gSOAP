@@ -115,7 +115,11 @@ const char * soap_xsd__date2s(struct soap *soap, QDate a)
   /* YYYY-MM-DDZ */
   if (!a.isValid())
     a = QDate(1, 1, 1);
-  QString str = a.toString(QString::fromAscii("yyyy-MM-ddZ"));
+#ifndef WITH_NOZONE
+  QString str = a.toString(QStringLiteral("yyyy-MM-ddZ"));
+#else
+  QString str = a.toString(QStringLiteral("yyyy-MM-dd"));
+#endif
   QByteArray ba = str.toLatin1();
   soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, ba.constData());
   return soap->tmpbuf;

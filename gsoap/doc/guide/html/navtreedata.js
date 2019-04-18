@@ -78,6 +78,7 @@ var NAVTREE =
         [ "wsdl2h -o", "index.html#wsdl2h-o", null ],
         [ "wsdl2h -P", "index.html#wsdl2h-P", null ],
         [ "wsdl2h -p", "index.html#wsdl2h-p", null ],
+        [ "wsdl2h -Q", "index.html#wsdl2h-Q", null ],
         [ "wsdl2h -q", "index.html#wsdl2h-q", null ],
         [ "wsdl2h -R", "index.html#wsdl2h-R", null ],
         [ "wsdl2h -r", "index.html#wsdl2h-r", null ],
@@ -361,7 +362,7 @@ var NAVTREEINDEX =
 "group__group__s2s.html#ga62c6452f879498f8751d52ced3dff798",
 "group__group__with.html#ga11ff99091a8f7fa179705bb3bff1aed2",
 "index.html#soapcpp2-C",
-"structsoap.html#af2f4dbd6f73f19f1beeaa3a7e9d9cc2c"
+"structsoap.html#af2ecfbae740da7839a0c5c96eb65db2a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

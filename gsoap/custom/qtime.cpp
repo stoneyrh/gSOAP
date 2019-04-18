@@ -115,7 +115,11 @@ const char * soap_xsd__time2s(struct soap *soap, QTime a)
   //hh:mm:ss.zzzZ
   if (!a.isValid())
     a = QTime(0, 0, 0, 0);
-  QString str = a.toString(QString::fromAscii("HH:mm:ss.zzzZ"));
+#ifndef WITH_NOZONE
+  QString str = a.toString(QStringLiteral("HH:mm:ss.zzzZ"));
+#else
+  QString str = a.toString(QStringLiteral("HH:mm:ss.zzz"));
+#endif
   QByteArray ba = str.toLatin1();
   soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, ba.constData());
   return soap->tmpbuf;
