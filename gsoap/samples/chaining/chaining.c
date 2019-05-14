@@ -57,24 +57,24 @@ struct Namespace namespaces[] = { {NULL} };
 
 int main()
 {
-	struct soap *soap = soap_new();
+  struct soap *soap = soap_new();
 
-	soap_set_namespaces(soap, q_namespaces);
-	/* serve over stdin/out, CGI style */
-	if (soap_begin_serve(soap))
-		soap_print_fault(soap, stderr);
-	else if (q_serve_request(soap) == SOAP_NO_METHOD)
-	{
-		soap_set_namespaces(soap, c_namespaces);
-		if (c_serve_request(soap))
-			soap_send_fault(soap);
-	}
-	else if (soap->error)
-		soap_send_fault(soap);
-	soap_destroy(soap);
-	soap_end(soap);
-	soap_free(soap);
-	return 0;
+  soap_set_namespaces(soap, q_namespaces);
+  /* serve over stdin/out, CGI style, see the user manual for a port-based version */
+  if (soap_begin_serve(soap))
+    soap_print_fault(soap, stderr);
+  else if (q_serve_request(soap) == SOAP_NO_METHOD)
+  {
+    soap_set_namespaces(soap, c_namespaces);
+    if (c_serve_request(soap))
+      soap_send_fault(soap);
+  }
+  else if (soap->error)
+    soap_send_fault(soap);
+  soap_destroy(soap);
+  soap_end(soap);
+  soap_free(soap);
+  return 0;
 }
 
 int ns__getQuote(struct soap *soap, char *s, float *r)

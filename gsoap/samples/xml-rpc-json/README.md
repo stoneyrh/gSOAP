@@ -1903,6 +1903,63 @@ To implement a C++ JSON-RPC and JSON REST server, please see the example
 `json-currentTimeServer.cpp` located in `gsoap/samples/xml-rpc-json` in the
 gSOAP package.
 
+Embedding and serializing raw JSON data as a JSON value in C++        {#cpp-raw}
+--------------------------------------------------------------
+
+A JSON value represented by a `value` may contain raw JSON data as a string to
+serialize literally in the output.  Deserializing JSON into a JSON `value`
+never populates this string, so this feature is to augment JSON output with
+embedded raw JSON data only.
+
+To add raw JSON data create a `_rawdata` object and assign it to a `value`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "json.h"
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    json::value v(ctx);
+
+    // create a blob of raw JSON
+    _rawdata blob(ctx, "[ true, 123, { \"key\": 456 } ]");
+    v = blob;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `_rawdata blob` can be assigned anywhere where a `value` is expected, i.e.
+as an item of an array or as a value property of a JSON object.
+
+To check that a `value` contains a `_rawdata` value and to retrieve it as raw
+data:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "json.h"
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    json::value v(ctx);
+
+    ...
+    if (v.is_rawdata())
+    {
+      _rawdata blob = (_rawdata)v;
+      size_t size = blob.size();
+      char *data = blob.ptr();
+      ...
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If the raw data blob does not contain `\0` bytes, then it is simpler to cast
+the `value` to a string:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "json.h"
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    json::value v(ctx);
+
+    ...
+    if (v.is_rawdata())
+    {
+      char *data = v;
+      ...
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Moving JSON types and operations into a C++ namespace                 {#json-ns}
 -----------------------------------------------------
 
@@ -2904,6 +2961,48 @@ The server-side creates response messages similar to the example shown above.
 To implement a C JSON-RPC and JSON REST server, please see the example
 `json-currentTimeServer.c` located in `gsoap/samples/xml-rpc-json` in the
 gSOAP package.
+
+Embedding and serializing raw JSON data as a JSON value in C            {#c-raw}
+------------------------------------------------------------
+
+A JSON value represented by a `value` may contain raw JSON data as a string to
+serialize literally in the output.  Deserializing JSON into a JSON `value`
+never populates this string, so this feature is to augment JSON output with
+embedded raw JSON data only.
+
+To add raw JSON data create a `_rawdata` structure and assign it to a `value`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "json.h"
+    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    struct value *v = new_value(ctx);
+
+    /* create a blob of raw data */
+    struct _rawdata *blob = rawdata_of(v);
+    const char *data = "[ true, 123, { \"key\": 456 } ]";
+    blob->__ptr = (void*)data;
+    blob->__size = strlen(data);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `_rawdata blob` can be assigned anywhere where a `value` is expected, i.e.
+as an item of an array or as a value property of a JSON object.
+
+To check that a `value` contains a `_rawdata` value and to retrieve it as raw
+data:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "json.h"
+    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    struct value *v = new_value(ctx);
+    ...
+    if (is_rawdata(v))
+    {
+      struct _rawdata *blob = rawdata_of(v);
+      char *data = (char*)blob.__ptr;
+      size_t size = blob.__size;
+      ...
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Miscellaneous                                                            {#misc}
 =============

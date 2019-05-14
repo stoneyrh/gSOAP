@@ -119,6 +119,26 @@ struct _base64
   int                   __size;         ///< size of raw binary data block
 };
 
+/// Represents the &lt;rawdata&gt; binary data element
+struct _rawdata
+{
+// C++ function members, not available in C (when using stdsoap2 -c)
+ public:
+                        _rawdata();
+                        _rawdata(struct soap*);
+                        _rawdata(struct soap*, int, char*);
+                        _rawdata(struct soap*, char*);
+  int                   size() const;   ///< byte size of data
+  char *                ptr();          ///< pointer to data
+  void                  size(int);      ///< set byte size of data
+  void                  ptr(char*);     ///< set pointer to data
+
+// serializable content
+ public:
+  unsigned char *       __ptr;          ///< pointer to raw binary data block
+  int                   __size;         ///< size of raw binary data block
+};
+
 /// Represents the &lt;struct&gt; record structure element
 struct _struct
 {
@@ -208,6 +228,7 @@ struct value
                         value(struct soap*, const struct _array&);
                         value(struct soap*, const struct _struct&);
                         value(struct soap*, const struct _base64&);
+                        value(struct soap*, const struct _rawdata&);
                         operator extern bool() const;
                         operator _i4() const;
                         operator _int() const;
@@ -223,6 +244,8 @@ struct value
                         operator const struct _struct&() const;
                         operator struct _base64&();
                         operator const struct _base64&() const;
+                        operator struct _rawdata& ();
+                        operator const struct _rawdata& () const;
   struct value&         operator[](int);                  ///< array/struct index (negative to get from end)
   struct value&         operator[](const char*);          ///< struct access
   struct value&         operator[](const std::string&);   ///< struct access
@@ -247,6 +270,7 @@ struct value
   struct _array&        operator=(const struct _array&);
   struct _struct&       operator=(const struct _struct&);
   struct _base64&       operator=(const struct _base64&);
+  struct _rawdata&      operator=(const struct _rawdata&);
   extern void           size(int);              ///< set/allocate size of array
   extern int            size() const;           ///< returns array/struct size or 0
   extern bool           empty() const;          ///< true if empty array or struct
@@ -268,6 +292,7 @@ struct value
   extern bool           is_array() const;       ///< true if value is array type
   extern bool           is_struct() const;      ///< true if value is struct type
   extern bool           is_base64() const;      ///< true if value is base64 type
+  extern bool           is_rawdata() const;     ///< true if value is rawdata
   value_iterator        begin();                ///< value iterator begin
   value_iterator        end();                  ///< value iterator end
  
@@ -413,6 +438,9 @@ extern const char **dateTime_of(struct value *v);
 /// C function returns pointer to base64 struct, coerces v to base64 struct if needed
 extern struct _base64 *base64_of(struct value *v);
 
+/// C function returns pointer to string of RAW JSON
+extern struct _rawdata *rawdata_of(struct value* v);
+
 /// C function returns pointer to member value of a struct, coerces v to struct if needed
 extern struct value *value_at(struct value *v, const char *s);
 
@@ -469,6 +497,9 @@ extern _boolean is_dateTime(const struct value *v);
 
 /// C function returns true if base64, always false for received JSON
 extern _boolean is_base64(const struct value *v);
+
+/// C function returns true if RAW JSON, always false for received JSON
+extern _boolean is_rawdata(const struct value *v);
 
 /// C function to create an empty struct
 extern void set_struct(struct value *v);

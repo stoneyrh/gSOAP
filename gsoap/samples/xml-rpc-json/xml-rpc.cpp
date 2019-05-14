@@ -62,6 +62,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define SOAP_TYPE__array               SOAP_TYPE_json__array
 # define SOAP_TYPE__struct              SOAP_TYPE_json__struct
 # define SOAP_TYPE__base64              SOAP_TYPE_json__base64
+# define SOAP_TYPE__rawdata             SOAP_TYPE_json__rawdata
 #else
 # include "soapH.h"
 #endif
@@ -164,6 +165,12 @@ value::value(struct soap *soap, const _base64& b)
   *this = b;
 }
 
+value::value(struct soap* soap, const _rawdata& b)
+{
+    soap_default_value(soap, this);
+    *this = b;
+}
+
 value::operator bool() const
 {
   return this->is_true();
@@ -222,7 +229,7 @@ value::operator _double() const
 
 value::operator char*() const
 {
-  if (__type == SOAP_TYPE__string || __type == SOAP_TYPE__dateTime_DOTiso8601)
+  if (__type == SOAP_TYPE__string || __type == SOAP_TYPE__dateTime_DOTiso8601 || __type == SOAP_TYPE__rawdata)
     return (char*)ref;
   if (__type == SOAP_TYPE__boolean)
     return (char*)(*(_boolean*)ref ? "true" : "false");
@@ -234,6 +241,8 @@ value::operator char*() const
     return (char*)soap_strdup(soap, soap_double2s(soap, (double)*(_double*)ref));
   if (__type == SOAP_TYPE__base64)
     return (char*)soap_s2base64(soap, (unsigned char*)((_base64*)ref)->ptr(), NULL, ((_base64*)ref)->size());
+  if (__type == SOAP_TYPE__rawdata)
+    return (char*)soap_strdup(soap, (const char*)((_rawdata*)ref)->ptr());
   if (__any)
     return (char*)__any;
   if (!__type)
@@ -268,7 +277,7 @@ value::operator std::wstring() const
 value::operator ULONG64() const
 {
   time_t t = 0;
-  if (__type == SOAP_TYPE__string || __type == SOAP_TYPE__dateTime_DOTiso8601)
+  if (__type == SOAP_TYPE__string || __type == SOAP_TYPE__dateTime_DOTiso8601 || __type == SOAP_TYPE__rawdata)
   {
     if (soap_s2dateTime(soap, (const char*)ref, &t))
     {
@@ -353,6 +362,36 @@ value::operator const _base64&() const
     base64->__size = (int)strlen(s);
   }
   return *base64;
+}
+
+value::operator _rawdata&()
+{
+  if (__type == SOAP_TYPE__rawdata)
+    return *(_rawdata*)ref;
+  _rawdata *rawdata = soap_new__rawdata(soap);
+  if (rawdata)
+  {
+    soap_default__rawdata(soap, rawdata);
+    char *s = *this;
+    rawdata->__ptr = (unsigned char*)s;
+    rawdata->__size = (int)strlen(s);
+  }
+  return *rawdata;
+}
+
+value::operator const _rawdata&() const
+{
+  if (__type == SOAP_TYPE__rawdata)
+    return *(const _rawdata*)ref;
+  _rawdata *rawdata = soap_new__rawdata(soap);
+  if (rawdata)
+  {
+    soap_default__rawdata(soap, rawdata);
+    char *s = *this;
+    rawdata->__ptr = (unsigned char*)s;
+    rawdata->__size = (int)strlen(s);
+  }
+  return *rawdata;
 }
 
 value& value::operator[](int n)
@@ -571,6 +610,18 @@ _base64& value::operator=(const _base64& b)
   return *(_base64*)ref;
 }
 
+_rawdata& value::operator=(const _rawdata& b)
+{
+  __type = SOAP_TYPE__rawdata;
+  __any = NULL;
+  ref = soap_new__rawdata(soap);
+  if (!ref)
+    throw std::bad_alloc();
+  soap_default__rawdata(soap, (_rawdata*)ref);
+  *(_rawdata*)ref = b;
+  return *(_rawdata*)ref;
+}
+
 void value::size(int n)
 {
   if (__type == SOAP_TYPE__array)
@@ -728,6 +779,11 @@ bool value::is_struct() const
 bool value::is_base64() const
 {
   return __type == SOAP_TYPE__base64;
+}
+
+bool value::is_rawdata() const
+{
+  return __type == SOAP_TYPE__rawdata;
 }
 
 value_iterator value::begin()
@@ -1067,6 +1123,48 @@ void _base64::size(int n)
 void _base64::ptr(unsigned char *p)
 {
   __ptr = p;
+}
+
+_rawdata::_rawdata()
+{ }
+
+_rawdata::_rawdata(struct soap *soap)
+{
+  soap_default__rawdata(soap, this);
+}
+
+_rawdata::_rawdata(struct soap *soap, char *p)
+{
+  soap_default__rawdata(soap, this);
+  __size = (int)strlen(p);
+  __ptr = (unsigned char*)p;
+}
+
+_rawdata::_rawdata(struct soap *soap, int n, char *p)
+{
+  soap_default__rawdata(soap, this);
+  __size = n;
+  __ptr = (unsigned char*)p;
+}
+
+int _rawdata::size() const
+{
+  return __size;
+}
+
+char * _rawdata::ptr()
+{
+  return (char*)__ptr;
+}
+
+void _rawdata::size(int n)
+{
+  __size = n;
+}
+
+void _rawdata::ptr(char *p)
+{
+  __ptr = (unsigned char*)p;
 }
 
 params::params()

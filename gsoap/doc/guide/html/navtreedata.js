@@ -304,7 +304,7 @@ var NAVTREE =
       [ "How to create client/server libraries", "index.html#dylibs", [
         [ "C++ examples", "index.html#example13", null ],
         [ "C examples", "index.html#example14", null ],
-        [ "C services chaining example", "index.html#example15", null ]
+        [ "How to chain C services to accept messages on the same port", "index.html#example15", null ]
       ] ],
       [ "How to create DLLs", "index.html#dll", [
         [ "Creating the base stdsoap2.dll", "index.html#basedll", null ],

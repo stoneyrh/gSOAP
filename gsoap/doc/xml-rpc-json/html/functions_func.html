@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Class Members - Functions</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Jan 27 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun May 12 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -81,8 +81,11 @@
 <li>_base64()
 : <a class="el" href="struct__base64.html#a8a14756c5cd4ea4fced24df501102ac7">_base64</a>
 </li>
+<li>_rawdata()
+: <a class="el" href="struct__rawdata.html#a684b4925f2b06e20c132e1e87bd3b883">_rawdata</a>
+</li>
 <li>_struct()
-: <a class="el" href="struct__struct.html#a89aff20b2d589201ebe2590ca56e105a">_struct</a>
+: <a class="el" href="struct__struct.html#a27b8a24d67da6c9dadf973c9d7419483">_struct</a>
 </li>
 </ul>
 
@@ -165,6 +168,9 @@
 <li>is_number()
 : <a class="el" href="structvalue.html#a2c9cfcdadaebaa3a4834ef507a5452c2">value</a>
 </li>
+<li>is_rawdata()
+: <a class="el" href="structvalue.html#a621d4c4e391b9d018dc3c2698f091655">value</a>
+</li>
 <li>is_string()
 : <a class="el" href="structvalue.html#a9b7b0789dc59f7a50c009c487777c282">value</a>
 </li>
@@ -216,6 +222,9 @@
 <li>operator const struct _base64 &amp;()
 : <a class="el" href="structvalue.html#af81afd529cb540fcc19630ecd8dff81b">value</a>
 </li>
+<li>operator const struct _rawdata &amp;()
+: <a class="el" href="structvalue.html#addb0643adf90b5ebfc08a3091c69ea93">value</a>
+</li>
 <li>operator const struct _struct &amp;()
 : <a class="el" href="structvalue.html#a0d650615b7a03e5c430d8a171f5bf2d9">value</a>
 </li>
@@ -234,6 +243,9 @@
 <li>operator struct _base64 &amp;()
 : <a class="el" href="structvalue.html#a5c5cb166dbb3af8354c0244b153fa756">value</a>
 </li>
+<li>operator struct _rawdata &amp;()
+: <a class="el" href="structvalue.html#a348987a5cbc55b964bc5b7d4a8d301a0">value</a>
+</li>
 <li>operator struct _struct &amp;()
 : <a class="el" href="structvalue.html#a87ee23db9bb536506c12f16bef72f3ab">value</a>
 </li>
@@ -247,15 +259,15 @@
 : <a class="el" href="structmethod_call.html#a91eb1168ac1e48e76b438d373a5c2e80">methodCall</a>
 </li>
 <li>operator=()
-: <a class="el" href="structvalue.html#adf97cb4c928389d3f849cd3eac6be9eb">value</a>
+: <a class="el" href="structvalue.html#ab27cb9ee4372927dadb299ff77468958">value</a>
 </li>
 <li>operator[]()
-: <a class="el" href="struct__array.html#af42e9052bcc131bff0bb6437843b3fb0">_array</a>
+: <a class="el" href="struct__array.html#a268e8e52e4f1b8e3f10b1dfdbbcac010">_array</a>
 , <a class="el" href="struct__struct.html#a4eb2ab930993a2bff3c9603346987f39">_struct</a>
-, <a class="el" href="structmethod_call.html#a0936960d7004a8431ab7b9eae028689b">methodCall</a>
-, <a class="el" href="structmethod_response.html#a8e58fe14069e86da0a1edd89d30d2816">methodResponse</a>
+, <a class="el" href="structmethod_call.html#a3a40c0257b4b21183b4d442fde476b3b">methodCall</a>
+, <a class="el" href="structmethod_response.html#a0d470d67a30d40993bb49f49d98237ad">methodResponse</a>
 , <a class="el" href="structparams.html#a30bc06165f43603171830255190e0e6f">params</a>
-, <a class="el" href="structvalue.html#a1ab95c334e84c965922df48b7af1371d">value</a>
+, <a class="el" href="structvalue.html#acc01f095ad5cf380e0050fb47ae516e8">value</a>
 </li>
 </ul>
 
@@ -266,6 +278,7 @@
 </li>
 <li>ptr()
 : <a class="el" href="struct__base64.html#accb75dbcdaf316a692d92d42783ffcb8">_base64</a>
+, <a class="el" href="struct__rawdata.html#a9ee0f6fde90e20379c4414f6f95ba819">_rawdata</a>
 </li>
 </ul>
 
@@ -292,9 +305,10 @@
 <li>size()
 : <a class="el" href="struct__array.html#a69afe895df347a4cba1c53841b3e7519">_array</a>
 , <a class="el" href="struct__base64.html#a68f0dc85f1bebf170b6322a43408b8ef">_base64</a>
+, <a class="el" href="struct__rawdata.html#a5e1dace69a66dfbc369809bc3f1559e7">_rawdata</a>
 , <a class="el" href="struct__struct.html#a78bb51fec1216a80d3749aa3ef5db221">_struct</a>
 , <a class="el" href="structparams.html#a6e150e3958d176f05bd6579d5d14836c">params</a>
-, <a class="el" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa">value</a>
+, <a class="el" href="structvalue.html#a2db9152a4f86289696a72bd13e26e7b9">value</a>
 </li>
 </ul>
 
@@ -310,7 +324,7 @@
 Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Jan 27 2019 10:36:23 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun May 12 2019 13:22:34 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

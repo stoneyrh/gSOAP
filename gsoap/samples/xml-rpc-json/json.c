@@ -48,6 +48,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define SOAP_TYPE__array               SOAP_TYPE_json__array
 # define SOAP_TYPE__struct              SOAP_TYPE_json__struct
 # define SOAP_TYPE__base64              SOAP_TYPE_json__base64
+# define SOAP_TYPE__rawdata             SOAP_TYPE_json__rawdata
 #endif
 #endif
 
@@ -207,6 +208,8 @@ int json_send(struct soap *soap, const struct value *v)
       if (v->ref && soap_putbase64(soap, ((struct _base64*)v->ref)->__ptr, ((struct _base64*)v->ref)->__size))
         return soap->error;
       return soap_send_raw(soap, "\"", 1);
+    case SOAP_TYPE__rawdata:
+      return soap_send_raw(soap, (const char*)(((struct _rawdata*)v->ref)->__ptr), ((struct _rawdata*)v->ref)->__size);
     case SOAP_TYPE__struct:
       if ((soap->mode & SOAP_XML_INDENT))
         n = 2 * (++soap->level % 40) + 2;

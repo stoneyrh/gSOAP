@@ -57,7 +57,7 @@ static int comment_nest = 0; /* keep track of block comments to avoid nesting */
 static const char *keywords[] =
 {
   "alignas",
-  "alignof"
+  "alignof",
   "and",
   "and_eq",
   "asm",

@@ -2510,7 +2510,7 @@ For example:
       soap->recv_timeout = 10;     // 10 seconds max socket delay 
       soap->accept_timeout = 3600; // server stops after 1 hour of inactivity 
       soap->max_keep_alive = 100;  // max keep-alive sequence 
-      // soap_ssl_server_context(soap, ...); // call when HTTPS is used
+      // soap_ssl_server_context(soap, ...); // call this function when HTTPS is used
       SOAP_SOCKET m, s;                      // master and slave sockets 
       m = soap_bind(soap, NULL, 18083, 10);  // small BACKLOG for iterative servers 
       if (!soap_valid_socket(m)) 
@@ -3253,6 +3253,54 @@ Chaining the services is also simpler to implement since we use one `::soap` con
     }
 ~~~
 
+However, the while loop iterates for each new connection that is established with `::soap_accept` and does not allow for HTTP keep-alive connections to persist.  For our final improvement we want to support HTTP keep-alive connections that require looping over the service dispatches until the connection closes on either end, after which we resume the outer loop.  The resulting code is very close to the soapcpp2-generated `::soap_serve` code and the `serve` service class methods, with the addition of the chain of service dispatches in the loop body:
+
+~~~{.cpp}
+    #include "AbcABCService.h" 
+    #include "UvwUVWService.h" 
+    #include "XyzXYZService.h" 
+    #include "envH.h" // include this file last, if it is needed 
+
+    int main()
+    {
+      struct soap *soap = soap_new(); 
+      Abc::soapABCService abc(soap); // generated with soapcpp2 -j -S -qAbc 
+      Uvw::soapUVWService uvw(soap); // generated with soapcpp2 -j -S -qUvw 
+      Xyz::soapXYZService xyz(soap); // generated with soapcpp2 -j -S -qXyz 
+      if (!soap_valid_socket(soap_bind(soap, NULL, 8080, BACKLOG)))
+        exit(EXIT_FAILURE);
+      while (1)
+      {
+        if (!soap_valid_socket(soap_accept(soap)))
+          exit(EXIT_FAILURE);
+        soap->keep_alive = soap->max_keep_alive + 1; // max keep-alive iterations
+        do
+        {
+          if ((soap->keep_alive > 0) && (soap->max_keep_alive > 0))
+            soap->keep_alive--;
+          if (soap_begin_serve(soap))
+          {
+            if (soap->error >= SOAP_STOP) // if a plugin has served the request
+              continue;                   // then continue with the next request
+            break;                        // an error occurred
+          }
+          if (abc.dispatch() == SOAP_NO_METHOD) 
+          {
+            if (uvw.dispatch() == SOAP_NO_METHOD) 
+            {
+              if (xyz.dispatch() == SOAP_NO_METHOD) 
+                soap_send_fault(soap); // send fault to client 
+            } 
+          } 
+          soap_destroy(soap); 
+          soap_end(soap); 
+        } while (soap->keep_alive);
+        soap_destroy(soap); 
+        soap_end(soap); 
+      }
+      soap_free(soap); // safe to delete when abc, uvw, xyz are also deleted
+    }
+~~~
 
 🔝 [Back to table of contents](#)
 
@@ -15853,7 +15901,7 @@ multi-threaded stand-alone SOAP Web Service:
         NULL,              /* optional capath to directory with trusted certificates */ 
         "dh512.pem",       /* DH file name or DH key len bits (minimum is 512, e.g. "512") to generate DH param, if NULL use RSA */ 
         NULL,              /* if randfile!=NULL: use a file with random data to seed randomness */  
-        NULL               /* optional server identification to enable SSL session cache (must be a unique name) */
+        NULL               /* optional server identification to enable SSL session caching to speed up TLS (must be a unique name) */
       )) 
       {
         soap_print_fault(soap, stderr); 
@@ -15917,11 +15965,11 @@ RSA. A numeric value greater than 512 can be provided instead as a string
 constant (e.g. `"512"`) to allow the engine to generate the DH parameters on
 the fly (this can take a while) rather than retrieving them from a file. The
 randfile entry can be used to seed the PRNG. The last entry enable server-side
-session caching. A unique server name is required.
+session caching to speed up TLS. A unique server name is required.
 
-You can set a specific cipher list with `SSL_CTX_set_cipher_list(soap->ctx,
-    "...")` where `::soap::ctx` is the SSL context created by
-`::soap_ssl_server_context`.
+You can set a specific cipher list with
+`SSL_CTX_set_cipher_list(soap->ctx, "...")` where `::soap::ctx` is the SSL
+context created by `::soap_ssl_server_context`.
 
 The GNUTLS mutex lock setup is automatically performed in the engine, but only
 when POSIX threads are detected and available.
@@ -17114,13 +17162,18 @@ Compile and link this application with <i>`stdsoap2.o`</i>, <i>`envC.o`</i>, <i>
 
 🔝 [Back to table of contents](#)
 
-### C services chaining example   {#example15}
+### How to chain C services to accept messages on the same port        {#example15}
 
-We build a C application for multiple services served on one and the same port.
+When combining multiple services into one application, you can run wsdl2h
+on multiple WSDLs to generate the single all-inclusive service definitions
+interface header file for soapcpp2. This header file is then processed with soapcpp2 to
+generate skeleton functions in C.
 
-We create a <i>`env.h`</i> that contains the joint SOAP Header and SOAP Fault
+What if we generate multiple services, each from a WSDL separately, and want to deploy them on the same port?  This requires listening to the same port and then chaining the service dispatches so that each service can serve a request.
+
+First we create a <i>`env.h`</i> that contains the joint SOAP Header and SOAP Fault
 definitions, for example by copy-pasting these from the other header files generated by wsdl2h.  Or this file is empty if no specialized SOAP Headers and Faults are used.
-Then, we compile it as follows:
+We compile it as follows:
 
      soapcpp2 -c -penv env.h
      cc -c envC.c
@@ -17142,6 +17195,11 @@ We do the same for a service definition in <i>`rate.h`</i>:
 To serve both the quote and rate services on the same port, we chain the service dispatchers as follows:
 
 ~~~{.cpp}
+    #include "quoteH.h"
+    #include "rateH.h"
+    #include "quote.nsmap"
+    #include "rate.nsmap"
+
     struct soap *soap = soap_new(); 
     if (soap_valid_socket(soap_bind(soap, NULL, 8080, 10))) // small BACKLOG for iterative servers
     {
@@ -17150,14 +17208,21 @@ To serve both the quote and rate services on the same port, we chain the service
         if (soap_valid_socket(soap_accept(soap)))
         {
           if (soap_begin_serve(soap)) 
-            soap_send_fault(&abc); // send fault to client 
-          else if (quote_serve_request(soap) == SOAP_NO_METHOD) 
           {
+            soap_print_fault(soap, stderr); 
+            continue;
+          }
+          soap_set_namespaces(soap, quote_namespaces);
+          if (quote_serve_request(soap) == SOAP_NO_METHOD) 
+          {
+            soap_set_namespaces(soap, rate_namespaces);
             if (rate_serve_request(soap))
               soap_send_fault(soap); // send fault to client 
           } 
           else if (soap->error) 
+          {
             soap_send_fault(soap); // send fault to client 
+          }
         }
         else if (soap->errnum) // accept failed, try again after 1 second
         {
@@ -17194,6 +17259,66 @@ The server should also define the service operations:
       *Result = ... ; 
       return SOAP_OK; 
     }
+~~~
+
+However, the while loop iterates for each new connection that is established with `::soap_accept` and does not allow for HTTP keep-alive connections to persist.  For our final improvement we want to support HTTP keep-alive connections that require looping over the service dispatches until the connection closes on either end, after which we resume the outer loop.  The resulting code is very close to the soapcpp2-generated `::soap_serve` code and the `serve` service class methods, with the addition of the chain of service dispatches in the loop body:
+
+~~~{.cpp}
+    #include "quoteH.h"
+    #include "rateH.h"
+    #include "quote.nsmap"
+    #include "rate.nsmap"
+
+    struct soap *soap = soap_new(); 
+    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 10))) // small BACKLOG for iterative servers
+    {
+      while (1)
+      {
+        if (soap_valid_socket(soap_accept(soap)))
+        {
+          soap->keep_alive = soap->max_keep_alive + 1; // max keep-alive iterations
+          do
+          {
+            if ((soap->keep_alive > 0) && (soap->max_keep_alive > 0))
+              soap->keep_alive--;
+            if (soap_begin_serve(soap))
+            {
+              if (soap->error >= SOAP_STOP) // if a plugin has served the request
+                continue;                   // then continue with the next request
+              break;                        // an error occurred
+            }
+            soap_set_namespaces(soap, quote_namespaces);
+            if (quote_serve_request(soap) == SOAP_NO_METHOD) 
+            {
+              soap_set_namespaces(soap, rate_namespaces);
+              if (rate_serve_request(soap))
+                soap_send_fault(soap); // send fault to client 
+            } 
+            else if (soap->error) 
+            {
+              soap_send_fault(soap); // send fault to client 
+            }
+            soap_destroy(soap); 
+            soap_end(soap); 
+          } while (soap->keep_alive);
+        }
+        else if (soap->errnum) // accept failed, try again after 1 second
+        {
+          soap_print_fault(soap, stderr); 
+          sleep(1);
+        } 
+        else
+        {
+          fprintf(stderr, "server timed out\n"); 
+          break; 
+        }
+        soap_destroy(soap); 
+        soap_end(soap); 
+      }
+    }
+    soap_destroy(soap); 
+    soap_end(soap); 
+    soap_free(soap);
 ~~~
 
 🔝 [Back to table of contents](#)

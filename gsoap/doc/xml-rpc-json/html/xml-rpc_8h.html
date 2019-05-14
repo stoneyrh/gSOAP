@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">xml-rpc.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Jan 27 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun May 12 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -72,6 +72,9 @@ Include dependency graph for xml-rpc.h:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__base64.html">_base64</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the &lt;base64&gt; binary data element.  <a href="struct__base64.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__rawdata.html">_rawdata</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the &lt;rawdata&gt; binary data element.  <a href="struct__rawdata.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html">_struct</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the &lt;struct&gt; record structure element.  <a href="struct__struct.html#details">More...</a><br /></td></tr>
@@ -150,6 +153,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a83e10b3bc3636f2aad1223d4ed8939d3"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__base64.html">_base64</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a83e10b3bc3636f2aad1223d4ed8939d3">base64_of</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
 <tr class="memdesc:a83e10b3bc3636f2aad1223d4ed8939d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to base64 struct, coerces v to base64 struct if needed.  <a href="#a83e10b3bc3636f2aad1223d4ed8939d3">More...</a><br /></td></tr>
 <tr class="separator:a83e10b3bc3636f2aad1223d4ed8939d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e941f85f33b0db7b53c1dd5cb292b8c"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__rawdata.html">_rawdata</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a8e941f85f33b0db7b53c1dd5cb292b8c">rawdata_of</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a8e941f85f33b0db7b53c1dd5cb292b8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to string of RAW JSON.  <a href="#a8e941f85f33b0db7b53c1dd5cb292b8c">More...</a><br /></td></tr>
+<tr class="separator:a8e941f85f33b0db7b53c1dd5cb292b8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5b4dd82782cd6a663fa4fd19ac9697c"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c">value_at</a> (struct <a class="el" href="structvalue.html">value</a> *v, const char *s)</td></tr>
 <tr class="memdesc:ae5b4dd82782cd6a663fa4fd19ac9697c"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to member value of a struct, coerces v to struct if needed.  <a href="#ae5b4dd82782cd6a663fa4fd19ac9697c">More...</a><br /></td></tr>
 <tr class="separator:ae5b4dd82782cd6a663fa4fd19ac9697c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,6 +213,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a99a7e4bbd0637ef4e752896cf299cfb7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a99a7e4bbd0637ef4e752896cf299cfb7">is_base64</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
 <tr class="memdesc:a99a7e4bbd0637ef4e752896cf299cfb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if base64, always false for received JSON.  <a href="#a99a7e4bbd0637ef4e752896cf299cfb7">More...</a><br /></td></tr>
 <tr class="separator:a99a7e4bbd0637ef4e752896cf299cfb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f6e1623bfceefdcafd9c7fbd3371886"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a5f6e1623bfceefdcafd9c7fbd3371886">is_rawdata</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a5f6e1623bfceefdcafd9c7fbd3371886"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if RAW JSON, always false for received JSON.  <a href="#a5f6e1623bfceefdcafd9c7fbd3371886">More...</a><br /></td></tr>
+<tr class="separator:a5f6e1623bfceefdcafd9c7fbd3371886"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4d39cc0904084cdc556be1b43146542"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa4d39cc0904084cdc556be1b43146542">set_struct</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
 <tr class="memdesc:aa4d39cc0904084cdc556be1b43146542"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function to create an empty struct.  <a href="#aa4d39cc0904084cdc556be1b43146542">More...</a><br /></td></tr>
 <tr class="separator:aa4d39cc0904084cdc556be1b43146542"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -708,6 +717,24 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a5f6e1623bfceefdcafd9c7fbd3371886"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_rawdata </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>C function returns true if RAW JSON, always false for received JSON. </p>
+
+</div>
+</div>
 <a class="anchor" id="a243e9ce66455d2d5819e0db13ae0c104"></a>
 <div class="memitem">
 <div class="memproto">
@@ -966,6 +993,24 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a8e941f85f33b0db7b53c1dd5cb292b8c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="struct__rawdata.html">_rawdata</a>* rawdata_of </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>C function returns pointer to string of RAW JSON. </p>
+
+</div>
+</div>
 <a class="anchor" id="a4923910fea4fc3bcb85ec655f1071a66"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1092,7 +1137,7 @@ Functions</h2></td></tr>
 Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Jan 27 2019 10:36:22 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun May 12 2019 13:22:33 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

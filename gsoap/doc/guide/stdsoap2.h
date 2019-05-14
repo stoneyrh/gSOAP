@@ -5634,14 +5634,14 @@ After `::soap_ssl_server_context` initialization you can select a specific ciphe
 #include "soapH.h"
 struct soap *soap = soap_new();
 if (soap_ssl_server_context(soap,
-      SOAP_SSL_DEFAULT,
-      "server.pem",
-      "password",
+      SOAP_SSL_DEFAULT, // authenticate, use TLSv1.0 to 1.3
+      "server.pem",     // private key and certificate
+      "password",       // password to read server.pem
       NULL,
       NULL,
       NULL,
       NULL,
-      "my_unique_server_id123"
+      "my_unique_server_id123" // server identification to enable SSL session caching to speed up TLS
       ))
 {
   soap_print_fault(soap, stderr);
@@ -5653,14 +5653,14 @@ if (soap_ssl_server_context(soap,
 #include "soapH.h"
 struct soap *soap = soap_new();
 if (soap_ssl_server_context(soap,
-      SOAP_TLSv1_1 | SOAP_TLSv1_2,
-      "server.pem",
-      "password",
+      SOAP_TLSv1_1 | SOAP_TLSv1_2, // authenticate, use TLSv1.1 or TLSv1.2 only
+      "server.pem",                // private key and certificate
+      "password",                  // password to read server.pem
       NULL,
       NULL,
-      "1024",
+      "1024",                      // generate DH with 1024 bits (takes a while to execute)
       NULL,
-      "my_unique_server_id123"
+      "my_unique_server_id123"     // identification to enable SSL session caching to speed up TLS
       ))
 {
   soap_print_fault(soap, stderr);
@@ -5672,14 +5672,14 @@ if (soap_ssl_server_context(soap,
 #include "soapH.h"
 struct soap *soap = soap_new();
 if (soap_ssl_server_context(soap,
-      SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION,
-      "server.pem",
-      "password",
-      "cacert.pem",
+      SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION, // require clients to authenticate
+      "server.pem",                           // private key and certificate
+      "password",                             // password to read server.pem
+      "cacert.pem",                           // certificate to authenticate clients
       NULL,
       NULL,
       NULL,
-      soap_rand_uuid(soap, NULL)
+      soap_rand_uuid(soap, NULL) // identification to enable SSL session caching to speed up TLS
       )
  || soap_ssl_crl(soap, "crl.pem"))
 {
