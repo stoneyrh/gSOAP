@@ -50,17 +50,17 @@ static void gen_parts(const sp__Parts& parts, Types& types, const char *what, co
 int wsp__Content::traverse(wsdl__definitions& definitions)
 {
   if (vflag)
-    cerr << "  Analyzing wsp Policy" << endl;
+    std::cerr << "  Analyzing wsp Policy" << std::endl;
   if (Policy)
     Policy->traverse(definitions);
   if (PolicyReference)
     PolicyReference->traverse(definitions);
-  for (vector<wsp__Content*>::iterator i = All.begin(); i != All.end(); ++i)
+  for (std::vector<wsp__Content*>::iterator i = All.begin(); i != All.end(); ++i)
   {
     if (*i)
       (*i)->traverse(definitions);
   }
-  for (vector<wsp__Content*>::iterator j = ExactlyOne.begin(); j != ExactlyOne.end(); ++j)
+  for (std::vector<wsp__Content*>::iterator j = ExactlyOne.begin(); j != ExactlyOne.end(); ++j)
   {
     if (*j)
       (*j)->traverse(definitions);
@@ -84,7 +84,7 @@ void wsp__Content::generate(Service& service, Types& types, int indent) const
   if (!All.empty())
   {
     fprintf(stream, "%s- All of the following:\n", tabs);
-    for (vector<wsp__Content*>::const_iterator p = All.begin(); p != All.end(); ++p)
+    for (std::vector<wsp__Content*>::const_iterator p = All.begin(); p != All.end(); ++p)
       if (*p)
         (*p)->generate(service, types, indent + 1);
   }
@@ -92,19 +92,19 @@ void wsp__Content::generate(Service& service, Types& types, int indent) const
   if (!ExactlyOne.empty())
   {
     fprintf(stream, "%s- Exactly one of the following:\n", tabs);
-    for (vector<wsp__Content*>::const_iterator p = ExactlyOne.begin(); p != ExactlyOne.end(); ++p)
+    for (std::vector<wsp__Content*>::const_iterator p = ExactlyOne.begin(); p != ExactlyOne.end(); ++p)
       if (*p)
         (*p)->generate(service, types, indent + 1);
   }
   // WS-SecurityPolicy Parts (TODO: do we need vectors of these?)
-  for (vector<sp__Parts>::const_iterator sp = sp__SignedParts.begin(); sp != sp__SignedParts.end(); ++sp)
+  for (std::vector<sp__Parts>::const_iterator sp = sp__SignedParts.begin(); sp != sp__SignedParts.end(); ++sp)
     gen_parts(*sp, types, "sign", "[4.1.1] WS-Security Signed Parts", indent);
-  for (vector<sp__Parts>::const_iterator ep = sp__EncryptedParts.begin(); ep != sp__EncryptedParts.end(); ++ep)
+  for (std::vector<sp__Parts>::const_iterator ep = sp__EncryptedParts.begin(); ep != sp__EncryptedParts.end(); ++ep)
     gen_parts(*ep, types, "encrypt", "[4.2.1] Security Encrypted Parts", indent);
-  for (vector<sp__Parts>::const_iterator rp = sp__RequiredParts.begin(); rp != sp__RequiredParts.end(); ++rp)
+  for (std::vector<sp__Parts>::const_iterator rp = sp__RequiredParts.begin(); rp != sp__RequiredParts.end(); ++rp)
   {
     fprintf(stream, "%s- Required Header elements:", tabs);
-    for (vector<sp__Header>::const_iterator h = (*rp).Header.begin(); h != (*rp).Header.end(); ++h)
+    for (std::vector<sp__Header>::const_iterator h = (*rp).Header.begin(); h != (*rp).Header.end(); ++h)
       if ((*h).Name)
         fprintf(stream, " %s", types.aname(NULL, (*h).Namespace, (*h).Name));
       else if ((*h).Namespace)
@@ -136,7 +136,7 @@ void wsp__Content::generate(Service& service, Types& types, int indent) const
   if (elts)
   {
     fprintf(stream, "%s- %s Elements requirements (XPath%s):\n%s  @verbatim\n", tabs, elts_name, elts->XPathVersion?elts->XPathVersion:"", tabs);
-    for (vector<xsd__string>::const_iterator s = elts->XPath.begin(); s != elts->XPath.end(); ++s)
+    for (std::vector<xsd__string>::const_iterator s = elts->XPath.begin(); s != elts->XPath.end(); ++s)
     {
       fprintf(stream, "%s  ", tabs);
       text(*s);
@@ -656,7 +656,7 @@ void wsp__Content::generate(Service& service, Types& types, int indent) const
   if (wsrmp5__InOrder)
     fprintf(stream, "%s- In Order\n", tabs);
   // All else
-  for (vector<_XML>::const_iterator x = __any.begin(); x != __any.end(); ++x)
+  for (std::vector<_XML>::const_iterator x = __any.begin(); x != __any.end(); ++x)
   {
     if (*x && *(*x))
     {
@@ -680,7 +680,7 @@ static void gen_parts(const sp__Parts& parts, Types& types, const char *what, co
   if (!parts.Header.empty())
   {
     fprintf(stream, "%s  -# Header elements:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_set_wsu_id(soap, \"", tabs);
-    for (vector<sp__Header>::const_iterator h = parts.Header.begin(); h != parts.Header.end(); ++h)
+    for (std::vector<sp__Header>::const_iterator h = parts.Header.begin(); h != parts.Header.end(); ++h)
     {
       if ((*h).Name)
         fprintf(stream, "%s ", types.aname(NULL, (*h).Namespace, (*h).Name));
@@ -704,7 +704,7 @@ int wsp__PolicyReference::traverse(wsdl__definitions& definitions)
   policyRef = NULL;
   if (!URI || !*URI)
   {
-    cerr << "PolicyReference has no URI" << endl;
+    std::cerr << "PolicyReference has no URI" << std::endl;
     return SOAP_OK;
   }
   if (*URI == '#')
@@ -712,7 +712,7 @@ int wsp__PolicyReference::traverse(wsdl__definitions& definitions)
     policyRef = search(URI + 1, definitions);
     if (!policyRef)
     {
-      cerr << "PolicyReference URI=\"" << URI << "\" not found" << endl;
+      std::cerr << "PolicyReference URI=\"" << URI << "\" not found" << std::endl;
       return SOAP_OK;
     }
   }
@@ -731,7 +731,7 @@ wsp__Policy *wsp__PolicyReference::policyPtr() const
 
 static wsp__Policy *search(const char *URI, wsdl__definitions& definitions)
 {
-  for (vector<wsp__Policy>::iterator p = definitions.wsp__Policy_.begin(); p != definitions.wsp__Policy_.end(); ++p)
+  for (std::vector<wsp__Policy>::iterator p = definitions.wsp__Policy_.begin(); p != definitions.wsp__Policy_.end(); ++p)
   {
     wsp__Policy *policy = search(URI, &(*p));
     if (policy)
@@ -755,13 +755,13 @@ static wsp__Policy *search(const char *URI, wsp__Content *content)
   policy = search(URI, content->Policy);
   if (policy)
     return policy;
-  for (vector<wsp__Content*>::iterator i = content->All.begin(); i != content->All.end(); ++i)
+  for (std::vector<wsp__Content*>::iterator i = content->All.begin(); i != content->All.end(); ++i)
   {
     policy = search(URI, *i);
     if (policy)
       return policy;
   }
-  for (vector<wsp__Content*>::iterator j = content->ExactlyOne.begin(); j != content->ExactlyOne.end(); ++j)
+  for (std::vector<wsp__Content*>::iterator j = content->ExactlyOne.begin(); j != content->ExactlyOne.end(); ++j)
   {
     policy = search(URI, *j);
     if (policy)

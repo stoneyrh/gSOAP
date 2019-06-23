@@ -41,7 +41,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "httpda.h"
 #endif
 
-#define WSDL2H_VERSION "2.8.84"
+#define WSDL2H_VERSION "2.8.85"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)
@@ -52,8 +52,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include <vector>
 #include <set>
 #include <map>
-
-using namespace std;
 
 struct ltstr
 { bool operator()(const char *s1, const char *s2) const
@@ -69,9 +67,9 @@ struct eqstr
   }
 }; 
 
-typedef set<const char*, ltstr> SetOfString;
+typedef std::set<const char*, ltstr> SetOfString;
 
-typedef pair<const char*, const char*> Pair;
+typedef std::pair<const char*, const char*> Pair;
 
 struct ltpair
 { bool operator()(Pair s1, Pair s2) const
@@ -82,13 +80,13 @@ struct ltpair
   }
 };
 
-typedef map<const char*, const char*, ltstr> MapOfStringToString;
+typedef std::map<const char*, const char*, ltstr> MapOfStringToString;
 
-typedef map<Pair, const char*, ltpair> MapOfPairToString;
+typedef std::map<Pair, const char*, ltpair> MapOfPairToString;
 
-typedef map<const char*, size_t, ltstr> MapOfStringToNum;
+typedef std::map<const char*, size_t, ltstr> MapOfStringToNum;
 
-typedef vector<const char*> VectorOfString;
+typedef std::vector<const char*> VectorOfString;
 
 extern int _flag,
            aflag,

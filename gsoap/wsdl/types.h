@@ -42,7 +42,7 @@ enum Type { NONE, CLASS, ENUM, STRUCT, TYPEDEF };
 
 enum CType { CTNONE, CTBOOL, CTINT, CTUINT, CTLONG, CTULONG, CTFLOAT, CTDOUBLE, CTLONGDOUBLE, CTENUM, CTSTRING, CTWSTRING, CTQNAME, CTWQNAME };
 
-typedef map<const char*, CType, ltstr> MapOfStringToCType;
+typedef std::map<const char*, CType, ltstr> MapOfStringToCType;
 
 enum Lookup { NOLOOKUP, LOOKUP };
 
@@ -101,13 +101,13 @@ class Types
     bool is_ptr(const char *prefix, const char *URI, const char *type);
     void dump(FILE*);
     void define(const char *URI, const char *name, const xs__complexType&);
-    void gen(const char *URI, const vector<xs__attribute>&, SetOfString&);
-    void gen(const char *URI, const vector<xs__attributeGroup>&, SetOfString&);
-    void gen(const char *URI, const vector<xs__all>&, SetOfString&);
-    void gen(const char *URI, const vector<xs__element>&, const char *minOccurs, const char *maxOccurs, SetOfString&);
-    void gen(const char *URI, const vector<xs__group>&, SetOfString&);
-    void gen(const char *URI, const vector<xs__any>&);
-    void gen(const char *URI, const vector<xs__contents>&, SetOfString&);
+    void gen(const char *URI, const std::vector<xs__attribute>&, SetOfString&);
+    void gen(const char *URI, const std::vector<xs__attributeGroup>&, SetOfString&);
+    void gen(const char *URI, const std::vector<xs__all>&, SetOfString&);
+    void gen(const char *URI, const std::vector<xs__element>&, const char *minOccurs, const char *maxOccurs, SetOfString&);
+    void gen(const char *URI, const std::vector<xs__group>&, SetOfString&);
+    void gen(const char *URI, const std::vector<xs__any>&);
+    void gen(const char *URI, const std::vector<xs__contents>&, SetOfString&);
     void gen(const char *URI, const char *name, const xs__simpleType&, bool anonymous, bool nested_restriction);
     void gen(const char *URI, const char *name, const xs__complexType&, bool anonymous);
     void gen(const char *URI, const xs__attribute&, SetOfString&);

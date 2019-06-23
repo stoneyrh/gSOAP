@@ -625,10 +625,10 @@ class xs__schema
         const SetOfString&              builtinAttributes() const;
         bool                            empty() const;
         void                            mark();
-        friend ostream&                 operator<<(ostream&, const xs__schema&);
-        friend istream&                 operator>>(istream&, xs__schema&);
+        friend std::ostream&            operator<<(std::ostream&, const xs__schema&);
+        friend std::istream&            operator>>(std::istream&, xs__schema&);
 };
 
-extern ostream &operator<<(ostream &o, const xs__schema &e);
-extern istream &operator>>(istream &i, xs__schema &e);
+extern std::ostream &operator<<(std::ostream &o, const xs__schema &e);
+extern std::istream &operator>>(std::istream &i, xs__schema &e);
 

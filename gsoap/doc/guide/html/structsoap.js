@@ -21,6 +21,7 @@ var structsoap =
     [ "buflen", "structsoap.html#a0b72b2e13d73dd568d845143822d29d8", null ],
     [ "c14nexclude", "structsoap.html#afd294a7412902194179ec31c2d0200ef", null ],
     [ "c14ninclude", "structsoap.html#a400a1663c7b747b84fa17100e10e3eb9", null ],
+    [ "client_addr", "structsoap.html#a9ac2ec757d32a005faa90f43145ad942", null ],
     [ "client_interface", "structsoap.html#aa66026bcd099d88d44c985b49928a05d", null ],
     [ "client_port", "structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c", null ],
     [ "connect_flags", "structsoap.html#a52a22fafc369b3a54fb0d16f53158794", null ],

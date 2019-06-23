@@ -1498,5 +1498,12 @@ Version 2.8.84 (5/14/2019)
 
 - Minor fixes and improvements.
 
+Version 2.8.85 (6/24/2019)
+---
+
+- Added `soap::client_addr` string to specify a IPv4 or IPv6 or a host address to bind to before connecting.  This can be used at the client side to bind to an address before connecting to a server endpoint, similar to `soap::client_port`.
+- Fixed wsdl2h compilation issue with C++17.
+- Fixed `custom/duration.c` custom deserializer `SOAP_TYPE` error caused by parsing duration fractional seconds.
+
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

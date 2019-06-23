@@ -45,7 +45,7 @@ static void page(const char *page, const char *title, const char *text);
 static void section(const char *section, const char *title, const char *text);
 static void banner(const char*, const char* = NULL);
 static void ident();
-static void gen_policy(Service&, const vector<const wsp__Policy*>&, const char*, Types&);
+static void gen_policy(Service&, const std::vector<const wsp__Policy*>&, const char*, Types&);
 static void gen_policy_enablers(const Service&);
 static void gen_plnk(const Service& service);
 static void gen_vprop(const wsdl__definitions& definitions, Types&);
@@ -63,7 +63,7 @@ void Definitions::collect(const wsdl__definitions& definitions)
 {
   // Collect information: analyze WSDL definitions and imported definitions
   analyze(definitions);
-  for (vector<wsdl__import>::const_iterator import = definitions.import.begin(); import != definitions.import.end(); ++import)
+  for (std::vector<wsdl__import>::const_iterator import = definitions.import.begin(); import != definitions.import.end(); ++import)
     if ((*import).definitionsPtr())
       analyze(*(*import).definitionsPtr());
 }
@@ -75,9 +75,9 @@ void Definitions::analyze(const wsdl__definitions& definitions)
   // Analyze WSDL and build Service information
   binding_count = 0;
   // Determine number of relevant service bindings (service prefix option only)
-  for (vector<wsdl__binding>::const_iterator i = definitions.binding.begin(); i != definitions.binding.end(); ++i)
+  for (std::vector<wsdl__binding>::const_iterator i = definitions.binding.begin(); i != definitions.binding.end(); ++i)
   {
-    for (vector<wsdl__ext_operation>::const_iterator j = (*i).operation.begin(); j != (*i).operation.end(); ++j)
+    for (std::vector<wsdl__ext_operation>::const_iterator j = (*i).operation.begin(); j != (*i).operation.end(); ++j)
     {
       if ((*j).operationPtr())
       {
@@ -96,7 +96,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
     fprintf(stderr, "\nWarning: %d service bindings found, but collected as one service (use option -Nname to produce a separate service for each binding)\n", binding_count);
   }
   // Analyze and collect service data
-  for (vector<wsdl__binding>::const_iterator binding = definitions.binding.begin(); binding != definitions.binding.end(); ++binding)
+  for (std::vector<wsdl__binding>::const_iterator binding = definitions.binding.begin(); binding != definitions.binding.end(); ++binding)
   {
     // /definitions/binding/documentation
     const char *binding_documentation = (*binding).documentation;
@@ -165,7 +165,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
       if (soap__binding_ && soap__binding_->style)
         soap__binding_style = *soap__binding_->style;
       // /definitions/binding/operation*
-      for (vector<wsdl__ext_operation>::const_iterator operation = (*binding).operation.begin(); operation != (*binding).operation.end(); ++operation)
+      for (std::vector<wsdl__ext_operation>::const_iterator operation = (*binding).operation.begin(); operation != (*binding).operation.end(); ++operation)
       {
         // /definitions/portType/operation/ associated with /definitions/binding/operation
         wsdl__operation *wsdl__operation_ = (*operation).operationPtr();
@@ -282,7 +282,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               input_mime_content = ext_input->mime__content_;
               if (ext_input->mime__multipartRelated_)
               {
-                for (vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
+                for (std::vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
                   if ((*part).soap__body_)
                   {
                     input_body = (*part).soap__body_;
@@ -297,7 +297,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               input_mime_content = ext_output->mime__content_;
               if (ext_output->mime__multipartRelated_)
               {
-                for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+                for (std::vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
                   if ((*part).soap__body_)
                   {
                     input_body = (*part).soap__body_;
@@ -353,38 +353,38 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                 else
                   service->type = NULL;
                 // collect faults (TODO: this is not used anywhere)
-                for (vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
+                for (std::vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
                 {
                   Message *f = analyze_fault(definitions, service, *fault);
                   if (f)
                     service->fault[f->name] = f;
                 }
                 // collect policies for the bindings
-                for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
+                for (std::vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
                   service->policy.push_back(&(*p));
-                for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
+                for (std::vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
                   service->policy.push_back((*r).policyPtr());
                 // collect policies for the service endpoints
-                for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+                for (std::vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
                 {
-                  for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
+                  for (std::vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
                     service->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
+                  for (std::vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
                     service->policy.push_back((*r).policyPtr());
                 }
                 // collect BPEL 2.0 partner link roles
-                for (vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
+                for (std::vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
                 {
-                  for (vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
+                  for (std::vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
                   {
                     if ((binding_count > 1 && !service_prefix) || (*r).portTypePtr() == (*binding).portTypePtr())
                       service->role.push_back(&(*r));
                   }
                 }  
               }
-              for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+              for (std::vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
               {
-                for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
+                for (std::vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
                 {
                   if ((*port).bindingPtr() == &(*binding))
                   {
@@ -410,7 +410,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                       service->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
                   }
                 }
-                for (vector<wsdl__port>::const_iterator endpoint = (*s).endpoint.begin(); endpoint != (*s).endpoint.end(); ++endpoint)
+                for (std::vector<wsdl__port>::const_iterator endpoint = (*s).endpoint.begin(); endpoint != (*s).endpoint.end(); ++endpoint)
                 {
                   if ((*endpoint).bindingPtr() == &(*binding))
                   {
@@ -554,9 +554,9 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               // collect input message policies
               if (op->input->message)
               {
-                for (vector<wsp__Policy>::const_iterator p = op->input->message->wsp__Policy_.begin(); p != op->input->message->wsp__Policy_.end(); ++p)
+                for (std::vector<wsp__Policy>::const_iterator p = op->input->message->wsp__Policy_.begin(); p != op->input->message->wsp__Policy_.end(); ++p)
                   op->input->policy.push_back(&(*p));
-                for (vector<wsp__PolicyReference>::const_iterator r = op->input->message->wsp__PolicyReference_.begin(); r != op->input->message->wsp__PolicyReference_.end(); ++r)
+                for (std::vector<wsp__PolicyReference>::const_iterator r = op->input->message->wsp__PolicyReference_.begin(); r != op->input->message->wsp__PolicyReference_.end(); ++r)
                   op->input->policy.push_back((*r).policyPtr());
               }
               if (input->wsp__Policy_)
@@ -586,7 +586,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                   output_mime_content = ext_output->mime__content_;
                   if (ext_output->mime__multipartRelated_)
                   {
-                    for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+                    for (std::vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
                       if ((*part).soap__body_)
                       {
                         output_body = (*part).soap__body_;
@@ -701,9 +701,9 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                 // collect output message policies
                 if (op->output->message)
                 {
-                  for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
+                  for (std::vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
                     op->output->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
+                  for (std::vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
                     op->output->policy.push_back((*r).policyPtr());
                 }
                 if (output->wsp__Policy_)
@@ -743,7 +743,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               output_mime_content = ext_output->mime__content_;
               if (ext_output->mime__multipartRelated_)
               {
-                for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+                for (std::vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
                   if ((*part).soap__body_)
                   {
                     output_body = (*part).soap__body_;
@@ -758,7 +758,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               output_mime_content = ext_input->mime__content_;
               if (ext_input->mime__multipartRelated_)
               {
-                for (vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
+                for (std::vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
                   if ((*part).soap__body_)
                   {
                     output_body = (*part).soap__body_;
@@ -813,38 +813,38 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                 else
                   service->type = NULL;
                 // collect faults (TODO: this is not used anywhere)
-                for (vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
+                for (std::vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
                 {
                   Message *f = analyze_fault(definitions, service, *fault);
                   if (f)
                     service->fault[f->name] = f;
                 }
                 // collect policies for the bindings
-                for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
+                for (std::vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
                   service->policy.push_back(&(*p));
-                for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
+                for (std::vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
                   service->policy.push_back((*r).policyPtr());
                 // collect policies for the service endpoints
-                for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+                for (std::vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
                 {
-                  for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
+                  for (std::vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
                     service->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
+                  for (std::vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
                     service->policy.push_back((*r).policyPtr());
                 }
                 // collect BPEL 2.0 partner link roles
-                for (vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
+                for (std::vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
                 {
-                  for (vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
+                  for (std::vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
                   {
                     if ((binding_count > 1 && !service_prefix) || (*r).portTypePtr() == (*binding).portTypePtr())
                       service->role.push_back(&(*r));
                   }
                 }  
               }
-              for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+              for (std::vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
               {
-                for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
+                for (std::vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
                 {
                   if ((*port).bindingPtr() == &(*binding))
                   {
@@ -992,9 +992,9 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               // collect output message policies
               if (op->output->message)
               {
-                for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
+                for (std::vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
                   op->output->policy.push_back(&(*p));
-                for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
+                for (std::vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
                   op->output->policy.push_back((*r).policyPtr());
               }
               if (output->wsp__Policy_)
@@ -1044,11 +1044,11 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
   // collect input headers and headerfaults
   if (ext_input)
   {
-    const vector<soap__header> *soap__header_ = NULL;
+    const std::vector<soap__header> *soap__header_ = NULL;
     // check if soap header is in mime:multipartRelated
     if (ext_input->mime__multipartRelated_)
     {
-      for (vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
+      for (std::vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
       if (!(*part).soap__header_.empty())
       {
         soap__header_ = &(*part).soap__header_;
@@ -1057,7 +1057,7 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
     }
     if (!soap__header_)
       soap__header_ = &ext_input->soap__header_;
-    for (vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
+    for (std::vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
     {
       Message *h = new Message();
       h->message = (*header).messagePtr();
@@ -1087,7 +1087,7 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       h->ext_documentation = NULL;      // TODO: may wanto to add document content
       h->documentation = NULL;          // TODO: may wanto to add document content
       service->header[h->name] = h;
-      for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
+      for (std::vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
       {
         Message *hf = new Message();
         hf->message = (*headerfault).messagePtr();
@@ -1120,7 +1120,7 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
         service->headerfault[hf->name] = hf;
       }
     }
-    for (vector<wsoap__header>::const_iterator wheader = ext_input->wsoap__header_.begin(); wheader != ext_input->wsoap__header_.end(); ++wheader)
+    for (std::vector<wsoap__header>::const_iterator wheader = ext_input->wsoap__header_.begin(); wheader != ext_input->wsoap__header_.end(); ++wheader)
     {
       Message *h = new Message();
       h->message = NULL;
@@ -1144,11 +1144,11 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
   // collect output headers and headerfaults
   if (ext_output)
   {
-    const vector<soap__header> *soap__header_ = NULL;
+    const std::vector<soap__header> *soap__header_ = NULL;
     // check if soap header is in mime:multipartRelated
     if (ext_output->mime__multipartRelated_)
     {
-      for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+      for (std::vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
       if (!(*part).soap__header_.empty())
       {
         soap__header_ = &(*part).soap__header_;
@@ -1157,7 +1157,7 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
     }
     if (!soap__header_)
       soap__header_ = &ext_output->soap__header_;
-    for (vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
+    for (std::vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
     {
       Message *h = new Message();
       h->message = (*header).messagePtr();
@@ -1184,7 +1184,7 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       h->ext_documentation = NULL;      // TODO: may want to add document content
       h->documentation = NULL;          // TODO: may want to add document content
       service->header[h->name] = h;
-      for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
+      for (std::vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
       {
         Message *hf = new Message();
         hf->message = (*headerfault).messagePtr();
@@ -1217,7 +1217,7 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
         service->headerfault[hf->name] = hf;
       }
     }
-    for (vector<wsoap__header>::const_iterator wheader = ext_output->wsoap__header_.begin(); wheader != ext_output->wsoap__header_.end(); ++wheader)
+    for (std::vector<wsoap__header>::const_iterator wheader = ext_output->wsoap__header_.begin(); wheader != ext_output->wsoap__header_.end(); ++wheader)
     {
       Message *h = new Message();
       h->message = NULL;
@@ -1240,9 +1240,9 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
   }
 }
 
-void Definitions::analyze_faults(const wsdl__definitions& definitions, Service *service, Operation *op, vector<wsdl__ext_operation>::const_iterator& operation)
+void Definitions::analyze_faults(const wsdl__definitions& definitions, Service *service, Operation *op, std::vector<wsdl__ext_operation>::const_iterator& operation)
 {
-  for (vector<wsdl__ext_fault>::const_iterator fault = (*operation).fault.begin(); fault != (*operation).fault.end(); ++fault)
+  for (std::vector<wsdl__ext_fault>::const_iterator fault = (*operation).fault.begin(); fault != (*operation).fault.end(); ++fault)
   {
     Message *f = analyze_fault(definitions, service, *fault);
     if (f)
@@ -1251,7 +1251,7 @@ void Definitions::analyze_faults(const wsdl__definitions& definitions, Service *
       service->fault[f->name] = f;
     }
   }
-  for (vector<wsdl__ext_fault>::const_iterator infault = (*operation).infault.begin(); infault != (*operation).infault.end(); ++infault)
+  for (std::vector<wsdl__ext_fault>::const_iterator infault = (*operation).infault.begin(); infault != (*operation).infault.end(); ++infault)
   {
     Message *f = analyze_fault(definitions, service, *infault);
     if (f)
@@ -1260,7 +1260,7 @@ void Definitions::analyze_faults(const wsdl__definitions& definitions, Service *
       service->fault[f->name] = f;
     }
   }
-  for (vector<wsdl__ext_fault>::const_iterator outfault = (*operation).outfault.begin(); outfault != (*operation).outfault.end(); ++outfault)
+  for (std::vector<wsdl__ext_fault>::const_iterator outfault = (*operation).outfault.begin(); outfault != (*operation).outfault.end(); ++outfault)
   {
     Message *f = analyze_fault(definitions, service, *outfault);
     if (f)
@@ -1791,7 +1791,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
   }
   if (!soap12)
   {
-    for (vector<wsdl__import>::const_iterator i = definitions.import.begin(); i != definitions.import.end(); ++i)
+    for (std::vector<wsdl__import>::const_iterator i = definitions.import.begin(); i != definitions.import.end(); ++i)
     {
       if ((*i).definitionsPtr())
       {
@@ -1815,12 +1815,12 @@ void Definitions::compile(const wsdl__definitions& definitions)
       fprintf(stream, "\n/* NOTE:\n\nIt is strongly recommended to customize the names of the namespace prefixes\ngenerated by wsdl2h. To do so, modify the prefix bindings below and add the\nmodified lines to 'typemap.dat' then rerun wsdl2h (use wsdl2h -t typemap.dat):\n\n");
       if (definitions.targetNamespace && *definitions.targetNamespace)
         fprintf(stream, "%s = \"%s\"\n", types.nsprefix(service_prefix, definitions.targetNamespace), definitions.targetNamespace);
-      for (vector<xs__schema*>::const_iterator schema1 = definitions.types->xs__schema_.begin(); schema1 != definitions.types->xs__schema_.end(); ++schema1)
+      for (std::vector<xs__schema*>::const_iterator schema1 = definitions.types->xs__schema_.begin(); schema1 != definitions.types->xs__schema_.end(); ++schema1)
         if ((*schema1)->targetNamespace && *(*schema1)->targetNamespace && (!definitions.targetNamespace || strcmp((*schema1)->targetNamespace, definitions.targetNamespace)))
           fprintf(stream, "%s = \"%s\"\n", types.nsprefix(NULL, (*schema1)->targetNamespace), (*schema1)->targetNamespace);
       fprintf(stream, "\n*/\n");
     }
-    for (vector<xs__schema*>::const_iterator schema2 = definitions.types->xs__schema_.begin(); schema2 != definitions.types->xs__schema_.end(); ++schema2)
+    for (std::vector<xs__schema*>::const_iterator schema2 = definitions.types->xs__schema_.begin(); schema2 != definitions.types->xs__schema_.end(); ++schema2)
     {
       const char *t = types.nsprefix(NULL, (*schema2)->targetNamespace);
       if (t && *t)
@@ -2241,15 +2241,15 @@ void Definitions::compile(const wsdl__definitions& definitions)
   {
     comment("Definitions", defs, "types", definitions.types->documentation);
     fprintf(stream, "\n");
-    for (vector<xs__schema*>::const_iterator schema4 = definitions.types->xs__schema_.begin(); schema4 != definitions.types->xs__schema_.end(); ++schema4)
+    for (std::vector<xs__schema*>::const_iterator schema4 = definitions.types->xs__schema_.begin(); schema4 != definitions.types->xs__schema_.end(); ++schema4)
     {
       if (vflag)
         fprintf(stderr, "\nDefining types in %s\n", (*schema4)->targetNamespace);
-      for (vector<xs__complexType>::const_iterator complexType = (*schema4)->complexType.begin(); complexType != (*schema4)->complexType.end(); ++complexType)
+      for (std::vector<xs__complexType>::const_iterator complexType = (*schema4)->complexType.begin(); complexType != (*schema4)->complexType.end(); ++complexType)
         types.define((*schema4)->targetNamespace, NULL, *complexType);
       if (vflag)
         fprintf(stderr, "\nDefining elements in %s\n", (*schema4)->targetNamespace);
-      for (vector<xs__element>::const_iterator element = (*schema4)->element.begin(); element != (*schema4)->element.end(); ++element)
+      for (std::vector<xs__element>::const_iterator element = (*schema4)->element.begin(); element != (*schema4)->element.end(); ++element)
       {
         if (!(*element).type && !(*element).abstract)
         {
@@ -2287,11 +2287,11 @@ void Definitions::compile(const wsdl__definitions& definitions)
     do
     {
       found = (baseLevel == 1);
-      for (vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
+      for (std::vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
       {
         if (found)
           banner("Schema Types and Top-Level Elements and Attributes", (*schema)->targetNamespace);
-        for (vector<xs__simpleType>::iterator simpleType = (*schema)->simpleType.begin(); simpleType != (*schema)->simpleType.end(); ++simpleType)
+        for (std::vector<xs__simpleType>::iterator simpleType = (*schema)->simpleType.begin(); simpleType != (*schema)->simpleType.end(); ++simpleType)
         {
           if ((*simpleType).baseLevel() == baseLevel)
           {
@@ -2299,7 +2299,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             types.gen((*schema)->targetNamespace, NULL, *simpleType, false, false);
           }
         }
-        for (vector<xs__element>::iterator element = (*schema)->element.begin(); element != (*schema)->element.end(); ++element)
+        for (std::vector<xs__element>::iterator element = (*schema)->element.begin(); element != (*schema)->element.end(); ++element)
         {
           if (!(*element).type && (*element).simpleTypePtr() && (*element).simpleTypePtr()->baseLevel() == baseLevel)
           {
@@ -2312,7 +2312,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           if (!(*element).type && (*element).complexTypePtr() && (*element).complexTypePtr()->baseLevel() == baseLevel)
             found = true;
         }
-        for (vector<xs__attribute>::const_iterator attribute = (*schema)->attribute.begin(); attribute != (*schema)->attribute.end(); ++attribute)
+        for (std::vector<xs__attribute>::const_iterator attribute = (*schema)->attribute.begin(); attribute != (*schema)->attribute.end(); ++attribute)
         {
           if (!(*attribute).type && (*attribute).simpleTypePtr() && (*attribute).simpleTypePtr()->baseLevel() == baseLevel)
           {
@@ -2323,7 +2323,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             types.gen((*schema)->targetNamespace, (*attribute).name, *(*attribute).simpleTypePtr(), false, false); // URI = NULL won't generate type in schema (type without namespace qualifier)
           }
         }
-        for (vector<xs__complexType>::iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
+        for (std::vector<xs__complexType>::iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
         {
           if ((*complexType).baseLevel() == baseLevel)
             found = true;
@@ -2407,9 +2407,9 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, "\n");
         }
       }
-      for (vector<xs__schema*>::const_iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
+      for (std::vector<xs__schema*>::const_iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
       {
-        for (vector<xs__simpleType>::const_iterator simpleType = (*schema)->simpleType.begin(); simpleType != (*schema)->simpleType.end(); ++simpleType)
+        for (std::vector<xs__simpleType>::const_iterator simpleType = (*schema)->simpleType.begin(); simpleType != (*schema)->simpleType.end(); ++simpleType)
         {
           if ((*simpleType).name
            && !(*simpleType).restriction
@@ -2421,7 +2421,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             fprintf(stream, "\n");
           }
         }
-        for (vector<xs__complexType>::const_iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
+        for (std::vector<xs__complexType>::const_iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
         {
           if ((*complexType).name
            && !(*complexType).abstract
@@ -2445,16 +2445,16 @@ void Definitions::compile(const wsdl__definitions& definitions)
     int maxLevel = baseLevel;
     for (baseLevel = 1; baseLevel < maxLevel; ++baseLevel)
     {
-      for (vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
+      for (std::vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
       {
         if (baseLevel == 1)
           banner("Schema Complex Types and Top-Level Elements", (*schema)->targetNamespace);
-        for (vector<xs__complexType>::iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
+        for (std::vector<xs__complexType>::iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
         {
           if ((*complexType).baseLevel() == baseLevel)
             types.gen((*schema)->targetNamespace, NULL, *complexType, false);
         }
-        for (vector<xs__element>::iterator element = (*schema)->element.begin(); element != (*schema)->element.end(); ++element)
+        for (std::vector<xs__element>::iterator element = (*schema)->element.begin(); element != (*schema)->element.end(); ++element)
         {
           if (!(*element).type && (*element).complexTypePtr() && (*element).complexTypePtr()->baseLevel() == baseLevel)
           {
@@ -2465,9 +2465,9 @@ void Definitions::compile(const wsdl__definitions& definitions)
         }
       }
     }
-    for (vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
+    for (std::vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
     {
-      for (vector<xs__simpleType>::iterator simpleType = (*schema)->simpleType.begin(); simpleType != (*schema)->simpleType.end(); ++simpleType)
+      for (std::vector<xs__simpleType>::iterator simpleType = (*schema)->simpleType.begin(); simpleType != (*schema)->simpleType.end(); ++simpleType)
       {
         if ((*simpleType).baseLevel() <= 0)
         {
@@ -2478,7 +2478,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           types.ptrtypemap[t] = types.usetypemap[t] = "_XML";
         }
       }
-      for (vector<xs__complexType>::iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
+      for (std::vector<xs__complexType>::iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
       {
         if ((*complexType).baseLevel() <= 0)
         {
@@ -2498,12 +2498,12 @@ void Definitions::compile(const wsdl__definitions& definitions)
     types.gen(NULL, (*local).first, *(*local).second);
     }
     */
-    for (vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
+    for (std::vector<xs__schema*>::iterator schema = definitions.types->xs__schema_.begin(); schema != definitions.types->xs__schema_.end(); ++schema)
     {
       if (vflag)
         fprintf(stderr, "\nGenerating elements in %s\n", (*schema)->targetNamespace);
       banner("Additional Top-Level Elements", (*schema)->targetNamespace);
-      for (vector<xs__element>::iterator element = (*schema)->element.begin(); element != (*schema)->element.end(); ++element)
+      for (std::vector<xs__element>::iterator element = (*schema)->element.begin(); element != (*schema)->element.end(); ++element)
       {
         if ((*element).name && (*element).type && !(*element).abstract)
         {
@@ -2548,7 +2548,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (vflag)
         fprintf(stderr, "\nGenerating attributes in %s\n", (*schema)->targetNamespace);
       banner("Additional Top-Level Attributes", (*schema)->targetNamespace);
-      for (vector<xs__attribute>::iterator attribute = (*schema)->attribute.begin(); attribute != (*schema)->attribute.end(); ++attribute)
+      for (std::vector<xs__attribute>::iterator attribute = (*schema)->attribute.begin(); attribute != (*schema)->attribute.end(); ++attribute)
       {
         if ((*attribute).name && (*attribute).type)
         {
@@ -2675,7 +2675,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           text((*binding_doc).second);
         }
         section(sv->name, "_operations Operations of Binding", sv->name);
-        for (vector<Operation*>::const_iterator op = sv->operation.begin(); op != sv->operation.end(); ++op)
+        for (std::vector<Operation*>::const_iterator op = sv->operation.begin(); op != sv->operation.end(); ++op)
         {
           if (*op && (*op)->input && (*op)->input_name)
             fprintf(stream, "\n  - @ref %s\n", (*op)->input_name);
@@ -2717,11 +2717,11 @@ void Definitions::compile(const wsdl__definitions& definitions)
     fprintf(stream, "\nSOAP/XML services use data bindings that are contractually bound by WSDL and\nare auto-generated by wsdl2h and soapcpp2 (see Service Bindings). Plain data\nbindings are adopted from XML schemas as part of the WSDL types section or when\nrunning wsdl2h on a set of schemas to produce non-SOAP-based XML data bindings.\n\n");
     if (!Lflag)
       fprintf(stream, "@note The following readers and writers are C/C++ data type (de)serializers\nauto-generated by wsdl2h and soapcpp2. Run soapcpp2 on this file to generate the\n(de)serialization code, which is stored in soapC.c[pp]. Include \"soapH.h\" in\nyour code to import these data type and function declarations. Only use the\nsoapcpp2-generated files in your project build. Do not include the wsdl2h-\ngenerated .h file in your code.\n\n@note Data can be read and deserialized from:\n  - an int file descriptor, using soap->recvfd = fd\n  - a socket, using soap->socket = (int)...\n  - a C++ stream (istream, stringstream), using soap->is = (istream*)...\n  - a C string, using soap->is = (const char*)...\n  - any input, using the soap->frecv() callback\n\n@note Data can be serialized and written to:\n  - an int file descriptor, using soap->sendfd = (int)...\n  - a socket, using soap->socket = (int)...\n  - a C++ stream (ostream, stringstream), using soap->os = (ostream*)...\n  - a C string, using soap->os = (const char**)...\n  - any output, using the soap->fsend() callback\n\n@note The following options are available for (de)serialization control:\n  - soap->encodingStyle = NULL; to remove SOAP 1.1/1.2 encodingStyle\n  - soap_set_mode(soap, SOAP_XML_TREE); XML without id-ref (no cycles!)\n  - soap_set_mode(soap, SOAP_XML_GRAPH); XML with id-ref (including cycles)\n  - soap_set_namespaces(soap, struct Namespace *nsmap); to set xmlns bindings\n\n");
-    for (vector<xs__schema*>::const_iterator schema5 = definitions.types->xs__schema_.begin(); schema5 != definitions.types->xs__schema_.end(); ++schema5)
+    for (std::vector<xs__schema*>::const_iterator schema5 = definitions.types->xs__schema_.begin(); schema5 != definitions.types->xs__schema_.end(); ++schema5)
     {
       const char *prefix = types.nsprefix(NULL, (*schema5)->targetNamespace);
       fprintf(stream, "\n@section %s Top-level root elements of schema \"%s\"\n", prefix ? prefix : "default", (*schema5)->targetNamespace);
-      for (vector<xs__element>::const_iterator element = (*schema5)->element.begin(); element != (*schema5)->element.end(); ++element)
+      for (std::vector<xs__element>::const_iterator element = (*schema5)->element.begin(); element != (*schema5)->element.end(); ++element)
       {
         if (prefix && *prefix)
           fprintf(stream, "\n  - <%s:%s> ", prefix, (*element).name);
@@ -2935,7 +2935,7 @@ void Definitions::generate()
           name = "?";
         if ((*fault).second->use == literal)
         {
-          for (vector<wsdl__part>::const_iterator part = (*fault).second->message->part.begin(); part != (*fault).second->message->part.end(); ++part)
+          for (std::vector<wsdl__part>::const_iterator part = (*fault).second->message->part.begin(); part != (*fault).second->message->part.end(); ++part)
           {
             if ((*part).elementPtr())
             {
@@ -3049,7 +3049,7 @@ void Service::generate(Types& types)
 {
   const char *method_name;
   banner("Service Binding", name);
-  for (vector<Operation*>::const_iterator op2 = operation.begin(); op2 != operation.end(); ++op2)
+  for (std::vector<Operation*>::const_iterator op2 = operation.begin(); op2 != operation.end(); ++op2)
   {
     if (*op2 && ((*op2)->input || bflag))
     {
@@ -3066,7 +3066,7 @@ void Service::generate(Types& types)
         else if (!wflag)
           flag = ((*op2)->output->element || ((*op2)->output->message && (*op2)->output->use == encoded && (*op2)->output->message->part.size() == 1 && !(*(*op2)->output->message->part.begin()).simpleTypePtr() && !(*(*op2)->output->message->part.begin()).complexTypePtr()));
         if (flag && (*op2)->input && (*op2)->output && (*op2)->input->message && (*op2)->output->message && !(*op2)->output->message->part.empty() && (*(*op2)->output->message->part.begin()).element)
-          for (vector<wsdl__part>::const_iterator part = (*op2)->input->message->part.begin(); part != (*op2)->input->message->part.end(); ++part)
+          for (std::vector<wsdl__part>::const_iterator part = (*op2)->input->message->part.begin(); part != (*op2)->input->message->part.end(); ++part)
             if ((*part).element && !strcmp((*part).element, (*(*op2)->output->message->part.begin()).element))
               flag = false;
         if (!flag)
@@ -3189,13 +3189,13 @@ void Service::generate(Types& types)
         if ((*op2)->output->action)
           fprintf(stream, "\n  - Addressing output action: \"%s\"\n", (*op2)->output->action);
       }
-      for (vector<Message*>::const_iterator infault = (*op2)->infault.begin(); infault != (*op2)->infault.end(); ++infault)
+      for (std::vector<Message*>::const_iterator infault = (*op2)->infault.begin(); infault != (*op2)->infault.end(); ++infault)
       {
         if ((*infault)->message)
         {
           if ((*infault)->use == literal)
           {
-            for (vector<wsdl__part>::const_iterator part = (*infault)->message->part.begin(); part != (*infault)->message->part.end(); ++part)
+            for (std::vector<wsdl__part>::const_iterator part = (*infault)->message->part.begin(); part != (*infault)->message->part.end(); ++part)
             {
               if ((*part).element)
                 fprintf(stream, "\n  - Input Fault: %s (literal)\n", (*part).element);
@@ -3216,13 +3216,13 @@ void Service::generate(Types& types)
         text((*infault)->ext_documentation);    
         gen_policy(*this, (*infault)->policy, "fault message", types);
       }
-      for (vector<Message*>::const_iterator outfault = (*op2)->outfault.begin(); outfault != (*op2)->outfault.end(); ++outfault)
+      for (std::vector<Message*>::const_iterator outfault = (*op2)->outfault.begin(); outfault != (*op2)->outfault.end(); ++outfault)
       {
         if ((*outfault)->message)
         {
           if ((*outfault)->use == literal)
           {
-            for (vector<wsdl__part>::const_iterator part = (*outfault)->message->part.begin(); part != (*outfault)->message->part.end(); ++part)
+            for (std::vector<wsdl__part>::const_iterator part = (*outfault)->message->part.begin(); part != (*outfault)->message->part.end(); ++part)
             {
               if ((*part).element)
                 fprintf(stream, "\n  - Output Fault: %s (literal)\n", (*part).element);
@@ -3247,7 +3247,7 @@ void Service::generate(Types& types)
       {
         if (!(*op2)->input->header.empty())
           fprintf(stream, "\n  - Request message has mandatory header part(s) (see @ref SOAP_ENV__Header):\n");
-        for (vector<soap__header>::const_iterator inputheader = (*op2)->input->header.begin(); inputheader != (*op2)->input->header.end(); ++inputheader)
+        for (std::vector<soap__header>::const_iterator inputheader = (*op2)->input->header.begin(); inputheader != (*op2)->input->header.end(); ++inputheader)
         {
           if ((*inputheader).part)
           {
@@ -3262,12 +3262,12 @@ void Service::generate(Types& types)
       {
         int k = 2;
         fprintf(stream, "\n  - Request message MIME multipart/related attachments:\n");
-        for (vector<mime__part>::const_iterator part = (*op2)->input->multipartRelated->part.begin(); part != (*op2)->input->multipartRelated->part.end(); ++part)
+        for (std::vector<mime__part>::const_iterator part = (*op2)->input->multipartRelated->part.begin(); part != (*op2)->input->multipartRelated->part.end(); ++part)
         {
           if ((*part).soap__body_)
           {
             fprintf(stream, "    -# MIME attachment with SOAP Body and mandatory header part(s):\n");
-            for (vector<soap__header>::const_iterator header = (*part).soap__header_.begin(); header != (*part).soap__header_.end(); ++header)
+            for (std::vector<soap__header>::const_iterator header = (*part).soap__header_.begin(); header != (*part).soap__header_.end(); ++header)
             {
               if ((*header).part)
               {
@@ -3281,7 +3281,7 @@ void Service::generate(Types& types)
           else
           {
             fprintf(stream, "    -# MIME attachment %d:\n", k++);
-            for (vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
+            for (std::vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
             {
               if ((*content).part)
               {
@@ -3303,7 +3303,7 @@ void Service::generate(Types& types)
       {
         if (!(*op2)->output->header.empty())
           fprintf(stream, "\n  - Response message has mandatory header part(s): (see @ref SOAP_ENV__Header)\n");
-        for (vector<soap__header>::const_iterator outputheader = (*op2)->output->header.begin(); outputheader != (*op2)->output->header.end(); ++outputheader)
+        for (std::vector<soap__header>::const_iterator outputheader = (*op2)->output->header.begin(); outputheader != (*op2)->output->header.end(); ++outputheader)
         {
           if ((*outputheader).part)
           {
@@ -3318,12 +3318,12 @@ void Service::generate(Types& types)
       {
         int k = 2;
         fprintf(stream, "\n  - Response message MIME multipart/related attachments\n");
-        for (vector<mime__part>::const_iterator part = (*op2)->output->multipartRelated->part.begin(); part != (*op2)->output->multipartRelated->part.end(); ++part)
+        for (std::vector<mime__part>::const_iterator part = (*op2)->output->multipartRelated->part.begin(); part != (*op2)->output->multipartRelated->part.end(); ++part)
         {
           if ((*part).soap__body_)
           {
             fprintf(stream, "    -# MIME attachment with SOAP Body and mandatory header part(s):\n");
-            for (vector<soap__header>::const_iterator header = (*part).soap__header_.begin(); header != (*part).soap__header_.end(); ++header)
+            for (std::vector<soap__header>::const_iterator header = (*part).soap__header_.begin(); header != (*part).soap__header_.end(); ++header)
             {
               if ((*header).part)
               {
@@ -3337,7 +3337,7 @@ void Service::generate(Types& types)
           else
           {
             fprintf(stream, "    -# MIME attachment %d:\n", k++);
-            for (vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
+            for (std::vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
             {
               if ((*content).part)
               {
@@ -3460,13 +3460,13 @@ void Service::generate(Types& types)
         if ((*op2)->output->action)
           fprintf(stream, "\n  - Addressing output action: \"%s\"\n", (*op2)->output->action);
       }
-      for (vector<Message*>::const_iterator outfault = (*op2)->outfault.begin(); outfault != (*op2)->outfault.end(); ++outfault)
+      for (std::vector<Message*>::const_iterator outfault = (*op2)->outfault.begin(); outfault != (*op2)->outfault.end(); ++outfault)
       {
         if ((*outfault)->message)
         {
           if ((*outfault)->use == literal)
           {
-            for (vector<wsdl__part>::const_iterator part = (*outfault)->message->part.begin(); part != (*outfault)->message->part.end(); ++part)
+            for (std::vector<wsdl__part>::const_iterator part = (*outfault)->message->part.begin(); part != (*outfault)->message->part.end(); ++part)
             {
               if ((*part).element)
                 fprintf(stream, "\n  - SOAP Output Fault: %s (literal)\n", (*part).element);
@@ -3485,7 +3485,7 @@ void Service::generate(Types& types)
       }
       if (!(*op2)->output->header.empty())
         fprintf(stream, "\n  - Response message has mandatory header part(s) (see @ref SOAP_ENV__Header):\n");
-      for (vector<soap__header>::const_iterator outputheader = (*op2)->output->header.begin(); outputheader != (*op2)->output->header.end(); ++outputheader)
+      for (std::vector<soap__header>::const_iterator outputheader = (*op2)->output->header.begin(); outputheader != (*op2)->output->header.end(); ++outputheader)
       {
         if ((*outputheader).part)
         {
@@ -3499,12 +3499,12 @@ void Service::generate(Types& types)
       {
         int k = 2;
         fprintf(stream, "\n  - Response message MIME multipart/related attachments:\n");
-        for (vector<mime__part>::const_iterator part = (*op2)->output->multipartRelated->part.begin(); part != (*op2)->output->multipartRelated->part.end(); ++part)
+        for (std::vector<mime__part>::const_iterator part = (*op2)->output->multipartRelated->part.begin(); part != (*op2)->output->multipartRelated->part.end(); ++part)
         {
           if ((*part).soap__body_)
           {
             fprintf(stream, "    -# MIME attachment with SOAP Body and mandatory header part(s):\n");
-            for (vector<soap__header>::const_iterator header = (*part).soap__header_.begin(); header != (*part).soap__header_.end(); ++header)
+            for (std::vector<soap__header>::const_iterator header = (*part).soap__header_.begin(); header != (*part).soap__header_.end(); ++header)
             {
               if ((*header).part)
               {
@@ -3518,7 +3518,7 @@ void Service::generate(Types& types)
           else
           {
             fprintf(stream, "    -# MIME attachment %d:\n", k++);
-            for (vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
+            for (std::vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
             {
               if ((*content).part)
               {
@@ -3588,7 +3588,7 @@ void Operation::generate(Types& types, Service& service)
     else if (!wflag)
       flag = (output->element || (output->message && output->use == encoded && output->message->part.size() == 1 && !(*output->message->part.begin()).simpleTypePtr() && !(*output->message->part.begin()).complexTypePtr()));
     if (flag && input && input->message && output->message && !output->message->part.empty() && (*output->message->part.begin()).element)
-      for (vector<wsdl__part>::const_iterator part = input->message->part.begin(); part != input->message->part.end(); ++part)
+      for (std::vector<wsdl__part>::const_iterator part = input->message->part.begin(); part != input->message->part.end(); ++part)
         if ((*part).element && !strcmp((*part).element, (*output->message->part.begin()).element))
           flag = false;
   }
@@ -3633,13 +3633,13 @@ void Operation::generate(Types& types, Service& service)
       else
         fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
     }
-    for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
+    for (std::vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
     {
       if ((*message)->message)
       {
         if ((*message)->use == literal)
         {
-          for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
+          for (std::vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
           {
             if ((*part).element)
               fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, NULL, (*part).element));
@@ -3660,9 +3660,9 @@ void Operation::generate(Types& types, Service& service)
     }
     if (output->multipartRelated)
     {
-      for (vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
+      for (std::vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
       {
-        for (vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
+        for (std::vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
         {
           if ((*outputheader).part)
           {
@@ -3672,13 +3672,13 @@ void Operation::generate(Types& types, Service& service)
               fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
           }
         }
-        for (vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
+        for (std::vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
           if ((*content).type)
             fprintf(stream, serviceformat, prefix, "method-mime-type", method_name, (*content).type);
       }
     }
     // TODO: add headerfault directives?
-    for (vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
+    for (std::vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
     {
       if ((*outputheader).part)
       {
@@ -3688,7 +3688,7 @@ void Operation::generate(Types& types, Service& service)
           fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
       }
     }
-    for (vector<wsoap__header>::const_iterator outputwheader = output->wheader.begin(); outputwheader != output->wheader.end(); ++outputwheader)
+    for (std::vector<wsoap__header>::const_iterator outputwheader = output->wheader.begin(); outputwheader != output->wheader.end(); ++outputwheader)
     {
       if ((*outputwheader).element)
         fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputwheader).element));
@@ -3733,13 +3733,13 @@ void Operation::generate(Types& types, Service& service)
       else
         fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
     }
-    for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
+    for (std::vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
     {
       if ((*message)->message)
       {
         if ((*message)->use == literal)
         {
-          for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
+          for (std::vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
           {
             if ((*part).element)
               fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, NULL, (*part).element));
@@ -3760,9 +3760,9 @@ void Operation::generate(Types& types, Service& service)
     }
     if (output->multipartRelated)
     {
-      for (vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
+      for (std::vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
       {
-        for (vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
+        for (std::vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
         {
           if ((*outputheader).part)
           {
@@ -3772,13 +3772,13 @@ void Operation::generate(Types& types, Service& service)
               fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
           }
         }
-        for (vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
+        for (std::vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
           if ((*content).type)
             fprintf(stream, serviceformat, prefix, "method-mime-type", method_name, (*content).type);
       }
     }
     // TODO: add headerfault directives?
-    for (vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
+    for (std::vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
     {
       if ((*outputheader).part)
       {
@@ -3788,7 +3788,7 @@ void Operation::generate(Types& types, Service& service)
           fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
       }
     }
-    for (vector<wsoap__header>::const_iterator outputwheader = output->wheader.begin(); outputwheader != output->wheader.end(); ++outputwheader)
+    for (std::vector<wsoap__header>::const_iterator outputwheader = output->wheader.begin(); outputwheader != output->wheader.end(); ++outputwheader)
     {
       if ((*outputwheader).element)
         fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputwheader).element));
@@ -3863,13 +3863,13 @@ void Operation::generate(Types& types, Service& service)
     }
     if (output && output->action && *output->action)
       fprintf(stream, serviceformat, prefix, "method-output-action", method_name, output->action);
-    for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
+    for (std::vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
     {
       if ((*message)->message)
       {
         if ((*message)->use == literal)
         {
-          for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
+          for (std::vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
           {
             if ((*part).element)
               fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, NULL, (*part).element));
@@ -3892,9 +3892,9 @@ void Operation::generate(Types& types, Service& service)
     {
       if (input->multipartRelated)
       {
-        for (vector<mime__part>::const_iterator inputmime = input->multipartRelated->part.begin(); inputmime != input->multipartRelated->part.end(); ++inputmime)
+        for (std::vector<mime__part>::const_iterator inputmime = input->multipartRelated->part.begin(); inputmime != input->multipartRelated->part.end(); ++inputmime)
         {
-          for (vector<soap__header>::const_iterator inputheader = (*inputmime).soap__header_.begin(); inputheader != (*inputmime).soap__header_.end(); ++inputheader)
+          for (std::vector<soap__header>::const_iterator inputheader = (*inputmime).soap__header_.begin(); inputheader != (*inputmime).soap__header_.end(); ++inputheader)
           {
             if ((*inputheader).part)
             {
@@ -3904,13 +3904,13 @@ void Operation::generate(Types& types, Service& service)
                 fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, NULL, (*inputheader).partPtr()->element));
             }
           }
-          for (vector<mime__content>::const_iterator content = (*inputmime).content.begin(); content != (*inputmime).content.end(); ++content)
+          for (std::vector<mime__content>::const_iterator content = (*inputmime).content.begin(); content != (*inputmime).content.end(); ++content)
             if ((*content).type)
               fprintf(stream, serviceformat, prefix, "method-input-mime-type", method_name, (*content).type);
         }
       }
       // TODO: add headerfault directives?
-      for (vector<soap__header>::const_iterator inputheader = input->header.begin(); inputheader != input->header.end(); ++inputheader)
+      for (std::vector<soap__header>::const_iterator inputheader = input->header.begin(); inputheader != input->header.end(); ++inputheader)
       {
         if ((*inputheader).part)
         {
@@ -3920,7 +3920,7 @@ void Operation::generate(Types& types, Service& service)
             fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, NULL, (*inputheader).partPtr()->element));
         }
       }
-      for (vector<wsoap__header>::const_iterator inputwheader = input->wheader.begin(); inputwheader != input->wheader.end(); ++inputwheader)
+      for (std::vector<wsoap__header>::const_iterator inputwheader = input->wheader.begin(); inputwheader != input->wheader.end(); ++inputwheader)
       {
         if ((*inputwheader).element)
           fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, NULL, (*inputwheader).element));
@@ -3930,9 +3930,9 @@ void Operation::generate(Types& types, Service& service)
     {
       if (output->multipartRelated)
       {
-        for (vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
+        for (std::vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
         {
-          for (vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
+          for (std::vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
           {
             if ((*outputheader).part)
             {
@@ -3942,12 +3942,12 @@ void Operation::generate(Types& types, Service& service)
                 fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
             }
           }
-          for (vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
+          for (std::vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
             if ((*content).type)
               fprintf(stream, serviceformat, prefix, "method-output-mime-type", method_name, (*content).type);
         }
       }
-      for (vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
+      for (std::vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
       {
         if ((*outputheader).part)
         {
@@ -3957,7 +3957,7 @@ void Operation::generate(Types& types, Service& service)
             fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
         }
       }
-      for (vector<wsoap__header>::const_iterator outputwheader = output->wheader.begin(); outputwheader != output->wheader.end(); ++outputwheader)
+      for (std::vector<wsoap__header>::const_iterator outputwheader = output->wheader.begin(); outputwheader != output->wheader.end(); ++outputwheader)
       {
         if ((*outputwheader).element)
           fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, NULL, (*outputwheader).element));
@@ -4007,7 +4007,7 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
 {
   if (message)
   {
-    for (vector<wsdl__part>::const_iterator part = message->part.begin(); part != message->part.end(); ++part)
+    for (std::vector<wsdl__part>::const_iterator part = message->part.begin(); part != message->part.end(); ++part)
     {
       if (!(*part).name)
       {
@@ -4209,7 +4209,7 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
     {
       // WSDL 2.0 RPC style
       xs__seqchoice *seq = element->complexTypePtr()->sequence;
-      for (vector<xs__contents>::const_iterator i = seq->__contents.begin(); i != seq->__contents.end(); ++i)
+      for (std::vector<xs__contents>::const_iterator i = seq->__contents.begin(); i != seq->__contents.end(); ++i)
       {
         if ((*i).__union == SOAP_UNION_xs__union_content_element)
         {
@@ -4413,11 +4413,11 @@ void text(const char *text)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-static void gen_policy(Service& service, const vector<const wsp__Policy*>& policy, const char *text, Types& types)
+static void gen_policy(Service& service, const std::vector<const wsp__Policy*>& policy, const char *text, Types& types)
 {
   if (!policy.empty())
   { fprintf(stream, "\n  - WS-Policy applicable to the %s:\n", text);
-    for (vector<const wsp__Policy*>::const_iterator p = policy.begin(); p != policy.end(); ++p)
+    for (std::vector<const wsp__Policy*>::const_iterator p = policy.begin(); p != policy.end(); ++p)
       if (*p)
         (*p)->generate(service, types, 0);
   }
@@ -4461,7 +4461,7 @@ static void gen_plnk(const Service& service)
 {
   if (!service.role.empty())
   {
-    for (vector<const plnk__tRole*>::const_iterator r = service.role.begin(); r != service.role.end(); ++r)
+    for (std::vector<const plnk__tRole*>::const_iterator r = service.role.begin(); r != service.role.end(); ++r)
     {
       if (*r && (*r)->portTypePtr() && (*r)->plnkPtr())
       {
@@ -4480,14 +4480,14 @@ static void gen_vprop(const wsdl__definitions& definitions, Types& types)
     banner("BPEL 2.0 Variables");
     fprintf(stream, "/**\n");
     page("page_bpel", " BPEL 2.0 Variables", NULL);
-    for (vector<vprop__tProperty>::const_iterator i1 = definitions.vprop__property.begin(); i1 != definitions.vprop__property.end(); ++i1)
+    for (std::vector<vprop__tProperty>::const_iterator i1 = definitions.vprop__property.begin(); i1 != definitions.vprop__property.end(); ++i1)
     {
       if ((*i1).name)
       {
         fprintf(stream, "\nBPEL 2.0 Variable \"%s\"\n", (*i1).name);
         text((*i1).documentation);
         fprintf(stream, "\n");
-        for (vector<vprop__tPropertyAlias>::const_iterator j = definitions.vprop__propertyAlias.begin(); j != definitions.vprop__propertyAlias.end(); ++j)
+        for (std::vector<vprop__tPropertyAlias>::const_iterator j = definitions.vprop__propertyAlias.begin(); j != definitions.vprop__propertyAlias.end(); ++j)
         {
           if ((*j).vpropPtr() == &(*i1) && (*j).query && (*j).query->__mixed)
           {
@@ -4510,11 +4510,11 @@ static void gen_vprop(const wsdl__definitions& definitions, Types& types)
       }
     }
     fprintf(stream, "*/\n\n");
-    for (vector<vprop__tProperty>::const_iterator i2 = definitions.vprop__property.begin(); i2 != definitions.vprop__property.end(); ++i2)
+    for (std::vector<vprop__tProperty>::const_iterator i2 = definitions.vprop__property.begin(); i2 != definitions.vprop__property.end(); ++i2)
     {
       if ((*i2).name)
       {
-        for (vector<vprop__tPropertyAlias>::const_iterator j = definitions.vprop__propertyAlias.begin(); j != definitions.vprop__propertyAlias.end(); ++j)
+        for (std::vector<vprop__tPropertyAlias>::const_iterator j = definitions.vprop__propertyAlias.begin(); j != definitions.vprop__propertyAlias.end(); ++j)
         {
           if ((*j).vpropPtr() == &(*i2) && (*j).query && (*j).query->__mixed)
           {

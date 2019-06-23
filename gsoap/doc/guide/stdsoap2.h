@@ -3522,18 +3522,51 @@ struct soap {
   @see `#SOAP_IO_UDP`, `::soap::ipv6_multicast_if`, `::soap::ipv4_multicast_if`.
   */
   unsigned char ipv4_multicast_ttl;
-  /// User-definable client port to bind to when connecting, when non-negative
+  /// User-definable client address to bind to before connecting to a server, when non-NULL
+  /**
+  When non-NULL, sets the client address specified as IPv4 or IPv6 or as a host address to bind to before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.
+
+  @par Example:
+
+  ~~~{.cpp}
+  struct soap *soap = soap_new();
+  soap->client_addr = "12.34.56.78"; // client binds to 12.34.56.78 when connecting to endpoint
+  if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
+    soap_print_fault(soap, stderr);
+  else
+    ... // success
+  soap_destroy(soap);
+  soap_end(soap);
+  soap_free(soap);
+  ~~~
+
+  @see `::soap::client_port`.
+  */
+  const char *client_addr;
+  /// User-definable client port to bind to before connecting to a server, when non-negative
   /**
   When non-negative, executes a `bind` with this port number before connecting to a server.  The value is reset to -1 after connecting successfully or unsuccessfully to the server.
 
-  @see `::soap::client_interface`.
+  @par Example:
+
+  ~~~{.cpp}
+  struct soap *soap = soap_new();
+  soap->client_port = 18000; // client binds to port 18000 when connecting to endpoint
+  if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
+    soap_print_fault(soap, stderr);
+  else
+    ... // success
+  soap_destroy(soap);
+  soap_end(soap);
+  soap_free(soap);
+  ~~~
+
+  @see `::soap::client_addr`.
   */
   int client_port;
-  /// User-definable client address to use when connecting, when non-NULL
+  /// User-definable client interface address to override when connecting to a server, when non-NULL
   /**
   When non-NULL, sets the client address before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.
-
-  @see `::soap::client_port`.
   */
   const char *client_interface;
   /// User-definable compression level for gzip compression (0=none, 1=fast to 9=best) default level is 6

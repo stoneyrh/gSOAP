@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">gSOAP user guide</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue May 14 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun Jun 23 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -4476,7 +4476,7 @@ Connecting clients through proxy servers</h2>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="bindbeforeconnect"></a>
 Bind before connect and setting the client interface address</h2>
-<p>To bind the client to a port before connect, set the <code><a class="el" href="structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c" title="User-definable client port to bind to when connecting, when non-negative. ">soap::client_port</a></code> to a non-negative port number:</p>
+<p>To bind the client to a port before connect, set the <code><a class="el" href="structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c" title="User-definable client port to bind to before connecting to a server, when non-negative. ">soap::client_port</a></code> to a non-negative port number:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>(); </div><div class="line">soap-&gt;<a class="code" href="structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c">client_port</a> = ...; <span class="comment">// non-negative port number </span></div><div class="line"><span class="keywordflow">if</span> (soap_call_ns__webmethod(soap, <span class="stringliteral">&quot;http://host:port/path&quot;</span>, <span class="stringliteral">&quot;action&quot;</span>, ...)) </div><div class="line">  ... <span class="comment">// error</span></div><div class="line"><span class="keywordflow">else</span> </div><div class="line">  ... <span class="comment">// success</span></div></div><!-- fragment --><p>This port number is used only once and reset to -1 (disabled). Set it again for the next call.</p>
 <p>To set a client interface address for the connection that is an IP address of the client:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>(); </div><div class="line">soap-&gt;<a class="code" href="structsoap.html#aa66026bcd099d88d44c985b49928a05d">client_interface</a> = <span class="stringliteral">&quot;...&quot;</span>; <span class="comment">// IP address </span></div><div class="line"><span class="keywordflow">if</span> (soap_call_ns__webmethod(soap, <span class="stringliteral">&quot;http://host:port/path&quot;</span>, <span class="stringliteral">&quot;action&quot;</span>, ...)) </div><div class="line">  ... <span class="comment">// error</span></div><div class="line"><span class="keywordflow">else</span> </div><div class="line">  ... <span class="comment">// success</span></div></div><!-- fragment --><p>This client interface address string is used only once and reset to NULL (disabled). Set it again for the next call. This feature is not available when compiling the code on windows.</p>
@@ -4775,7 +4775,7 @@ All rights reserved.</em> </p>
 Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue May 14 2019 14:28:03 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun Jun 23 2019 14:57:22 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

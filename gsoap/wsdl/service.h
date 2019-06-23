@@ -52,18 +52,18 @@ class Message
     const char *body_parts;
     wsdl__part *part;
     bool mustUnderstand;
-    vector<soap__header> header;
-    vector<wsoap__header> wheader;
+    std::vector<soap__header> header;
+    std::vector<wsoap__header> wheader;
     mime__multipartRelated *multipartRelated;	// MIME
     mime__content *content;			// REST/MIME
     const char *layout;				// DIME
     const char *documentation;
     const char *ext_documentation;
-    vector<const wsp__Policy*> policy;
+    std::vector<const wsp__Policy*> policy;
     void generate(Types&, const char *sep, bool anonymous, bool remark, bool response, bool optional, bool rest);
 };
 
-typedef map<const char*, Message*, ltstr> MapOfStringToMessage;
+typedef std::map<const char*, Message*, ltstr> MapOfStringToMessage;
 
 class Operation
 {
@@ -82,11 +82,11 @@ class Operation
     const char *output_name;
     Message *input; 			// name, use, and parts
     Message *output;			// name, use, and parts
-    vector<Message*> infault;
-    vector<Message*> outfault;
+    std::vector<Message*> infault;
+    std::vector<Message*> outfault;
     const char *documentation;
     const char *operation_documentation;
-    vector<const wsp__Policy*> policy;
+    std::vector<const wsp__Policy*> policy;
     void generate(Types&, Service&);
 };
 
@@ -99,15 +99,15 @@ class Service
     const char *type;			// portType
     const char *transport;		// binding transport
     SetOfString location;		// WSDL may specify multiple locations via <Port> -> <Binding>
-    vector<Operation*> operation;
+    std::vector<Operation*> operation;
     MapOfStringToMessage header;
     MapOfStringToMessage headerfault;
     MapOfStringToMessage fault;
     MapOfStringToString service_documentation;
     MapOfStringToString port_documentation;
     MapOfStringToString binding_documentation;
-    vector<const wsp__Policy*> policy;	// WS-Policy
-    vector<const plnk__tRole*> role;	// BPEL 2.0
+    std::vector<const wsp__Policy*> policy;	// WS-Policy
+    std::vector<const plnk__tRole*> role;	// BPEL 2.0
     VectorOfString imports;
     Service();
     void generate(Types&);
@@ -115,7 +115,7 @@ class Service
     void del_import(const char*);
 };
 
-typedef map<const char*, Service*, ltstr> MapOfStringToService;
+typedef std::map<const char*, Service*, ltstr> MapOfStringToService;
 
 class Definitions
 {
@@ -130,7 +130,7 @@ class Definitions
   private:
     void analyze(const wsdl__definitions&);
     void analyze_headers(const wsdl__definitions&, Service*, wsdl__ext_ioput*, wsdl__ext_ioput*);
-    void analyze_faults(const wsdl__definitions&, Service*, Operation*, vector<wsdl__ext_operation>::const_iterator&);
+    void analyze_faults(const wsdl__definitions&, Service*, Operation*, std::vector<wsdl__ext_operation>::const_iterator&);
     Message *analyze_fault(const wsdl__definitions&, Service*, const wsdl__ext_fault&);
     void analyze_application(const wsdl__definitions&);
     void analyze_resource(const wsdl__definitions&, Service*, const wadl__resource_USCOREtype*, const char*, const char*, const char*);

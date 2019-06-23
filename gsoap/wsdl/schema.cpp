@@ -123,21 +123,21 @@ int xs__schema::get(struct soap *soap)
 
 int xs__schema::preprocess()
 {
-  for (vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
+  for (std::vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
     (*im).preprocess(*this); // read schema and recurse over <import>
-  for (vector<xs__include>::iterator in = include.begin(); in != include.end(); ++in)
+  for (std::vector<xs__include>::iterator in = include.begin(); in != include.end(); ++in)
   {
     (*in).preprocess(*this); // read schema and recurse over <include>, <override> and <redefine>
     if ((*in).schemaPtr())
       insert(*(*in).schemaPtr());
   }
-  for (vector<xs__override>::iterator ov = override_.begin(); ov != override_.end(); ++ov)
+  for (std::vector<xs__override>::iterator ov = override_.begin(); ov != override_.end(); ++ov)
   {
     (*ov).preprocess(*this); // read schema and recurse over <include>, <override> and <redefine>
     if ((*ov).schemaPtr())
       insert(*(*ov).schemaPtr());
   }
-  for (vector<xs__redefine>::iterator re = redefine.begin(); re != redefine.end(); ++re)
+  for (std::vector<xs__redefine>::iterator re = redefine.begin(); re != redefine.end(); ++re)
   {
     (*re).preprocess(*this); // read schema and recurse over <redefine>, <override> and <redefine>
     if ((*re).schemaPtr())
@@ -168,12 +168,12 @@ int xs__schema::insert(xs__schema& schema)
     schema.attributeFormDefault = attributeFormDefault;
   }
   // insert imports
-  for (vector<xs__import>::const_iterator im = schema.import.begin(); im != schema.import.end(); ++im)
+  for (std::vector<xs__import>::const_iterator im = schema.import.begin(); im != schema.import.end(); ++im)
   {
     found = false;
     if ((*im).schemaLocation)
     {
-      for (vector<xs__import>::const_iterator i = import.begin(); i != import.end(); ++i)
+      for (std::vector<xs__import>::const_iterator i = import.begin(); i != import.end(); ++i)
       {
         if ((*i).schemaLocation && !strcmp((*im).schemaLocation, (*i).schemaLocation))
         {
@@ -184,7 +184,7 @@ int xs__schema::insert(xs__schema& schema)
     }
     else if ((*im).namespace_)
     {
-      for (vector<xs__import>::const_iterator i = import.begin(); i != import.end(); ++i)
+      for (std::vector<xs__import>::const_iterator i = import.begin(); i != import.end(); ++i)
       {
         if ((*i).namespace_ && !strcmp((*im).namespace_, (*i).namespace_))
         {
@@ -197,12 +197,12 @@ int xs__schema::insert(xs__schema& schema)
       import.push_back(*im);
   }
   // insert attributes, but only add attributes with new name (limited conflict check)
-  for (vector<xs__attribute>::const_iterator at = schema.attribute.begin(); at != schema.attribute.end(); ++at)
+  for (std::vector<xs__attribute>::const_iterator at = schema.attribute.begin(); at != schema.attribute.end(); ++at)
   {
     found = false;
     if ((*at).name)
     {
-      for (vector<xs__attribute>::const_iterator a = attribute.begin(); a != attribute.end(); ++a)
+      for (std::vector<xs__attribute>::const_iterator a = attribute.begin(); a != attribute.end(); ++a)
       {
         if ((*a).name && !strcmp((*at).name, (*a).name))
         {
@@ -221,12 +221,12 @@ int xs__schema::insert(xs__schema& schema)
     }
   }
   // insert elements, but only add elements with new name (limited conflict check)
-  for (vector<xs__element>::const_iterator el = schema.element.begin(); el != schema.element.end(); ++el)
+  for (std::vector<xs__element>::const_iterator el = schema.element.begin(); el != schema.element.end(); ++el)
   {
     found = false;
     if ((*el).name)
     {
-      for (vector<xs__element>::const_iterator e = element.begin(); e != element.end(); ++e)
+      for (std::vector<xs__element>::const_iterator e = element.begin(); e != element.end(); ++e)
       {
         if ((*e).name && !strcmp((*el).name, (*e).name))
         {
@@ -245,12 +245,12 @@ int xs__schema::insert(xs__schema& schema)
     }
   }
   // insert groups, but only add groups with new name (no conflict warning)
-  for (vector<xs__group>::const_iterator gp = schema.group.begin(); gp != schema.group.end(); ++gp)
+  for (std::vector<xs__group>::const_iterator gp = schema.group.begin(); gp != schema.group.end(); ++gp)
   {
     found = false;
     if ((*gp).name)
     {
-      for (vector<xs__group>::const_iterator g = group.begin(); g != group.end(); ++g)
+      for (std::vector<xs__group>::const_iterator g = group.begin(); g != group.end(); ++g)
       {
         if ((*g).name && !strcmp((*gp).name, (*g).name))
         {
@@ -266,12 +266,12 @@ int xs__schema::insert(xs__schema& schema)
     }
   }
   // insert attributeGroups, but only add attributeGroups with new name (no conflict warning)
-  for (vector<xs__attributeGroup>::const_iterator ag = schema.attributeGroup.begin(); ag != schema.attributeGroup.end(); ++ag)
+  for (std::vector<xs__attributeGroup>::const_iterator ag = schema.attributeGroup.begin(); ag != schema.attributeGroup.end(); ++ag)
   {
     found = false;
     if ((*ag).name)
     {
-      for (vector<xs__attributeGroup>::const_iterator g = attributeGroup.begin(); g != attributeGroup.end(); ++g)
+      for (std::vector<xs__attributeGroup>::const_iterator g = attributeGroup.begin(); g != attributeGroup.end(); ++g)
       {
         if ((*g).name && !strcmp((*ag).name, (*g).name))
         {
@@ -287,12 +287,12 @@ int xs__schema::insert(xs__schema& schema)
     }
   }
   // insert simpleTypes, but only add simpleTypes with new name (no conflict warning)
-  for (vector<xs__simpleType>::const_iterator st = schema.simpleType.begin(); st != schema.simpleType.end(); ++st)
+  for (std::vector<xs__simpleType>::const_iterator st = schema.simpleType.begin(); st != schema.simpleType.end(); ++st)
   {
     found = false;
     if ((*st).name)
     {
-      for (vector<xs__simpleType>::const_iterator s = simpleType.begin(); s != simpleType.end(); ++s)
+      for (std::vector<xs__simpleType>::const_iterator s = simpleType.begin(); s != simpleType.end(); ++s)
       {
         if ((*s).name && !strcmp((*st).name, (*s).name))
         {
@@ -308,12 +308,12 @@ int xs__schema::insert(xs__schema& schema)
     }
   }
   // insert complexTypes, but only add complexTypes with new name (no conflict warning)
-  for (vector<xs__complexType>::const_iterator ct = schema.complexType.begin(); ct != schema.complexType.end(); ++ct)
+  for (std::vector<xs__complexType>::const_iterator ct = schema.complexType.begin(); ct != schema.complexType.end(); ++ct)
   {
     found = false;
     if ((*ct).name)
     {
-      for (vector<xs__complexType>::const_iterator c = complexType.begin(); c != complexType.end(); ++c)
+      for (std::vector<xs__complexType>::const_iterator c = complexType.begin(); c != complexType.end(); ++c)
       {
         if ((*c).name && !strcmp((*ct).name, (*c).name))
         {
@@ -336,7 +336,7 @@ int xs__schema::traverse()
   if (updated)
     return SOAP_OK;
   if (vflag)
-    cerr << "  Analyzing schema '" << (targetNamespace ? targetNamespace : "(null)") << "' '" << (sourceLocation() ? sourceLocation() : "") << "'" << endl;
+    std::cerr << "  Analyzing schema '" << (targetNamespace ? targetNamespace : "(null)") << "' '" << (sourceLocation() ? sourceLocation() : "") << "'" << std::endl;
   updated = true;
   if (!targetNamespace)
   {
@@ -350,22 +350,22 @@ int xs__schema::traverse()
       fprintf(stderr, "\nWarning: Built-in schema '%s' content encountered\n", targetNamespace);
   }
   // process import
-  for (vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
+  for (std::vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
     (*im).traverse(*this);
   // process attributes
-  for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+  for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
     (*at).traverse(*this);
   // process elements
-  for (vector<xs__element>::iterator el = element.begin(); el != element.end(); 
+  for (std::vector<xs__element>::iterator el = element.begin(); el != element.end(); 
 ++el)
     (*el).traverse(*this);
   // process simpleTypes, check conflicts with complexTypes
-  for (vector<xs__simpleType>::iterator st = simpleType.begin(); st != simpleType.end(); ++st)
+  for (std::vector<xs__simpleType>::iterator st = simpleType.begin(); st != simpleType.end(); ++st)
   {
     (*st).traverse(*this);
     if ((*st).name)
     {
-      for (vector<xs__complexType>::iterator ct = complexType.begin(); ct != complexType.end(); ++ct)
+      for (std::vector<xs__complexType>::iterator ct = complexType.begin(); ct != complexType.end(); ++ct)
       {
         if ((*ct).name && !strcmp((*st).name, (*ct).name))
         {
@@ -376,18 +376,18 @@ int xs__schema::traverse()
     }
   }
   // process complexTypes
-  for (vector<xs__complexType>::iterator ct = complexType.begin(); ct != complexType.end(); ++ct)
+  for (std::vector<xs__complexType>::iterator ct = complexType.begin(); ct != complexType.end(); ++ct)
     (*ct).traverse(*this);
   // process groups
-  for (vector<xs__group>::iterator gp = group.begin(); gp != group.end(); ++gp)
+  for (std::vector<xs__group>::iterator gp = group.begin(); gp != group.end(); ++gp)
     (*gp).traverse(*this);
   // process attributeGroups
-  for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+  for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
     (*ag).traverse(*this);
   // XSD 1.1 defaultAttributes
   if (defaultAttributes)
   {
-    for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+    for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
     {
       if ((*ag).name && !strcmp((*ag).name, defaultAttributes))
       {
@@ -396,10 +396,10 @@ int xs__schema::traverse()
       }
     }
     if (!attributeGroupRef)
-      cerr << "\nWarning: could not find defaultAttributes attributeGroup '" << defaultAttributes << "' in schema '" << (targetNamespace ? targetNamespace : "(null)") << "'" << endl;
+      std::cerr << "\nWarning: could not find defaultAttributes attributeGroup '" << defaultAttributes << "' in schema '" << (targetNamespace ? targetNamespace : "(null)") << "'" << std::endl;
   }
   if (vflag)
-    cerr << "  End of schema '" << (targetNamespace ? targetNamespace : "(null)") << "'" << endl;
+    std::cerr << "  End of schema '" << (targetNamespace ? targetNamespace : "(null)") << "'" << std::endl;
   return SOAP_OK;
 }
 
@@ -499,7 +499,7 @@ int xs__schema::read(const char *cwd, const char *loc, const char *relloc)
               location += 7;
             soap->recvfd = open(location, O_RDONLY, 0);
             if (vflag)
-              cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
+              std::cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << std::endl;
           }
         }
         if (soap->recvfd < 0 && import_path)
@@ -515,7 +515,7 @@ int xs__schema::read(const char *cwd, const char *loc, const char *relloc)
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
           if (vflag)
-            cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
+            std::cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << std::endl;
         }
         if (relloc && soap->recvfd < 0 && import_path)
         {
@@ -530,7 +530,7 @@ int xs__schema::read(const char *cwd, const char *loc, const char *relloc)
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
           if (vflag)
-            cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << endl;
+            std::cerr << "Opening file " << location << (soap->recvfd < 0 ? " failed" : " successful") << std::endl;
         }
         if (soap->recvfd < 0)
         {
@@ -750,15 +750,15 @@ void xs__schema::mark()
   if (Oflag > 1 && !used)
   {
     used = true;
-    for (vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
+    for (std::vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
       (*im).mark();
     // -O2: start with root of usage: use top-level attributes
     if (Oflag < 3)
-      for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+      for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
         (*at).mark();
     // -O2 and -O3: start with root of usage: use top-level elements
     if (Oflag < 4)
-      for (vector<xs__element>::iterator el = element.begin(); el != element.end(); ++el)
+      for (std::vector<xs__element>::iterator el = element.begin(); el != element.end(); ++el)
         (*el).mark();
   }
 }
@@ -776,8 +776,8 @@ int xs__include::preprocess(xs__schema &schema)
     if (schemaLocation)
     {
       // only read from include locations not read already, uses static std::map
-      static map<const char*, xs__schema*, ltstr> included;
-      map<const char*, xs__schema*, ltstr>::iterator i = included.end();
+      static std::map<const char*, xs__schema*, ltstr> included;
+      std::map<const char*, xs__schema*, ltstr>::iterator i = included.end();
       const char *relative_schemaLocation = soap_strdup(schema.soap, schemaLocation);
       schemaLocation = schema.absoluteLocation(schemaLocation);
       if (schema.targetNamespace)
@@ -793,7 +793,7 @@ int xs__include::preprocess(xs__schema &schema)
       if (i == included.end())
       {
         if (vflag)
-          cerr << "Preprocessing schema include '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+          std::cerr << "Preprocessing schema include '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
         schemaRef = new xs__schema(schema.soap);
         if (!schemaRef)
           return SOAP_EOF;
@@ -813,7 +813,7 @@ int xs__include::preprocess(xs__schema &schema)
       else
       {
         if (vflag)
-          cerr << "Schema '" << (schemaLocation ? schemaLocation : "(null)") << "' already included into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+          std::cerr << "Schema '" << (schemaLocation ? schemaLocation : "(null)") << "' already included into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
         schemaRef = (*i).second;
       }
     }
@@ -850,7 +850,7 @@ xs__redefine::xs__redefine()
 int xs__redefine::preprocess(xs__schema &schema)
 {
   if (vflag)
-    cerr << "Preprocessing schema redefine '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+    std::cerr << "Preprocessing schema redefine '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
   if (!schemaRef)
   {
     if (schemaLocation)
@@ -859,11 +859,11 @@ int xs__redefine::preprocess(xs__schema &schema)
       schemaLocation = schema.absoluteLocation(schemaLocation);
       schemaRef = new xs__schema(schema.soap, schema.sourceLocation(), schemaLocation, relative_schemaLocation);
       // redefine xs:all, xs:choice, or xs:sequence in a group
-      for (vector<xs__group>::iterator gp = schemaRef->group.begin(); gp != schemaRef->group.end(); ++gp)
+      for (std::vector<xs__group>::iterator gp = schemaRef->group.begin(); gp != schemaRef->group.end(); ++gp)
       {
         if ((*gp).name)
         {
-          for (vector<xs__group>::const_iterator g = group.begin(); g != group.end(); ++g)
+          for (std::vector<xs__group>::const_iterator g = group.begin(); g != group.end(); ++g)
           {
             if ((*g).name && !strcmp((*gp).name, (*g).name))
             {
@@ -875,7 +875,7 @@ int xs__redefine::preprocess(xs__schema &schema)
               {
                 xs__seqchoice& s = *(*gp).choice;
                 (*gp).choice = soap_new_xs__seqchoice(schema.soap);
-                for (vector<xs__contents>::iterator c = (*g).choice->__contents.begin(); c != (*g).choice->__contents.end(); )
+                for (std::vector<xs__contents>::iterator c = (*g).choice->__contents.begin(); c != (*g).choice->__contents.end(); )
                 {
                   if ((*c).__union == SOAP_UNION_xs__union_content_element)
                   {
@@ -888,7 +888,7 @@ int xs__redefine::preprocess(xs__schema &schema)
                     {
                       const char *token = qname_token((*c).__content.group->ref, schema.targetNamespace);
                       if (token && !strcmp((*gp).name, token))
-                        for (vector<xs__contents>::const_iterator d = s.__contents.begin(); d != s.__contents.end(); ++d)
+                        for (std::vector<xs__contents>::const_iterator d = s.__contents.begin(); d != s.__contents.end(); ++d)
                           if ((*d).__union == SOAP_UNION_xs__union_content_element)
                             (*gp).choice->__contents.push_back(*d);
                       (*g).choice->__contents.erase(c);
@@ -904,7 +904,7 @@ int xs__redefine::preprocess(xs__schema &schema)
               {
                 xs__seqchoice& s = *(*gp).sequence;
                 (*gp).sequence = soap_new_xs__seqchoice(schema.soap);
-                for (vector<xs__contents>::iterator c = (*g).sequence->__contents.begin(); c != (*g).sequence->__contents.end(); )
+                for (std::vector<xs__contents>::iterator c = (*g).sequence->__contents.begin(); c != (*g).sequence->__contents.end(); )
                 {
                   if ((*c).__union == SOAP_UNION_xs__union_content_element)
                   {
@@ -917,7 +917,7 @@ int xs__redefine::preprocess(xs__schema &schema)
                     {
                       const char *token = qname_token((*c).__content.group->ref, schema.targetNamespace);
                       if (token && !strcmp((*gp).name, token))
-                        for (vector<xs__contents>::const_iterator d = s.__contents.begin(); d != s.__contents.end(); ++d)
+                        for (std::vector<xs__contents>::const_iterator d = s.__contents.begin(); d != s.__contents.end(); ++d)
                           if ((*d).__union == SOAP_UNION_xs__union_content_element)
                             (*gp).sequence->__contents.push_back(*d);
                       (*g).sequence->__contents.erase(c);
@@ -935,11 +935,11 @@ int xs__redefine::preprocess(xs__schema &schema)
         }
       }
       // redefine specified attributes in an attributeGroup
-      for (vector<xs__attributeGroup>::iterator ag = schemaRef->attributeGroup.begin(); ag != schemaRef->attributeGroup.end(); ++ag)
+      for (std::vector<xs__attributeGroup>::iterator ag = schemaRef->attributeGroup.begin(); ag != schemaRef->attributeGroup.end(); ++ag)
       {
         if ((*ag).name)
         {
-          for (vector<xs__attributeGroup>::const_iterator g = attributeGroup.begin(); g != attributeGroup.end(); ++g)
+          for (std::vector<xs__attributeGroup>::const_iterator g = attributeGroup.begin(); g != attributeGroup.end(); ++g)
           {
             if ((*g).name && !strcmp((*ag).name, (*g).name))
             {
@@ -966,11 +966,11 @@ int xs__redefine::preprocess(xs__schema &schema)
         }
       }
       // redefine simpleType
-      for (vector<xs__simpleType>::iterator st = schemaRef->simpleType.begin(); st != schemaRef->simpleType.end(); ++st)
+      for (std::vector<xs__simpleType>::iterator st = schemaRef->simpleType.begin(); st != schemaRef->simpleType.end(); ++st)
       {
         if ((*st).name)
         {
-          for (vector<xs__simpleType>::const_iterator s = simpleType.begin(); s != simpleType.end(); ++s)
+          for (std::vector<xs__simpleType>::const_iterator s = simpleType.begin(); s != simpleType.end(); ++s)
           {
             if ((*s).name && !strcmp((*st).name, (*s).name))
             {
@@ -983,11 +983,11 @@ int xs__redefine::preprocess(xs__schema &schema)
         }
       }
       // redefine complexType by extension/restriction
-      for (vector<xs__complexType>::iterator ct = schemaRef->complexType.begin(); ct != schemaRef->complexType.end(); ++ct)
+      for (std::vector<xs__complexType>::iterator ct = schemaRef->complexType.begin(); ct != schemaRef->complexType.end(); ++ct)
       {
         if ((*ct).name)
         {
-          for (vector<xs__complexType>::const_iterator c = complexType.begin(); c != complexType.end(); ++c)
+          for (std::vector<xs__complexType>::const_iterator c = complexType.begin(); c != complexType.end(); ++c)
           {
             if ((*c).name && !strcmp((*ct).name, (*c).name))
             {
@@ -1126,7 +1126,7 @@ xs__override::xs__override()
 int xs__override::preprocess(xs__schema &schema)
 {
   if (vflag)
-    cerr << "Preprocessing schema override '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+    std::cerr << "Preprocessing schema override '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
   if (!schemaRef)
   {
     if (schemaLocation)
@@ -1134,11 +1134,11 @@ int xs__override::preprocess(xs__schema &schema)
       const char *relative_schemaLocation = soap_strdup(schema.soap, schemaLocation);
       schemaLocation = schema.absoluteLocation(schemaLocation);
       schemaRef = new xs__schema(schema.soap, schema.sourceLocation(), schemaLocation, relative_schemaLocation);
-      for (vector<xs__element>::iterator el = schemaRef->element.begin(); el != schemaRef->element.end(); ++el)
+      for (std::vector<xs__element>::iterator el = schemaRef->element.begin(); el != schemaRef->element.end(); ++el)
       {
         if ((*el).name)
         {
-          for (vector<xs__element>::const_iterator e = element.begin(); e != element.end(); ++e)
+          for (std::vector<xs__element>::const_iterator e = element.begin(); e != element.end(); ++e)
           {
             if ((*e).name && !strcmp((*el).name, (*e).name))
             {
@@ -1148,11 +1148,11 @@ int xs__override::preprocess(xs__schema &schema)
           }
         }
       }
-      for (vector<xs__attribute>::iterator at = schemaRef->attribute.begin(); at != schemaRef->attribute.end(); ++at)
+      for (std::vector<xs__attribute>::iterator at = schemaRef->attribute.begin(); at != schemaRef->attribute.end(); ++at)
       {
         if ((*at).name)
         {
-          for (vector<xs__attribute>::const_iterator a = attribute.begin(); a != attribute.end(); ++a)
+          for (std::vector<xs__attribute>::const_iterator a = attribute.begin(); a != attribute.end(); ++a)
           {
             if ((*a).name && !strcmp((*at).name, (*a).name))
             {
@@ -1162,11 +1162,11 @@ int xs__override::preprocess(xs__schema &schema)
           }
         }
       }
-      for (vector<xs__group>::iterator gp = schemaRef->group.begin(); gp != schemaRef->group.end(); ++gp)
+      for (std::vector<xs__group>::iterator gp = schemaRef->group.begin(); gp != schemaRef->group.end(); ++gp)
       {
         if ((*gp).name)
         {
-          for (vector<xs__group>::const_iterator g = group.begin(); g != group.end(); ++g)
+          for (std::vector<xs__group>::const_iterator g = group.begin(); g != group.end(); ++g)
           {
             if ((*g).name && !strcmp((*gp).name, (*g).name))
             {
@@ -1176,11 +1176,11 @@ int xs__override::preprocess(xs__schema &schema)
           }
         }
       }
-      for (vector<xs__attributeGroup>::iterator ag = schemaRef->attributeGroup.begin(); ag != schemaRef->attributeGroup.end(); ++ag)
+      for (std::vector<xs__attributeGroup>::iterator ag = schemaRef->attributeGroup.begin(); ag != schemaRef->attributeGroup.end(); ++ag)
       {
         if ((*ag).name)
         {
-          for (vector<xs__attributeGroup>::const_iterator g = attributeGroup.begin(); g != attributeGroup.end(); ++g)
+          for (std::vector<xs__attributeGroup>::const_iterator g = attributeGroup.begin(); g != attributeGroup.end(); ++g)
           {
             if ((*g).name && !strcmp((*ag).name, (*g).name))
             {
@@ -1190,11 +1190,11 @@ int xs__override::preprocess(xs__schema &schema)
           }
         }
       }
-      for (vector<xs__simpleType>::iterator st = schemaRef->simpleType.begin(); st != schemaRef->simpleType.end(); ++st)
+      for (std::vector<xs__simpleType>::iterator st = schemaRef->simpleType.begin(); st != schemaRef->simpleType.end(); ++st)
       {
         if ((*st).name)
         {
-          for (vector<xs__simpleType>::const_iterator s = simpleType.begin(); s != simpleType.end(); ++s)
+          for (std::vector<xs__simpleType>::const_iterator s = simpleType.begin(); s != simpleType.end(); ++s)
           {
             if ((*s).name && !strcmp((*st).name, (*s).name))
             {
@@ -1204,11 +1204,11 @@ int xs__override::preprocess(xs__schema &schema)
           }
         }
       }
-      for (vector<xs__complexType>::iterator ct = schemaRef->complexType.begin(); ct != schemaRef->complexType.end(); ++ct)
+      for (std::vector<xs__complexType>::iterator ct = schemaRef->complexType.begin(); ct != schemaRef->complexType.end(); ++ct)
       {
         if ((*ct).name)
         {
-          for (vector<xs__complexType>::const_iterator c = complexType.begin(); c != complexType.end(); ++c)
+          for (std::vector<xs__complexType>::const_iterator c = complexType.begin(); c != complexType.end(); ++c)
           {
             if ((*c).name && !strcmp((*ct).name, (*c).name))
             {
@@ -1257,7 +1257,7 @@ int xs__import::preprocess(xs__schema &schema)
   if (!schemaLocation && location)
     schemaLocation = location;
   if (vflag)
-    cerr << "   Preprocessing schema import '" << (namespace_ ? namespace_ : "(null)") << "'" << endl;
+    std::cerr << "   Preprocessing schema import '" << (namespace_ ? namespace_ : "(null)") << "'" << std::endl;
   if (!schemaRef)
   {
     bool found = false;
@@ -1282,8 +1282,8 @@ int xs__import::preprocess(xs__schema &schema)
       {
         schemaLocation = schema.absoluteLocation(schemaLocation);
         // only read from import locations not read already, uses static std::map
-        static map<const char*, xs__schema*, ltstr> included;
-        map<const char*, xs__schema*, ltstr>::iterator i = included.find(schemaLocation);
+        static std::map<const char*, xs__schema*, ltstr> included;
+        std::map<const char*, xs__schema*, ltstr>::iterator i = included.find(schemaLocation);
         const char *relative_schemaLocation = soap_strdup(schema.soap, schemaLocation);
         if (i == included.end())
         {
@@ -1344,26 +1344,26 @@ xs__attribute::xs__attribute()
 int xs__attribute::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema attribute '" << (name ? name : "(null)") << "'" << endl;
+    std::cerr << "   Analyzing schema attribute '" << (name ? name : "(null)") << "'" << std::endl;
   schemaRef = &schema;
   const char *token = qname_token(ref, schema.targetNamespace);
   attributeRef = NULL;
   if (token)
   {
-    for (vector<xs__attribute>::iterator i = schema.attribute.begin(); i != schema.attribute.end(); ++i)
+    for (std::vector<xs__attribute>::iterator i = schema.attribute.begin(); i != schema.attribute.end(); ++i)
     {
       if ((*i).name && !strcmp((*i).name, token))
       {
         attributeRef = &(*i);
         if (vflag)
-          cerr << "    Found attribute '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+          std::cerr << "    Found attribute '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
         break;
       }
     }
   }
   if (!attributeRef)
   {
-    for (vector<xs__import>::iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -1371,13 +1371,13 @@ int xs__attribute::traverse(xs__schema &schema)
         token = qname_token(ref, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__attribute>::iterator j = s->attribute.begin(); j != s->attribute.end(); ++j)
+          for (std::vector<xs__attribute>::iterator j = s->attribute.begin(); j != s->attribute.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
               attributeRef = &(*j);
               if (vflag)
-                cerr << "    Found attribute '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+                std::cerr << "    Found attribute '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
               break;
             }
           }
@@ -1398,20 +1398,20 @@ int xs__attribute::traverse(xs__schema &schema)
     simpleTypeRef = NULL;
     if (token)
     {
-      for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+      for (std::vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
       {
         if ((*i).name && !strcmp((*i).name, token))
         {
           simpleTypeRef = &(*i);
           if (vflag)
-            cerr << "    Found attribute '" << (name ? name : "(null)") << "' type '" << (token ? token : "(null)") << "'" << endl;
+            std::cerr << "    Found attribute '" << (name ? name : "(null)") << "' type '" << (token ? token : "(null)") << "'" << std::endl;
           break;
         }
       }
     }
     if (!simpleTypeRef)
     {
-      for (vector<xs__import>::iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+      for (std::vector<xs__import>::iterator i = schema.import.begin(); i != schema.import.end(); ++i)
       {
         xs__schema *s = (*i).schemaPtr();
         if (s)
@@ -1419,13 +1419,13 @@ int xs__attribute::traverse(xs__schema &schema)
           token = qname_token(type, s->targetNamespace);
           if (token)
           {
-            for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
+            for (std::vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
             {
               if ((*j).name && !strcmp((*j).name, token))
               {
                 simpleTypeRef = &(*j);
                 if (vflag)
-                  cerr << "    Found attribute '" << (name ? name : "(null)") << "' type '" << (token ? token : "(null)") << "'" << endl;
+                  std::cerr << "    Found attribute '" << (name ? name : "(null)") << "' type '" << (token ? token : "(null)") << "'" << std::endl;
                 break;
               }
             }
@@ -1443,7 +1443,7 @@ int xs__attribute::traverse(xs__schema &schema)
       if (is_builtin_qname(ref))
         schema.builtinAttribute(ref);
       else if (!Wflag)
-        cerr << "\nWarning: could not find the referenced attribute '" << (name ? name : "") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find the referenced attribute '" << (name ? name : "") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
       /* moved to restriction::traverse()
       if (wsdl__arrayType)
       {
@@ -1461,7 +1461,7 @@ int xs__attribute::traverse(xs__schema &schema)
       if (is_builtin_qname(type))
         schema.builtinType(type);
       else if (!Wflag)
-        cerr << "\nWarning: could not find the type for attribute '" << (name ? name : "(null)") << "' type '" << type << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find the type for attribute '" << (name ? name : "(null)") << "' type '" << type << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
     }
   }
   return SOAP_OK;
@@ -1544,26 +1544,26 @@ xs__element::xs__element()
 int xs__element::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema element '" << (name ? name : "(null)") << "'" << endl;
+    std::cerr << "   Analyzing schema element '" << (name ? name : "(null)") << "'" << std::endl;
   schemaRef = &schema;
   const char *token = qname_token(ref, schema.targetNamespace);
   elementRef = NULL;
   if (token)
   {
-    for (vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
+    for (std::vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
     {
       if ((*i).name && !strcmp((*i).name, token))
       {
         elementRef = &(*i);
         if (vflag)
-          cerr << "    Found element '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+          std::cerr << "    Found element '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
         break;
       }
     }
   }
   if (!elementRef)
   {
-    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -1571,13 +1571,13 @@ int xs__element::traverse(xs__schema &schema)
         token = qname_token(ref, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
+          for (std::vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
               elementRef = &(*j);
               if (vflag)
-                cerr << "    Found element '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+                std::cerr << "    Found element '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
               break;
             }
           }
@@ -1598,18 +1598,18 @@ int xs__element::traverse(xs__schema &schema)
     simpleTypeRef = NULL;
     if (token)
     {
-      for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+      for (std::vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
         if ((*i).name && !strcmp((*i).name, token))
         {
           simpleTypeRef = &(*i);
           if (vflag)
-            cerr << "    Found element '" << (name ? name : "(null)") << "' simpleType '" << (token ? token : "(null)") << "'" << endl;
+            std::cerr << "    Found element '" << (name ? name : "(null)") << "' simpleType '" << (token ? token : "(null)") << "'" << std::endl;
           break;
         }
     }
     if (!simpleTypeRef)
     {
-      for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+      for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
       {
         xs__schema *s = (*i).schemaPtr();
         if (s)
@@ -1617,13 +1617,13 @@ int xs__element::traverse(xs__schema &schema)
           token = qname_token(type, s->targetNamespace);
           if (token)
           {
-            for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
+            for (std::vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
             {
               if ((*j).name && !strcmp((*j).name, token))
               {
                 simpleTypeRef = &(*j);
                 if (vflag)
-                  cerr << "    Found element '" << (name ? name : "(null)") << "' simpleType '" << (token ? token : "(null)") << "'" << endl;
+                  std::cerr << "    Found element '" << (name ? name : "(null)") << "' simpleType '" << (token ? token : "(null)") << "'" << std::endl;
                 break;
               }
             }
@@ -1645,18 +1645,18 @@ int xs__element::traverse(xs__schema &schema)
     complexTypeRef = NULL;
     if (token)
     {
-      for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
+      for (std::vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
         if ((*i).name && !strcmp((*i).name, token))
         {
           complexTypeRef = &(*i);
           if (vflag)
-            cerr << "    Found element '" << (name ? name : "(null)") << "' complexType '" << (token ? token : "(null)") << "'" << endl;
+            std::cerr << "    Found element '" << (name ? name : "(null)") << "' complexType '" << (token ? token : "(null)") << "'" << std::endl;
           break;
         }
     }
     if (!complexTypeRef)
     {
-      for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+      for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
       {
         xs__schema *s = (*i).schemaPtr();
         if (s)
@@ -1664,13 +1664,13 @@ int xs__element::traverse(xs__schema &schema)
           token = qname_token(type, s->targetNamespace);
           if (token)
           {
-            for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
+            for (std::vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
             {
               if ((*j).name && !strcmp((*j).name, token))
               {
                 complexTypeRef = &(*j);
                 if (vflag)
-                  cerr << "    Found element '" << (name ? name : "(null)") << "' complexType '" << (token ? token : "(null)") << "'" << endl;
+                  std::cerr << "    Found element '" << (name ? name : "(null)") << "' complexType '" << (token ? token : "(null)") << "'" << std::endl;
                 break;
               }
             }
@@ -1686,7 +1686,7 @@ int xs__element::traverse(xs__schema &schema)
     token = qname_token(substitutionGroup, schema.targetNamespace);
     if (token)
     {
-      for (vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
+      for (std::vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
       {
         if ((*i).name && !strcmp((*i).name, token))
         {
@@ -1703,12 +1703,12 @@ int xs__element::traverse(xs__schema &schema)
           }
           (*i).substitutions.push_back(elt);
           if (vflag)
-            cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "'" << endl;
+            std::cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "'" << std::endl;
           break;
         }
       }
     }
-    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -1716,7 +1716,7 @@ int xs__element::traverse(xs__schema &schema)
         token = qname_token(substitutionGroup, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
+          for (std::vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
@@ -1733,7 +1733,7 @@ int xs__element::traverse(xs__schema &schema)
               }
               (*j).substitutions.push_back(elt);
               if (vflag)
-                cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "' in '" << s->targetNamespace << "'" << endl;
+                std::cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "' in '" << s->targetNamespace << "'" << std::endl;
               break;
             }
           }
@@ -1748,14 +1748,14 @@ int xs__element::traverse(xs__schema &schema)
       if (is_builtin_qname(ref))
         schema.builtinElement(ref);
       else if (!Wflag)
-        cerr << "\nWarning: could not find the referenced element '" << (name ? name : "") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find the referenced element '" << (name ? name : "") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
     }
     else if (type)
     {
       if (is_builtin_qname(type))
         schema.builtinType(type);
       else if (!Wflag)
-        cerr << "\nWarning: could not find the type for element '" << (name ? name : "(null)") << "' type '" << type << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find the type for element '" << (name ? name : "(null)") << "' type '" << type << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
     }
   }
   return SOAP_OK;
@@ -1838,7 +1838,7 @@ xs__simpleType::xs__simpleType()
 int xs__simpleType::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema simpleType '" << (name ? name : "(null)") << "'" << endl;
+    std::cerr << "   Analyzing schema simpleType '" << (name ? name : "(null)") << "'" << std::endl;
   schemaRef = &schema;
   if (list)
   {
@@ -1898,7 +1898,7 @@ int xs__simpleType::baseLevel()
   }
   else if (level < 0)
   {
-    cerr << "Error: cyclic simpleType restriction/extension base dependency in '" << (name ? name : "(null)") << "'" << endl;
+    std::cerr << "Error: cyclic simpleType restriction/extension base dependency in '" << (name ? name : "(null)") << "'" << std::endl;
   }
   return level;
 }
@@ -1956,7 +1956,7 @@ xs__complexType::xs__complexType()
 int xs__complexType::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema complexType '" << (name ? name : "(null)") << "'" << endl;
+    std::cerr << "   Analyzing schema complexType '" << (name ? name : "(null)") << "'" << std::endl;
   schemaRef = &schema;
   if (simpleContent)
   {
@@ -2036,9 +2036,9 @@ int xs__complexType::traverse(xs__schema &schema)
   {
     any->traverse(schema);
   }
-  for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+  for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
     (*at).traverse(schema);
-  for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+  for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
     (*ag).traverse(schema);
   return SOAP_OK;
 }
@@ -2108,7 +2108,7 @@ int xs__complexType::baseLevel()
   }
   else if (level < 0)
   {
-    cerr << "Error: cyclic complexType restriction/extension base dependency in '" << (name ? name : "(null)") << "'" << endl;
+    std::cerr << "Error: cyclic complexType restriction/extension base dependency in '" << (name ? name : "(null)") << "'" << std::endl;
   }
   return level;
 }
@@ -2171,7 +2171,7 @@ const std::vector<xsd__QName>& xs__complexType::get_restrictions() const
 int xs__simpleContent::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema simpleContent" << endl;
+    std::cerr << "   Analyzing schema simpleContent" << std::endl;
   if (extension)
     extension->traverse(schema);
   else if (restriction)
@@ -2193,7 +2193,7 @@ void xs__simpleContent::mark()
 int xs__complexContent::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema complexContent" << endl;
+    std::cerr << "   Analyzing schema complexContent" << std::endl;
   if (extension)
     extension->traverse(schema);
   else if (restriction)
@@ -2221,7 +2221,7 @@ xs__extension::xs__extension()
 int xs__extension::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema extension '" << (base ? base : "(null)") << "'" << endl;
+    std::cerr << "   Analyzing schema extension '" << (base ? base : "(null)") << "'" << std::endl;
   if (group)
     group->traverse(schema);
   else if (all)
@@ -2230,26 +2230,26 @@ int xs__extension::traverse(xs__schema &schema)
     choice->traverse(schema);
   else if (sequence)
     sequence->traverse(schema);
-  for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+  for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
     (*at).traverse(schema);
-  for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+  for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
     (*ag).traverse(schema);
   const char *token = qname_token(base, schema.targetNamespace);
   simpleTypeRef = NULL;
   if (token)
   {
-    for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+    for (std::vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
       if ((*i).name && !strcmp((*i).name, token))
       {
         simpleTypeRef = &(*i);
         if (vflag)
-          cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << endl;
+          std::cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << std::endl;
         break;
       }
   }
   if (!simpleTypeRef)
   {
-    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -2257,13 +2257,13 @@ int xs__extension::traverse(xs__schema &schema)
         token = qname_token(base, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
+          for (std::vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
               simpleTypeRef = &(*j);
               if (vflag)
-                cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << endl;
+                std::cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << std::endl;
               break;
             }
           }
@@ -2277,18 +2277,18 @@ int xs__extension::traverse(xs__schema &schema)
   complexTypeRef = NULL;
   if (token)
   {
-    for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
+    for (std::vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
       if ((*i).name && !strcmp((*i).name, token))
       {
         complexTypeRef = &(*i);
         if (vflag)
-          cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << endl;
+          std::cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << std::endl;
         break;
       }
   }
   if (!complexTypeRef)
   {
-    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -2296,13 +2296,13 @@ int xs__extension::traverse(xs__schema &schema)
         token = qname_token(base, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
+          for (std::vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
               complexTypeRef = &(*j);
               if (vflag)
-                cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << endl;
+                std::cerr << "    Found extension base type '" << (token ? token : "(null)") << "'" << std::endl;
               break;
             }
           }
@@ -2319,10 +2319,10 @@ int xs__extension::traverse(xs__schema &schema)
       if (is_builtin_qname(base))
         schema.builtinType(base);
       else if (!Wflag)
-        cerr << "\nWarning: could not find extension base type '" << base << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find extension base type '" << base << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
     }
     else
-      cerr << "Extension has no base" << endl;
+      std::cerr << "Extension has no base" << std::endl;
   }
   return SOAP_OK;
 }
@@ -2353,9 +2353,9 @@ void xs__extension::mark()
       choice->mark();
     else if (sequence)
       sequence->mark();
-    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+    for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
       (*at).mark();
-    for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+    for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
       (*ag).mark();
   }
 }
@@ -2381,7 +2381,7 @@ xs__restriction::xs__restriction()
 int xs__restriction::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema restriction '" << (base ? base : "(null)") << "'" << endl;
+    std::cerr << "   Analyzing schema restriction '" << (base ? base : "(null)") << "'" << std::endl;
   if (simpleType)
     simpleType->traverse(schema);
   if (attributeGroup)
@@ -2396,12 +2396,12 @@ int xs__restriction::traverse(xs__schema &schema)
     sequence->traverse(schema);
   else
   {
-    for (vector<xs__enumeration>::iterator en = enumeration.begin(); en != enumeration.end(); ++en)
+    for (std::vector<xs__enumeration>::iterator en = enumeration.begin(); en != enumeration.end(); ++en)
       (*en).traverse(schema);
-    for (vector<xs__pattern>::iterator pn = pattern.begin(); pn != pattern.end(); ++pn)
+    for (std::vector<xs__pattern>::iterator pn = pattern.begin(); pn != pattern.end(); ++pn)
       (*pn).traverse(schema);
   }
-  for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+  for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
   {
     (*at).traverse(schema);
     if ((*at).wsdl__arrayType)
@@ -2414,7 +2414,7 @@ int xs__restriction::traverse(xs__schema &schema)
       /* one work-around for incomplete schemas with SOAP arrays defined solely by wsdl:arrayType is to add sequence/element with type but this creates __ptritem */
       if (!sequence)
       {
-        cerr << "ADDED sequence/element for array\n";
+        std::cerr << "ADDED sequence/element for array\n";
         sequence = soap_new_xs__seqchoice(schema.soap);
         sequence->soap_default(schema.soap);
         xs__contents ct;
@@ -2434,20 +2434,20 @@ int xs__restriction::traverse(xs__schema &schema)
       simpleArrayTypeRef = NULL;
       if (token)
       {
-        for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+        for (std::vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
         {
           if ((*i).name && !strcmp((*i).name, token))
           {
             simpleArrayTypeRef = &(*i);
             if (vflag)
-              cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+              std::cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << std::endl;
             break;
           }
         }
       }
       if (!simpleArrayTypeRef)
       {
-        for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+        for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
         {
           xs__schema *s = (*i).schemaPtr();
           if (s)
@@ -2455,13 +2455,13 @@ int xs__restriction::traverse(xs__schema &schema)
             token = qname_token(arrayType, s->targetNamespace);
             if (token)
             {
-              for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
+              for (std::vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
               {
                 if ((*j).name && !strcmp((*j).name, token))
                 {
                   simpleArrayTypeRef = &(*j);
                   if (vflag)
-                    cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+                    std::cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << std::endl;
                   break;
                 }
               }
@@ -2475,20 +2475,20 @@ int xs__restriction::traverse(xs__schema &schema)
       complexArrayTypeRef = NULL;
       if (token)
       {
-        for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
+        for (std::vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
         {
           if ((*i).name && !strcmp((*i).name, token))
           {
             complexArrayTypeRef = &(*i);
             if (vflag)
-              cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+              std::cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << std::endl;
             break;
           }
         }
       }
       if (!complexArrayTypeRef)
       {
-        for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+        for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
         {
           xs__schema *s = (*i).schemaPtr();
           if (s)
@@ -2496,13 +2496,13 @@ int xs__restriction::traverse(xs__schema &schema)
             token = qname_token(arrayType, s->targetNamespace);
             if (token)
             {
-              for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
+              for (std::vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
               {
                 if ((*j).name && !strcmp((*j).name, token))
                 {
                   complexArrayTypeRef = &(*j);
                   if (vflag)
-                    cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+                    std::cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << std::endl;
                   break;
                 }
               }
@@ -2517,7 +2517,7 @@ int xs__restriction::traverse(xs__schema &schema)
         if (is_builtin_qname(arrayType))
           schema.builtinType(arrayType);
         else if (!Wflag)
-          cerr << "\nWarning: could not find restriction array type '" << arrayType << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+          std::cerr << "\nWarning: could not find restriction array type '" << arrayType << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
       }
 #endif
     }
@@ -2526,20 +2526,20 @@ int xs__restriction::traverse(xs__schema &schema)
   simpleTypeRef = NULL;
   if (token)
   {
-    for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+    for (std::vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
     {
       if ((*i).name && !strcmp((*i).name, token))
       {
         simpleTypeRef = &(*i);
         if (vflag)
-          cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << endl;
+          std::cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << std::endl;
         break;
       }
     }
   }
   if (!simpleTypeRef)
   {
-    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -2547,13 +2547,13 @@ int xs__restriction::traverse(xs__schema &schema)
         token = qname_token(base, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
+          for (std::vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
               simpleTypeRef = &(*j);
               if (vflag)
-                cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << endl;
+                std::cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << std::endl;
               break;
             }
           }
@@ -2567,20 +2567,20 @@ int xs__restriction::traverse(xs__schema &schema)
   complexTypeRef = NULL;
   if (token)
   {
-    for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
+    for (std::vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
     {
       if ((*i).name && !strcmp((*i).name, token))
       {
         complexTypeRef = &(*i);
         if (vflag)
-          cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << endl;
+          std::cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << std::endl;
         break;
       }
     }
   }
   if (!complexTypeRef)
   {
-    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -2588,13 +2588,13 @@ int xs__restriction::traverse(xs__schema &schema)
         token = qname_token(base, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
+          for (std::vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
               complexTypeRef = &(*j);
               if (vflag)
-                cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << endl;
+                std::cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << std::endl;
               break;
             }
           }
@@ -2611,11 +2611,11 @@ int xs__restriction::traverse(xs__schema &schema)
       if (is_builtin_qname(base))
         schema.builtinType(base);
       else if (!Wflag)
-        cerr << "\nWarning: could not find restriction base type '" << base << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find restriction base type '" << base << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
     }
     else if (!simpleType)
     {
-      cerr << "Restriction has no base" << endl;
+      std::cerr << "Restriction has no base" << std::endl;
     }
   }
   return SOAP_OK;
@@ -2675,7 +2675,7 @@ void xs__restriction::mark()
       choice->mark();
     else if (sequence)
       sequence->mark();
-    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+    for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
       (*at).mark();
   }
 }
@@ -2688,29 +2688,29 @@ xs__list::xs__list()
 int xs__list::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema list" << endl;
+    std::cerr << "   Analyzing schema list" << std::endl;
   if (restriction)
     restriction->traverse(schema);
-  for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
+  for (std::vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
     (*i).traverse(schema);
   itemTypeRef = NULL;
   const char *token = qname_token(itemType, schema.targetNamespace);
   if (token)
   {
-    for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+    for (std::vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
     {
       if ((*i).name && !strcmp((*i).name, token))
       {
         itemTypeRef = &(*i);
         if (vflag)
-          cerr << "    Found list itemType '" << (token ? token : "(null)") << "'" << endl;
+          std::cerr << "    Found list itemType '" << (token ? token : "(null)") << "'" << std::endl;
         break;
       }
     }
   }
   if (!itemTypeRef)
   {
-    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+    for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
       xs__schema *s = (*i).schemaPtr();
       if (s)
@@ -2718,13 +2718,13 @@ int xs__list::traverse(xs__schema &schema)
         token = qname_token(itemType, s->targetNamespace);
         if (token)
         {
-          for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
+          for (std::vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
           {
             if ((*j).name && !strcmp((*j).name, token))
             {
               itemTypeRef = &(*j);
               if (vflag)
-                cerr << "    Found list itemType '" << (token ? token : "(null)") << "'" << endl;
+                std::cerr << "    Found list itemType '" << (token ? token : "(null)") << "'" << std::endl;
               break;
             }
           }
@@ -2739,7 +2739,7 @@ int xs__list::traverse(xs__schema &schema)
     if (is_builtin_qname(itemType))
       schema.builtinType(itemType);
     else if (!Wflag)
-      cerr << "\nWarning: could not find list itemType '" << itemType << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+      std::cerr << "\nWarning: could not find list itemType '" << itemType << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
   }
   return SOAP_OK;
 }
@@ -2760,7 +2760,7 @@ void xs__list::mark()
   {
     if (restriction)
       restriction->mark();
-    for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
+    for (std::vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
       (*i).mark();
   }
 }
@@ -2768,8 +2768,8 @@ void xs__list::mark()
 int xs__union::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema union" << endl;
-  for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
+    std::cerr << "   Analyzing schema union" << std::endl;
+  for (std::vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
     (*i).traverse(schema);
   return SOAP_OK;
 }
@@ -2778,7 +2778,7 @@ void xs__union::mark()
 {
   if (Oflag > 1)
   {
-    for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
+    for (std::vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
       (*i).mark();
   }
 }
@@ -2786,8 +2786,8 @@ void xs__union::mark()
 int xs__all::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema all" << endl;
-  for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
+    std::cerr << "   Analyzing schema all" << std::endl;
+  for (std::vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
     (*i).traverse(schema);
   return SOAP_OK;
 }
@@ -2795,7 +2795,7 @@ int xs__all::traverse(xs__schema &schema)
 void xs__all::mark()
 {
   if (Oflag > 1)
-    for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
+    for (std::vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
       (*i).mark();
 }
 
@@ -2868,18 +2868,18 @@ xs__seqchoice::xs__seqchoice()
 int xs__seqchoice::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema sequence/choice" << endl;
+    std::cerr << "   Analyzing schema sequence/choice" << std::endl;
   schemaRef = &schema;
-  for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
+  for (std::vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
     (*c).traverse(schema);
   if (Oflag > 0)
   {
     SetOfString members;
-    for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); )
+    for (std::vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); )
     {
       if ((*c).__union == SOAP_UNION_xs__union_content_sequence)
       {
-        for (vector<xs__contents>::iterator c1 = (*c).__content.sequence->__contents.begin(); c1 != (*c).__content.sequence->__contents.end(); )
+        for (std::vector<xs__contents>::iterator c1 = (*c).__content.sequence->__contents.begin(); c1 != (*c).__content.sequence->__contents.end(); )
         {
           if ((*c1).__union == SOAP_UNION_xs__union_content_element)
           {
@@ -2894,7 +2894,7 @@ int xs__seqchoice::traverse(xs__schema &schema)
               {
                 (*c).__content.sequence->__contents.erase(c1);
                 if (!Wflag)
-                  cerr << "\nOptimization: removed duplicate element '" << e->name << "' from nested choice/sequence" << endl;
+                  std::cerr << "\nOptimization: removed duplicate element '" << e->name << "' from nested choice/sequence" << std::endl;
               }
               else
               {
@@ -2926,7 +2926,7 @@ int xs__seqchoice::traverse(xs__schema &schema)
           if (members.find(e->name) != members.end())
           {
             __contents.erase(c);
-            cerr << "\nOptimization: removed duplicate element '" << e->name << "' from nested xs:sequence/xs:choice" << endl;
+            std::cerr << "\nOptimization: removed duplicate element '" << e->name << "' from nested xs:sequence/xs:choice" << std::endl;
           }
           else
           {
@@ -2961,7 +2961,7 @@ xs__schema *xs__seqchoice::schemaPtr() const
 void xs__seqchoice::mark()
 {
   if (Oflag > 1)
-    for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
+    for (std::vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
       (*c).mark();
 }
 
@@ -2975,11 +2975,11 @@ xs__attributeGroup::xs__attributeGroup()
 int xs__attributeGroup::traverse(xs__schema& schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema attributeGroup" << endl;
+    std::cerr << "   Analyzing schema attributeGroup" << std::endl;
   schemaRef = &schema;
-  for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+  for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
     (*at).traverse(schema);
-  for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+  for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
     (*ag).traverse(schema);
   attributeGroupRef = NULL;
   if (ref)
@@ -2987,18 +2987,18 @@ int xs__attributeGroup::traverse(xs__schema& schema)
     const char *token = qname_token(ref, schema.targetNamespace);
     if (token)
     {
-      for (vector<xs__attributeGroup>::iterator i = schema.attributeGroup.begin(); i != schema.attributeGroup.end(); ++i)
+      for (std::vector<xs__attributeGroup>::iterator i = schema.attributeGroup.begin(); i != schema.attributeGroup.end(); ++i)
         if ((*i).name && !strcmp((*i).name, token))
         {
           attributeGroupRef = &(*i);
           if (vflag)
-              cerr << "    Found attributeGroup '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+              std::cerr << "    Found attributeGroup '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
           break;
         }
     }
     if (!attributeGroupRef)
     {
-      for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+      for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
       {
         xs__schema *s = (*i).schemaPtr();
         if (s)
@@ -3006,13 +3006,13 @@ int xs__attributeGroup::traverse(xs__schema& schema)
           token = qname_token(ref, s->targetNamespace);
           if (token)
           {
-            for (vector<xs__attributeGroup>::iterator j = s->attributeGroup.begin(); j != s->attributeGroup.end(); ++j)
+            for (std::vector<xs__attributeGroup>::iterator j = s->attributeGroup.begin(); j != s->attributeGroup.end(); ++j)
             {
               if ((*j).name && !strcmp((*j).name, token))
               {
                 attributeGroupRef = &(*j);
                 if (vflag)
-                    cerr << "    Found attribute Group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+                    std::cerr << "    Found attribute Group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
                 break;
               }
             }
@@ -3024,7 +3024,7 @@ int xs__attributeGroup::traverse(xs__schema& schema)
     }
     if (!attributeGroupRef)
       if (!Wflag)
-        cerr << "\nWarning: could not find the referenced attributeGroup '" << (name ? name : "") << "' ref '" << (ref ? ref : "(null)") << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find the referenced attributeGroup '" << (name ? name : "") << "' ref '" << (ref ? ref : "(null)") << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
   }
   return SOAP_OK;
 }
@@ -3056,9 +3056,9 @@ void xs__attributeGroup::mark()
     used = true;
     if (attributeGroupPtr())
       attributeGroupPtr()->mark();
-    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+    for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
       (*at).mark();
-    for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+    for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
       (*ag).mark();
   }
 }
@@ -3066,8 +3066,8 @@ void xs__attributeGroup::mark()
 int xs__any::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema any" << endl;
-  for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
+    std::cerr << "   Analyzing schema any" << std::endl;
+  for (std::vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
     (*i).traverse(schema);
   return SOAP_OK;
 }
@@ -3075,7 +3075,7 @@ int xs__any::traverse(xs__schema &schema)
 void xs__any::mark()
 {
   if (Oflag > 1)
-    for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
+    for (std::vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
       (*i).mark();
 }
 
@@ -3089,7 +3089,7 @@ xs__group::xs__group()
 int xs__group::traverse(xs__schema &schema)
 {
   if (vflag)
-    cerr << "   Analyzing schema group" << endl;
+    std::cerr << "   Analyzing schema group" << std::endl;
   schemaRef = &schema;
   if (all)
     all->traverse(schema);
@@ -3103,20 +3103,20 @@ int xs__group::traverse(xs__schema &schema)
     const char *token = qname_token(ref, schema.targetNamespace);
     if (token)
     {
-      for (vector<xs__group>::iterator i = schema.group.begin(); i != schema.group.end(); ++i)
+      for (std::vector<xs__group>::iterator i = schema.group.begin(); i != schema.group.end(); ++i)
       {
         if ((*i).name && !strcmp((*i).name, token))
         {
           groupRef = &(*i);
           if (vflag)
-              cerr << "    Found group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+              std::cerr << "    Found group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
           break;
         }
       }
     }
     if (!groupRef)
     {
-      for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+      for (std::vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
       {
         xs__schema *s = (*i).schemaPtr();
         if (s)
@@ -3124,13 +3124,13 @@ int xs__group::traverse(xs__schema &schema)
           token = qname_token(ref, s->targetNamespace);
           if (token)
           {
-            for (vector<xs__group>::iterator j = s->group.begin(); j != s->group.end(); ++j)
+            for (std::vector<xs__group>::iterator j = s->group.begin(); j != s->group.end(); ++j)
             {
               if ((*j).name && !strcmp((*j).name, token))
               {
                 groupRef = &(*j);
                 if (vflag)
-                    cerr << "    Found group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
+                    std::cerr << "    Found group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << std::endl;
                 break;
               }
             }
@@ -3142,7 +3142,7 @@ int xs__group::traverse(xs__schema &schema)
     }
     if (!groupRef)
       if (!Wflag)
-        cerr << "\nWarning: could not find the referenced group '" << (name ? name : "") << "' ref '" << (ref ? ref : "(null)") << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        std::cerr << "\nWarning: could not find the referenced group '" << (name ? name : "") << "' ref '" << (ref ? ref : "(null)") << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << std::endl;
   }
   return SOAP_OK;
 }
@@ -3187,7 +3187,7 @@ int xs__enumeration::traverse(xs__schema &schema)
 {
   (void)schema;
   if (vflag)
-    cerr << "   Analyzing schema enumeration '" << (value ? value : "(null)") << "'" << endl;
+    std::cerr << "   Analyzing schema enumeration '" << (value ? value : "(null)") << "'" << std::endl;
   return SOAP_OK;
 }
 
@@ -3195,7 +3195,7 @@ int xs__pattern::traverse(xs__schema &schema)
 {
   (void)schema;
   if (vflag)
-    cerr << "   Analyzing schema pattern" << endl;
+    std::cerr << "   Analyzing schema pattern" << std::endl;
   return SOAP_OK;
 }
 
@@ -3205,7 +3205,7 @@ int xs__pattern::traverse(xs__schema &schema)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-ostream &operator<<(ostream &o, const xs__schema &e)
+std::ostream &operator<<(std::ostream &o, const xs__schema &e)
 {
   if (!e.soap)
   {
@@ -3221,7 +3221,7 @@ ostream &operator<<(ostream &o, const xs__schema &e)
   }
   else
   {
-    ostream *os = e.soap->os;
+    std::ostream *os = e.soap->os;
     e.soap->os = &o;
     e.soap_serialize(e.soap);
     soap_begin_send(e.soap);
@@ -3232,14 +3232,14 @@ ostream &operator<<(ostream &o, const xs__schema &e)
   return o;
 }
 
-istream &operator>>(istream &i, xs__schema &e)
+std::istream &operator>>(std::istream &i, xs__schema &e)
 {
   if (!e.soap)
   {
     e.soap = soap_new();
     soap_set_namespaces(e.soap, namespaces);
   }
-  istream *is = e.soap->is;
+  std::istream *is = e.soap->is;
   e.soap->is = &i;
   if (soap_begin_recv(e.soap)
    || !e.soap_in(e.soap, "xs:schema", NULL)

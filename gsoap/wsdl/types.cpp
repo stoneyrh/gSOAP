@@ -899,10 +899,10 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
       qnames[Pair(p,name)] = s;
       if (vflag)
       {
-        cerr << "Mapping '" << p << ":" << name << "' to '" << s << "'" << endl;
+        std::cerr << "Mapping '" << p << ":" << name << "' to '" << s << "'" << std::endl;
 #ifdef DEBUG
         for (MapOfPairToString::const_iterator i = qnames.begin(); i != qnames.end(); ++i)
-          cerr << "Map[" << (*i).first.first << ":" << (*i).first.second << "]='" << (*i).second << "'" << endl;
+          std::cerr << "Map[" << (*i).first.first << ":" << (*i).first.second << "]='" << (*i).second << "'" << std::endl;
 #endif
       }
     }
@@ -973,7 +973,7 @@ const char *Types::tname(const char *prefix, const char *URI, const char *qname)
       fprintf(stderr, "\nWarning: undefined QName %s for type %s in namespace \"%s\"\n", qname ? qname : "", t, URI ? URI : "?");
   }
   if (vflag)
-    cerr << "Mapping use of '" << t << "' to '" << s << "'" << endl;
+    std::cerr << "Mapping use of '" << t << "' to '" << s << "'" << std::endl;
   return s;
 }
 
@@ -1047,7 +1047,7 @@ const char *Types::pname(bool flag, bool smart, const char *prefix, const char *
           s = p;
         }
         if (vflag)
-          cerr << "Mapping \"smart\" pointer of '" << t << "' to '" << s << "'" << endl;
+          std::cerr << "Mapping \"smart\" pointer of '" << t << "' to '" << s << "'" << std::endl;
         smptypemap[t] = s;
       }
     }
@@ -1079,7 +1079,7 @@ const char *Types::pname(bool flag, bool smart, const char *prefix, const char *
           s = p;
         }
         if (vflag)
-          cerr << "Mapping pointer of '" << t << "' to '" << s << "'" << endl;
+          std::cerr << "Mapping pointer of '" << t << "' to '" << s << "'" << std::endl;
         ptrtypemap[t] = s;
       }
     }
@@ -1182,7 +1182,7 @@ const char *Types::deftname(enum Type type, bool mk_pointer, bool is_pointer, co
   if (is_pointer)
     smptypemap[t] = s;
   if (vflag)
-    cerr <<  "Defined '" << t << "' ('" << qname << "' in namespace '" << (URI ? URI : prefix ? prefix : "") << "') as '" << s << "'" << endl;
+    std::cerr <<  "Defined '" << t << "' ('" << qname << "' in namespace '" << (URI ? URI : prefix ? prefix : "") << "') as '" << s << "'" << std::endl;
   return t;
 }
 
@@ -1684,7 +1684,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         if (!is_qname)
         {
           bool letters_ok = true;
-          for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
+          for (std::vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
           {
             const char *s;
             if ((s = (*enumeration).value))
@@ -1710,7 +1710,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           }
           if (letters_ok)
           {
-            for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
+            for (std::vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
             {
               const char *s;
               if ((s = (*enumeration).value))
@@ -1730,7 +1730,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             }
           }
         }
-        for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
+        for (std::vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
         {
           const char *s;
           if ((s = (*enumeration).value))
@@ -1824,7 +1824,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           soap_strcpy(format + n + 1, sizeof(format) - n - 1, simpleType.restriction->fractionDigits->value);
           fprintf(stream, "/// %s of fraction digits is %s.\n", simpleType.restriction->fractionDigits->fixed ? "Fixed number" : "Number", simpleType.restriction->fractionDigits->value);
         }
-        for (vector<xs__pattern>::const_iterator pattern1 = simpleType.restriction->pattern.begin(); pattern1 != simpleType.restriction->pattern.end(); ++pattern1)
+        for (std::vector<xs__pattern>::const_iterator pattern1 = simpleType.restriction->pattern.begin(); pattern1 != simpleType.restriction->pattern.end(); ++pattern1)
           fprintf(stream, "/// Content pattern is \"%s\".\n", xstring((*pattern1).value));
         const char *ai = NULL, *ae = NULL, *bi = NULL, *be = NULL;
         if (simpleType.restriction->minInclusive)
@@ -1887,7 +1887,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           if (!anonymous && !simpleType.restriction->pattern.empty())
           {
             fprintf(stream, " \"");
-            for (vector<xs__pattern>::const_iterator pattern2 = simpleType.restriction->pattern.begin(); pattern2 != simpleType.restriction->pattern.end(); ++pattern2)
+            for (std::vector<xs__pattern>::const_iterator pattern2 = simpleType.restriction->pattern.begin(); pattern2 != simpleType.restriction->pattern.end(); ++pattern2)
             {
               if (pattern2 != simpleType.restriction->pattern.begin())
                 fprintf(stream, "|");
@@ -2061,7 +2061,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       }
       if (t)
       {
-        for (vector<xs__enumeration>::const_iterator enumeration = simpleType.list->restriction->enumeration.begin(); enumeration != simpleType.list->restriction->enumeration.end(); ++enumeration)
+        for (std::vector<xs__enumeration>::const_iterator enumeration = simpleType.list->restriction->enumeration.begin(); enumeration != simpleType.list->restriction->enumeration.end(); ++enumeration)
         {
           if ((*enumeration).value)
           {
@@ -2131,7 +2131,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         }
         if (t)
         {
-          for (vector<xs__enumeration>::const_iterator enumeration = p->restriction->enumeration.begin(); enumeration != p->restriction->enumeration.end(); ++enumeration)
+          for (std::vector<xs__enumeration>::const_iterator enumeration = p->restriction->enumeration.begin(); enumeration != p->restriction->enumeration.end(); ++enumeration)
           {
             if ((*enumeration).value)
             {
@@ -2214,11 +2214,11 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           fprintf(stream, "enum * class %s : int64_t\n{\n", t);
         else
           fprintf(stream, "enum * %s\n{\n", t);
-        for (vector<xs__simpleType>::const_iterator simple = simpleType.list->simpleType.begin(); simple != simpleType.list->simpleType.end(); ++simple)
+        for (std::vector<xs__simpleType>::const_iterator simple = simpleType.list->simpleType.begin(); simple != simpleType.list->simpleType.end(); ++simple)
         {
           if ((*simple).restriction && (*simple).restriction->base)
           {
-            for (vector<xs__enumeration>::const_iterator enumeration = (*simple).restriction->enumeration.begin(); enumeration != (*simple).restriction->enumeration.end(); ++enumeration)
+            for (std::vector<xs__enumeration>::const_iterator enumeration = (*simple).restriction->enumeration.begin(); enumeration != (*simple).restriction->enumeration.end(); ++enumeration)
             {
               if ((*enumeration).value)
               {
@@ -2278,7 +2278,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       const char *s = tname(NULL, NULL, "xs:string");
       if (!anonymous)
         t = deftname(TYPEDEF, false, is_ptr(NULL, NULL, "xs:string"), prefix, URI, name, s);
-      for (vector<xs__simpleType>::const_iterator simpleType1 = simpleType.union_->simpleType.begin(); simpleType1 != simpleType.union_->simpleType.end(); ++simpleType1)
+      for (std::vector<xs__simpleType>::const_iterator simpleType1 = simpleType.union_->simpleType.begin(); simpleType1 != simpleType.union_->simpleType.end(); ++simpleType1)
       {
         if ((*simpleType1).restriction)
         {
@@ -2923,9 +2923,9 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     scope.pop_back();
 }
 
-void Types::gen(const char *URI, const vector<xs__attribute>& attributes, SetOfString& members)
+void Types::gen(const char *URI, const std::vector<xs__attribute>& attributes, SetOfString& members)
 {
-  for (vector<xs__attribute>::const_iterator attribute = attributes.begin(); attribute != attributes.end(); ++attribute)
+  for (std::vector<xs__attribute>::const_iterator attribute = attributes.begin(); attribute != attributes.end(); ++attribute)
     gen(URI, *attribute, members);
 }
 
@@ -3082,11 +3082,11 @@ void Types::gen(const char *URI, const xs__attribute& attribute, SetOfString& me
   }
 }
 
-void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGroups, SetOfString& members)
+void Types::gen(const char *URI, const std::vector<xs__attributeGroup>& attributeGroups, SetOfString& members)
 {
-  for (vector<xs__attributeGroup>::const_iterator attributeGroup = attributeGroups.begin(); attributeGroup != attributeGroups.end(); ++attributeGroup)
+  for (std::vector<xs__attributeGroup>::const_iterator attributeGroup = attributeGroups.begin(); attributeGroup != attributeGroups.end(); ++attributeGroup)
   {
-    static set<const xs__attributeGroup*> visited;
+    static std::set<const xs__attributeGroup*> visited;
     const xs__attributeGroup *p = &*attributeGroup;
     if (visited.find(p) != visited.end())
     {
@@ -3120,9 +3120,9 @@ void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGrou
   }
 }
 
-void Types::gen(const char *URI, const vector<xs__all>& alls, SetOfString& members)
+void Types::gen(const char *URI, const std::vector<xs__all>& alls, SetOfString& members)
 {
-  for (vector<xs__all>::const_iterator all = alls.begin(); all != alls.end(); ++all)
+  for (std::vector<xs__all>::const_iterator all = alls.begin(); all != alls.end(); ++all)
     gen(URI, *all, NULL, NULL, members);
 }
 
@@ -3137,9 +3137,9 @@ void Types::gen(const char *URI, const xs__all& all, const char *minOccurs, cons
   fake_union = tmp_union2;
 }
 
-void Types::gen(const char *URI, const vector<xs__contents>& contents, SetOfString& members)
+void Types::gen(const char *URI, const std::vector<xs__contents>& contents, SetOfString& members)
 {
-  for (vector<xs__contents>::const_iterator content = contents.begin(); content != contents.end(); ++content)
+  for (std::vector<xs__contents>::const_iterator content = contents.begin(); content != contents.end(); ++content)
   {
     switch ((*content).__union)
     {
@@ -3258,9 +3258,9 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minO
   with_union = tmp_union;
 }
 
-void Types::gen(const char *URI, const vector<xs__element>& elements, const char *minOccurs, const char *maxOccurs, SetOfString& members)
+void Types::gen(const char *URI, const std::vector<xs__element>& elements, const char *minOccurs, const char *maxOccurs, SetOfString& members)
 {
-  for (vector<xs__element>::const_iterator element = elements.begin(); element != elements.end(); ++element)
+  for (std::vector<xs__element>::const_iterator element = elements.begin(); element != elements.end(); ++element)
     gen(URI, *element, true, minOccurs, maxOccurs, members);
 }
 
@@ -3691,15 +3691,15 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   }
 }
 
-void Types::gen(const char *URI, const vector<xs__group>& groups, SetOfString& members)
+void Types::gen(const char *URI, const std::vector<xs__group>& groups, SetOfString& members)
 {
-  for (vector<xs__group>::const_iterator group = groups.begin(); group != groups.end(); ++group)
+  for (std::vector<xs__group>::const_iterator group = groups.begin(); group != groups.end(); ++group)
     gen(URI, *group, NULL, NULL, members);
 }
 
 void Types::gen(const char *URI, const xs__group& group, const char *minOccurs, const char *maxOccurs, SetOfString& members)
 {
-  static set<const xs__group*> visited;
+  static std::set<const xs__group*> visited;
   const char *min = minOccurs;
   const char *max = maxOccurs;
   if (visited.find(&group) != visited.end())
@@ -3762,7 +3762,7 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
     fprintf(stream, " maxOccurs=\"%s\"", max);
   fprintf(stream, ">\n");
   document(choice.annotation);
-  for (vector<xs__contents>::const_iterator c1 = choice.__contents.begin(); c1 != choice.__contents.end(); ++c1)
+  for (std::vector<xs__contents>::const_iterator c1 = choice.__contents.begin(); c1 != choice.__contents.end(); ++c1)
   {
     if (use_union && ((*c1).__union == SOAP_UNION_xs__union_content_group || (*c1).__union == SOAP_UNION_xs__union_content_sequence))
     {
@@ -3780,7 +3780,7 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
   }
   if (use_union && (cflag || sflag))
   {
-    for (vector<xs__contents>::const_iterator c2 = choice.__contents.begin(); c2 != choice.__contents.end(); ++c2)
+    for (std::vector<xs__contents>::const_iterator c2 = choice.__contents.begin(); c2 != choice.__contents.end(); ++c2)
     {
       if ((*c2).__union == SOAP_UNION_xs__union_content_element
        && (*c2).__content.element
@@ -3908,9 +3908,9 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
   fprintf(stream, "//  END OF CHOICE\n");
 }
 
-void Types::gen(const char *URI, const vector<xs__any>& anys)
+void Types::gen(const char *URI, const std::vector<xs__any>& anys)
 {
-  for (vector<xs__any>::const_iterator any = anys.begin(); any != anys.end(); ++any)
+  for (std::vector<xs__any>::const_iterator any = anys.begin(); any != anys.end(); ++any)
     gen(URI, *any, NULL, NULL);
 }
 
@@ -4248,7 +4248,7 @@ void Types::gen_substitutions(const char *URI, const xs__element& element, SetOf
   }
   if (!abstract)
     gen(URI, element, false, NULL, NULL, members);
-  for (vector<xs__element*>::const_iterator i2 = substitutions->begin(); i2 != substitutions->end(); ++i2)
+  for (std::vector<xs__element*>::const_iterator i2 = substitutions->begin(); i2 != substitutions->end(); ++i2)
     gen(URI, *(*i2), true, NULL, NULL, members); // substitutions can be recursive?
   if (use_union)
   {

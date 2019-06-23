@@ -119,7 +119,9 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__dateTime(struct soap *soap, const char *s,
       T.tm_mday = (int)(d % 100);
     }
     else
+    {
       return soap->error = SOAP_TYPE;
+    }
     if (*t == 'T' || ((*t == 't' || *t == ' ') && !(soap->mode & SOAP_XML_STRICT)))
     {
       d = soap_strtoul(t + 1, &t, 10);
@@ -138,7 +140,9 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__dateTime(struct soap *soap, const char *s,
 	T.tm_sec = (int)(d % 100);
       }
       else
+      {
 	return soap->error = SOAP_TYPE;
+      }
     }
     if (T.tm_year == 1)
       T.tm_year = 70;
@@ -148,12 +152,19 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__dateTime(struct soap *soap, const char *s,
     a->tv_usec = 0;
     if (*t == '.')
     {
+      char tmp[32];
+      int i;
       float f = 0.0;
-      (void)soap_s2float(soap, t, &f);
-      a->tv_usec = (long)(1e6 * f + 0.5);
-      for (t++; *t; t++)
+      for (i = 0; i < 31; i++)
+      {
+        tmp[i] = *t++;
         if (*t < '0' || *t > '9')
           break;
+      }
+      tmp[i + 1] = '\0';
+      if (soap_s2float(soap, tmp, &f))
+        return soap->error;
+      a->tv_usec = (long)(1e6 * f + 0.5);
     }
     if (*t == ' ' && !(soap->mode & SOAP_XML_STRICT))
       t++;
@@ -206,12 +217,16 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__dateTime(struct soap *soap, const char *s,
         /* note: day of the month may be out of range, timegm() handles it */
       }
       else if (*t != 'Z')
+      {
 	return soap->error = SOAP_TYPE;
+      }
 #endif
       a->tv_sec = soap_timegm(&T);
     }
     else
+    {
       a->tv_sec = mktime(&T);
+    }
   }
   return soap->error;
 }

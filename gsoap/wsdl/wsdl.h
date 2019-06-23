@@ -420,9 +420,9 @@ class wsdl__definitions
         void                            appPtr(wadl__application*);
         wadl__application*              appPtr() const;
         void                            mark();
-        friend ostream&                 operator<<(ostream&, const wsdl__definitions&);
-        friend istream&                 operator>>(istream&, wsdl__definitions&);
+        friend std::ostream&            operator<<(std::ostream&, const wsdl__definitions&);
+        friend std::istream&            operator>>(std::istream&, wsdl__definitions&);
 };
 
-extern ostream &operator<<(ostream &o, const wsdl__definitions &e);
-extern istream &operator>>(istream &i, wsdl__definitions &e);
+extern std::ostream &operator<<(std::ostream &o, const wsdl__definitions &e);
+extern std::istream &operator>>(std::istream &i, wsdl__definitions &e);

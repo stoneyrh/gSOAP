@@ -307,7 +307,7 @@ static SOAP_SOCKET soap_ios_open( struct soap *soap, const char *endpoint, const
   }
   else
   {
-    [url_data setContent_type:@"tex/xml; charset=utf-8"];
+    [url_data setContent_type:@"text/xml; charset=utf-8"];
   }
 
   return 1;

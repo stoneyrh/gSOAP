@@ -516,14 +516,44 @@ static int soap_curl_connect_callback(struct soap *soap, const char *endpoint, c
       soap->tmpbuf[sizeof(soap->tmpbuf)-1] = '\0';
       (void)soap_memcpy(soap->tmpbuf, sizeof(soap->tmpbuf), "Content-Type: ", 14);
       data->hdr = curl_slist_append(data->hdr, soap->tmpbuf);
-      curl_easy_setopt(data->curl, CURLOPT_HTTPHEADER, (void*)data->hdr);
+      if (!data->hdr)
+        return soap->error = SOAP_EOM;
     }
     if (soap->action)
     {
       (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->action) + 14), "SOAPAction: \"%s\"", soap->action);
       data->hdr = curl_slist_append(data->hdr, soap->tmpbuf);
-      curl_easy_setopt(data->curl, CURLOPT_HTTPHEADER, (void*)data->hdr);
+      if (!data->hdr)
+        return soap->error = SOAP_EOM;
     }
+    if (soap->http_extra_header)
+    {
+      const char *header = soap->http_extra_header;
+      const char *next;
+      soap->http_extra_header = NULL; /* use http_extra_header once (assign new value before each call) */
+      while ((next = strstr(header, "\r\n")) != NULL)
+      {
+        if (next > header && next < header + sizeof(soap->tmpbuf))
+        {
+          soap_strncpy(soap->tmpbuf, sizeof(soap->tmpbuf), header, next - header);
+          if (*soap->tmpbuf)
+          {
+            data->hdr = curl_slist_append(data->hdr, soap->tmpbuf);
+            if (!data->hdr)
+              return soap->error = SOAP_EOM;
+          }
+        }
+        header = next + 2;
+      }
+      if (*header)
+      {
+        data->hdr = curl_slist_append(data->hdr, header);
+        if (!data->hdr)
+          return soap->error = SOAP_EOM;
+      }
+    }
+    if (data->hdr)
+      curl_easy_setopt(data->curl, CURLOPT_HTTPHEADER, (void*)data->hdr);
     curl_easy_setopt(data->curl, CURLOPT_READFUNCTION, soap_curl_read_callback);
     curl_easy_setopt(data->curl, CURLOPT_READDATA, (void*)data);
   }
@@ -659,13 +689,15 @@ static int soap_curl_prepare_init_recv_callback(struct soap *soap)
     curl_easy_setopt(data->curl, CURLOPT_ACCEPT_ENCODING, "");
   }
   data->hdr = curl_slist_append(data->hdr, "Expect:"); /* remove Expect: 100 */
-  curl_easy_setopt(data->curl, CURLOPT_HTTPHEADER, (void*)data->hdr);
-  res = curl_easy_perform(data->curl);
   if (data->hdr)
+  {
+    curl_easy_setopt(data->curl, CURLOPT_HTTPHEADER, (void*)data->hdr);
+    res = curl_easy_perform(data->curl);
     curl_slist_free_all(data->hdr);
-  data->hdr = NULL;
-  if (res != CURLE_OK)
-    return soap_sender_fault(soap, curl_easy_strerror(res), "origin: soap_curl plugin");
+    data->hdr = NULL;
+    if (res != CURLE_OK)
+      return soap_sender_fault(soap, curl_easy_strerror(res), "origin: soap_curl plugin");
+  }
   curl_easy_getinfo(data->curl, CURLINFO_RESPONSE_CODE, &status);
   if (!curl_easy_getinfo(data->curl, CURLINFO_CONTENT_TYPE, &s) && s)
     soap->http_content = soap_strdup(soap, s);

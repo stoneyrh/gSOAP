@@ -44,8 +44,8 @@ typedef char	*xsd__anyURI,
 		*xsd__string;
 typedef bool	xsd__boolean;
 
-extern class ostream;
-extern class istream;
+extern class std::ostream;
+extern class std::istream;
 
 #include "includes.h"
 
