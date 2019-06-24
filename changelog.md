@@ -1505,5 +1505,10 @@ Version 2.8.85 (6/24/2019)
 - Fixed wsdl2h compilation issue with C++17.
 - Fixed `custom/duration.c` custom deserializer `SOAP_TYPE` error caused by parsing duration fractional seconds.
 
+Version 2.8.86 (6/24/2019)
+---
+
+- Fixed a problem with the `SOAP_SSL_DEFAULT` settings parameter used with `soap_ssl_client_context` and `soap_ssl_server_context` that may lead to a weaker setting than specified.
+
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
