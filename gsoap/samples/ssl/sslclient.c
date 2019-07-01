@@ -6,7 +6,7 @@
         Build steps:
 
         soapcpp2 -c ssl.h
-        cc -o sslserver sslserver.c soapC.c soapClient.c stdsoap2.c thread_setup.c
+        cc -DWITH_OPENSSL -o sslserver sslserver.c soapC.c soapClient.c stdsoap2.c thread_setup.c
 
 	SSL-enabled services use the gSOAP SSL interface. See sslclient.c and
 	sslserver.c for example code with instructions and the gSOAP

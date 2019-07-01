@@ -167,6 +167,7 @@ This function sets the specified file path name `logfile` to save all messages r
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap_set_recv_logfile(soap, "logs/thread_1_recv.log");
 soap_set_sent_logfile(soap, "logs/thread_1_sent.log");
@@ -190,6 +191,7 @@ This function sets the specified file path name `logfile` to save the messages s
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap_set_recv_logfile(soap, "logs/thread_1_recv.log");
 soap_set_sent_logfile(soap, "logs/thread_1_sent.log");
@@ -213,6 +215,7 @@ This function sets the specified file path name `logfile` to save debugging info
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap_set_recv_logfile(soap, "logs/thread_1_recv.log");
 soap_set_sent_logfile(soap, "logs/thread_1_sent.log");
@@ -235,6 +238,7 @@ This function enables inbound message logging.  Inbound messages are recorded to
 ~~~{.cpp}
 #include "soapH.h"
 #include "plugin/logging.h"
+
 struct soap *soap = soap_new();
 FILE *fd = fopen("logs/recv.log", "w");
 soap_register_plugin(soap, logging);
@@ -262,6 +266,7 @@ This function enables outbound message logging.  Outbound messages are recorded 
 ~~~{.cpp}
 #include "soapH.h"
 #include "plugin/logging.h"
+
 struct soap *soap = soap_new();
 FILE *fd = fopen("logs/sent.log", "w");
 soap_register_plugin(soap, logging);
@@ -289,6 +294,7 @@ This function collects the recorded messaging statistics, namely the number of b
 ~~~{.cpp}
 #include "soapH.h"
 #include "plugin/logging.h"
+
 struct soap *soap = soap_new();
 soap_register_plugin(soap, logging);
 ... // send and receive messages
@@ -528,6 +534,7 @@ Use `::soap::bind_inet6` and `::soap::bind_v6only` at runtime to configure port 
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap->bind_inet6 = 1;  // to use AF_INET6 instead of PF_UNSPEC
 soap->bind_v6only = 1; // to setsockopt IPPROTO_IPV6 IPV6_V6ONLY
@@ -548,6 +555,7 @@ Alternatively, compile with `#WITH_IPV6` and set `::soap::bind_v6only` at runtim
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap->bind_inet6 = 1;  // to use AF_INET6 instead of PF_UNSPEC
 soap->bind_v6only = 1; // to setsockopt IPPROTO_IPV6 IPV6_V6ONLY
@@ -602,6 +610,7 @@ To enable compression with the gzip method and decompression with the compress a
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_ZLIB);
 ~~~
 
@@ -620,6 +629,7 @@ To enable (de)compression with the compress method use `#SOAP_ENC_ZLIB`:
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_ZLIB);
 ~~~
 
@@ -672,6 +682,7 @@ To enable DOM parsing use `#SOAP_XML_DOM`, for example:
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_DOM);
 ... // call an XML service operation that deserializes the response
 if (soap->dom) // we also got a DOM
@@ -713,6 +724,7 @@ Call `::soap_serve` (or the C++ service class `serve` method) to serve CGI and F
 ~~~{.cpp}
 // example server.cpp
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -732,6 +744,7 @@ The following IO and socket-related functions should be defined by callbacks imp
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int my_accept(struct soap *soap, SOAP_SOCKET sock, struct sockaddr *addr, int *len) { ... }
 int my_connect(struct soap *soap, const char *endpoint, const char *host, int port) { ... }
 int my_disconnect(struct soap *soap) { ... }
@@ -771,6 +784,7 @@ Alternatively, set `#SOAP_XML_TREE` at runtime:
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_TREE);
 ~~~
 
@@ -824,6 +838,7 @@ Applications developed with soapcpp2 options `-i` or `-j` assign a namespace tab
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct Namespace my_namespaces[] = {
   { "SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*soap-envelope",      NULL },
   { "SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*soap-encoding",      NULL },
@@ -863,6 +878,7 @@ int ns__webmethod(_XML string, _XML *response); // _XML is a literal XML string 
 // example client.cpp file
 #include "soapH.h"
 #include "example.nsmap"
+
 struct soap *soap = soap_new1(SOAP_XML_INDENT);
 if (soap_call_ns__webmethod(soap, endpoint, NULL, "<doc title=\"Example\">Some text</doc>", &r))
   soap_print_fault(soap, stderr);
@@ -935,6 +951,7 @@ int ns__webmethod(char *string, struct ns__webmethodResponse *response);
 // example server.cpp file
 #include "soapexampleService.h"
 #include "example.nsmap"
+
 class MyService : public exampleService {
   public:
     virtual int webmethod(char *string, struct ns__webmethodResponse *response)
@@ -980,6 +997,7 @@ int ns__webmethod(char *string, struct ns__webmethodResponse *response);
 // example server.cpp file
 #include "soapexampleService.h"
 #include "example.nsmap"
+
 class MyService : public exampleService {
   public:
     virtual int webmethod(char *string, struct ns__webmethodResponse *response)
@@ -1123,6 +1141,7 @@ By default, `::soap_new` and the soapcpp2-generated `soap_new_T` functions retur
 ~~~{.cpp}
 // compiled with compile-time flag -D SOAP_NOTHROW=""
 #include "soapH.h"
+
 try
 {
   // soap_new() may cause a std::bad_alloc exception
@@ -1516,6 +1535,7 @@ typedef int soap_mode;
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK);
 if ((soap->omode & SOAP_IO) == SOAP_IO_CHUNK)
   ... // HTTP chunking is enabled
@@ -1539,6 +1559,7 @@ When set as input-mode flag, forces all messages sent to be temporarily stored b
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_STORE); // store messages temporarily before transmission
 ~~~
 */
@@ -1552,6 +1573,7 @@ struct soap *soap = soap_new1(SOAP_IO_STORE); // store messages temporarily befo
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // enable HTTP chunking
 ~~~
 */
@@ -1563,6 +1585,7 @@ struct soap *soap = soap_new1(SOAP_IO_CHUNK); // enable HTTP chunking
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_UDP); // use UDP
 ~~~
 
@@ -1590,6 +1613,7 @@ Stand-alone server applications should be multi-threaded to use this flag, becau
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_KEEPALIVE); // enable HTTP keep-alive
 soap->max_keep_alive = 50;                        // serve 50 max keep-alive exchanges (SOAP_MAXKEEPALIVE by default)
 ... // serve requests with soap_bind, soap_accept, soap_ssl_accept, and soap_serve
@@ -1597,6 +1621,7 @@ soap->max_keep_alive = 50;                        // serve 50 max keep-alive exc
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap_set_mode(soap, SOAP_IO_KEEPALIVE);           // keep connection to the server open
 if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
@@ -1626,6 +1651,7 @@ else
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_PLAIN); // no HTTP
 ~~~
 */
@@ -1640,6 +1666,7 @@ struct soap *soap = soap_new1(SOAP_ENC_PLAIN); // no HTTP
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
 data.__ptr = (unsigned char*)soap_malloc(soap, 1024);       // allocate 1024 bytes on the managed heap
@@ -1653,6 +1680,7 @@ data.options = soap_dime_option(soap, 0, "Picture.png");    // DIME option 0 = "
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 unsigned char *ptr = (unsigned char*)image_data;                   // image data to attach
 size_t size = 1024;                                                // 1024 bytes of data
@@ -1679,6 +1707,7 @@ The MTOM specification requires SOAP 1.2.
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_MIME);               // enable MIME attachments, not DIME or MTOM
 struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
 data.__ptr = (unsigned char*)soap_malloc(soap, 1024);       // allocate 1024 bytes on the managed heap
@@ -1692,6 +1721,7 @@ data.options = "Picture";                                   // attachment descri
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_MIME);                      // enable MIME attachments, not DIME or MTOM
 unsigned char *ptr = (unsigned char*)image_data;                   // image data to attach
 size_t size = 1024;                                                // 1024 bytes of data
@@ -1713,6 +1743,7 @@ soap_clr_mime(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_MTOM);               // enable MTOM attachments, not DIME
 struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
 data.__ptr = (unsigned char*)soap_malloc(soap, 1024);       // allocate 1024 bytes on the managed heap
@@ -1726,6 +1757,7 @@ data.options = "Picture";                                   // attachment descri
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_MTOM);                      // enable MTOM attachments, not DIME
 unsigned char *ptr = (unsigned char*)image_data;                   // image data to attach
 size_t size = 1024;                                                // 1024 bytes of data
@@ -1747,6 +1779,7 @@ soap_clr_mime(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_ENC_ZLIB); // HTTP compression
 ~~~
 */
@@ -1765,6 +1798,7 @@ Alternatively, use <i>`soapcpp2 -s`</i> to generate stub and skeleton functions 
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_STRICT); // strict XML validation
 ~~~
 
@@ -1778,6 +1812,7 @@ struct soap *soap = soap_new1(SOAP_XML_STRICT); // strict XML validation
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_INDENT); // indent XML
 ~~~
 */
@@ -1789,6 +1824,7 @@ struct soap *soap = soap_new1(SOAP_XML_INDENT); // indent XML
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_IGNORENS); // ignore xmlns bindings in XML
 ~~~
 */
@@ -1802,6 +1838,7 @@ struct soap *soap = soap_new1(SOAP_XML_IGNORENS); // ignore xmlns bindings in XM
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_DEFAULTNS); // use XML default namespaces with xmlns="..."
 ~~~
 
@@ -1840,6 +1877,7 @@ Qualified XML element names are replaced by unqualified element names.  Qualifie
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_CANONICAL); // XML canonicalization, exclusive by default
 soap->c14ninclude = "*";                           // optional: make all prefixes inclusive, i.e. inclusive canonicalization
 ~~~
@@ -1934,6 +1972,7 @@ Must be used in combination with `#SOAP_XML_CANONICAL_NA` to emit XML in canonic
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_CANONICAL_NA);
 soap->c14ninclude = "*"; // make all prefixes inclusive, i.e. inclusive canonicalization
 ~~~
@@ -1948,6 +1987,7 @@ soap->c14ninclude = "*"; // make all prefixes inclusive, i.e. inclusive canonica
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_TREE); // no id-href and id-ref multi-reference serialization
 ~~~
 
@@ -1963,6 +2003,7 @@ struct soap *soap = soap_new1(SOAP_XML_TREE); // no id-href and id-ref multi-ref
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_GRAPH); // id-ref multi-reference serialization
 ~~~
 
@@ -1978,6 +2019,7 @@ struct soap *soap = soap_new1(SOAP_XML_GRAPH); // id-ref multi-reference seriali
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_NIL); // emit NULL pointers as empty elements with xsi:nil="true"
 ~~~
 */
@@ -1989,6 +2031,7 @@ struct soap *soap = soap_new1(SOAP_XML_NIL); // emit NULL pointers as empty elem
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_NOTYPE); // no xsi:type attributes ever
 ~~~
 */
@@ -2000,6 +2043,7 @@ struct soap *soap = soap_new1(SOAP_XML_NOTYPE); // no xsi:type attributes ever
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_DOM);
 ... // call an XML service operation that deserializes the response
 if (soap->dom) // we also got a DOM
@@ -2017,6 +2061,7 @@ if (soap->dom) // we also got a DOM
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_DOM_ASIS);
 soap_dom_element *dom = soap_new_xsd__anyType(soap); // allocate dom
 if ((soap->recvfd = open("doc1.xml", O_RDONLY)) == 0 || soap_read_xsd__anyType(soap, dom))
@@ -2041,6 +2086,7 @@ This example requires the soapC.cpp source code generated with soapcpp2 from <i>
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_DOM_NODE);
 soap_dom_element *dom = soap_new_xsd__anyType(soap); // allocate dom
 soap_dom_element *elt = soap_new_xsd__anyType(soap); // allocate child element
@@ -2064,6 +2110,7 @@ This example requires the soapC.cpp source code generated with soapcpp2 from <i>
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_DOM_TREE);
 soap_dom_element *dom = soap_new_xsd__anyType(soap); // allocate dom
 if ((soap->recvfd = open("doc.xml", O_RDONLY)) == 0 || soap_read_xsd__anyType(soap, dom))
@@ -2092,6 +2139,7 @@ int ns__webmethod(float x, struct ns__webmethodResponse *out);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_C_NOIOB);
 struct ns__webmethodResponse result;
 ... //
@@ -2107,6 +2155,7 @@ if (soap_call_ns__webmethod(soap, 3, &result))
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_C_UTFSTRING);
 ~~~
 */
@@ -2121,6 +2170,7 @@ struct soap *soap = soap_new1(SOAP_C_UTFSTRING);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_C_NILSTRING); // elements with empty strings have <i>`xsi:nil="true"`</i>
 ~~~
 */
@@ -2217,6 +2267,7 @@ The `::soap::fault` is non-NULL and points to a `::SOAP_ENV__Fault` structure.  
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // call a Web service here
 if (soap->error == SOAP_CLI_FAULT)
@@ -2288,6 +2339,7 @@ The `#SOAP_EOF` error indicates a transmission error.  Use `::soap::errnum` to d
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // call a Web service here
 if (soap->error == SOAP_EOF)
@@ -2505,6 +2557,7 @@ The `::soap::fault` is non-NULL and points to a `::SOAP_ENV__Fault` structure.  
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // call a Web service here
 if (soap->error == SOAP_SVR_FAULT)
@@ -3120,38 +3173,6 @@ struct soap {
   @see `::soap::error`, `::soap::errnum`, `::soap::connect_timeout`, `::soap::accept_timeout`, `::soap::recv_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
   */
   int send_timeout;
-  /// User-definable timeout when waiting to connect to a server at the client-side, positive timeout values are seconds, negative timeout values are microseconds, zero means no timeout (the value is 0 by default)
-  /**
-  @par Example:
-
-  ~~~{.cpp}
-  #include "soapH.h"
-  int main()
-  {
-    struct soap *soap = soap_new();
-    soap->connect_timeout = 30;                 // 30 seconds max connect stall time
-    soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
-    soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
-    soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-    if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
-    {
-      soap_print_fault(soap, stderr);
-      if (soap->errnum == 0) // timed out, exit program
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-      ... // success
-    }
-    soap_destroy(soap);
-    soap_end(soap);
-    soap_free(soap);
-  }
-  ~~~
-
-  @see `::soap::error`, `::soap::errnum`, `::soap::accept_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
-  */
-  int connect_timeout;
   /// User-definable timeout when waiting to accept a request from a client at the server-side with `::soap_accept` (or the C++ service class `accept` method), positive timeout values are seconds, negative timeout values are microseconds, zero means no timeout (the value is 0 by default)
   /**
   @par Example:
@@ -3194,6 +3215,72 @@ struct soap {
   @see `::soap::error`, `::soap::errnum`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
   */
   int accept_timeout;
+  /// User-definable timeout when waiting to connect to a server at the client-side, positive timeout values are seconds, negative timeout values are microseconds, zero means no timeout (the value is 0 by default)
+  /**
+  @par Example:
+
+  ~~~{.cpp}
+  #include "soapH.h"
+  int main()
+  {
+    struct soap *soap = soap_new();
+    soap->connect_timeout = 30;                 // 30 seconds max connect stall time
+    soap->connect_retry = 4;                    // retry 4 more times (waiting 1, 2, 4, 8 seconds between retries)
+    soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
+    soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
+    soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
+    if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
+    {
+      soap_print_fault(soap, stderr);
+      if (soap->errnum == 0) // timed out, exit program
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+      ... // success
+    }
+    soap_destroy(soap);
+    soap_end(soap);
+    soap_free(soap);
+  }
+  ~~~
+
+  @see `::soap::error`, `::soap::errnum`, `::soap::connect_retry`, `::soap::accept_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
+  */
+  int connect_timeout;
+  /// User-definable number of retries to attempt at the client side when connecting to a server fails with `::SOAP_TCP_ERROR`, using exponential backoff delays between reconnects, maxed at 32 seconds: 1, 2, 4, 8, 16, 32, 32, 32, ... seconds for retry values 1 to 8 respectively (the retry value is 0 by default, meaning no retry)
+  /**
+  @par Example:
+
+  ~~~{.cpp}
+  #include "soapH.h"
+  int main()
+  {
+    struct soap *soap = soap_new();
+    soap->connect_timeout = 30;                 // 30 seconds max connect stall time
+    soap->connect_retry = 4;                    // retry 4 more times (waiting 1, 2, 4, 8 seconds between retries)
+    soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
+    soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
+    soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
+    if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
+    {
+      soap_print_fault(soap, stderr);
+      if (soap->errnum == 0) // timed out, exit program
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+      ... // success
+    }
+    soap_destroy(soap);
+    soap_end(soap);
+    soap_free(soap);
+  }
+  ~~~
+
+  @see `::soap::error`, `::soap::errnum`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`, `::SOAP_TCP_ERROR`.
+  */
+  int connect_retry;
   /// User-definable maximum XML and JSON nesting level permitted, initially set to `#SOAP_MAXLEVEL` (the value is 10000 by default)
   /**
   @par Example:
@@ -3531,6 +3618,7 @@ struct soap {
   ~~~{.cpp}
   struct soap *soap = soap_new();
   soap->client_addr = "12.34.56.78"; // client binds to 12.34.56.78 when connecting to endpoint
+  soap->client_port = 8080; // optional, to also specify a port to bind to
   if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
     soap_print_fault(soap, stderr);
   else
@@ -3540,9 +3628,34 @@ struct soap {
   soap_free(soap);
   ~~~
 
-  @see `::soap::client_port`.
+  @see `::soap::client_addr_ipv6`, `::soap::client_port`, `::soap::client_interface`.
   */
   const char *client_addr;
+  /// User-definable client address to bind to before connecting to a server, when non-NULL, requires `#WITH_IPV6`
+  /**
+  When non-NULL and `soap::client_addr` is non-NULL and when connecting to a IPv6 server, sets the client address specified as IPv6 or as a host address to bind to before connecting to the server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.
+
+  @par Example:
+
+  ~~~{.cpp}
+  struct soap *soap = soap_new();
+  soap->client_addr = "12.34.56.78"; // client binds to 12.34.56.78 when connecting to a IPv4 endpoint
+  soap->client_addr_ipv6 = "2001:db8:0:1; // but the client binds 2001:db8:0:1 when connecting to a IPv6 endpoint
+  soap->client_port = 8080; // optional, to also specify a port to bind to
+  if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
+    soap_print_fault(soap, stderr);
+  else
+    ... // success
+  soap_destroy(soap);
+  soap_end(soap);
+  soap_free(soap);
+  ~~~
+
+  @note Requires compilation with `#WITH_IPV6` or `#WITH_IPV6_V6ONLY`.
+
+  @see `::soap::client_addr`, `::soap::client_port`, `::soap::client_interface`.
+  */
+  const char *client_addr_ipv6;
   /// User-definable client port to bind to before connecting to a server, when non-negative
   /**
   When non-negative, executes a `bind` with this port number before connecting to a server.  The value is reset to -1 after connecting successfully or unsuccessfully to the server.
@@ -3561,12 +3674,14 @@ struct soap {
   soap_free(soap);
   ~~~
 
-  @see `::soap::client_addr`.
+  @see `::soap::client_addr`, `::soap::client_addr_ipv6`, `::soap::client_interface`.
   */
   int client_port;
   /// User-definable client interface address to override when connecting to a server, when non-NULL
   /**
-  When non-NULL, sets the client address before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.
+  When non-NULL, sets the client address before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.  Does not bind the address, unlike `::soap::client_addr` and `::soap::client_addr_ipv6`.
+
+  @see `::soap::client_addr`, `::soap::client_addr_ipv6`, `::soap::client_addr_ipv6`.
   */
   const char *client_interface;
   /// User-definable compression level for gzip compression (0=none, 1=fast to 9=best) default level is 6
@@ -4793,6 +4908,8 @@ struct soap {
 
   @param ok when 1: the certificate passed, when 0: the certificate did not pass
   @returns 1 to pass and 0 to fail
+
+  @see '::soap_ssl_client_context`.
   */
   int (*fsslverify)(int ok, X509_STORE_CTX *store);
 };
@@ -4806,12 +4923,14 @@ There is no need to call `::soap_init` to initialize the context allocated with 
 @note C++ proxy and service classes generated by <b>`soapcpp2 -j`</b> option <b>`-j`</b> or option <b>`-i`</b> have an internal `::soap` context that is either a base class (option <b>`-i`</b>) or a member variable pointing to a `::soap` context (option <b>`-j`</b>).  The C++ proxy and service classes allocate and deallocate this context, which means that `::soap_new` and `::soap_free` are not required.  For example:
 ~~~{.cpp}
 #include "soapexampleProxy.h"
+
 exampleProxy proxy(SOAP_XML_INDENT);
 ... // use proxy or proxy.soap (option -j)
 proxy.destroy(); // delete managed C++ objects and memory
 ~~~
 ~~~{.cpp}
 #include "soapexampleService.h"
+
 exampleService service(SOAP_XML_INDENT);
 ... // use service or service.soap (option -j)
 service.destroy(); // delete managed C++ objects and memory
@@ -4821,6 +4940,7 @@ service.destroy(); // delete managed C++ objects and memory
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // send and receive messages etc.
 soap_destroy(soap); // delete managed C++ objects
@@ -4842,6 +4962,7 @@ This function allocates and initializes a new context with the specified input a
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_XML_INDENT);
 ... // send and receive messages etc.
 soap_destroy(soap); // delete managed C++ objects
@@ -4879,6 +5000,7 @@ This function initializes a context.
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap soap;
 soap_init(&soap);
 ... // send and receive messages etc.
@@ -4904,6 +5026,7 @@ This function initializes a context with the specified input and output `::soap_
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap soap;
 soap_init1(&soap, SOAP_XML_INDENT);
 ... // send and receive messages etc.
@@ -4980,6 +5103,7 @@ This function allocates a new context and copies the state of the specified cont
 @note C++ proxy and service classes generated by <b>`soapcpp2 -j`</b> option <b>`-j`</b> or option <b>`-i`</b> have an internal `::soap` context that is either a base class (option <b>`-i`</b>) or a member variable pointing to a `::soap` context (option <b>`-j`</b>).  For convenience, use the `copy` member function instead of `::soap_copy` and delete the copied instance with `delete`.  For example:
 ~~~{.cpp}
 #include "soapexampleService.h" // generated by soapcpp2 option -j
+
 int main()
 {
   exampleService service(SOAP_XML_INDENT);
@@ -5028,6 +5152,7 @@ void *process_request(exampleService *service)
 ~~~{.cpp}
 #include "soapH.h"
 #include "plugin/threads.h"
+
 int main()
 {
   struct soap *soap = soap_new1(SOAP_XML_INDENT);
@@ -5090,6 +5215,7 @@ This function copies the state of the specified context to another uninitialized
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // send and receive messages etc.
 struct soap temp;
@@ -5112,6 +5238,7 @@ This function copies the input/output state of the specified source context to t
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 struct soap *temp = soap_new();
 ... // send and receive messages etc.
@@ -5144,12 +5271,14 @@ This function finalizes and frees the specified context.  The finalization is do
 @note C++ proxy and service classes generated by <b>`soapcpp2 -j`</b> option <b>`-j`</b> or option <b>`-i`</b> have an internal `::soap` context that is either a base class (option <b>`-i`</b>) or a member variable pointing to a `::soap` context (option <b>`-j`</b>).  The C++ proxy and service classes allocate and deallocate this context, which means that `::soap_new` and `::soap_free` are not required.  For example:
 ~~~{.cpp}
 #include "soapexampleProxy.h"
+
 exampleProxy proxy(SOAP_XML_INDENT);
 ... // use proxy or proxy.soap (option -j)
 proxy.destroy(); // delete managed C++ objects and memory
 ~~~
 ~~~{.cpp}
 #include "soapexampleService.h"
+
 exampleService service(SOAP_XML_INDENT);
 ... // use service or service.soap (option -j)
 service.destroy(); // delete managed C++ objects and memory
@@ -5159,6 +5288,7 @@ service.destroy(); // delete managed C++ objects and memory
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // send and receive messages etc.
 soap_destroy(soap);
@@ -5179,6 +5309,7 @@ This function finalizes the specified context.  This function does not free memo
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap soap;
 soap_init(&soap);
 ... // send and receive messages etc.
@@ -5199,6 +5330,7 @@ This function allocates a block of memory from the heap managed by the specified
 @note The soapcpp2 tool generates `soap_new_T` functions for all serialiable types `T`.  The `soap_new_T` functions allocate and default initializes the type `T` or an array of items of type `T`.  Recommended is to use these more powerful `soap_new_T` functions instead of `::soap_malloc`.  For example:
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 struct ns__someElement *data = soap_new_ns__someElement(soap);       // allocate managed object
 struct ns__someElement *array = soap_new_ns__someElement(soap, 100); // allocate array of 100 managed objects
@@ -5210,6 +5342,7 @@ soap_free(soap);    // free the context
 The soapcpp2 tool also generates `soap_default_T` functions to default initialize the type `T`.  For example:
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 struct ns__someElement data;
 soap_default_ns__someElement(soap, &data); // default initializes all public members
@@ -5222,6 +5355,7 @@ but objects of classes should use their `soap_default` method instead of the `so
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 char *s = (char*)soap_malloc(soap, 80); // allocate 80 bytes of memory managed by the context
 strcpy(s, "Hello");                     // copy a string into it
@@ -5247,6 +5381,7 @@ This function copies the specified wide string to memory managed by the specifie
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 // allocate and assign a string in memory managed by the context
 char *s = soap_strdup(soap, "Hello");
@@ -5272,6 +5407,7 @@ This function copies the specified wide string to managed memory.  Returns a cop
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 // allocate and assign a wide string in memory managed by the context
 wchar_t *s = soap_wstrdup(soap, L"Hello");
@@ -5306,12 +5442,14 @@ This function deletes all dynamically-allocated C++ objects managed by the speci
 @note C++ proxy and service classes generated by <b>`soapcpp2 -j`</b> option <b>`-j`</b> or option <b>`-i`</b> have an internal `::soap` context that is either a base class (option <b>`-i`</b>) or a member variable pointing to a `::soap` context (option <b>`-j`</b>).  For convenience, use the `destroy` member function instead of `::soap_destroy` and `::soap_end`.  For example:
 ~~~{.cpp}
 #include "soapexampleProxy.h"
+
 exampleProxy proxy(SOAP_XML_INDENT);
 ... // use proxy or proxy.soap (option -j)
 proxy.destroy(); // delete managed C++ objects and memory
 ~~~
 ~~~{.cpp}
 #include "soapexampleService.h"
+
 exampleService service(SOAP_XML_INDENT);
 ... // use service or service.soap (option -j)
 service.destroy(); // delete managed C++ objects and memory
@@ -5321,6 +5459,7 @@ service.destroy(); // delete managed C++ objects and memory
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // send and receive messages etc.
 soap_destroy(soap); // delete managed C++ objects
@@ -5356,12 +5495,14 @@ This function deletes all dynamically-allocated data managed by the specified `:
 @note C++ proxy and service classes generated by <b>`soapcpp2 -j`</b> option <b>`-j`</b> or option <b>`-i`</b> have an internal `::soap` context that is either a base class (option <b>`-i`</b>) or a member variable pointing to a `::soap` context (option <b>`-j`</b>).  For convenience, use the `destroy` member function instead of `::soap_destroy` and `::soap_end`.  For example:
 ~~~{.cpp}
 #include "soapexampleProxy.h"
+
 exampleProxy proxy(SOAP_XML_INDENT);
 ... // use proxy or proxy.soap (option -j)
 proxy.destroy(); // delete managed C++ objects and memory
 ~~~
 ~~~{.cpp}
 #include "soapexampleService.h"
+
 exampleService service(SOAP_XML_INDENT);
 ... // use service or service.soap (option -j)
 service.destroy(); // delete managed C++ objects and memory
@@ -5371,6 +5512,7 @@ service.destroy(); // delete managed C++ objects and memory
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // send and receive messages etc.
 soap_destroy(soap); // delete managed C++ objects
@@ -5391,6 +5533,7 @@ This function moves all dynamically-allocated data managed by the specified `::s
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 struct soap *temp = soap_new(); // temp context to manage data
 if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
@@ -5665,6 +5808,7 @@ After `::soap_ssl_server_context` initialization you can select a specific ciphe
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_ssl_server_context(soap,
       SOAP_SSL_DEFAULT, // authenticate, use TLSv1.0 to 1.3
@@ -5684,6 +5828,27 @@ if (soap_ssl_server_context(soap,
 
 ~~~{.cpp}
 #include "soapH.h"
+
+struct soap *soap = soap_new();
+if (soap_ssl_server_context(soap,
+      SOAP_TLSv1_1 | SOAP_TLSv1_2, // authenticate, use TLSv1.1 or TLSv1.2 only
+      "server.pem",                // private key and certificate
+      "password",                  // password to read server.pem
+      NULL,
+      NULL,
+      "dh1024.pem",                // use DH with 1024 bits
+      NULL,
+      "my_unique_server_id123"     // identification to enable SSL session caching to speed up TLS
+      ))
+{
+  soap_print_fault(soap, stderr);
+  exit(EXIT_FAILURE);
+}
+~~~
+
+~~~{.cpp}
+#include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_ssl_server_context(soap,
       SOAP_TLSv1_1 | SOAP_TLSv1_2, // authenticate, use TLSv1.1 or TLSv1.2 only
@@ -5703,6 +5868,7 @@ if (soap_ssl_server_context(soap,
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_ssl_server_context(soap,
       SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION, // require clients to authenticate
@@ -5714,11 +5880,12 @@ if (soap_ssl_server_context(soap,
       NULL,
       soap_rand_uuid(soap, NULL) // identification to enable SSL session caching to speed up TLS
       )
- || soap_ssl_crl(soap, "crl.pem"))
+ || soap_ssl_crl(soap, "crl.pem"))            // specify CRLs
 {
   soap_print_fault(soap, stderr);
   exit(EXIT_FAILURE);
 }
+// specify a cipher list
 SSL_CTX_set_cipher_list(soap->ctx, "HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4:!DH");
 ~~~
 
@@ -5735,7 +5902,7 @@ int soap_ssl_server_context(
     const char *capath,   ///< directory to certificates
     const char *dhfile,   ///< file with DH parameters or numeric string value to generate DH parameters or NULL
     const char *randfile, ///< file to see the PRNG or NULL
-    const char *sid)      ///< unique server id for session caching or NULL
+    const char *sid)      ///< a unique server id for session caching or NULL
   /// @returns `#SOAP_OK` or a `::soap_status` error code
   ;
 
@@ -5753,9 +5920,10 @@ All OpenSSL versions prior to 1.1.0 require mutex locks to be explicitly set up 
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_ssl_client_context(soap,
-      SOAP_SSL_NO_AUTHENTICATION,
+      SOAP_SSL_NO_AUTHENTICATION, // do not authenticate the server
       NULL,
       NULL,
       NULL,
@@ -5770,12 +5938,13 @@ if (soap_ssl_client_context(soap,
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_ssl_client_context(soap,
-      SOAP_SSL_DEFAULT,
-      "client.pem",
-      "password",
+      SOAP_SSL_DEFAULT, // authenticate, use TLSv1.0 to 1.3
       NULL,
+      NULL,
+      "cacerts.pem",    // certificates to authenticate servers
       NULL,
       NULL
       ))
@@ -5787,12 +5956,15 @@ if (soap_ssl_client_context(soap,
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_ssl_client_context(soap,
-      SOAP_TLSv1_1 | SOAP_TLSv1_2,
-      "client.pem",
-      "password",
+      SOAP_SSLv3_TLSv1 |                  // authenticate, use SSLv3, TLSv1.0 to 1.3
+      SOAP_SSL_SKIP_HOST_CHECK |          // but skip host name checking
+      SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE, // and allow expired certificates
       NULL,
+      NULL,
+      "cacerts.pem",                      // certificates to authenticate servers
       NULL,
       NULL
       ))
@@ -5804,25 +5976,56 @@ if (soap_ssl_client_context(soap,
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_ssl_client_context(soap,
-      SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION,
-      "client.pem",
-      "password",
-      "cacert.pem",
+      SOAP_TLSv1_1 | SOAP_TLSv1_2, // authenticate, use TLSv1.1 or 1.2
+      "client.pem",                // private key and certificate (allowing server to authenticate the client)
+      "password",                  // password to read client.pem
+      "cacerts.pem",               // certificates to authenticate servers
       NULL,
       NULL
-      )
- || soap_ssl_crl(soap, "crls.pem"))
+      ))
 {
   soap_print_fault(soap, stderr);
   exit(EXIT_FAILURE);
 }
+~~~
+
+~~~{.cpp}
+#include "soapH.h"
+
+// define a verification callback that allows self-signed certificates
+int ssl_verify_callback_allow_self_signed_cert(int ok, X509_STORE_CTX *store)
+{
+  if (!ok && X509_STORE_CTX_get_error(store) == X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN)
+  {
+    X509_STORE_CTX_set_error(store, X509_V_OK);
+    ok = 1;
+  }
+  return ok;
+}
+
+struct soap *soap = soap_new();
+soap->fsslverify = ssl_verify_callback_allow_self_signed_cert;
+if (soap_ssl_client_context(soap,
+      SOAP_SSL_DEFAULT, // authenticate, use TLSv1.0 to 1.3
+      "client.pem",     // private key and certificate (allowing server to authenticate the client)
+      "password",       // password to read client.pem
+      "cacerts.pem",    // certificates to authenticate servers
+      NULL,
+      NULL
+      ))
+{
+  soap_print_fault(soap, stderr);
+  exit(EXIT_FAILURE);
+}
+
 ~~~
 
 @note Requires compilation with `#WITH_OPENSSL` or `#WITH_GNUTLS`.
 
-@see `#SOAP_SSL_RSA_BITS`, `::soap_ssl_server_context`, `::soap_ssl_crl`.
+@see `#SOAP_SSL_RSA_BITS`, `::soap_ssl_server_context`, `::soap_ssl_crl`, ::soap::fsslverify`.
 */
 int soap_ssl_client_context(
     struct soap *soap,    ///< `::soap` context
@@ -6148,6 +6351,7 @@ To implement server-side HTTP GET handling use `::soap::fget`.
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 char *response = NULL;
 size_t response_len;
@@ -6181,6 +6385,7 @@ To implement server-side HTTP PUT handling use `::soap::fput`.
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK (preferred) or SOAP_IO_STORE
 if (soap_PUT(soap, "http://www.example.com/API/PUT", NULL, "text/xml; charset=utf-8")
  || soap_send(soap, "<doc title=\"Example\">Some text</doc>\n")
@@ -6212,6 +6417,7 @@ To implement server-side HTTP PATCH handling use `::soap::fpatch`.
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK (preferred) or SOAP_IO_STORE
 if (soap_PATCH(soap, "http://www.example.com/API/PATCH", NULL, "application/json; charset=utf-8")
  || soap_send(soap, "{ \"title\": \"Example\", \"doc\": \"Some text\" }\n")
@@ -6241,6 +6447,7 @@ This function is used by the soapcpp2-generated `soap_POST_send_T` functions for
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK (preferred) or SOAP_IO_STORE
 char *response = NULL;
 size_t response_len;
@@ -6274,6 +6481,7 @@ This function connects to the server specified by the `endpoint` URL string, usi
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 if (soap_DELETE(soap, "http://www.example.com/API/DELETE"))
   soap_print_fault(soap, stderr);
@@ -6312,6 +6520,7 @@ This code is to be used with `::soap_connect_command` and produces HTTP content 
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 char *response = NULL;
 size_t response_len;
@@ -6328,6 +6537,7 @@ soap_closesock(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // must use SOAP_IO_CHUNK or SOAP_IO_STORE
 char *response = NULL;
 size_t response_len;
@@ -6346,6 +6556,7 @@ soap_closesock(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new(); // no SOAP_IO_CHUNK or SOAP_IO_STORE, see below
 const char *request = "<doc title=\"Example\">Some text</doc>\n";
 char *response = NULL;
@@ -6378,6 +6589,7 @@ This code is to be used with `::soap_connect_command` and requires `::soap::http
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK (preferred) or SOAP_IO_STORE
 char *response = NULL;
 size_t response_len;
@@ -6404,6 +6616,7 @@ This code is to be used with `::soap_connect_command`.  The `::soap_GET` perform
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK or SOAP_IO_STORE
 char *response = NULL;
 size_t response_len;
@@ -6427,6 +6640,7 @@ This code is to be used with `::soap_connect_command` and requires `::soap::http
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK or SOAP_IO_STORE
 soap->http_content = "text/xml; charset=utf-8";
 if (soap_connect_command(soap, "http://www.example.com/API/PUT", NULL, SOAP_PUT)
@@ -6447,6 +6661,7 @@ This code is to be used with `::soap_connect_command`.  The `::soap_DELETE` perf
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK or SOAP_IO_STORE
 if (soap_connect_command(soap, "http://www.example.com/API/DELETE", NULL, SOAP_DEL)
  || soap_recv_empty_response(soap))
@@ -6482,6 +6697,7 @@ This code is to be used with `::soap_connect_command` and requires `::soap::http
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK or SOAP_IO_STORE
 soap->http_content = "application/json; charset=utf-8";
 if (soap_connect_command(soap, "http://www.example.com/API/PATCH", NULL, SOAP_PATCH)
@@ -6502,6 +6718,7 @@ This function connects to the server specified by the `endpoint` URL string, usi
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK or SOAP_IO_STORE
 char *response = NULL;
 size_t response_len;
@@ -6521,6 +6738,7 @@ soap_closesock(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 const char *request = "{ \"title\": \"Example\", \"doc\": \"Some text\" }\n";
 char *response = NULL;
@@ -6560,6 +6778,7 @@ This function connects to the server specified by the `endpoint` URL string, usi
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK or SOAP_IO_STORE
 char *response = NULL;
 size_t response_len;
@@ -6820,6 +7039,7 @@ This auto-generated function implements the following behavior:
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int soap_serve(struct soap *soap)
 {
   // keep socket open for HTTP keep-alive for maximum of soap->max_keep_alive iterations when nonzero
@@ -6851,6 +7071,7 @@ If soapcpp2 is not used or does not generate `::soap_serve` but `::soap_serve` i
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int soap_serve(struct soap *ctx)
 {
   soap->keep_alive = soap->max_keep_alive + 1;
@@ -6876,6 +7097,7 @@ int soap_serve(struct soap *ctx)
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap->accept_timeout = 3600;                // exit loop when no request arrives in one hour
 soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
@@ -6951,6 +7173,7 @@ Besides `::soap_response`, other options to return a HTTP status code are:
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -7000,6 +7223,7 @@ int my_get(struct soap *soap)
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -7022,6 +7246,7 @@ int my_get(struct soap *soap)
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -7110,6 +7335,7 @@ This function is used to determine the HTTP content length.  This is done by sen
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 char *response = NULL;
 size_t response_len;
@@ -7129,6 +7355,7 @@ soap_closesock(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 soap->fget = my_get; // HTTP GET handler to serve HTTP GET
 ... // serve requests with soap_bind, soap_accept, soap_ssl_accept, and soap_serve
@@ -7152,6 +7379,7 @@ Same examples but using HTTP transfer encoding chunked:
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK);
 char *response = NULL;
 size_t response_len;
@@ -7170,6 +7398,7 @@ soap_closesock(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK);
 soap->fget = my_get; // HTTP GET handler to serve HTTP GET
 ... // serve requests with soap_bind, soap_accept, soap_ssl_accept, and soap_serve
@@ -7357,6 +7586,7 @@ This function parses an HTTP body message into a string, whether or not an HTTP 
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new1(SOAP_IO_CHUNK); // use SOAP_IO_CHUNK or SOAP_IO_STORE
@@ -7375,6 +7605,7 @@ int main()
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -7600,6 +7831,7 @@ Besides `::soap_send_empty_response`, other options to return an HTTP status cod
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -7618,6 +7850,7 @@ int my_put(struct soap *soap)
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -7726,6 +7959,7 @@ This function is used to register the `::http_get` HTTP GET plugin with `soap_re
 ~~~{.cpp}
 #include "soapH.h"
 #include "plugin/httpget.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -7976,6 +8210,7 @@ This function is used to register the `::http_post` HTTP POST plugin with `soap_
 ~~~{.cpp}
 #include "soapH.h"
 #include "plugin/httppost.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -8203,6 +8438,7 @@ This function adds a cookie to the cookie store at the server side, if not alrea
 ~~~{.cpp}
 // A CGI service with `::soap_serve` function generated by soapcpp2 from an interface file declaring a ns__webmethod function
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -8845,6 +9081,7 @@ This structure defines the rows the namespace table `::namespaces` and the names
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct Namespace namespaces[] = {
   {"SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*soap-envelope",      NULL},
   {"SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*soap-encoding",      NULL},
@@ -8919,6 +9156,7 @@ int ns__webmethod(...);
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // context initializations
 // add a SOAP Header to the message
@@ -8977,6 +9215,7 @@ Because the `::SOAP_ENV__Detail` substructure is declared `mutable` (which is a 
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // call a Web service here
 if (soap->error)
@@ -8989,6 +9228,7 @@ if (soap->error)
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new();
 ... // context initializations
 if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
@@ -9028,6 +9268,7 @@ int ns__webmethod(...);
 ~~~{.cpp}
 // example service implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9280,6 +9521,7 @@ int ns__webmethod(struct xsd__base64Binary *data, struct xsd__base64Binary *resu
 ~~~{.cpp}
 // example client implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9302,6 +9544,7 @@ int main()
 ~~~{.cpp}
 // example service implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9323,6 +9566,7 @@ Besides receiving the attachments in `::xsd__base64Binary` structures, on the re
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9398,6 +9642,7 @@ int ns__webmethod(struct xsd__base64Binary *data, struct xsd__base64Binary *resu
 ~~~{.cpp}
 // example client implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9420,6 +9665,7 @@ int main()
 ~~~{.cpp}
 // example service implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9465,6 +9711,7 @@ int ns__webmethod(struct _xop__Include *data, struct _xop__Include *result);
 ~~~{.cpp}
 // example service implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9516,6 +9763,7 @@ int ns__webmethod(struct xsd__hexBinary *data, struct xsd__hexBinary *result);
 ~~~{.cpp}
 // example client implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9538,6 +9786,7 @@ int main()
 ~~~{.cpp}
 // example service implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9600,6 +9849,7 @@ When streaming DIME attachments are enabled by defining the `::soap::fdimereadop
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK);
 const char *data = ...; // points to data to send
 size_t size = ...;      // length of the data
@@ -9682,6 +9932,7 @@ int ns__webmethod(struct xsd__base64Binary *data, struct xsd__base64Binary *resu
 ~~~{.cpp}
 // example client implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9704,6 +9955,7 @@ int main()
 ~~~{.cpp}
 // example service implementation based on the above example .h file for soapcpp2
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9727,6 +9979,7 @@ For example a client-side multipart-related POST operation that sends a multipar
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9781,6 +10034,7 @@ At the server side the code to retrieve the REST message sent consisting of a se
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9842,6 +10096,7 @@ Both methods support streaming MIME/MTOM attachments, where a user-defined handl
 
 ~~~{.cpp}
 #include "soapH.h"
+
 struct soap *soap = soap_new1(SOAP_IO_CHUNK);
 const char *data = ...; // points to data to send
 size_t size = ...;      // length of the data
@@ -9911,6 +10166,7 @@ If attachments are not referenced by the SOAP/XML message received, then normall
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();
@@ -9949,6 +10205,7 @@ int main()
 
 ~~~{.cpp}
 #include "soapH.h"
+
 int main()
 {
   struct soap *soap = soap_new();

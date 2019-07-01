@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.86
+        stdsoap2.h 2.8.87
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20886
+#define GSOAP_VERSION 20887
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2720,6 +2720,7 @@ struct SOAP_CMAC soap
   int accept_timeout;           /* user-definable, when > 0, sets socket accept() timeout in seconds, < 0 in usec */
   int socket_flags;             /* user-definable socket recv() and send() flags, e.g. set to MSG_NOSIGNAL to disable sigpipe */
   int connect_flags;            /* user-definable connect() SOL_SOCKET sockopt flags, e.g. set to SO_DEBUG to debug socket */
+  int connect_retry;            /* number of times to retry connecting (exponential backoff), zero by default */
   int bind_flags;               /* user-definable bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
   short bind_inet6;             /* user-definable, when > 0 use AF_INET6 instead of PF_UNSPEC (only with -DWITH_IPV6) */
   short bind_v6only;            /* user-definable, when > 0 use IPPROTO_IPV6 sockopt IPV6_V6ONLY (only with -DWITH_IPV6) */
@@ -2938,7 +2939,8 @@ struct SOAP_CMAC soap
   char* ipv4_multicast_if; /* IP_MULTICAST_IF IPv4 setsockopt interface_addr */
   unsigned char ipv4_multicast_ttl; /* IP_MULTICAST_TTL value 0..255 */
   const char *client_addr; /* when non-NULL, client binds to this address before connect */
-  int client_port; /* when nonnegative (and client_addr not set), client binds to this port before connect */
+  const char *client_addr_ipv6; /* WITH_IPV6: when non-NULL and client_addr is non-NULL and when connecting to a IPv6 server, client binds to this IPv6 address instead of client_addr */
+  int client_port; /* when nonnegative, client binds to this port before connect */
   const char *client_interface; /* when non-NULL, override client-side interface address using this address */
   union {
     struct sockaddr addr;

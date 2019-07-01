@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.86
+        stdsoap2.c[pp] 2.8.87
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20886
+#define GSOAP_LIB_VERSION 20887
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.86 2019-06-24 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.87 2019-07-01 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.86 2019-06-24 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.87 2019-07-01 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -5068,7 +5068,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
 {
 #if (defined(_AIX43) || defined(TRU64) || defined(HP_UX)) && defined(HAVE_GETHOSTBYNAME_R)
   struct hostent_data ht_data;
-#elif defined(__GLIBC__) && (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined (_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__)))
+#elif (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   int r;
   char *tmpbuf = soap->tmpbuf;
   size_t tmplen = sizeof(soap->tmpbuf);
@@ -5101,7 +5101,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     hostent = NULL;
     soap->errnum = h_errno;
   }
-#elif defined(__GLIBC__) && (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined (_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__)))
+#elif (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   while ((r = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &hostent, &soap->errnum)) < 0)
   {
     if (tmpbuf != soap->tmpbuf)
@@ -5150,7 +5150,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
 #else
     if (soap_memcpy((void*)inaddr, sizeof(struct in_addr), (const void*)hostent->h_addr, (size_t)hostent->h_length))
     {
-#if defined(__GLIBC__) && !_GNU_SOURCE && (!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(__GNU__) || defined(__GNUC__))) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__)))
+#if (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
       if (tmpbuf && tmpbuf != soap->tmpbuf)
         SOAP_FREE(soap, tmpbuf);
 #endif
@@ -5158,7 +5158,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     }
 #endif
   }
-#if defined(__GLIBC__) && !_GNU_SOURCE && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(__GNU__) || defined(__GNUC__))) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__)))
+#if (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   if (tmpbuf && tmpbuf != soap->tmpbuf)
     SOAP_FREE(soap, tmpbuf);
 #endif
@@ -5511,6 +5511,8 @@ again:
     struct sockaddr_in addr;
     memset((void*)&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
+    if (soap->client_port >= 0)
+      addr.sin_port = htons(soap->client_port);
     if (inet_pton(AF_INET, soap->client_addr, (void*)&addr.sin_addr) != 1 || bind(sk, (struct sockaddr*)&addr, sizeof(addr)))
     {
       soap->errnum = soap_socket_errno(sk);
@@ -5518,9 +5520,11 @@ again:
       soap_set_receiver_error(soap, tcp_error(soap), "bind failed in tcp_connect()", SOAP_TCP_ERROR);
       soap->fclosesocket(soap, sk);
       soap->client_addr = NULL;
+      soap->client_port = -1;
       return soap->socket = SOAP_INVALID_SOCKET;
     }
     soap->client_addr = NULL; /* disable bind before connect, so need to set it again before the next connect */
+    soap->client_port = -1; /* disable bind before connect, so need to set it again before the next connect */
   }
   else if (soap->client_port >= 0)
   {
@@ -5585,8 +5589,12 @@ again:
     struct sockaddr_in6 addr;
     memset((void*)&addr, 0, sizeof(addr));
     addr.sin6_family = AF_INET6;
-    if (inet_pton(AF_INET6, soap->client_addr, (void*)&addr.sin6_addr.s6_addr) == 1)
+    if ((soap->client_addr_ipv6 && res->ai_family == AF_INET6 && inet_pton(AF_INET6, soap->client_addr_ipv6, (void*)&addr.sin6_addr.s6_addr) == 1)
+     || inet_pton(AF_INET6, soap->client_addr, (void*)&addr.sin6_addr.s6_addr) == 1
+     )
     {
+      if (soap->client_port >= 0)
+        addr.sin6_port = htons(soap->client_port);
       if (bind(sk, (struct sockaddr*)&addr, sizeof(addr)))
       {
         soap->errnum = soap_socket_errno(sk);
@@ -5595,6 +5603,8 @@ again:
         soap_set_receiver_error(soap, tcp_error(soap), "bind failed in tcp_connect()", SOAP_TCP_ERROR);
         soap->fclosesocket(soap, sk);
         soap->client_addr = NULL;
+        soap->client_addr_ipv6 = NULL;
+        soap->client_port = -1;
         return soap->socket = SOAP_INVALID_SOCKET;
       }
     }
@@ -5603,6 +5613,8 @@ again:
       struct sockaddr_in addr;
       memset((void*)&addr, 0, sizeof(addr));
       addr.sin_family = AF_INET;
+      if (soap->client_port >= 0)
+        addr.sin_port = htons(soap->client_port);
       if (inet_pton(AF_INET, soap->client_addr, (void*)&addr.sin_addr) != 1 || bind(sk, (struct sockaddr*)&addr, sizeof(addr)))
       {
         soap->errnum = soap_socket_errno(sk);
@@ -5611,10 +5623,14 @@ again:
         soap_set_receiver_error(soap, tcp_error(soap), "bind failed in tcp_connect()", SOAP_TCP_ERROR);
         soap->fclosesocket(soap, sk);
         soap->client_addr = NULL;
+        soap->client_addr_ipv6 = NULL;
+        soap->client_port = -1;
         return soap->socket = SOAP_INVALID_SOCKET;
       }
     }
     soap->client_addr = NULL; /* disable bind before connect, so need to set it again before the next connect */
+    soap->client_addr_ipv6 = NULL; /* disable bind before connect, so need to set it again before the next connect */
+    soap->client_port = -1; /* disable bind before connect, so need to set it again before the next connect */
   }
   else if (soap->client_port >= 0)
   {
@@ -7045,7 +7061,7 @@ soap_accept(struct soap *soap)
       if (getaddrinfo(soap->host, NULL, &hints, &res) == 0 && res)
       {
         struct sockaddr_storage result;
-        soap_memcpy(&result, sizeof(result), res->ai_addr, res->ai_addrlen);
+        (void)soap_memcpy(&result, sizeof(result), res->ai_addr, res->ai_addrlen);
         freeaddrinfo(res);
         if (result.ss_family == AF_INET6)
         {
@@ -11815,6 +11831,7 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   copy->accept_timeout = soap->accept_timeout;
   copy->socket_flags = soap->socket_flags;
   copy->connect_flags = soap->connect_flags;
+  copy->connect_retry = soap->connect_retry;
   copy->bind_flags = soap->bind_flags;
   copy->bind_inet6 = soap->bind_inet6;
   copy->bind_v6only = soap->bind_v6only;
@@ -12070,7 +12087,8 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->ipv6_multicast_if = 0; /* in_addr_t value */
   soap->ipv4_multicast_if = NULL; /* points to struct in_addr or in_addr_t */
   soap->ipv4_multicast_ttl = 0; /* 0: use default */
-  soap->client_addr = NULL; /* client address (IPv4 or iPv6 or host name) to bind before connect, NULL for none */
+  soap->client_addr = NULL; /* client address (IPv4 or IPv6 or host name) to bind before connect, NULL for none */
+  soap->client_addr_ipv6 = NULL; /* client address IPv6 or host name to bind before connect, NULL for none */
   soap->client_port = -1; /* client port to bind before connect, -1 for none */
   soap->client_interface = NULL; /* client interface address, NULL for none */
 #ifndef WITH_IPV6
@@ -12135,6 +12153,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->accept_timeout = 0;
   soap->socket_flags = 0;
   soap->connect_flags = 0;
+  soap->connect_retry = 0;
   soap->bind_flags = 0;
 #ifdef WITH_IPV6_V6ONLY
   soap->bind_inet6 = 1;
@@ -21285,37 +21304,52 @@ soap_connect_command(struct soap *soap, int http_command, const char *endpoints,
 {
   if (endpoints)
   {
-    const char *s;
-    s = strchr(endpoints, ' ');
-    if (s)
+    int retry = soap->connect_retry;
+    unsigned int backoff = 1;
+    for (;;)
     {
-      size_t l = strlen(endpoints);
-      char *endpoint = NULL;
-      if (SOAP_MAXALLOCSIZE == 0 || l <= SOAP_MAXALLOCSIZE)
-        endpoint = (char*)SOAP_MALLOC(soap, l + 1);
-      if (!endpoint)
-        return soap->error = SOAP_EOM;
-      for (;;)
+      struct timeval tv;
+      const char *s;
+      s = strchr(endpoints, ' ');
+      if (s)
       {
-        (void)soap_strncpy(endpoint, l + 1, endpoints, s - endpoints);
-        endpoint[s - endpoints] = '\0';
-        if (soap_try_connect_command(soap, http_command, endpoint, action) != SOAP_TCP_ERROR)
-          break;
-        if (!*s)
-          break;
-        soap->error = SOAP_OK;
-        while (*s == ' ')
-          s++;
-        endpoints = s;
-        s = strchr(endpoints, ' ');
-        if (!s)
-          s = endpoints + strlen(endpoints);
+        size_t l = strlen(endpoints);
+        char *endpoint = NULL;
+        if (SOAP_MAXALLOCSIZE == 0 || l <= SOAP_MAXALLOCSIZE)
+          endpoint = (char*)SOAP_MALLOC(soap, l + 1);
+        if (!endpoint)
+          return soap->error = SOAP_EOM;
+        for (;;)
+        {
+          (void)soap_strncpy(endpoint, l + 1, endpoints, s - endpoints);
+          endpoint[s - endpoints] = '\0';
+          if (soap_try_connect_command(soap, http_command, endpoint, action) != SOAP_TCP_ERROR)
+            break;
+          while (*s == ' ')
+            s++;
+          if (!*s)
+            break;
+          soap->error = SOAP_OK;
+          endpoints = s;
+          s = strchr(endpoints, ' ');
+          if (!s)
+            s = endpoints + strlen(endpoints);
+        }
+        SOAP_FREE(soap, endpoint);
       }
-      SOAP_FREE(soap, endpoint);
-    }
-    else
-    {
-      soap_try_connect_command(soap, http_command, endpoints, action);
+      else
+      {
+        soap_try_connect_command(soap, http_command, endpoints, action);
+      }
+      if (soap->error != SOAP_TCP_ERROR || retry <= 0)
+        break;
+      soap->error = SOAP_OK;
+      tv.tv_sec = backoff;
+      tv.tv_usec = 0;
+      select(0, NULL, NULL, NULL, &tv);
+      if (backoff < 32)
+        backoff *= 2;
+      --retry;
     }
   }
   return soap->error;
@@ -21330,7 +21364,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
   int port;
   ULONG64 count;
   soap->error = SOAP_OK;
-  soap_memcpy(host, sizeof(host), soap->host, sizeof(soap->host)); /* save previous host name: if != then reconnect */
+  (void)soap_memcpy(host, sizeof(host), soap->host, sizeof(soap->host)); /* save previous host name: if != then reconnect */
   port = soap->port; /* save previous port to compare */
   soap->status = http_command;
   soap_set_endpoint(soap, endpoint);

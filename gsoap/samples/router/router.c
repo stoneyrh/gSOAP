@@ -725,7 +725,7 @@ buffer_body(struct soap *sender)
   for (;;)
   { if (!(s = (char*)soap_push_block(sender, NULL, sender->buflen - sender->bufidx)))
       return SOAP_EOM;
-    soap_memcpy((void*)s, sender->buflen - sender->bufidx, (const void*)(sender->buf + sender->bufidx), sender->buflen - sender->bufidx);
+    (void)soap_memcpy((void*)s, sender->buflen - sender->bufidx, (const void*)(sender->buf + sender->bufidx), sender->buflen - sender->bufidx);
     if (soap_recv_raw(sender))
       break;
   }

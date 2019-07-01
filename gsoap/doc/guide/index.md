@@ -5,7 +5,7 @@ gSOAP user guide                                                    {#mainpage}
 
 # User guide
 
-<div align="right"><i>Copyright (c) 2000-2018, Genivia Inc.<br>All rights reserved.</i></div>
+<div align="right"><i>Copyright (c) 2000-2019, Genivia Inc.<br>All rights reserved.</i></div>
 
 # Introduction                                                         {#intro}
 
@@ -18293,4 +18293,4 @@ For more details, see the [WS-Discovery plugin](../../wsdd/html/wsdd_0.html) doc
 Copyright                                                           {#copyright}
 =========
 
-<i>Copyright (c) 2000-2018, Robert A. van Engelen, Genivia Inc.<br>All rights reserved.</i>
+<i>Copyright (c) 2000-2019, Robert A. van Engelen, Genivia Inc.<br>All rights reserved.</i>
