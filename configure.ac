@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT(gsoap, 2.8.87)
+AC_INIT(gsoap, 2.8.88)
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([gsoap/stdsoap2.cpp])
 AC_CANONICAL_HOST
@@ -59,12 +59,14 @@ case "${host}" in
                         case "${host}" in
                             *-*-aix4.1*)   osver=AIX41;;
                             *-*-aix4.2*)   osver=AIX42;;
-                            *-*-aix4.3*)   osver=AIX43;;
                             *-*-aix4.*)    osver=AIX43;;
-                            *-*-aix5.2)    osver=AIX52;;
-                            *-*-aix5.3)    osver=AIX53;;
-                            *-*-aix6.1)    osver=AIX61;;
+                            *-*-aix5.1*)   osver=AIX51;;
+                            *-*-aix5.2*)   osver=AIX52;;
+                            *-*-aix5.3*)   osver=AIX53;;
+                            *-*-aix6.*)    osver=AIX61;;
+                            *-*-aix7.*)    osver=AIX71;;
                         esac
+			SAMPLE_EXTRA_LIBS="-lm"
 			;;
         *-sequent-*)    platform=PTX ;;
         *-*-hp*)        platform=HP_UX ;
@@ -86,7 +88,9 @@ case "${host}" in
 	*-nto-qnx)	platform=QNX
 			SAMPLE_EXTRA_LIBS="-lsocket -lm"
 			;;
-        *)              platform=UNKNOWN ;;
+        *)              platform=UNKNOWN
+			SAMPLE_EXTRA_LIBS="-lm"
+                        ;;
 esac
 
 AC_SUBST(SAMPLE_EXTRA_LIBS)

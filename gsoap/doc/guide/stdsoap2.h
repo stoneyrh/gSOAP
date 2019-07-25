@@ -3609,7 +3609,7 @@ struct soap {
   @see `#SOAP_IO_UDP`, `::soap::ipv6_multicast_if`, `::soap::ipv4_multicast_if`.
   */
   unsigned char ipv4_multicast_ttl;
-  /// User-definable client address to bind to before connecting to a server, when non-NULL
+  /// User-definable client address to bind to before connecting to a server, when non-NULL (Windows: n/a)
   /**
   When non-NULL, sets the client address specified as IPv4 or IPv6 or as a host address to bind to before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.
 
@@ -3627,6 +3627,8 @@ struct soap {
   soap_end(soap);
   soap_free(soap);
   ~~~
+
+  @note: cannot be used on Windows platforms.
 
   @see `::soap::client_addr_ipv6`, `::soap::client_port`, `::soap::client_interface`.
   */
@@ -3677,9 +3679,11 @@ struct soap {
   @see `::soap::client_addr`, `::soap::client_addr_ipv6`, `::soap::client_interface`.
   */
   int client_port;
-  /// User-definable client interface address to override when connecting to a server, when non-NULL
+  /// User-definable client interface address to override when connecting to a server, when non-NULL (Windows: n/a)
   /**
   When non-NULL, sets the client address before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.  Does not bind the address, unlike `::soap::client_addr` and `::soap::client_addr_ipv6`.
+
+  @note: cannot be used on Windows platforms.
 
   @see `::soap::client_addr`, `::soap::client_addr_ipv6`, `::soap::client_addr_ipv6`.
   */

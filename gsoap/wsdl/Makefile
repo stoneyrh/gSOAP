@@ -91,7 +91,8 @@ POST_UNINSTALL = :
 build_triplet = x86_64-apple-darwin16.7.0
 host_triplet = x86_64-apple-darwin16.7.0
 bin_PROGRAMS = wsdl2h$(EXEEXT)
-am__append_1 = $(top_srcdir)/gsoap/plugin/httpda.c $(top_srcdir)/gsoap/plugin/smdevp.c $(top_srcdir)/gsoap/plugin/threads.c
+am__append_1 = $(top_srcdir)/gsoap/plugin/httpda.c $(top_srcdir)/gsoap/plugin/smdevp.c
+am__append_2 = -lpthread
 subdir = gsoap/wsdl
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -107,12 +108,10 @@ PROGRAMS = $(bin_PROGRAMS)
 am__wsdl2h_SOURCES_DIST = wsdl2h.cpp wsdl.cpp wadl.cpp schema.cpp \
 	types.cpp service.cpp soap.cpp mime.cpp wsp.cpp bpel.cpp \
 	wsdlC.cpp $(top_srcdir)/gsoap/plugin/httpda.c \
-	$(top_srcdir)/gsoap/plugin/smdevp.c \
-	$(top_srcdir)/gsoap/plugin/threads.c
+	$(top_srcdir)/gsoap/plugin/smdevp.c
 am__objects_1 = wsdl2h-wsdlC.$(OBJEXT)
 am__objects_2 = wsdl2h-httpda.$(OBJEXT) \
-	wsdl2h-smdevp.$(OBJEXT) \
-	wsdl2h-threads.$(OBJEXT)
+	wsdl2h-smdevp.$(OBJEXT)
 am_wsdl2h_OBJECTS = wsdl2h-wsdl2h.$(OBJEXT) wsdl2h-wsdl.$(OBJEXT) \
 	wsdl2h-wadl.$(OBJEXT) wsdl2h-schema.$(OBJEXT) \
 	wsdl2h-types.$(OBJEXT) wsdl2h-service.$(OBJEXT) \
@@ -121,7 +120,8 @@ am_wsdl2h_OBJECTS = wsdl2h-wsdl2h.$(OBJEXT) wsdl2h-wsdl.$(OBJEXT) \
 	$(am__objects_2)
 wsdl2h_OBJECTS = $(am_wsdl2h_OBJECTS)
 am__DEPENDENCIES_1 =
-wsdl2h_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
+wsdl2h_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 wsdl2h_LINK = $(CXXLD) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_$(V))
@@ -143,10 +143,9 @@ am__depfiles_remade = ./$(DEPDIR)/wsdl2h-bpel.Po \
 	./$(DEPDIR)/wsdl2h-httpda.Po ./$(DEPDIR)/wsdl2h-mime.Po \
 	./$(DEPDIR)/wsdl2h-schema.Po ./$(DEPDIR)/wsdl2h-service.Po \
 	./$(DEPDIR)/wsdl2h-smdevp.Po ./$(DEPDIR)/wsdl2h-soap.Po \
-	./$(DEPDIR)/wsdl2h-threads.Po ./$(DEPDIR)/wsdl2h-types.Po \
-	./$(DEPDIR)/wsdl2h-wadl.Po ./$(DEPDIR)/wsdl2h-wsdl.Po \
-	./$(DEPDIR)/wsdl2h-wsdl2h.Po ./$(DEPDIR)/wsdl2h-wsdlC.Po \
-	./$(DEPDIR)/wsdl2h-wsp.Po
+	./$(DEPDIR)/wsdl2h-types.Po ./$(DEPDIR)/wsdl2h-wadl.Po \
+	./$(DEPDIR)/wsdl2h-wsdl.Po ./$(DEPDIR)/wsdl2h-wsdl2h.Po \
+	./$(DEPDIR)/wsdl2h-wsdlC.Po ./$(DEPDIR)/wsdl2h-wsp.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -254,10 +253,10 @@ OBJEXT = o
 PACKAGE = gsoap
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = gsoap
-PACKAGE_STRING = gsoap 2.8.87
+PACKAGE_STRING = gsoap 2.8.88
 PACKAGE_TARNAME = gsoap
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.8.87
+PACKAGE_VERSION = 2.8.88
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SAMPLE_DIRS = 
@@ -274,7 +273,7 @@ SOAPCPP2_IPV6_V6ONLY =
 SOAPCPP2_NONAMESPACES = 
 SOAPCPP2_NO_C_LOCALE = 
 STRIP = 
-VERSION = 2.8.87
+VERSION = 2.8.88
 WITH_OPENSSL = 
 WSDL2H_EXTRA_FLAGS = -I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP
 WSDL2H_EXTRA_LIBS = -L/usr/local/opt/openssl/lib  -lssl -lcrypto -lz
@@ -353,7 +352,7 @@ wsdl2h_CPPFLAGS = $(AM_CPPFLAGS) $(SOAPCPP2_NONAMESPACES) -D$(platform)
 wsdl2h_SOURCES = wsdl2h.cpp wsdl.cpp wadl.cpp schema.cpp types.cpp \
 	service.cpp soap.cpp mime.cpp wsp.cpp bpel.cpp $(SOAP_CPP_SRC) \
 	$(am__append_1)
-wsdl2h_LDADD = $(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS)
+wsdl2h_LDADD = $(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS) $(am__append_2)
 CLEANFILES = *~ *C.cpp *H.h *Stub.h *.nsmap
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -449,7 +448,6 @@ include ./$(DEPDIR)/wsdl2h-schema.Po # am--include-marker
 include ./$(DEPDIR)/wsdl2h-service.Po # am--include-marker
 include ./$(DEPDIR)/wsdl2h-smdevp.Po # am--include-marker
 include ./$(DEPDIR)/wsdl2h-soap.Po # am--include-marker
-include ./$(DEPDIR)/wsdl2h-threads.Po # am--include-marker
 include ./$(DEPDIR)/wsdl2h-types.Po # am--include-marker
 include ./$(DEPDIR)/wsdl2h-wadl.Po # am--include-marker
 include ./$(DEPDIR)/wsdl2h-wsdl.Po # am--include-marker
@@ -504,20 +502,6 @@ wsdl2h-smdevp.obj: $(top_srcdir)/gsoap/plugin/smdevp.c
 #	$(AM_V_CC)source='$(top_srcdir)/gsoap/plugin/smdevp.c' object='wsdl2h-smdevp.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CFLAGS) $(CFLAGS) -c -o wsdl2h-smdevp.obj `if test -f '$(top_srcdir)/gsoap/plugin/smdevp.c'; then $(CYGPATH_W) '$(top_srcdir)/gsoap/plugin/smdevp.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/gsoap/plugin/smdevp.c'; fi`
-
-wsdl2h-threads.o: $(top_srcdir)/gsoap/plugin/threads.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CFLAGS) $(CFLAGS) -MT wsdl2h-threads.o -MD -MP -MF $(DEPDIR)/wsdl2h-threads.Tpo -c -o wsdl2h-threads.o `test -f '$(top_srcdir)/gsoap/plugin/threads.c' || echo '$(srcdir)/'`$(top_srcdir)/gsoap/plugin/threads.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/wsdl2h-threads.Tpo $(DEPDIR)/wsdl2h-threads.Po
-#	$(AM_V_CC)source='$(top_srcdir)/gsoap/plugin/threads.c' object='wsdl2h-threads.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CFLAGS) $(CFLAGS) -c -o wsdl2h-threads.o `test -f '$(top_srcdir)/gsoap/plugin/threads.c' || echo '$(srcdir)/'`$(top_srcdir)/gsoap/plugin/threads.c
-
-wsdl2h-threads.obj: $(top_srcdir)/gsoap/plugin/threads.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CFLAGS) $(CFLAGS) -MT wsdl2h-threads.obj -MD -MP -MF $(DEPDIR)/wsdl2h-threads.Tpo -c -o wsdl2h-threads.obj `if test -f '$(top_srcdir)/gsoap/plugin/threads.c'; then $(CYGPATH_W) '$(top_srcdir)/gsoap/plugin/threads.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/gsoap/plugin/threads.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/wsdl2h-threads.Tpo $(DEPDIR)/wsdl2h-threads.Po
-#	$(AM_V_CC)source='$(top_srcdir)/gsoap/plugin/threads.c' object='wsdl2h-threads.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CFLAGS) $(CFLAGS) -c -o wsdl2h-threads.obj `if test -f '$(top_srcdir)/gsoap/plugin/threads.c'; then $(CYGPATH_W) '$(top_srcdir)/gsoap/plugin/threads.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/gsoap/plugin/threads.c'; fi`
 
 .cpp.o:
 	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -825,7 +809,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/wsdl2h-service.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-smdevp.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-soap.Po
-	-rm -f ./$(DEPDIR)/wsdl2h-threads.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-types.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-wadl.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-wsdl.Po
@@ -884,7 +867,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/wsdl2h-service.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-smdevp.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-soap.Po
-	-rm -f ./$(DEPDIR)/wsdl2h-threads.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-types.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-wadl.Po
 	-rm -f ./$(DEPDIR)/wsdl2h-wsdl.Po

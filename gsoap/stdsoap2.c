@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.87
+        stdsoap2.c[pp] 2.8.88
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20887
+#define GSOAP_LIB_VERSION 20888
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.87 2019-07-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.88 2019-23-01 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.87 2019-07-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.88 2019-07-23 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1381,7 +1381,6 @@ soap_recv_raw(struct soap *soap)
         if (r == Z_STREAM_END)
         {
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Inflated %lu->%lu bytes\n", soap->d_stream->total_in, soap->d_stream->total_out));
-          soap->z_ratio_in = (float)soap->d_stream->total_in / (float)soap->d_stream->total_out;
           soap->d_stream->next_out = Z_NULL;
         }
         if (ret)
@@ -1391,6 +1390,7 @@ soap_recv_raw(struct soap *soap)
           soap->count += ret;
           if (soap->recv_maxlength && soap->count > soap->recv_maxlength)
             return soap->error = SOAP_EOF;
+          soap->z_ratio_in = (float)soap->d_stream->total_in / (float)soap->d_stream->total_out;
           if (soap->count > SOAP_MAXINFLATESIZE && soap->z_ratio_in < SOAP_MINDEFLATERATIO)
           {
             soap->d_stream->msg = (char*)"caught SOAP_MINDEFLATERATIO explosive decompression guard (remedy: increase SOAP_MAXINFLATESIZE and/or decrease SOAP_MINDEFLATERATIO)";
@@ -1543,9 +1543,9 @@ zlib_again:
       if (r == Z_STREAM_END)
       {
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Inflated total %lu->%lu bytes\n", soap->d_stream->total_in, soap->d_stream->total_out));
-        soap->z_ratio_in = (float)soap->d_stream->total_in / (float)soap->d_stream->total_out;
         soap->d_stream->next_out = Z_NULL;
       }
+      soap->z_ratio_in = (float)soap->d_stream->total_in / (float)soap->d_stream->total_out;
       if (soap->count + ret > SOAP_MAXINFLATESIZE && soap->z_ratio_in < SOAP_MINDEFLATERATIO)
       {
         soap->d_stream->msg = (char*)"caught SOAP_MINDEFLATERATIO explosive decompression guard (remedy: increase SOAP_MAXINFLATESIZE and/or decrease SOAP_MINDEFLATERATIO)";
@@ -3722,6 +3722,8 @@ int
 SOAP_FMAC2
 soap_tag_cmp(const char *s, const char *t)
 {
+  const char *a = NULL;
+  const char *b = NULL;
   for (;;)
   {
     int c1 = *s;
@@ -3730,34 +3732,32 @@ soap_tag_cmp(const char *s, const char *t)
       break;
     if (c2 != '-')
     {
-      if (c1 != c2)
+      if (c1 < c2)
       {
         if (c1 >= 'A' && c1 <= 'Z')
           c1 += 'a' - 'A';
+      }
+      else if (c1 > c2)
+      {
         if (c2 >= 'A' && c2 <= 'Z')
           c2 += 'a' - 'A';
       }
-      if (c1 != c2)
+      if (c2 == '*')
       {
-        if (c2 != '*')
-          return 1;
         c2 = *++t;
         if (!c2)
           return 0;
-        if (c2 >= 'A' && c2 <= 'Z')
-          c2 += 'a' - 'A';
-        for (;;)
-        {
-          c1 = *s;
-          if (!c1 || c1 == '"')
-            break;
-          if (c1 >= 'A' && c1 <= 'Z')
-            c1 += 'a' - 'A';
-          if (c1 == c2 && !soap_tag_cmp(s + 1, t + 1))
-            return 0;
-          s++;
-        }
-        break;
+        a = s;
+        b = t;
+        continue;
+      }
+      if (c1 != c2)
+      {
+        if (!a)
+          return 1;
+        s = ++a;
+        t = b;
+        continue;
       }
     }
     s++;
@@ -5068,7 +5068,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
 {
 #if (defined(_AIX43) || defined(TRU64) || defined(HP_UX)) && defined(HAVE_GETHOSTBYNAME_R)
   struct hostent_data ht_data;
-#elif (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   int r;
   char *tmpbuf = soap->tmpbuf;
   size_t tmplen = sizeof(soap->tmpbuf);
@@ -5101,7 +5101,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     hostent = NULL;
     soap->errnum = h_errno;
   }
-#elif (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   while ((r = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &hostent, &soap->errnum)) < 0)
   {
     if (tmpbuf != soap->tmpbuf)
@@ -5150,7 +5150,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
 #else
     if (soap_memcpy((void*)inaddr, sizeof(struct in_addr), (const void*)hostent->h_addr, (size_t)hostent->h_length))
     {
-#if (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
       if (tmpbuf && tmpbuf != soap->tmpbuf)
         SOAP_FREE(soap, tmpbuf);
 #endif
@@ -5158,7 +5158,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     }
 #endif
   }
-#if (!defined(__GLIBC__) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   if (tmpbuf && tmpbuf != soap->tmpbuf)
     SOAP_FREE(soap, tmpbuf);
 #endif
@@ -5506,6 +5506,7 @@ again:
   soap->peerlen = sizeof(soap->peer.in);
   memset((void*)&soap->peer.in, 0, sizeof(soap->peer.in));
   soap->peer.in.sin_family = AF_INET;
+#ifndef WIN32
   if (soap->client_addr)
   {
     struct sockaddr_in addr;
@@ -5526,7 +5527,9 @@ again:
     soap->client_addr = NULL; /* disable bind before connect, so need to set it again before the next connect */
     soap->client_port = -1; /* disable bind before connect, so need to set it again before the next connect */
   }
-  else if (soap->client_port >= 0)
+  else
+#endif
+  if (soap->client_port >= 0)
   {
     struct sockaddr_in addr;
     memset((void*)&addr, 0, sizeof(addr));
@@ -5584,6 +5587,7 @@ again:
     return sk;
 #endif
 #else
+#ifndef WIN32
   if (soap->client_addr)
   {
     struct sockaddr_in6 addr;
@@ -5632,7 +5636,9 @@ again:
     soap->client_addr_ipv6 = NULL; /* disable bind before connect, so need to set it again before the next connect */
     soap->client_port = -1; /* disable bind before connect, so need to set it again before the next connect */
   }
-  else if (soap->client_port >= 0)
+  else
+#endif
+  if (soap->client_port >= 0)
   {
     struct sockaddr_in6 addr;
     memset((void*)&addr, 0, sizeof(addr));
@@ -5650,6 +5656,7 @@ again:
     }
     soap->client_port = -1; /* disable bind before connect, so need to set it again before the next connect */
   }
+#ifndef WIN32
   if (soap->client_interface)
   {
     if (inet_pton(AF_INET6, soap->client_interface, res->ai_addr) != 1)
@@ -5666,6 +5673,7 @@ again:
     }
     soap->client_interface = NULL; /* disable client interface, so need to set it again before the next connect */
   }
+#endif
 #ifndef WITH_LEAN
   if ((soap->omode & SOAP_IO_UDP))
   {
@@ -22432,7 +22440,7 @@ soap_strerror(struct soap *soap)
   {
 #ifndef WIN32
 # ifdef HAVE_STRERROR_R
-#  if !_GNU_SOURCE && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)) || defined(__ANDROID__) || !defined(__GLIBC__)
+#  if !defined(_GNU_SOURCE) || (!_GNU_SOURCE && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)) || defined(__ANDROID__) || !defined(__GLIBC__))
     err = strerror_r(err, soap->msgbuf, sizeof(soap->msgbuf)); /* XSI-compliant */
     if (err != 0)
       soap_strcpy(soap->msgbuf, sizeof(soap->msgbuf), "unknown error");

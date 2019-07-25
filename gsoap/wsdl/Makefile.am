@@ -29,9 +29,10 @@ wsdl2h_CFLAGS=$(C_DEBUG_FLAGS) $(SOAPCPP2_INCLUDE_XLOCALE) $(SOAPCPP2_NO_C_LOCAL
 wsdl2h_CXXFLAGS=$(C_DEBUG_FLAGS) $(SOAPCPP2_INCLUDE_XLOCALE) $(SOAPCPP2_NO_C_LOCALE) $(WSDL2H_EXTRA_FLAGS) $(WSDL2H_IMPORTPATH)
 wsdl2h_CPPFLAGS=$(AM_CPPFLAGS) $(SOAPCPP2_NONAMESPACES) -D$(platform)
 wsdl2h_SOURCES=wsdl2h.cpp wsdl.cpp wadl.cpp schema.cpp types.cpp service.cpp soap.cpp mime.cpp wsp.cpp bpel.cpp $(SOAP_CPP_SRC)
-if WITH_OPENSSL
-wsdl2h_SOURCES += $(top_srcdir)/gsoap/plugin/httpda.c $(top_srcdir)/gsoap/plugin/smdevp.c $(top_srcdir)/gsoap/plugin/threads.c
-endif
 wsdl2h_LDADD=$(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS)
+if WITH_OPENSSL
+wsdl2h_SOURCES+=$(top_srcdir)/gsoap/plugin/httpda.c $(top_srcdir)/gsoap/plugin/smdevp.c
+wsdl2h_LDADD+=-lpthread
+endif
 
 CLEANFILES= *~ *C.cpp *H.h *Stub.h *.nsmap

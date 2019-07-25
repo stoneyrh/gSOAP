@@ -972,8 +972,6 @@ compile(Table *table)
     fprintf(fheader, "\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif");
   fprintf(fheader, "\n#include \"stdsoap2.h\"");
   fprintf(fheader, "\n#if GSOAP_VERSION != %d\n# error \"GSOAP VERSION %d MISMATCH IN GENERATED CODE VERSUS LIBRARY CODE: PLEASE REINSTALL PACKAGE\"\n#endif\n", GSOAP_VERSION, GSOAP_VERSION);
-  if (cflag)
-    fprintf(fheader, "\n#ifdef __cplusplus\nextern \"C\" {\n#endif");
   if (namespaceid)
     fprintf(fheader, "\n\nnamespace %s {", namespaceid);
 
@@ -984,8 +982,6 @@ compile(Table *table)
   copyrightnote(fhead, soapH);
   fprintf(fhead, "\n\n#ifndef %sH_H\n#define %sH_H", prefix, prefix);
   fprintf(fhead, "\n#include \"%s\"", soapStub);
-  if (cflag)
-    fprintf(fhead, "\n#ifdef __cplusplus\nextern \"C\" {\n#endif");
   if (namespaceid)
     fprintf(fhead, "\n\nnamespace %s {", namespaceid);
   fprintf(fhead, "\n#ifndef WITH_NOIDREF");
@@ -1025,8 +1021,6 @@ compile(Table *table)
     fprintf(fclient, "\n#pragma option push -w-8004");
     fprintf(fclient, "\n#endif");
     fprintf(fclient, "\n#include \"%sH.h\"", prefix);
-    if (cflag)
-      fprintf(fclient, "\n#ifdef __cplusplus\nextern \"C\" {\n#endif");
     if (namespaceid)
       fprintf(fclient, "\n\nnamespace %s {", namespaceid);
     identify(fclient, soapClient);
@@ -1059,8 +1053,6 @@ compile(Table *table)
     fprintf(fserver, "\n#pragma option push -w-8004");
     fprintf(fserver, "\n#endif");
     fprintf(fserver, "\n#include \"%sH.h\"", prefix);
-    if (cflag)
-      fprintf(fserver, "\n#ifdef __cplusplus\nextern \"C\" {\n#endif");
     if (namespaceid)
       fprintf(fserver, "\n\nnamespace %s {", namespaceid);
     identify(fserver, soapServer);
@@ -1133,8 +1125,6 @@ compile(Table *table)
     fprintf(fout, "\n#endif");
 
     fprintf(fout, "\n\n#include \"%sH.h\"", prefix);
-    if (cflag)
-      fprintf(fout, "\n\n#ifdef __cplusplus\nextern \"C\" {\n#endif");
     if (namespaceid)
       fprintf(fout, "\n\nnamespace %s {", namespaceid);
     identify(fout, soapC);
@@ -1541,8 +1531,6 @@ compile(Table *table)
 
     if (namespaceid)
       fprintf(fout, "\n\n} // namespace %s\n", namespaceid);
-    if (cflag)
-      fprintf(fout, "\n\n#ifdef __cplusplus\n}\n#endif");
     fprintf(fout, "\n\n#if defined(__BORLANDC__)");
     fprintf(fout, "\n#pragma option pop");
     fprintf(fout, "\n#pragma option pop");
@@ -1553,16 +1541,12 @@ compile(Table *table)
 
   if (namespaceid)
     fprintf(fhead, "\n\n} // namespace %s\n", namespaceid);
-  if (cflag)
-    fprintf(fhead, "\n\n#ifdef __cplusplus\n}\n#endif");
   fprintf(fhead, "\n\n#endif");
   fprintf(fhead, "\n\n/* End of %s */\n", soapH);
   fclose(fhead);
 
   if (namespaceid)
     fprintf(fheader, "\n\n} // namespace %s\n", namespaceid);
-  if (cflag)
-    fprintf(fheader, "\n\n#ifdef __cplusplus\n}\n#endif");
   fprintf(fheader, "\n\n#endif");
   fprintf(fheader, "\n\n/* End of %s */\n", soapStub);
   fclose(fheader);
@@ -1580,8 +1564,6 @@ compile(Table *table)
   {
     if (namespaceid)
       fprintf(fclient, "\n\n} // namespace %s\n", namespaceid);
-    if (cflag)
-      fprintf(fclient, "\n\n#ifdef __cplusplus\n}\n#endif");
     fprintf(fclient, "\n\n#if defined(__BORLANDC__)");
     fprintf(fclient, "\n#pragma option pop");
     fprintf(fclient, "\n#pragma option pop");
@@ -1594,8 +1576,6 @@ compile(Table *table)
   {
     if (namespaceid)
       fprintf(fserver, "\n\n} // namespace %s\n", namespaceid);
-    if (cflag)
-      fprintf(fserver, "\n\n#ifdef __cplusplus\n}\n#endif");
     fprintf(fserver, "\n\n#if defined(__BORLANDC__)");
     fprintf(fserver, "\n#pragma option pop");
     fprintf(fserver, "\n#pragma option pop");
@@ -1956,7 +1936,7 @@ gen_class(FILE *fd, Entry *p)
       }
       else if (is_anytype(q))
       {
-        fprintf(fd, "\n        /** Any type of element '%s' assigned to %s with its SOAP_TYPE_<typename> assigned to %s */\n        /** Do not create a cyclic data structure throught this member unless SOAP encoding or SOAP_XML_GRAPH are used for id-ref serialization */", ns_add(q->next, nse), ident(q->next->sym->name), ident(q->sym->name));
+        fprintf(fd, "\n        /** Any type of element '%s' assigned to %s with its SOAP_TYPE_<typename> assigned to %s */\n        /** Do not create a cyclic data structure through this member unless SOAP encoding or SOAP_XML_GRAPH are used for id-ref serialization */", ns_add(q->next, nse), ident(q->next->sym->name), ident(q->sym->name));
         flag = 1;
       }
       else if (is_choice(q))
@@ -2225,7 +2205,7 @@ gen_class(FILE *fd, Entry *p)
       }
       else if (is_anytype(q))
       {
-        fprintf(fd, "\n        /// Any type of element '%s' assigned to %s with its SOAP_TYPE_<typename> assigned to %s\n        /// Do not create a cyclic data structure throught this member unless SOAP encoding or SOAP_XML_GRAPH are used for id-ref serialization", ns_add(q->next, nse), ident(q->next->sym->name), ident(q->sym->name));
+        fprintf(fd, "\n        /// Any type of element '%s' assigned to %s with its SOAP_TYPE_<typename> assigned to %s\n        /// Do not create a cyclic data structure through this member unless SOAP encoding or SOAP_XML_GRAPH are used for id-ref serialization", ns_add(q->next, nse), ident(q->next->sym->name), ident(q->sym->name));
         flag = 1;
       }
       else if (is_choice(q))
@@ -6632,7 +6612,7 @@ gen_proxy_header(FILE *fd, Table *table, Symbol *ns, const char *name)
   if (iflag)
     fprintf(fd, "\n        /// Destructor deletes deserialized data and its managing context");
   else
-    fprintf(fd, "\n        /// Destructor deletes deserialized data and its managing context, when the context was allocated by the contructor");
+    fprintf(fd, "\n        /// Destructor deletes deserialized data and its managing context, when the context was allocated by the constructor");
   fprintf(fd, "\n        virtual ~%s();", name);
   fprintf(fd, "\n        /// Initializer used by constructors");
   fprintf(fd, "\n        virtual void %s_init(soap_mode imode, soap_mode omode);", name);
@@ -6876,7 +6856,7 @@ gen_object_header(FILE *fd, Table *table, Symbol *ns, const char *name)
   if (iflag)
     fprintf(fd, "\n        /// Destructor deletes deserialized data and its managing context");
   else
-    fprintf(fd, "\n        /// Destructor deletes deserialized data and its managing context, when the context was allocated by the contructor");
+    fprintf(fd, "\n        /// Destructor deletes deserialized data and its managing context, when the context was allocated by the constructor");
   fprintf(fd, "\n        virtual ~%s();", name);
   fprintf(fd, "\n        /// Delete all deserialized data (with soap_destroy() and soap_end())");
   fprintf(fd, "\n        virtual void destroy();");

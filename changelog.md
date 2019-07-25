@@ -1483,7 +1483,7 @@ Version 2.8.82 (3/14/2019)
 
 - Minor fixes and improvements.
 
-Version 2.8.83 (4/18/2019) {#latest}
+Version 2.8.83 (4/18/2019)
 ---
 
 - Added wsdl2h optimization options `-Ow2`, `-Ow3`, and `-Ow4` to optimize the generated source code by schema slicing, while retaining all derived extensions of base types.  The new optimization options are generally recommended instead of the more aggressive `-O2`, `-O3`, and `-O4`, respectively, when derived type extensions of a base type are used in XML messages, which are referenced by *`xsi:type`* attributes in XML messages.  If base types are overridden by derived types indicated with *`xsi:type`* in XML, then the `-Ow` options should be used instead of the more aggressive `-O` options.
@@ -1516,6 +1516,12 @@ Version 2.8.87 (7/1/2019)
 - Added `soap::connect_retry` to specify a number of retries at the client side when connecting to a server fails, with exponential backoff of 2^n seconds between retries (1s, 2s, 4s, 8s, ... up to 32s per iteration).  Zero by default, meaning no retries.
 - Added `soap::client_addr_ipv6` to optionally specify a IPv6 or host address to bind to at the client side, when the destination is a IPv6 server, otherwise uses `soap::client_addr` to bind.
 - Improved portability for Cygwin, `gethostbyname_r` not available on Cygwin.
+
+Version 2.8.88 (7/25/2019) {#latest}
+---
+
+- Fixed an issue with wsdl2h `typemap.dat` for WS-Trust WSDLs causing missing types in the generated header file.
+- Portability fixes and improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
