@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.88" /* Current version */
-# define GSOAP_VERSION 20888
+# define VERSION "2.8.89" /* Current version */
+# define GSOAP_VERSION 20889
 #endif
 
 #ifdef WIN32
@@ -229,6 +229,8 @@ typedef struct Symbol
 
 Symbol  *install(const char*, Token), *lookup(const char*), *gensym(const char*), *gensymidx(const char*, int);
 
+typedef enum Visited { Unexplored, Cold, Hot } Visited;
+
 typedef struct Tnode
 {
   Type            type;
@@ -244,7 +246,7 @@ typedef struct Tnode
   int             transient;
   const char      *imported;
   struct Tnode    *next;
-  Bool            visited;
+  Visited         visited;
   Bool            recursive;      /* recursive data type */
   Bool            generated;
   Bool            wsdl;

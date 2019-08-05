@@ -928,26 +928,34 @@ const char *Types::wname(const char *prefix, const char *URI, const char *qname,
 {
   SetOfString reserved;
   const char *t = aname(prefix, URI, qname, &reserved);
-  if (lookup == LOOKUP)
+  const char *s;
+  if (!zflag || zflag > 8)
   {
-    MapOfStringToString::const_iterator i = wnames.find(t);
-    if (i != wnames.end())
-      return (*i).second;
-    fprintf(stream, "// Warning: FIXME internal error, incomplete wnames\n");
-    return qname;
-  }
-  const char *s = fname(prefix, URI, qname, &reserved, NOLOOKUP, true);
-  if (cflag)
-  {
-    size_t l = strlen(s);
-    char *r = (char*)emalloc(l + 8);
-    soap_strcpy(r, l + 8, "struct ");
-    soap_strcpy(r + 7, l + 1, s);
-    wnames[t] = r;
+    if (lookup == LOOKUP)
+    {
+      MapOfStringToString::const_iterator i = wnames.find(t);
+      if (i != wnames.end())
+        return (*i).second;
+      fprintf(stream, "// Warning: FIXME internal error, incomplete wnames\n");
+      return qname;
+    }
+    s = fname(prefix, URI, qname, &reserved, NOLOOKUP, true);
+    if (cflag)
+    {
+      size_t l = strlen(s);
+      char *r = (char*)emalloc(l + 8);
+      soap_strcpy(r, l + 8, "struct ");
+      soap_strcpy(r + 7, l + 1, s);
+      wnames[t] = r;
+    }
+    else
+    {
+      wnames[t] = s;
+    }
   }
   else
   {
-    wnames[t] = s;
+    s = fname(prefix, URI, qname, &reserved, NOLOOKUP, true);
   }
   knames.insert(s);
   return s;
@@ -4196,14 +4204,24 @@ void Types::gen_substitutions(const char *URI, const xs__element& element, SetOf
     if (!abstract && element.complexTypePtr())
       abstract = element.complexTypePtr()->abstract;
   }
-  fprintf(stream, "//  BEGIN CHOICE OF SUBSTITUTIONS <xs:element substitutionGroup=\"%s\"", name);
+  fprintf(stream, "//  BEGIN SUBSTITUTIONS <xs:element substitutionGroup=\"%s\"", name);
   if (element.minOccurs)
     fprintf(stream, " minOccurs=\"%s\"", element.minOccurs);
   if (element.maxOccurs)
     fprintf(stream, " maxOccurs=\"%s\"", element.maxOccurs);
-  fprintf(stream, "> with global elements");
+  fprintf(stream, "> with choice of elements to substitute:\n//   ");
+  size_t len = 7;
   for (std::vector<xs__element*>::const_iterator i1 = substitutions->begin(); i1 != substitutions->end(); ++i1)
+  {
+    size_t w = strlen((*i1)->name) + 3;
+    len += w;
+    if (len > 132)
+    {
+      fprintf(stream, "\n//   ");
+      len = 7 + w;
+    }
     fprintf(stream, " <%s>", (*i1)->name);
+  }
   fprintf(stream, "\n");
   t = uname(URI);
   s = strstr(t, "__union");

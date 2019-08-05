@@ -685,7 +685,7 @@ mktype(Type type, void *ref, int width)
   p->extsym = NULL;
   p->response = NULL;
   p->width = width;
-  p->visited = False;
+  p->visited = Unexplored;
   p->recursive = False;
   p->generated = False;
   p->wsdl = False;
@@ -729,7 +729,7 @@ mksymtype(Tnode *typ, Symbol *sym)
   p->extsym = typ->extsym;
   p->response = (Entry*)0;
   p->width = typ->width;
-  p->visited = False;
+  p->visited = Unexplored;
   p->recursive = False;
   p->generated = False;
   p->wsdl = False;
@@ -13908,46 +13908,58 @@ detect_cycles(void)
 void
 detect_recursive_type(Tnode *p)
 {
+  if (is_transient(p))
+    return;
   if (p->type == Tclass || p->type == Tstruct || p->type == Tunion)
   {
-    if (!p->recursive)
+    if (p->visited == Unexplored)
     {
-      if (!p->visited)
+      Table *t;
+      Entry *e, *b = NULL;
+      Tnode *q;
+      p->visited = Hot;
+      if ((p->type == Tclass || p->type == Tstruct) && p->base)
       {
-        Table *t;
-        Entry *e, *b = NULL;
-        p->visited = True;
-        if ((p->type == Tclass || p->type == Tstruct) && p->base && !is_transient(p))
+        q = p;
+        while (q->base)
         {
-          b = entry(classtable, p->base);
-          if (b && b->info.typ->recursive)
+          b = entry(classtable, q->base);
+          if (!b)
+            break;
+          q = b->info.typ;
+          if (q->visited == Unexplored)
+            detect_recursive_type(q);
+          if (q->recursive)
           {
             p->recursive = True;
+            break;
           }
-          else if (b && !b->info.typ->visited)
-          {
-            detect_recursive_type(b->info.typ);
-            if (b->info.typ->recursive)
-              p->recursive = True;
-            b->info.typ->visited = True;
-          }
+          q->visited = Hot;
         }
-        if (!p->recursive)
-          for (t = (Table*)p->ref; t; t = t->prev)
-            for (e = t->list; e; e = e->next)
-              detect_recursive_type(e->info.typ);
-        if (b)
-        {
-          if (b->info.typ->recursive)
-            p->recursive = True;
-          b->info.typ->visited = False;
-        }
-        p->visited = False;
       }
-      else
+      if (!p->recursive)
+        for (t = (Table*)p->ref; t; t = t->prev)
+          for (e = t->list; e; e = e->next)
+            detect_recursive_type(e->info.typ);
+      if ((p->type == Tclass || p->type == Tstruct) && p->base)
       {
-        p->recursive = True;
+        q = p;
+        while (q->base)
+        {
+          b = entry(classtable, q->base);
+          if (!b)
+            break;
+          q = b->info.typ;
+          if (q->recursive)
+            p->recursive = True;
+          q->visited = Cold;
+        }
       }
+      p->visited = Cold;
+    }
+    else if (p->visited == Hot)
+    {
+      p->recursive = True;
     }
   }
   else if (p->type == Tpointer || p->type == Treference || p->type == Trvalueref || p->type == Tarray || p->type == Ttemplate)

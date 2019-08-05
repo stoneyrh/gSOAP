@@ -187,6 +187,7 @@ COMMAND LINE OPTIONS
 -v      verbose output
 -W      suppress warnings
 -w      always wrap response parameters in a response struct (<=1.1.4 behavior)
+-X      don't qualify part names to disambiguate doc/lit wrapped patterns
 -x      don't generate _XML any/anyAttribute extensibility elements
 -y      generate typedef synonyms for structs and enums
 -z1     compatibility with 2.7.6e: generate pointer-based arrays
@@ -196,6 +197,7 @@ COMMAND LINE OPTIONS
 -z5     compatibility up to 2.8.15: don't include minor improvements
 -z6     compatibility up to 2.8.17: don't include minor improvements
 -z7     compatibility up to 2.8.59: don't generate std::vector of class of union
+-z8     compatibility up to 2.8.74: don't gen quals for doc/lit wrapped patterns
 -_      don't generate _USCORE (replace with Unicode code point _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 

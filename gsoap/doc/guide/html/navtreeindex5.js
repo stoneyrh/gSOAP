@@ -85,7 +85,8 @@ var NAVTREEINDEX5 =
 "index.html#wsdl2h-U":[7,0,31],
 "index.html#wsdl2h-V":[7,0,33],
 "index.html#wsdl2h-W":[7,0,35],
-"index.html#wsdl2h-_":[7,0,40],
+"index.html#wsdl2h-X":[7,0,37],
+"index.html#wsdl2h-_":[7,0,41],
 "index.html#wsdl2h-a":[7,0,0],
 "index.html#wsdl2h-b":[7,0,1],
 "index.html#wsdl2h-c":[7,0,2],
@@ -109,9 +110,9 @@ var NAVTREEINDEX5 =
 "index.html#wsdl2h-u":[7,0,32],
 "index.html#wsdl2h-v":[7,0,34],
 "index.html#wsdl2h-w":[7,0,36],
-"index.html#wsdl2h-x":[7,0,37],
-"index.html#wsdl2h-y":[7,0,38],
-"index.html#wsdl2h-z":[7,0,39],
+"index.html#wsdl2h-x":[7,0,38],
+"index.html#wsdl2h-y":[7,0,39],
+"index.html#wsdl2h-z":[7,0,40],
 "index.html#wsdl2hoptions":[7,0],
 "index.html#wsdlin":[7],
 "index.html#wsrmplugin":[25,37,11],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "structsoap.html#ae4a79c23a3ebab6023b6b6e16de734cc":[27,5,0,37],
 "structsoap.html#ae5e98733a4349b5e1466a9e0ccc22c11":[27,5,0,96],
 "structsoap.html#ae731dd4b82b3a91b679c410756ee4faa":[27,5,0,6],
-"structsoap.html#aeacd72a210204ebde6dcdb81bdaf4eef":[27,5,0,36],
-"structsoap.html#aec65c0198db5df4bef7afd2df29ff88d":[27,5,0,143]
+"structsoap.html#aeacd72a210204ebde6dcdb81bdaf4eef":[27,5,0,36]
 };

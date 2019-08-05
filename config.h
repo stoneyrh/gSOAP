@@ -243,7 +243,7 @@
 #define PACKAGE_NAME "gsoap"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "gsoap 2.8.88"
+#define PACKAGE_STRING "gsoap 2.8.89"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gsoap"
@@ -252,7 +252,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.8.88"
+#define PACKAGE_VERSION "2.8.89"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -267,7 +267,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "2.8.88"
+#define VERSION "2.8.89"
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

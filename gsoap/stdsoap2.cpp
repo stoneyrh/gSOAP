@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.88
+        stdsoap2.c[pp] 2.8.89
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20888
+#define GSOAP_LIB_VERSION 20889
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.88 2019-23-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.89 2019-08-05 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.88 2019-07-23 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.89 2019-08-05 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -5594,7 +5594,7 @@ again:
     memset((void*)&addr, 0, sizeof(addr));
     addr.sin6_family = AF_INET6;
     if ((soap->client_addr_ipv6 && res->ai_family == AF_INET6 && inet_pton(AF_INET6, soap->client_addr_ipv6, (void*)&addr.sin6_addr.s6_addr) == 1)
-     || inet_pton(AF_INET6, soap->client_addr, (void*)&addr.sin6_addr.s6_addr) == 1
+     || (!soap->client_addr_ipv6 && inet_pton(AF_INET6, soap->client_addr, (void*)&addr.sin6_addr.s6_addr) == 1)
      )
     {
       if (soap->client_port >= 0)

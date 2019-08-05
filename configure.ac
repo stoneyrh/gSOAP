@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT(gsoap, 2.8.88)
+AC_INIT(gsoap, 2.8.89)
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([gsoap/stdsoap2.cpp])
 AC_CANONICAL_HOST

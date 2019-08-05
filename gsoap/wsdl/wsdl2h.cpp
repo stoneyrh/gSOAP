@@ -75,6 +75,7 @@ int _flag = 0,
     vflag = 0,
     Wflag = 0,
     wflag = 0,
+    Xflag = 0,
     xflag = 0,
     yflag = 0,
     zflag = 0;
@@ -493,6 +494,9 @@ static void options(int argc, char **argv)
           case 'W':
             Wflag = 1;
             break;
+          case 'X':
+            Xflag = 1;
+            break;
           case 'x':
             xflag = 1;
             break;
@@ -500,20 +504,25 @@ static void options(int argc, char **argv)
             yflag = 1;
             break;
           case 'z':
+          {
+            int z = zflag;
             a++;
             if (zflag)
               fprintf(stderr, "wsdl2h: Option -z specified twice\n");
             g = 0;
             if (*a)
-              zflag = soap_strtol(a, NULL, 10);
+              z = soap_strtol(a, NULL, 10);
             else if (i < argc && argv[++i])
-              zflag = soap_strtol(argv[i], NULL, 10);
+              z = soap_strtol(argv[i], NULL, 10);
             else
-              zflag = 1;
+              fprintf(stderr, "wsdl2h: Option -z requires an argument\n");
+            if (zflag == 0 || z < zflag)
+              zflag = z;
             break;
+          }
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-F] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-L] [-l] [-M] [-m] [-N name] [-n name] [-O1|-O2|-O3|-O4|-Ow2|-Ow3|-Ow4] [-P|-p] [-Q] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:uid:pwd] [-Sname] [-s] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-F] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-L] [-l] [-M] [-m] [-N name] [-n name] [-O1|-O2|-O3|-O4|-Ow2|-Ow3|-Ow4] [-P|-p] [-Q] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:uid:pwd] [-Sname] [-s] [-T] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b      bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -563,6 +572,7 @@ static void options(int argc, char **argv)
 -v      verbose output\n\
 -W      suppress warnings\n\
 -w      always wrap response parameters in a response struct (<=1.1.4 behavior)\n\
+-X      don't qualify part names to disambiguate doc/lit wrapped patterns\n\
 -x      don't generate _XML any/anyAttribute extensibility elements\n\
 -y      generate typedef synonyms for structs and enums\n\
 -z1     compatibility with 2.7.6e: generate pointer-based arrays\n\
@@ -572,6 +582,7 @@ static void options(int argc, char **argv)
 -z5     compatibility up to 2.8.15: don't include minor improvements\n\
 -z6     compatibility up to 2.8.17: don't include minor improvements\n\
 -z7     compatibility up to 2.8.59: don't generate std::vector of class of union\n\
+-z8     compatibility up to 2.8.74: don't gen quals for doc/lit wrapped patterns\n\
 -_      don't generate _USCORE (replace with Unicode code point _x005f)\n\
 infile.wsdl infile.xsd http://www... list of input sources (if none reads stdin)\n\
 \n");

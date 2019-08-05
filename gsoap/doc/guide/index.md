@@ -4933,6 +4933,7 @@ option                                    | result
 [`-v`](#wsdl2h-v)                         | verbose output 
 [`-W`](#wsdl2h-W)                         | suppress warnings 
 [`-w`](#wsdl2h-w)                         | always wrap response parameters in a response struct 
+[`-X`](#wsdl2h-X)                         | don't qualify part names to disambiguate doc/lit wrapped patterns
 [`-x`](#wsdl2h-x)                         | don't generate `_XML any` and `_XML anyAttribute` extensibility elements 
 [`-y`](#wsdl2h-y)                         | generate typedef synonyms for structs and enums 
 [`-z1`](#wsdl2h-z)                        | compatibility with 2.7.6e: generate pointer-based arrays
@@ -4942,6 +4943,7 @@ option                                    | result
 [`-z5`](#wsdl2h-z)                        | compatibility up to 2.8.15: don't include minor improvements
 [`-z6`](#wsdl2h-z)                        | compatibility up to 2.8.17: don't include minor improvements
 [`-z7`](#wsdl2h-z)                        | compatibility up to 2.8.59: don't generate `std::vector` of class of union
+[`-z8`](#wsdl2h-z)                        | compatibility up to 2.8.74: don't generate qualifiers for doc/lit wrapped patterns
 [`-_`](#wsdl2h-_)                         | don't generate `_USCORE` (replace with Unicode `_x005f`) 
 
 The following subsections explain the options in detail.  The source code
@@ -6396,6 +6398,132 @@ when a single response parameter is a primitive type value.
 
 🔝 [Back to table of contents](#)
 
+### wsdl2h -X {#wsdl2h-X}
+
+Document/literal wrapped patterns may cause ambiguities with respect to message
+namespace qualification.  A <i>`part`</i> name associated with a <i>`type`</i> is
+implicitly qualified by the targetNamespace of the WSDL but may also be
+associated with the namespace of the type.  By default, the wsdl2h tool uses
+the namespace of the type when the type is not a primitive XSD type, otherwise
+the WSDL targetNamespace is used.
+
+As an example of a document/literal wrapped pattern message, consider:
+
+<div class="alt">
+~~~{.xml}
+    <wsdl:types>
+      <xs:schema ...>
+        <xs:complexType name="Record">
+          ...
+    </wsdl:types>
+    ...
+    <wsdl:message name="Message">
+      <wsdl:part name="Name" type="xs:string"/>
+      <wsdl:part name="Info" type="tns:Record"/>
+    </wsdl:message>
+    ...
+    <wsdl:operation name="Operation">
+      <wsdl:input message="tns:Message"/>
+      <wsdl:output message="tns:MessageResponse"/>
+    </wsdl:operation>
+    ...
+    <wsdl:binding name="Binding" type="tns:PortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsdl:operation name="Operation">
+        <soap:operation soapAction="Action"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+      </wsdl:operation>
+      ...
+~~~
+</div>
+
+Note that <i>`message name="Message"`</i> has two parts with both a type, which
+makes these part namespaces amiguous.  The generated interface header file
+declares a wrapper for the <i>`Name`</i> request message and the <i>`Info`</i> response
+message:
+
+~~~{.cpp}
+    int __ns1__Operation(
+        std::string Name,
+        ns1__Record ns2__Info
+        );
+~~~
+
+Here, <i>`Name`</i> belongs to the <i>`ns1`</i> namespace, i.e. by the <i>`__ns1__Operation`</i>,
+whereas <i>`Info`</i> belongs to the `ns2` namespace.  The <i>`__ns1__Operation`</i> is just
+a wrapper for the operation and is not visible in XML.  Only <i>`Name`</i> and <i>`Info`</i>
+are serialized in XML as the request and response message, respectively.
+
+With option <b>`-X`</b> the <i>`ns2`</i> qualifier is removed:
+
+~~~{.cpp}
+    int __ns1__Operation(
+        std::string Name,
+        ns1__Record Info
+        );
+~~~
+
+Now both <i>`Name`</i> and <i>`Info`</i> belong to the <i>`ns1`</i> namespace,
+i.e. by the <i>`__ns1__Operation`</i>.
+
+However, best practices for document/literal messaging recommend to avoid this wrapped
+pattern construct in favor of using elements defined in schemas:
+
+<div class="alt">
+~~~{.xml}
+    <wsdl:types>
+      <xs:schema ...>
+        <xs:element name="Name" type="xs:string"/>
+        <xs:element name="Info" type="tns:Record"/>
+        <xs:complexType name="Record">
+          ...
+        ...
+    </wsdl:types>
+    ...
+    <wsdl:message name="Message">
+      <wsdl:part name="Name" element="tns:Name"/>
+      <wsdl:part name="Info" element="tns:Record"/>
+    </wsdl:message>
+    ...
+    <wsdl:operation name="Operation">
+      <wsdl:input message="tns:Message"/>
+      <wsdl:output message="tns:MessageResponse"/>
+    </wsdl:operation>
+    ...
+    <wsdl:binding name="netfileOverSoap" type="tns:netfileOverSoap">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsdl:operation name="Operation">
+        <soap:operation soapAction="Action"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+      </wsdl:operation>
+      ...
+~~~
+</div>
+
+The elements <i>`Name`</i> and <i>`Record`</i> are the actual message names, qualified by the
+schema's targetNamespace:
+
+~~~{.cpp}
+    int __ns1__Operation(
+        std::string ns2__Name,
+        ns1__Record ns2__Info
+        );
+~~~
+
+See also wsdl2h [option <b>`-z7`</b>](#wsdl2h-z).
+
+🔝 [Back to table of contents](#)
+
 ### wsdl2h -x {#wsdl2h-x}
 
 This option removes `_XML` type members of structs and classes that are
@@ -6430,6 +6558,7 @@ These options are for backward compatiility with older gSOAP releases:
 - <b>`-z5`</b> compatibility up to 2.8.15: don't include minor improvements.
 - <b>`-z6`</b> compatibility up to 2.8.17: don't include minor improvements.
 - <b>`-z7`</b> compatibility up to 2.8.59: don't generate std::vector of class of union.
+- <b>`-z8`</b> compatibility up to 2.8.74: don't gen quals for doc/lit wrapped patterns.
 
 🔝 [Back to table of contents](#)
 

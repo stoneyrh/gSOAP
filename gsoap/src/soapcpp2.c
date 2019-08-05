@@ -356,15 +356,22 @@ infile  header file to parse (if none reads stdin)\n\
             vflag = 1;
             break;
           case 'z':
+          {
+            int z = zflag;
             a++;
+            if (zflag)
+              fprintf(stderr, "soapcpp2: Option -z specified twice\n");
             g = 0;
             if (*a)
               zflag = *a - '0';
             else if (i < argc && argv[++i])
               zflag = *argv[i] - '0';
             else
-              execerror("Option -z requires a digit");
+              execerror("Option -z requires an argument");
+            if (zflag == 0 || z < zflag)
+              zflag = z;
             break;
+          }
           default:
             fprintf(stderr, "soapcpp2: Unknown option %s\n", a);
             exit(1);
