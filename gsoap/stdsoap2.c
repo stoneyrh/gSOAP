@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.89
+        stdsoap2.c[pp] 2.8.90
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20889
+#define GSOAP_LIB_VERSION 20890
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.89 2019-08-05 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.90 2019-08-14 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.89 2019-08-05 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.90 2019-08-14 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -6918,7 +6918,7 @@ soap_poll(struct soap *soap)
   {
     int t;
 #ifdef WITH_OPENSSL
-    if ((soap->imode & SOAP_ENC_SSL))
+    if ((soap->imode & SOAP_ENC_SSL) && soap->ssl)
     {
       if (soap_valid_socket(soap->socket)
        && (r & SOAP_TCP_SELECT_SND)
@@ -6972,7 +6972,7 @@ soap_ready(struct soap *soap)
   {
     char t;
 #ifdef WITH_OPENSSL
-    if ((soap->imode & SOAP_ENC_SSL))
+    if ((soap->imode & SOAP_ENC_SSL) && soap->ssl)
     {
       if (SSL_peek(soap->ssl, &t, 1) > 0)
         return SOAP_OK;

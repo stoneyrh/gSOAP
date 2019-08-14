@@ -49,6 +49,8 @@ typedef struct Keyword
 
 static Keyword keywords[] =
 {
+  { "alignas",          NONE },
+  { "alignof",          NONE },
   { "asm",              NONE },
   { "auto",             AUTO },
   { "bool",             BOOL },

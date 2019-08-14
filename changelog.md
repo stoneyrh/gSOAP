@@ -1523,13 +1523,18 @@ Version 2.8.88 (7/25/2019)
 - Fixed an issue with wsdl2h `typemap.dat` for WS-Trust WSDLs causing missing types in the generated header file.
 - Portability fixes and improvements.
 
-Version 2.8.89 (8/5/2019) {#latest}
+Version 2.8.89 (8/5/2019)
 ---
 
 - Added wsdl2h option `-X` to do not qualify part names in order to disambiguate document/literal wrapped patterns (as the other choice to disambiguate instead of the default qualification with schema namespaces).
 - Added wsdl2h option `-z8` for backward compatibility with 2.8.74 and earlier: don't qualify part names to disambiguate doc/lit wrapped patterns and revert to the old wrapper class/struct naming used for `xs:anyType` inheritance.
 - Improved wsdl2h option `-L` to skip non-essential comments from the output.
 - Faster soapcpp2 and other improvements.
+
+Version 2.8.90 (8/14/2019) {#latest}
+---
+
+- Improved software bundling to prevent autoheader from running with `./configure`, other minor improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
