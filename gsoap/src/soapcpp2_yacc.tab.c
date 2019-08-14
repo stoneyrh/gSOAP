@@ -2907,7 +2907,7 @@ yyreduce:
 			  p->tag = (yyvsp[-2].s);
                           if ((yyvsp[-1].rec).minOccurs < 0)
                           {
-                            if ((yyvsp[-1].rec).hasval ||
+                            if ((yyvsp[0].rec).hasval ||
                                 ((int)(yyvsp[-3].rec).sto & (int)Sattribute) ||
                                 ((int)(yyvsp[-3].rec).sto & (int)Sspecial) ||
                                 (yyvsp[-3].rec).typ->type == Tpointer ||

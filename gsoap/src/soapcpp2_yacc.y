@@ -704,7 +704,7 @@ arg     : arrayck init {
 			  p->tag = $3;
                           if ($4.minOccurs < 0)
                           {
-                            if ($4.hasval ||
+                            if ($5.hasval ||
                                 ((int)$2.sto & (int)Sattribute) ||
                                 ((int)$2.sto & (int)Sspecial) ||
                                 $2.typ->type == Tpointer ||
