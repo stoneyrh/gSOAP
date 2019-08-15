@@ -363,9 +363,9 @@ infile  header file to parse (if none reads stdin)\n\
               fprintf(stderr, "soapcpp2: Option -z specified twice\n");
             g = 0;
             if (*a)
-              zflag = *a - '0';
+              z = *a - '0';
             else if (i < argc && argv[++i])
-              zflag = *argv[i] - '0';
+              z = *argv[i] - '0';
             else
               execerror("Option -z requires an argument");
             if (zflag == 0 || z < zflag)

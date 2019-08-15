@@ -1531,10 +1531,15 @@ Version 2.8.89 (8/5/2019)
 - Improved wsdl2h option `-L` to skip non-essential comments from the output.
 - Faster soapcpp2 and other improvements.
 
-Version 2.8.90 (8/14/2019) {#latest}
+Version 2.8.90 (8/14/2019)
 ---
 
 - Improved software bundling to prevent autoheader from running with `./configure`, other minor improvements.
+
+Version 2.8.91 (8/15/2019) {#latest}
+---
+
+- Correction to fix soapcpp2 2.8.90 `-z#` flag enforcement problem.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
