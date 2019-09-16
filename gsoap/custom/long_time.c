@@ -146,6 +146,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__time(struct soap *soap, const char *s, ULO
     }
     else if (*s == '+' || *s == '-')
     {
+      int c = *s;
       int h = 0, m = 0;
       h = soap_strtol(s, &r, 10);
       if (!r || *r != ':')
@@ -155,26 +156,25 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__time(struct soap *soap, const char *s, ULO
       if (!r)
 	return soap->error = SOAP_TYPE;
       s = r;
-      H += h;
-      if (h < 0)
+      H += 24 - h;
+      if (c == '-')
       {
-	M += 60 - m;
+	M += m;
         if (M >= 60)
-	  M -= 60;
-	else
-	  H--;
+        {
+          M -= 60;
+          H++;
+        }
       }
       else
       {
-	M += m;
-	if (M >= 60)
-	{
-	  H++;
-	  M -= 60;
-        }
+        M += 60 - m;
+        if (M < 60)
+          H += 23;
+        else
+          M -= 60;
       }
-      if (H >= 24)
-	return soap->error = SOAP_TYPE;
+      H %= 24;
     }
     if (*s)
       return soap->error = SOAP_TYPE;

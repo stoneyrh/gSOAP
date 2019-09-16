@@ -1,5 +1,5 @@
 /*
-	wsa5.h WS-Addressing 2005/08
+	wsa5.h WS-Addressing 2005/08, accepts WS-Addressing 2004/08
 
 	Usage: See plugin/wsaapi.c
 

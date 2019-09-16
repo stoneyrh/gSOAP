@@ -2730,7 +2730,7 @@ struct soap *soap2 = soap_new1(input_and_output_mode);
 struct soap *soap3 = soap_new2(input_mode, output_mode);
 ~~~
 
-Alternatively, use contructors in C++ as follows:
+Alternatively, use constructors in C++ as follows:
 
 ~~~{.cpp}
 struct soap *soap1();
@@ -2765,7 +2765,7 @@ soap_init1(&soap2, input_and_output_mode);
 soap_init2(&soap3, input_mode, output_mode);
 ~~~
 
-Alternatively, use contructors in C++:
+Alternatively, use constructors in C++:
 
 ~~~{.cpp}
 struct soap soap1();

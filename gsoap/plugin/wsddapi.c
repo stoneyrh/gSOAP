@@ -368,6 +368,12 @@ as follows:
 where the `service` object is an instance of the application services generated
 by soapcpp2 `-j`.
 
+Then compile the generated wsddClient.cpp file with the macro
+`-DSOAP_H_FILE=wsddH.h` to specify that `wsddH.h` should be used instead of
+`soapH.h.
+
+To combine WS-Security with WS-Discovery, please see the next section.
+
 @section wsdd_6 Miscellaneous
 
 You must generate client-side operations that the WSDD library expects to be
@@ -375,8 +381,28 @@ linked with, by executing:
 
     soapcpp2 -a -L -pwsdd -Iimport import/wsdd.h
 
-Then change wsddapi.h to use `#include "wsddH.h"` and compile and link the
-generated wsddClient.cpp code with your project.
+Then compile the generated wsddClient.cpp file with the macro
+`-DSOAP_H_FILE=wsddH.h` to specify that `wsddH.h` should be used instead of
+`soapH.h.
+
+If WS-Security is used with WS-Discovery, then create a file `imports.h` with
+the following two lines:
+
+@code
+    // file: imports.h
+    #import "wsdd.h" // or wsdd10.h, wsdd5.h
+    #import "wsse.h"
+@endcode
+
+Then execute:
+
+    soapcpp2 -a -L -pwsdd -Iimport imports.h
+
+This generates wsddC.cpp and wsddClient.cpp, which should be compiled together
+with plugin/wsddapi.c, plugin/wsseapi.c, plugin/mecevp.c, and plugin/smdevp.c.
+All files should be compiled with `-DSOAP_H_FILE=wsddH.h`, i.e. macro
+`SOAP_H_FILE` set to `wsddH.h`.  WS-Security requires OpenSSL and linkage with
+libssl and libcrypto.
 
 For server-side projects, also compile and link the generated wsddServer.cpp
 code.  You will also need to implement the @ref wsdd_2.

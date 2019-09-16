@@ -7,6 +7,18 @@ gSOAP demo web server located in gsoap/samples/webserver, which should be build
 to run the examples.  The gSOAP webserver optionally uses the httppipe HTTP
 pipelining plugin to support HTTP pipelining.
 
+Note that true asynchronous messaging expects non-blocking operations.
+However, message sends and receives cannot be interrupted without losing their
+internal state, i.e. deserialized data is lost in case of receives.  Message
+receives can be placed in a thread to prevent blocking on receives.  Message
+sends can either be placed in a thread or use timeouts and retries.
+
+The following examples demonstrate alternative approaches, showing one-way
+messaging with one thread (i.e. blocking send and receive), and mixing blocking
+sends with async non-blocking receives using threads to receive responses.
+The probability of blocking on sending short messages is quite low, e.g. HTTP
+GET messages.
+
 Examples:
 
 - asyncsoap.c   C example SOAP asynchronous messaging with one thread

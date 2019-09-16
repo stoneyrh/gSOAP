@@ -1536,10 +1536,16 @@ Version 2.8.90 (8/14/2019)
 
 - Improved software bundling to prevent autoheader from running with `./configure`, other minor improvements.
 
-Version 2.8.91 (8/15/2019) {#latest}
+Version 2.8.91 (8/15/2019)
 ---
 
 - Correction to fix soapcpp2 2.8.90 `-z#` flag enforcement problem.
+
+Version 2.8.92 (9/16/2019) {#latest}
+---
+
+- Fixed soapcpp2-generated call to `soap_DELETE` for REST DELETE operations.
+- Minor improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

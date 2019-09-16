@@ -867,8 +867,8 @@ As always, use `soap_print_fault` to display the error message.
 To sign the body of an outbound SOAP message using RSA-SHA (DSA-SHA is
 similar), we include the X509 certificate with the public key as a
 BinarySecurityToken in the header and a KeyInfo reference to the token to let
-receivers use the public key in the certificate to verify the authenticity of
-the message:
+receivers use the public key in the trusted and verified (!) certificate to
+verify the authenticity of the message:
 
 @code
     FILE *fd;
@@ -1699,7 +1699,7 @@ The code for a client is shown below that uses signatures and encryption:
      || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
      || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0))
       ... // an error occurred
-    // encrypt the Body and the signature using the public key in cert (the cert of the peer)
+    // encrypt the Body and the signature using the public key in cert (the cert of the peer loaded from PEM)
     soap_wsse_set_wsu_id(soap, "ds:Signature");
     if (soap_wsse_add_EncryptedKey_encrypt_only(soap, SOAP_MEC_ENV_ENC_DES_CBC, "Cert", cert, NULL, NULL, NULL, "ds:Signature SOAP-ENV:Body"))
       ... // an error occurred
@@ -1774,10 +1774,10 @@ where an example service operation could be:
       ...
       // remove old security headers
       soap_wsse_delete_Security(soap);
-      // encrypt the Body and the signature using the public key in cert (the cert of the peer)
+      // encrypt the Body and the signature using the public key in cert (the cert of the peer loaded from PEM)
       soap_wsse_set_wsu_id(soap, "ds:Signature");
       // add the certificate X509 token and token reference, sign the Body using the private key
-      // encrypt the Body and the signature using the public key in cert (the cert of the peer)
+      // encrypt the Body and the signature using the public key in cert (the cert of the peer loaded from PEM)
       if (soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert)
        || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
        || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0)

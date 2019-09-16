@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.91
+        stdsoap2.c[pp] 2.8.92
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20891
+#define GSOAP_LIB_VERSION 20892
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.91 2019-08-15 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.92 2019-09-16 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.91 2019-08-15 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.92 2019-09-16 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -5215,7 +5215,9 @@ tcp_connect(struct soap *soap, const char *endpoint, const char *host, int port)
       soap->peer.in.sin_port = htons((short)port);
       soap->errmode = 0;
 #else
-      if (getaddrinfo(host, soap_int2s(soap, port), &hints, &res) || !res)
+      memset((void*)&hints, 0, sizeof(hints));
+      err = getaddrinfo(host, soap_int2s(soap, port), &hints, &res);
+      if (err || !res)
       {
         soap_set_receiver_error(soap, SOAP_GAI_STRERROR(err), "getaddrinfo failed in tcp_connect()", SOAP_TCP_ERROR);
         soap->fclosesocket(soap, soap->socket);
@@ -6595,57 +6597,54 @@ tcp_disconnect(struct soap *soap)
         soap->session_port = soap->port;
       }
     }
-    r = SSL_shutdown(soap->ssl);
-    /* SSL shutdown does not work when reads are pending, non-blocking */
-    if (r == 0)
+    if (soap_valid_socket(soap->socket))
     {
-      while (SSL_want_read(soap->ssl))
+      r = SSL_shutdown(soap->ssl);
+      /* SSL shutdown does not work when reads are pending, non-blocking */
+      if (r == 0)
       {
-        if (SSL_read(soap->ssl, NULL, 0)
-         || soap_socket_errno(soap->socket) != SOAP_EAGAIN)
+        while (SSL_want_read(soap->ssl))
         {
-          r = SSL_shutdown(soap->ssl);
-          break;
+          if (SSL_read(soap->ssl, NULL, 0)
+              || soap_socket_errno(soap->socket) != SOAP_EAGAIN)
+          {
+            r = SSL_shutdown(soap->ssl);
+            break;
+          }
         }
       }
-    }
-    if (r == 0)
-    {
-      if (soap_valid_socket(soap->socket))
+      if (r == 0 && !soap->fshutdownsocket(soap, soap->socket, SOAP_SHUT_WR))
       {
-        if (!soap->fshutdownsocket(soap, soap->socket, SOAP_SHUT_WR))
-        {
 #if !defined(WITH_LEAN) && !defined(WIN32)
-          /*
-          wait up to 5 seconds for close_notify to be sent by peer (if peer not
-          present, this avoids calling SSL_shutdown() which has a lengthy return
-          timeout)
-          */
-          r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, 5);
-          if (r <= 0)
+        /*
+           wait up to 5 seconds for close_notify to be sent by peer (if peer not
+           present, this avoids calling SSL_shutdown() which has a lengthy return
+           timeout)
+         */
+        r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, 5);
+        if (r <= 0)
+        {
+          soap->errnum = 0;
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connection lost...\n"));
+          soap->fclosesocket(soap, soap->socket);
+          soap->socket = SOAP_INVALID_SOCKET;
+          ERR_clear_error();
+          SSL_free(soap->ssl);
+          soap->ssl = NULL;
+          return SOAP_OK;
+        }
+#else
+        r = SSL_shutdown(soap->ssl);
+        if (r <= 0)
+        {
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Shutdown failed: %d\n", SSL_get_error(soap->ssl, r)));
+          if (soap_valid_socket(soap->socket) && !(soap->omode & SOAP_IO_UDP))
           {
-            soap->errnum = 0;
-            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connection lost...\n"));
             soap->fclosesocket(soap, soap->socket);
             soap->socket = SOAP_INVALID_SOCKET;
-            ERR_clear_error();
-            SSL_free(soap->ssl);
-            soap->ssl = NULL;
-            return SOAP_OK;
           }
-#else
-          r = SSL_shutdown(soap->ssl);
-          if (r <= 0)
-          {
-            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Shutdown failed: %d\n", SSL_get_error(soap->ssl, r)));
-            if (soap_valid_socket(soap->socket) && !(soap->omode & SOAP_IO_UDP))
-            {
-              soap->fclosesocket(soap, soap->socket);
-              soap->socket = SOAP_INVALID_SOCKET;
-            }
-          }
-#endif
         }
+#endif
       }
     }
     SSL_free(soap->ssl);

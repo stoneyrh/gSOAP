@@ -7871,50 +7871,6 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
   params = (Table*)p->info.typ->ref;
   if (!is_response(result->info.typ) && !is_XML(result->info.typ))
     response = get_response(method->info.typ);
-  if (name)
-  {
-    if (!is_transient(result->info.typ))
-    {
-      fprintf(fd, "\n\nint %s::send_%s(const char *soap_endpoint_url, const char *soap_action", name, ns_cname(method->sym->name, NULL));
-      gen_params_ref(fd, params, NULL, 1);
-    }
-    else
-    {
-      fprintf(fd, "\n\nint %s::send_%s(const char *soap_endpoint_url, const char *soap_action", name, ns_cname(method->sym->name, NULL));
-      gen_params_ref(fd, params, NULL, 1);
-    }
-  }
-  else
-  {
-    if (!is_transient(result->info.typ))
-    {
-      fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_call_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
-      gen_params_ref(fd, params, result, 1);
-      fprintf(fd, "\n{\tif (soap_send_%s(soap, soap_endpoint, soap_action", ident(method->sym->name));
-      gen_args(fd, params, NULL, 1);
-      fprintf(fd, " || soap_recv_%s(soap", ident(method->sym->name));
-      gen_args(fd, NULL, result, 1);
-      fprintf(fd, ")\n\t\treturn soap->error;\n\treturn SOAP_OK;\n}");
-      fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_send_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
-      gen_params_ref(fd, params, NULL, 1);
-    }
-    else
-    {
-      fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_send_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
-      gen_params_ref(fd, params, NULL, 1);
-    }
-  }
-  if (name)
-  {
-    if (iflag)
-      fprintf(fd, "\n{\n\tstruct soap *soap = this;\n");
-    else
-      fprintf(fd, "\n{\n");
-  }
-  else
-  {
-    fprintf(fd, "\n{");
-  }
   for (sp = services; sp; sp = sp->next)
   {
     if (has_ns_eq(sp->ns, method->sym->name))
@@ -7973,6 +7929,53 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
       }
       break;
     }
+  }
+  if (name)
+  {
+    if (!is_transient(result->info.typ))
+    {
+      fprintf(fd, "\n\nint %s::send_%s(const char *soap_endpoint_url, const char *soap_action", name, ns_cname(method->sym->name, NULL));
+      gen_params_ref(fd, params, NULL, 1);
+    }
+    else
+    {
+      fprintf(fd, "\n\nint %s::send_%s(const char *soap_endpoint_url, const char *soap_action", name, ns_cname(method->sym->name, NULL));
+      gen_params_ref(fd, params, NULL, 1);
+    }
+  }
+  else
+  {
+    if (!is_transient(result->info.typ))
+    {
+      fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_call_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
+      gen_params_ref(fd, params, result, 1);
+      fprintf(fd, "\n{\tif (soap_send_%s(soap, soap_endpoint, soap_action", ident(method->sym->name));
+      gen_args(fd, params, NULL, 1);
+      if (!del)
+      {
+        fprintf(fd, " || soap_recv_%s(soap", ident(method->sym->name));
+        gen_args(fd, NULL, result, 1);
+      }
+      fprintf(fd, ")\n\t\treturn soap->error;\n\treturn SOAP_OK;\n}");
+      fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_send_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
+      gen_params_ref(fd, params, NULL, 1);
+    }
+    else
+    {
+      fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_send_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
+      gen_params_ref(fd, params, NULL, 1);
+    }
+  }
+  if (name)
+  {
+    if (iflag)
+      fprintf(fd, "\n{\n\tstruct soap *soap = this;\n");
+    else
+      fprintf(fd, "\n{\n");
+  }
+  else
+  {
+    fprintf(fd, "\n{");
   }
   if (!get && !del && !mimein)
     fprintf(fd, "\tstruct %s soap_tmp_%s;", ident(method->sym->name), ident(method->sym->name));
@@ -8081,15 +8084,15 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
     if (params->list)
     {
       gen_query_url(fd, params, soap);
-      fprintf(fd, "\n\tif (soap_DELETE(soap, soap->msgbuf, soap_action))");
+      fprintf(fd, "\n\tif (soap_DELETE(soap, soap->msgbuf))");
     }
     else if (soap)
     {
-      fprintf(fd, "\n\tif (soap_DELETE(soap, soap_endpoint, soap_action))");
+      fprintf(fd, "\n\tif (soap_DELETE(soap, soap_endpoint))");
     }
     else
     {
-      fprintf(fd, "\n\tif (soap_DELETE(soap, soap_extend_url(soap, soap_endpoint, soap_action), soap_action))");
+      fprintf(fd, "\n\tif (soap_DELETE(soap, soap_extend_url(soap, soap_endpoint, soap_action)))");
     }
     fprintf(fd, "\n\t\treturn soap_closesock(soap);");
   }
@@ -8103,6 +8106,8 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
     gen_query_send_form(fd, params);
   }
   fprintf(fd, "\n\treturn SOAP_OK;\n}");
+  if (del)
+    return;
   if (is_transient(result->info.typ))
   {
     if (name)

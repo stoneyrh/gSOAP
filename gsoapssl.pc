@@ -5,7 +5,7 @@ includedir=${prefix}/include
 
 Name: GSoap
 Description: SOAP C Web Services with SSL, ZLIB, DOM
-Version: 2.8.91
+Version: 2.8.92
 Requires:
 Libs: -L${libdir} -lgsoapssl
 Libs.private: -L/usr/local/opt/openssl/lib -lssl -lcrypto -lz -lm

@@ -285,7 +285,7 @@ int json_send_string(struct soap *soap, const char *s)
       }
       else
       {
-        (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%4x", c);
+        (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%.4x", c);
         if (soap_send_raw(soap, t, s - t - 1) || soap_send_raw(soap, buf, 6))
           return soap->error;
         t = s;
