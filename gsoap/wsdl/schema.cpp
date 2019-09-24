@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -632,47 +632,73 @@ char *xs__schema::absoluteLocation(const char *loc) const
     loc += 7;
   const char *s = strrchr(base, '/');
 #ifdef WIN32
+  while (!strncmp(loc, "./", 2) || !strncmp(loc, ".\\", 2))
+    loc += 2;
   const char *t = strrchr(base, '\\');
   if (!s || s < t)
     s = t;
   if (!s)
     return soap_strdup(soap, loc);
-  while ((!strncmp(loc, "../", 3) || !strncmp(loc, "..\\", 3)) && s > base)
+  while (true)
   {
-    while (--s >= base)
+    if ((!strncmp(loc, "../", 3) || !strncmp(loc, "..\\", 3)) && s > base)
     {
-      if (*s == '/' || *s == '\\')
+      while (--s >= base)
       {
-        if (s[1] != '.')
-          break;
-        if (s[2] == '.' && (s[3] == '/' || s[3] == '\\'))
+        if (*s == '/' || *s == '\\')
         {
-          s += 3;
-          break;
+          if (s[1] != '.')
+            break;
+          if (s[2] == '.' && (s[3] == '/' || s[3] == '\\'))
+          {
+            s += 3;
+            break;
+          }
         }
       }
+      loc += 3;
     }
-    loc += 3;
+    else if (!strncmp(loc, "./", 2) || !strncmp(loc, ".\\", 2))
+    {
+      loc += 2;
+    }
+    else
+    {
+      break;
+    }
   }
 #else
+  while (!strncmp(loc, "./", 2))
+    loc += 2;
   if (!s)
     return soap_strdup(soap, loc);
-  while (!strncmp(loc, "../", 3) && s > base)
+  while (true)
   {
-    while (--s >= base)
+    if (!strncmp(loc, "../", 3) && s > base)
     {
-      if (*s == '/')
+      while (--s >= base)
       {
-        if (s[1] != '.')
-          break;
-        if (s[2] == '.' && s[3] == '/')
+        if (*s == '/')
         {
-          s += 3;
-          break;
+          if (s[1] != '.')
+            break;
+          if (s[2] == '.' && s[3] == '/')
+          {
+            s += 3;
+            break;
+          }
         }
       }
+      loc += 3;
     }
-    loc += 3;
+    else if (!strncmp(loc, "./", 2))
+    {
+      loc += 2;
+    }
+    else
+    {
+      break;
+    }
   }
 #endif
   size_t n = s - base + 1;
@@ -1257,7 +1283,7 @@ int xs__import::preprocess(xs__schema &schema)
   if (!schemaLocation && location)
     schemaLocation = location;
   if (vflag)
-    std::cerr << "   Preprocessing schema import '" << (namespace_ ? namespace_ : "(null)") << "'" << std::endl;
+    std::cerr << "   Preprocessing schema import '" << (namespace_ ? namespace_ : "(null)") << "' location '" << schemaLocation << "'" << std::endl;
   if (!schemaRef)
   {
     bool found = false;
@@ -1701,7 +1727,15 @@ int xs__element::traverse(xs__schema &schema)
             elt->schemaPtr(schemaPtr());
             elt->targetNamespace = NULL;
           }
-          (*i).substitutions.push_back(elt);
+          std::vector<xs__element*>::iterator k = (*i).substitutions.begin();
+          while (k != (*i).substitutions.end())
+          {
+            if ((*k)->schemaPtr() == elt->schemaPtr() && !strcmp((*k)->name, elt->name))
+              break;
+            ++k;
+          }
+          if (k == (*i).substitutions.end())
+            (*i).substitutions.push_back(elt);
           if (vflag)
             std::cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "'" << std::endl;
           break;
@@ -1731,7 +1765,15 @@ int xs__element::traverse(xs__schema &schema)
                 elt->schemaPtr(schemaPtr());
                 elt->targetNamespace = NULL;
               }
-              (*j).substitutions.push_back(elt);
+              std::vector<xs__element*>::iterator k = (*j).substitutions.begin();
+              while (k != (*j).substitutions.end())
+              {
+                if ((*k)->schemaPtr() == elt->schemaPtr() && !strcmp((*k)->name, elt->name))
+                  break;
+                ++k;
+              }
+              if (k == (*j).substitutions.end())
+                (*j).substitutions.push_back(elt);
               if (vflag)
                 std::cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "' in '" << s->targetNamespace << "'" << std::endl;
               break;

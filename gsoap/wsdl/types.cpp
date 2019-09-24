@@ -4204,95 +4204,110 @@ void Types::gen_substitutions(const char *URI, const xs__element& element, SetOf
     if (!abstract && element.complexTypePtr())
       abstract = element.complexTypePtr()->abstract;
   }
-  fprintf(stream, "//  BEGIN SUBSTITUTIONS <xs:element substitutionGroup=\"%s\"", name);
-  if (element.minOccurs)
-    fprintf(stream, " minOccurs=\"%s\"", element.minOccurs);
-  if (element.maxOccurs)
-    fprintf(stream, " maxOccurs=\"%s\"", element.maxOccurs);
-  fprintf(stream, "> with choice of elements to substitute:\n//   ");
-  size_t len = 7;
-  for (std::vector<xs__element*>::const_iterator i1 = substitutions->begin(); i1 != substitutions->end(); ++i1)
+  if (abstract && (!substitutions || substitutions->empty()))
   {
-    size_t w = strlen((*i1)->name) + 3;
-    len += w;
-    if (len > 132)
-    {
-      fprintf(stream, "\n//   ");
-      len = 7 + w;
-    }
-    fprintf(stream, " <%s>", (*i1)->name);
+    fprintf(stream, "//  SUBSTITUTIONS <xs:element substitutionGroup=\"%s\"> is empty\n", name);
   }
-  fprintf(stream, "\n");
-  t = uname(URI);
-  s = strstr(t, "__union");
-  r = aname(NULL, NULL, name);
-  if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
+  else
   {
-    if (with_union)
+    fprintf(stream, "//  BEGIN SUBSTITUTIONS <xs:element substitutionGroup=\"%s\"", name);
+    if (element.minOccurs)
+      fprintf(stream, " minOccurs=\"%s\"", element.minOccurs);
+    if (element.maxOccurs)
+      fprintf(stream, " maxOccurs=\"%s\"", element.maxOccurs);
+    if (!substitutions || substitutions->empty())
     {
-      // Generate a wrapper when we need a union within a union
-      wrap_union = true;
-      fprintf(stream, "    struct __%s\n    {\n", t);
+      fprintf(stream, "> singleton non-abstract element:\n//   ");
+      gen(URI, element, true, element.minOccurs, element.maxOccurs, members);
     }
-    fprintf(stream, sizeformat, vname("$SIZE"), r);
-    fprintf(stream, " %s", element.minOccurs ? element.minOccurs : "0");
-    if (is_integer(element.maxOccurs))
-      fprintf(stream, ":%s", element.maxOccurs);
-    fprintf(stream, ";\n");
-    if (cflag)
-      fprintf(stream, "    struct _%s\n    {\n", t);
     else
-      fprintf(stream, "    class _%s\n    {\n", t);
-  }
-  if (use_union)
-  {
-    if (!with_union || wrap_union)
     {
-      fprintf(stream, choiceformat, "int", r);
-      if (element.minOccurs)
-        fprintf(stream, " %s", element.minOccurs);
-      fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, element.minOccurs && !strcmp(element.minOccurs, "0") ? " or 0 to omit" : "");
-      if (name)
-        fprintf(stream, "/// Union for substitutionGroup %s.\n", cname(NULL, URI, name));
-      fprintf(stream, "    union %s\n    {\n", t);
-    }
-    tmp_union = with_union;
-    with_union = true;
-  }
-  else
-  {
-    tmp_union = fake_union;
-    fake_union = true;
-  }
-  if (!abstract)
-    gen(URI, element, false, NULL, NULL, members);
-  for (std::vector<xs__element*>::const_iterator i2 = substitutions->begin(); i2 != substitutions->end(); ++i2)
-    gen(URI, *(*i2), true, NULL, NULL, members); // substitutions can be recursive?
-  if (use_union)
-  {
-    with_union = tmp_union;
-    if (!with_union || wrap_union)
-    {
-      if (s)
-        fprintf(stream, elementformat, "}", s[0] == '_' && s[1] == '_' ? s+2 : s);
+      fprintf(stream, "> with choice of elements to substitute:\n//   ");
+      size_t len = 7;
+      for (std::vector<xs__element*>::const_iterator i1 = substitutions->begin(); i1 != substitutions->end(); ++i1)
+      {
+        size_t w = strlen((*i1)->name) + 3;
+        len += w;
+        if (len > 132)
+        {
+          fprintf(stream, "\n//   ");
+          len = 7 + w;
+        }
+        fprintf(stream, " <%s>", (*i1)->name);
+      }
+      fprintf(stream, "\n");
+      t = uname(URI);
+      s = strstr(t, "__union");
+      r = aname(NULL, NULL, name);
+      if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
+      {
+        if (with_union)
+        {
+          // Generate a wrapper when we need a union within a union
+          wrap_union = true;
+          fprintf(stream, "    struct __%s\n    {\n", t);
+        }
+        fprintf(stream, sizeformat, vname("$SIZE"), r);
+        fprintf(stream, " %s", element.minOccurs ? element.minOccurs : "0");
+        if (is_integer(element.maxOccurs))
+          fprintf(stream, ":%s", element.maxOccurs);
+        fprintf(stream, ";\n");
+        if (cflag)
+          fprintf(stream, "    struct _%s\n    {\n", t);
+        else
+          fprintf(stream, "    class _%s\n    {\n", t);
+      }
+      if (use_union)
+      {
+        if (!with_union || wrap_union)
+        {
+          fprintf(stream, choiceformat, "int", r);
+          if (element.minOccurs)
+            fprintf(stream, " %s", element.minOccurs);
+          fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, element.minOccurs && !strcmp(element.minOccurs, "0") ? " or 0 to omit" : "");
+          if (name)
+            fprintf(stream, "/// Union for substitutionGroup %s.\n", cname(NULL, URI, name));
+          fprintf(stream, "    union %s\n    {\n", t);
+        }
+        tmp_union = with_union;
+        with_union = true;
+      }
       else
-        fprintf(stream, elementformat, "}", t[0] == '_' ? t+1 : t);
-      fprintf(stream, ";\n");
+      {
+        tmp_union = fake_union;
+        fake_union = true;
+      }
+      if (!abstract)
+        gen(URI, element, false, NULL, NULL, members);
+      for (std::vector<xs__element*>::const_iterator i2 = substitutions->begin(); i2 != substitutions->end(); ++i2)
+        gen(URI, *(*i2), true, NULL, NULL, members); // substitutions can be recursive?
+      if (use_union)
+      {
+        with_union = tmp_union;
+        if (!with_union || wrap_union)
+        {
+          if (s)
+            fprintf(stream, elementformat, "}", s[0] == '_' && s[1] == '_' ? s+2 : s);
+          else
+            fprintf(stream, elementformat, "}", t[0] == '_' ? t+1 : t);
+          fprintf(stream, ";\n");
+        }
+      }
+      else
+        fake_union = tmp_union;
+      if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
+      {
+        fprintf(stream, pointerformat, "}", s);
+        fprintf(stream, ";\n");
+      }
+      if (wrap_union)
+      {
+        fprintf(stream, elementformat, "}", s);
+        fprintf(stream, ";\n");
+      }
     }
+    fprintf(stream, "//  END OF SUBSTITUTIONS\n");
   }
-  else
-    fake_union = tmp_union;
-  if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
-  {
-    fprintf(stream, pointerformat, "}", s);
-    fprintf(stream, ";\n");
-  }
-  if (wrap_union)
-  {
-    fprintf(stream, elementformat, "}", s);
-    fprintf(stream, ";\n");
-  }
-  fprintf(stream, "//  END OF SUBSTITUTIONS\n");
 }
 
 void Types::document(const xs__annotation *annotation)

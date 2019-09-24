@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Portable threads and locking support</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Aug 25 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Mon Sep 23 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -50,6 +50,8 @@
 <li>THREAD_TYPE portable thread type</li>
 <li>THREAD_ID returns current thread ID of type THREAD_TYPE*</li>
 <li>THREAD_CREATE(t,f,a) start thread (THREAD_TYPE*)t for f(a), return 0 if OK</li>
+<li>THREAD_CREATEX(t,f,a) Windows only: start joinable thread (THREAD_TYPE*)t for f(a), return 0 if OK</li>
+<li>THREAD_CLOSE(t) Windows only: close and destroy thread ID (a handle) when done</li>
 <li>THREAD_DETACH(t) detach thread (THREAD_TYPE*)t</li>
 <li>THREAD_JOIN(t) wait to join (THREAD_TYPE*)t</li>
 <li>THREAD_EXIT exit the current thread</li>
@@ -69,10 +71,10 @@
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Aug 25 2018 13:26:08 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Mon Sep 23 2019 14:53:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

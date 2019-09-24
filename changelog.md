@@ -1541,11 +1541,17 @@ Version 2.8.91 (8/15/2019)
 
 - Correction to fix soapcpp2 2.8.90 `-z#` flag enforcement problem.
 
-Version 2.8.92 (9/16/2019) {#latest}
+Version 2.8.92 (9/16/2019)
 ---
 
 - Fixed soapcpp2-generated call to `soap_DELETE` for REST DELETE operations.
 - Minor improvements.
+
+Version 2.8.93 (9/24/2019) {#latest}
+---
+
+- Fixed a wsdl2h schema import/include issue when a `./` occurs in `schemaLocation` and schema import/include dependencies are cyclic, causing wsdl2h to not be able to locate and read schema files.
+- Removed empty substitutionGroup and duplicate substitutionGroup elements in wsdl2h-generated `SUBSTITUTIONS` sections.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -16126,9 +16126,15 @@ the fly (this can take a while) rather than retrieving them from a file. The
 randfile entry can be used to seed the PRNG. The last entry enable server-side
 session caching to speed up TLS. A unique server name is required.
 
-You can set a specific cipher list with
-`SSL_CTX_set_cipher_list(soap->ctx, "...")` where `::soap::ctx` is the SSL
-context created by `::soap_ssl_server_context`.
+You can specify a cipher list to use with TLSv1.2 and below with
+`SSL_CTX_set_cipher_list(soap->ctx, "...")` where `soap->ctx` is the SSL
+context created by `::soap_ssl_server_context()`.  Likewise, use
+`SSL_CTX_set_ciphersuites(soap->ctx, "...")` to configure the available TLSv1.3
+ciphersuites.
+
+We refer to the OpenSSL documentation and manual pages of
+`SSL_CTX_set_cipher_list` and `SSL_CTX_set_ciphersuites` for details on the
+latest cipher lists and suites available to use.
 
 The GNUTLS mutex lock setup is automatically performed in the engine, but only
 when POSIX threads are detected and available.
@@ -16269,7 +16275,15 @@ client, if server authentication is required. Alternatively, you can use the
 <i>`gsoap/plugin/cacerts.h`</i> and <i>`gsoap/plugin/cacerts.c`</i> code to embed CA certificates
 in your client code.
 
-You can set a specific cipher list with `SSL_CTX_set_cipher_list(soap->ctx, "...")` where `::soap::ctx` is the SSL context created by `::soap_ssl_client_context`.
+You can specify a cipher list to use with TLSv1.2 and below with
+`SSL_CTX_set_cipher_list(soap->ctx, "...")` where `soap->ctx` is the SSL
+context created by `::soap_ssl_client_context()`.  Likewise, use
+`SSL_CTX_set_ciphersuites(soap->ctx, "...")` to configure the available TLSv1.3
+ciphersuites.
+
+We refer to the OpenSSL documentation and manual pages of
+`SSL_CTX_set_cipher_list` and `SSL_CTX_set_ciphersuites` for details on the
+latest cipher lists and suites available to use.
 
 Other client-side SSL options are `#SOAP_SSL_SKIP_HOST_CHECK` to skip the host name verification check and `#SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE` to allow connecting to a host with an expired certificate. For example,
 

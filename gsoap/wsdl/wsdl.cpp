@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -606,47 +606,73 @@ char *wsdl__definitions::absoluteLocation(const char *loc) const
     loc += 7;
   const char *s = strrchr(base, '/');
 #ifdef WIN32
+  while (!strncmp(loc, "./", 2) || !strncmp(loc, ".\\", 2))
+    loc += 2;
   const char *t = strrchr(base, '\\');
   if (!s || s < t)
     s = t;
   if (!s)
     return soap_strdup(soap, loc);
-  while ((!strncmp(loc, "../", 3) || !strncmp(loc, "..\\", 3)) && s > base)
+  while (true)
   {
-    while (--s >= base)
+    if ((!strncmp(loc, "../", 3) || !strncmp(loc, "..\\", 3)) && s > base)
     {
-      if (*s == '/' || *s == '\\')
+      while (--s >= base)
       {
-        if (s[1] != '.')
-          break;
-        if (s[2] == '.' && (s[3] == '/' || s[3] == '\\'))
+        if (*s == '/' || *s == '\\')
         {
-          s += 3;
-          break;
+          if (s[1] != '.')
+            break;
+          if (s[2] == '.' && (s[3] == '/' || s[3] == '\\'))
+          {
+            s += 3;
+            break;
+          }
         }
       }
+      loc += 3;
     }
-    loc += 3;
+    else if (!strncmp(loc, "./", 2) || !strncmp(loc, ".\\", 2))
+    {
+      loc += 2;
+    }
+    else
+    {
+      break;
+    }
   }
 #else
+  while (!strncmp(loc, "./", 2))
+    loc += 2;
   if (!s)
     return soap_strdup(soap, loc);
-  while (!strncmp(loc, "../", 3) && s > base)
+  while (true)
   {
-    while (--s >= base)
+    if (!strncmp(loc, "../", 3) && s > base)
     {
-      if (*s == '/')
+      while (--s >= base)
       {
-        if (s[1] != '.')
-          break;
-        if (s[2] == '.' && s[3] == '/')
+        if (*s == '/')
         {
-          s += 3;
-          break;
+          if (s[1] != '.')
+            break;
+          if (s[2] == '.' && s[3] == '/')
+          {
+            s += 3;
+            break;
+          }
         }
       }
+      loc += 3;
     }
-    loc += 3;
+    else if (!strncmp(loc, "./", 2))
+    {
+      loc += 2;
+    }
+    else
+    {
+      break;
+    }
   }
 #endif
   size_t n = s - base + 1;
