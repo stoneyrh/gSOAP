@@ -1,7 +1,7 @@
 /** Interface for the ISAPI_SoapServerFactory class
   * @file ISAPI_SoapServerFactory.h
   * @author Christian Aberger 
-  * Copyright (C) 2001 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */
 #ifndef SoapServerFactory_H
 #define SoapServerFactory_H

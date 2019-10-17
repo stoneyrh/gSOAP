@@ -1,7 +1,7 @@
 /** Implementation of the ISAPI_HttpRequest and related classes
   * @file ISAPI_HttpContext.cpp
   * @author Christian Aberger 
-  * Copyright (C) 2001-2002 WebWare (http://www.webware.at)
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */
 #include <cassert>
 #include <algorithm>

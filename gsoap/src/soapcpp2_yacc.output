@@ -187,7 +187,7 @@ Grammar
   131     | unionid '{' decls '}'
   132     | UNION id
   133     | ENUM '{' s2 dclrs s5 '}'
-  134     | ENUM '*' '{' s2 dclrs s5 '}'
+  134     | ENUM '*' '{' s4 dclrs s5 '}'
   135     | enum '{' s2 dclrs s5 '}'
   136     | enumsc '{' s2 dclrs s5 '}'
   137     | mask '{' s4 dclrs s5 '}'
@@ -635,11 +635,11 @@ tname (166)
 base <e> (167)
     on left: 174 175 176 177 178 179, on right: 125 174 175 176
 s2 (168)
-    on left: 180, on right: 123 127 133 134 135 136 150 152
+    on left: 180, on right: 123 127 133 135 136 150 152
 s3 (169)
     on left: 181, on right: 130 154
 s4 (170)
-    on left: 182, on right: 137 138
+    on left: 182, on right: 134 137 138
 s5 (171)
     on left: 183 184, on right: 133 134 135 136 137 138
 s6 (172)
@@ -915,7 +915,7 @@ State 14
 State 15
 
   133 type: ENUM . '{' s2 dclrs s5 '}'
-  134     | ENUM . '*' '{' s2 dclrs s5 '}'
+  134     | ENUM . '*' '{' s4 dclrs s5 '}'
   139     | ENUM . id
   140     | ENUM . sc
   149     | ENUM . error '}'
@@ -1815,7 +1815,7 @@ State 93
 
 State 94
 
-  134 type: ENUM '*' . '{' s2 dclrs s5 '}'
+  134 type: ENUM '*' . '{' s4 dclrs s5 '}'
   158 mask: ENUM '*' . id utype
   159 masksc: ENUM '*' . sc utype
 
@@ -3089,11 +3089,11 @@ State 180
 
 State 181
 
-  134 type: ENUM '*' '{' . s2 dclrs s5 '}'
+  134 type: ENUM '*' '{' . s4 dclrs s5 '}'
 
-    $default  reduce using rule 180 (s2)
+    $default  reduce using rule 182 (s4)
 
-    s2  go to state 241
+    s4  go to state 241
 
 
 State 182
@@ -4296,7 +4296,7 @@ State 240
 
 State 241
 
-  134 type: ENUM '*' '{' s2 . dclrs s5 '}'
+  134 type: ENUM '*' '{' s4 . dclrs s5 '}'
 
     error           shift, and go to state 244
     AUTO            shift, and go to state 10
@@ -5321,7 +5321,7 @@ State 310
 
    32 dclrs: dclrs . ',' dclr
    33      | dclrs . ',' fdclr func
-  134 type: ENUM '*' '{' s2 dclrs . s5 '}'
+  134 type: ENUM '*' '{' s4 dclrs . s5 '}'
 
     ','  shift, and go to state 311
 
@@ -6451,7 +6451,7 @@ State 363
 
 State 364
 
-  134 type: ENUM '*' '{' s2 dclrs s5 . '}'
+  134 type: ENUM '*' '{' s4 dclrs s5 . '}'
 
     '}'  shift, and go to state 410
 
@@ -7374,7 +7374,7 @@ State 409
 
 State 410
 
-  134 type: ENUM '*' '{' s2 dclrs s5 '}' .
+  134 type: ENUM '*' '{' s4 dclrs s5 '}' .
 
     $default  reduce using rule 134 (type)
 

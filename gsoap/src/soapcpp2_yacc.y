@@ -1268,7 +1268,7 @@ type    : VOID          { $$ = mkvoid(); }
                           $$ = p->info.typ;
                           exitscope();
                         }
-        | ENUM '*' '{' s2 dclrs s5 '}'
+        | ENUM '*' '{' s4 dclrs s5 '}'
                         {
                           sym = gensym("_Enum");
                           sprintf(errbuf, "anonymous enum will be named '%s'", sym->name);

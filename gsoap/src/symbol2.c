@@ -2668,26 +2668,46 @@ generate_header(Table *t)
         }
         if ((Table*)p->info.typ->ref)
         {
+          LONG64 delta = 0;
           const char *c = "";
+          if (p->info.typ->type == Tenum && !is_mask(p->info.typ))
+          {
+            for (q = ((Table*)p->info.typ->ref)->list; q; q = q->next)
+            {
+              Entry *e = entry(r, q->sym);
+              if (e && delta <= e->info.val.i)
+                delta = e->info.val.i + 1;
+            }
+          }
           for (q = ((Table*)p->info.typ->ref)->list; q; q = q->next)
           {
             Entry *e = NULL;
             if (rflag)
               fprintf(freport, "%s <code> %s </code>", c, ident(q->sym->name));
-            if (p->info.typ->type == Tenum && (e = entry(r, q->sym)) && e->info.val.i == q->info.val.i)
-              fprintf(fheader, " /* %s\n\t%s = " SOAP_LONG_FORMAT " */", c, ident(q->sym->name), q->info.val.i);
+            if (p->info.typ->type == Tenum && (e = entry(r, q->sym)))
+            {
+              fprintf(fheader, " /* %s\n\t%s = " SOAP_LONG_FORMAT " */", c, ident(q->sym->name), e->info.val.i);
+              if (delta > 0)
+                delta--;
+            }
             else
             {
-              if (q->info.val.i > 0 && q->info.val.i < 128 && isalpha((int)q->info.val.i))
+              LONG64 i = q->info.val.i + delta;
+              if (delta == 0 && i > 0 && i < 128 && isalpha((int)i))
+              {
                 fprintf(fheader, "%s\n\t%s = '%c'", c, ident(q->sym->name), (int)q->info.val.i);
-              else if (q->info.val.i <= 0x7FFFLL && q->info.val.i >= -0x8000LL)
-                fprintf(fheader, "%s\n\t%s = " SOAP_LONG_FORMAT, c, ident(q->sym->name), q->info.val.i);
+              }
               else
-                fprintf(fheader, "%s\n\t%s = " SOAP_LONG_FORMAT "LL", c, ident(q->sym->name), q->info.val.i);
+              {
+                if (i <= 0x7FFFLL && i >= -0x8000LL)
+                  fprintf(fheader, "%s\n\t%s = " SOAP_LONG_FORMAT, c, ident(q->sym->name), i);
+                else
+                  fprintf(fheader, "%s\n\t%s = " SOAP_LONG_FORMAT "LL", c, ident(q->sym->name), i);
+              }
               if (p->info.typ->type == Tenum && !e)
               {
                 e = enter(r, q->sym);
-                e->info.val.i = q->info.val.i;
+                e->info.val.i = i;
               }
               c = ",";
             }

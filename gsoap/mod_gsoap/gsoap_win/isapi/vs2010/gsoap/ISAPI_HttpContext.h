@@ -1,7 +1,7 @@
 /** Interface for the ISAPI_HttpRequest and related classes
   * @file ISAPI_HttpContext.h
   * @author Christian Aberger 
-  * Copyright (C) 2001 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */
 #ifndef ISAPIHTTPCONTEXT_H
 #define ISAPIHTTPCONTEXT_H

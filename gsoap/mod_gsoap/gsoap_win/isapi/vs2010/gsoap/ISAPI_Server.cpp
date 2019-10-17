@@ -1,10 +1,8 @@
 /** Implementation of the ISAPI_Server class 
   * @file ISAPI_Server.cpp
   * @author Christian Aberger 
-  * Copyright (C) 2001 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   * Load a gosap server dll dynamically (if not already loaded) and serve the request.
-  * See http://www.aberger.at/SOAP for documentation.
-  * 
   */
 #define WIN32_LEAN_AND_MEAN
 

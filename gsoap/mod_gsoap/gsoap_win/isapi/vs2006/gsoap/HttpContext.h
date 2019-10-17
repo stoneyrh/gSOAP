@@ -1,7 +1,7 @@
 /** Interface for the HttpMessage and HttpContext classes.
   * @file HttpContext.h
   * @author Christian Aberger 
-  * Copyright (C) 2001-2002 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */
 #ifndef HttpContext_H_F3A8FE10_2C12_11d5_8BEB_01A0CCD4FF57
 #define HttpContext_H_F3A8FE10_2C12_11d5_8BEB_01A0CCD4FF57

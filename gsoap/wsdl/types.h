@@ -85,7 +85,7 @@ class Types
     const char *tnamenoptr(const char *prefix, const char *URI, const char *qname);
     const char *pname(bool flag, bool smart, const char *prefix, const char *URI, const char *qname);
     const char *oname(const char *prefix, const char *URI, const char *qname);
-    const char *ename(const char *type, const char *value, bool isqname);
+    const char *ename(const char *type, const char *value, bool isqname, bool isbitmask);
     const char *sname(const char *URI, const char *name);
     const char *gname(const char *URI, const char *name);
     const char *uname(const char *URI);

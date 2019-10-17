@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">gSOAP user guide</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Sep 24 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Oct 17 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -1344,9 +1344,9 @@ wsdl2h options</h2>
 <tr>
 <td><a href="#wsdl2h-z"><code>-z1</code></a> </td><td>compatibility with 2.7.6e: generate pointer-based arrays </td></tr>
 <tr>
-<td><a href="#wsdl2h-z"><code>-z2</code></a> </td><td>compatibility with 2.7.15: qualify element/attribute referenced members </td></tr>
+<td><a href="#wsdl2h-z"><code>-z2</code></a> </td><td>compatibility with 2.7.15: (un)qualify element/attribute referenced members </td></tr>
 <tr>
-<td><a href="#wsdl2h-z"><code>-z3</code></a> </td><td>compatibility with 2.7.16 to 2.8.7: qualify element/attribute references </td></tr>
+<td><a href="#wsdl2h-z"><code>-z3</code></a> </td><td>compatibility with 2.7.16 to 2.8.7: (un)qualify element/attribute referenced members </td></tr>
 <tr>
 <td><a href="#wsdl2h-z"><code>-z4</code></a> </td><td>compatibility up to 2.8.11: don't generate union structs in std::vector </td></tr>
 <tr>
@@ -1357,6 +1357,8 @@ wsdl2h options</h2>
 <td><a href="#wsdl2h-z"><code>-z7</code></a> </td><td>compatibility up to 2.8.59: don't generate <code>std::vector</code> of class of union </td></tr>
 <tr>
 <td><a href="#wsdl2h-z"><code>-z8</code></a> </td><td>compatibility up to 2.8.74: don't generate qualifiers for doc/lit wrapped patterns </td></tr>
+<tr>
+<td><a href="#wsdl2h-z"><code>-z9</code></a> </td><td>compatibility up to 2.8.93: always qualify element/attribute referenced members, even when defined in the same namespace with default forms unqualified </td></tr>
 <tr>
 <td><a href="#wsdl2h-_"><code>-_</code></a> </td><td>don't generate <code>_USCORE</code> (replace with Unicode <code>_x005f</code>) </td></tr>
 </table>
@@ -1692,14 +1694,15 @@ wsdl2h -y</h3>
 wsdl2h -z</h3>
 <p>These options are for backward compatiility with older gSOAP releases:</p>
 <ul>
-<li><b><code>-z1</code></b> compatibility with 2.7.6e: generate pointer-based arrays.</li>
-<li><b><code>-z2</code></b> compatibility with 2.7.7 to 2.7.15: qualify element/attribute references.</li>
-<li><b><code>-z3</code></b> compatibility with 2.7.16 to 2.8.7: qualify element/attribute references.</li>
-<li><b><code>-z4</code></b> compatibility up to 2.8.11: don't generate union structs in std::vector.</li>
-<li><b><code>-z5</code></b> compatibility up to 2.8.15: don't include minor improvements.</li>
-<li><b><code>-z6</code></b> compatibility up to 2.8.17: don't include minor improvements.</li>
-<li><b><code>-z7</code></b> compatibility up to 2.8.59: don't generate std::vector of class of union.</li>
-<li><b><code>-z8</code></b> compatibility up to 2.8.74: don't gen quals for doc/lit wrapped patterns.</li>
+<li><b><code>-z1</code></b> compatibility with 2.7.6e: generate pointer-based arrays</li>
+<li><b><code>-z2</code></b> compatibility with 2.7.15: (un)qualify element/attribute referenced members</li>
+<li><b><code>-z3</code></b> compatibility with 2.7.16 to 2.8.7: (un)qualify element/attribute referenced members</li>
+<li><b><code>-z4</code></b> compatibility up to 2.8.11: don't generate union structs in std::vector</li>
+<li><b><code>-z5</code></b> compatibility up to 2.8.15: don't include minor improvements</li>
+<li><b><code>-z6</code></b> compatibility up to 2.8.17: don't include minor improvements</li>
+<li><b><code>-z7</code></b> compatibility up to 2.8.59: don't generate <code>std::vector</code> of class of union</li>
+<li><b><code>-z8</code></b> compatibility up to 2.8.74: don't generate qualifiers for doc/lit wrapped patterns</li>
+<li><b><code>-z9</code></b> compatibility up to 2.8.93: always qualify element/attribute referenced members, even when defined in the same namespace with default forms unqualified</li>
 </ul>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h3><a class="anchor" id="wsdl2h-_"></a>
@@ -4807,7 +4810,7 @@ All rights reserved.</em> </p>
 Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Sep 24 2019 15:46:18 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Oct 17 2019 17:00:00 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

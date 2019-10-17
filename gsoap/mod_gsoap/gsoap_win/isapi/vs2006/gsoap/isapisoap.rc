@@ -49,7 +49,7 @@ BEGIN
             VALUE "FileDescription", "SOAP extension for Internet Information Server\0"
             VALUE "FileVersion", "1, 0, 0, 2\0"
             VALUE "InternalName", "gsoap\0"
-            VALUE "LegalCopyright", "Copyright © 2001-2003 Aberger http://www.aberger.at/SOAP\0"
+            VALUE "LegalCopyright", "Copyright © 2001-2019 Genivia Inc and Aberger\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "gsoap.dll\0"
             VALUE "PrivateBuild", "\0"

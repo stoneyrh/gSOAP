@@ -1,7 +1,7 @@
 /** Implementation of the ISAPI_SoapServerFactory class
   * @file SoapServerFactory.h
   * @author Christian Aberger 
-  * Copyright (C) 2001 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */
 #include <cassert>
 #include <cstring> // for casecmp

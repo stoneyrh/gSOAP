@@ -1,7 +1,7 @@
 /** Interface for the isapistream class
   * @file isapistream.h
   * @author Christian Aberger 
-  * Copyright (C) 2001 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */
 #ifndef _ISAPISTREAM_H_1DCECA02_E2F0_11d4_83AA_00A0CCD4FF57
 #define _ISAPISTREAM_H_1DCECA02_E2F0_11d4_83AA_00A0CCD4FF57

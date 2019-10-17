@@ -4937,13 +4937,14 @@ option                                    | result
 [`-x`](#wsdl2h-x)                         | don't generate `_XML any` and `_XML anyAttribute` extensibility elements 
 [`-y`](#wsdl2h-y)                         | generate typedef synonyms for structs and enums 
 [`-z1`](#wsdl2h-z)                        | compatibility with 2.7.6e: generate pointer-based arrays
-[`-z2`](#wsdl2h-z)                        | compatibility with 2.7.15: qualify element/attribute referenced members
-[`-z3`](#wsdl2h-z)                        | compatibility with 2.7.16 to 2.8.7: qualify element/attribute references
+[`-z2`](#wsdl2h-z)                        | compatibility with 2.7.15: (un)qualify element/attribute referenced members
+[`-z3`](#wsdl2h-z)                        | compatibility with 2.7.16 to 2.8.7: (un)qualify element/attribute referenced members
 [`-z4`](#wsdl2h-z)                        | compatibility up to 2.8.11: don't generate union structs in std::vector 
 [`-z5`](#wsdl2h-z)                        | compatibility up to 2.8.15: don't include minor improvements
 [`-z6`](#wsdl2h-z)                        | compatibility up to 2.8.17: don't include minor improvements
 [`-z7`](#wsdl2h-z)                        | compatibility up to 2.8.59: don't generate `std::vector` of class of union
 [`-z8`](#wsdl2h-z)                        | compatibility up to 2.8.74: don't generate qualifiers for doc/lit wrapped patterns
+[`-z9`](#wsdl2h-z)                        | compatibility up to 2.8.93: always qualify element/attribute referenced members, even when defined in the same namespace with default forms unqualified
 [`-_`](#wsdl2h-_)                         | don't generate `_USCORE` (replace with Unicode `_x005f`) 
 
 The following subsections explain the options in detail.  The source code
@@ -6551,14 +6552,15 @@ is declared by `typedef struct name name;` and for an enum is declared by
 
 These options are for backward compatiility with older gSOAP releases:
 
-- <b>`-z1`</b> compatibility with 2.7.6e: generate pointer-based arrays.
-- <b>`-z2`</b> compatibility with 2.7.7 to 2.7.15: qualify element/attribute references.
-- <b>`-z3`</b> compatibility with 2.7.16 to 2.8.7: qualify element/attribute references.
-- <b>`-z4`</b> compatibility up to 2.8.11: don't generate union structs in std::vector.
-- <b>`-z5`</b> compatibility up to 2.8.15: don't include minor improvements.
-- <b>`-z6`</b> compatibility up to 2.8.17: don't include minor improvements.
-- <b>`-z7`</b> compatibility up to 2.8.59: don't generate std::vector of class of union.
-- <b>`-z8`</b> compatibility up to 2.8.74: don't gen quals for doc/lit wrapped patterns.
+- <b>`-z1`</b> compatibility with 2.7.6e: generate pointer-based arrays
+- <b>`-z2`</b> compatibility with 2.7.15: (un)qualify element/attribute referenced members
+- <b>`-z3`</b> compatibility with 2.7.16 to 2.8.7: (un)qualify element/attribute referenced members
+- <b>`-z4`</b> compatibility up to 2.8.11: don't generate union structs in std::vector 
+- <b>`-z5`</b> compatibility up to 2.8.15: don't include minor improvements
+- <b>`-z6`</b> compatibility up to 2.8.17: don't include minor improvements
+- <b>`-z7`</b> compatibility up to 2.8.59: don't generate `std::vector` of class of union
+- <b>`-z8`</b> compatibility up to 2.8.74: don't generate qualifiers for doc/lit wrapped patterns
+- <b>`-z9`</b> compatibility up to 2.8.93: always qualify element/attribute referenced members, even when defined in the same namespace with default forms unqualified
 
 🔝 [Back to table of contents](#)
 

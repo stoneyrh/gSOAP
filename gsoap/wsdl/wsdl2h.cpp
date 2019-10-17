@@ -576,13 +576,14 @@ static void options(int argc, char **argv)
 -x      don't generate _XML any/anyAttribute extensibility elements\n\
 -y      generate typedef synonyms for structs and enums\n\
 -z1     compatibility with 2.7.6e: generate pointer-based arrays\n\
--z2     compatibility with 2.7.7 to 2.7.15: qualify element/attribute references\n\
--z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references\n\
+-z2     compatibility with 2.7.7-2.7.15: (un)qualify element/attribute refs\n\
+-z3     compatibility with 2.7.16-2.8.7: (un)qualify element/attribute refs\n\
 -z4     compatibility up to 2.8.11: don't generate union structs in std::vector\n\
 -z5     compatibility up to 2.8.15: don't include minor improvements\n\
 -z6     compatibility up to 2.8.17: don't include minor improvements\n\
 -z7     compatibility up to 2.8.59: don't generate std::vector of class of union\n\
 -z8     compatibility up to 2.8.74: don't gen quals for doc/lit wrapped patterns\n\
+-z9     compatibility up to 2.8.93: always qualify element/attribute refs\n\
 -_      don't generate _USCORE (replace with Unicode code point _x005f)\n\
 infile.wsdl infile.xsd http://www... list of input sources (if none reads stdin)\n\
 \n");

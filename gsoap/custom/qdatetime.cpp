@@ -57,8 +57,17 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #else
 # include "soapH.h"	/* or manually replace with soapcpp2-generated *H.h file */
 #endif
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)) && QT_CONFIG(timezone)
-# include <QTimeZone>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+# if QT_CONFIG(timezone)
+#  include <QTimeZone>
+#  define WITH_QT_SETTIMEZONE
+# endif
+#endif
+
+#ifndef QStringLiteral
+/* note: source code is assumed to be encoded in UTF-8 */
+# define QStringLiteral(str) QString::fromUtf8("" str "", sizeof(str) - 1)
 #endif
 
 static void * instantiate_xsd__dateTime(struct soap*, int, const char*, const char*, size_t*);
@@ -222,7 +231,7 @@ int soap_s2xsd__dateTime(struct soap *soap, const char *s, QDateTime *a)
         if (*t)
           return soap->error = SOAP_TYPE;
         int offsetSeconds = mins*60 + hrs*3600;
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)) && QT_CONFIG(timezone)
+#ifdef WITH_QT_SETTIMEZONE
         a->setTimeZone(QTimeZone(offsetSeconds));
 #else
         *a = a->addSecs(offsetSeconds);
@@ -235,6 +244,7 @@ int soap_s2xsd__dateTime(struct soap *soap, const char *s, QDateTime *a)
     else
     {
       /* no UTC or timezone, so assume we got a localtime */
+      a->setTimeSpec(Qt::TimeZone);
     }
   }
   return soap->error;

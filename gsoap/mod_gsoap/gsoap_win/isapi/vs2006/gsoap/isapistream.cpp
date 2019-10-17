@@ -1,7 +1,7 @@
 /** Implementation of the isapistream class.
   * @file isapistream.cpp
   * @author Christian Aberger 
-  * Copyright (C) 2001 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */
 #include "isapistream.h"
 #include <cassert>

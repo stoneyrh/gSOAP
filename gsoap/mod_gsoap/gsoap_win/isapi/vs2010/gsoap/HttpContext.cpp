@@ -1,7 +1,7 @@
 /** Implementation of the HttpContext class
   * @file HttpContext.cpp
   * @author Christian Aberger 
-  * Copyright (C) 2001 WebWare (http://www.webware.at) 
+  * Copyright (C) 2001 Genivia Inc and WebWare
   */ 
 #include "HttpContext.h"
 

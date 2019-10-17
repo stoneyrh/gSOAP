@@ -58,6 +58,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # include "soapH.h"	/* or manually replace with soapcpp2-generated *H.h file */
 #endif
 
+#ifndef QStringLiteral
+/* note: source code is assumed to be encoded in UTF-8 */
+# define QStringLiteral(str) QString::fromUtf8("" str "", sizeof(str) - 1)
+#endif
+
 static void * instantiate_xsd__date(struct soap*, int, const char*, const char*, size_t*);
 
 static int delete_xsd__date(struct soap*, struct soap_clist*);

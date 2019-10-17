@@ -53,6 +53,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include <openssl/evp.h>
 #include <openssl/ssl.h>
+#include <openssl/err.h>
 
 #ifdef __cplusplus
 extern "C" {
