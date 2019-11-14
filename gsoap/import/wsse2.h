@@ -129,6 +129,8 @@ typedef struct _wsse__UsernameToken
 {	char*					Username;
 	struct _wsse__Password*			Password;
 	struct wsse__EncodedString*		Nonce;
+        char*                                   Salt;
+        unsigned int*                           Iteration;
 	char*					wsu__Created;
 	@char*					wsu__Id;
 } _wsse__UsernameToken;

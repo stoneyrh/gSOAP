@@ -205,6 +205,39 @@ Thread attach/detach callback: in my experience IIS does not always call
 your DLL was loaded. Use thread local storage instead.
 
 
+IIS Settings                                                         {#settings}
+============
+
+This depends on the version of the Windows OS.
+
+The gSOAP ISAPI extension uses `ReadClient`.  The documentation of this
+function states: *"The number of bytes that the Web Server reads when receiving
+POST data is specified in the `HKEY_LOCAL_MACHINE\COMM\HTTPD\PostReadSize`
+registry key. The Web Server will read in, at most, the number of bytes
+specified in this registry value before calling the ISAPI extension."* This
+value should be changed if it is too small to handle POST requests that are
+larger than this value.
+
+Furthermore, IIS enforces file upload size limits, which by default is 2MB.  This
+is a problem for POST requests that are larger than the default.  The IIS settings
+should be updated in `web.config`, for example to increase the allowed size of
+the POST request messages to 100MB:
+
+    <configuration>
+        <system.webServer>
+            <security>
+              <requestFiltering>
+                <requestLimits maxAllowedContentLength="100000000"/>
+              </requestFiltering>
+            </security>
+        </system.webServer>
+    </configuration>
+
+The gSOAP engine limits the size of requests to 2GB max, which can be changed
+by setting the value of `soap->recv_maxlength` to the max number of bytes allowed
+to receive.  For other gSOAP settings, please see the gSOAP documentation.
+
+
 Troubleshooting                                                         {#debug}
 ===============
 

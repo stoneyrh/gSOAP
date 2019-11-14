@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.94
+        stdsoap2.h 2.8.95
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20894
+#define GSOAP_VERSION 20895
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -361,7 +361,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_SSCANF
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
-#  define HAVE_SYS_TIMEB_H
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define HAVE_LOCALE_H
@@ -444,7 +443,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_GETTIMEOFDAY
-#  define HAVE_SYS_TIMEB_H
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
 #  define HAVE_ASCTIME_R
@@ -465,9 +463,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_STRTOUL
 #  define HAVE_STRTOLL
 #  define HAVE_STRTOULL
-#  define HAVE_SYS_TIMEB_H
 #  define HAVE_GETTIMEOFDAY
-#  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
@@ -493,6 +489,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_SSCANF
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
+#  define HAVE_SYS_TIMEB_H
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
@@ -565,8 +562,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_STRTOLL
 #  define HAVE_STRTOULL
 #  define HAVE_GETTIMEOFDAY
-#  define HAVE_SYS_TIMEB_H
-#  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
@@ -604,8 +599,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_STRTOUL
 #  define HAVE_STRTOLL
 #  define HAVE_STRTOULL
-#  define HAVE_SYS_TIMEB_H
-#  define HAVE_FTIME
+#  define HAVE_GETTIMEOFDAY
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
@@ -816,7 +810,9 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 # ifndef WITH_LEAN
 #  ifdef HAVE_SYS_TIMEB_H
-#   include <sys/timeb.h>              /* for ftime() */
+#   ifdef HAVE_FTIME
+#    include <sys/timeb.h>              /* for ftime() */
+#   endif
 #  endif
 #  include <time.h>
 # endif
@@ -1395,7 +1391,9 @@ extern "C" {
 #endif
 
 #ifdef SUN_OS
-# define HAVE_ISNAN
+# ifndef HAVE_ISNAN
+#  define HAVE_ISNAN
+# endif
 #endif
 
 #ifdef __APPLE__
@@ -2430,14 +2428,14 @@ struct SOAP_CMAC soap_dom_attribute
   soap_dom_attribute(const soap_dom_attribute& att);
   soap_dom_attribute(struct soap *soap, const char *tag);
   soap_dom_attribute(struct soap *soap, const wchar_t *tag);
-  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const char *text);
-  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const wchar_t *text);
-  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const char *text);
-  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *text);
-  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::string& text);
-  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::wstring& text);
-  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& text);
-  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& text);
+  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const char *str);
+  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const wchar_t *str);
+  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const char *str);
+  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *str);
+  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::string& str);
+  soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::wstring& str);
+  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& str);
+  soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& str);
   ~soap_dom_attribute();
   soap_dom_attribute& set(const char *ns, const char *tag)      { return *soap_att_set(this, ns, tag); }
   soap_dom_attribute& set(const char *ns, const wchar_t *tag)   { return *soap_att_set_w(this, ns, tag); }
@@ -2446,22 +2444,22 @@ struct SOAP_CMAC soap_dom_attribute
   soap_dom_attribute& set(LONG64 n)                             { return *soap_att_int(this, n); }
   soap_dom_attribute& set(float x)                              { return *soap_att_double(this, x); }
   soap_dom_attribute& set(double x)                             { return *soap_att_double(this, x); }
-  soap_dom_attribute& set(const char *text)                     { return *soap_att_text(this, text); }
-  soap_dom_attribute& set(const wchar_t *text)                  { return *soap_att_text_w(this, text); }
+  soap_dom_attribute& set(const char *str)                      { return *soap_att_text(this, str); }
+  soap_dom_attribute& set(const wchar_t *str)                   { return *soap_att_text_w(this, str); }
 #ifndef WITH_COMPAT
-  soap_dom_attribute& set(const std::string& text)              { return *soap_att_text(this, text.c_str()); }
-  soap_dom_attribute& set(const std::wstring& text)             { return *soap_att_text_w(this, text.c_str()); }
+  soap_dom_attribute& set(const std::string& str)               { return *soap_att_text(this, str.c_str()); }
+  soap_dom_attribute& set(const std::wstring& str)              { return *soap_att_text_w(this, str.c_str()); }
 #endif
   soap_dom_attribute& operator=(bool b)                         { return *soap_att_bool(this, b); }
   soap_dom_attribute& operator=(int n)                          { return *soap_att_int(this, n); }
   soap_dom_attribute& operator=(LONG64 n)                       { return *soap_att_int(this, n); }
   soap_dom_attribute& operator=(float x)                        { return *soap_att_double(this, x); }
   soap_dom_attribute& operator=(double x)                       { return *soap_att_double(this, x); }
-  soap_dom_attribute& operator=(const char *text)               { return *soap_att_text(this, text); }
-  soap_dom_attribute& operator=(const wchar_t *text)            { return *soap_att_text_w(this, text); }
+  soap_dom_attribute& operator=(const char *str)                { return *soap_att_text(this, str); }
+  soap_dom_attribute& operator=(const wchar_t *str)             { return *soap_att_text_w(this, str); }
 #ifndef WITH_COMPAT
-  soap_dom_attribute& operator=(const std::string& text)        { return *soap_att_text(this, text.c_str()); }
-  soap_dom_attribute& operator=(const std::wstring& text)       { return *soap_att_text_w(this, text.c_str()); }
+  soap_dom_attribute& operator=(const std::string& str)         { return *soap_att_text(this, str.c_str()); }
+  soap_dom_attribute& operator=(const std::wstring& str)        { return *soap_att_text_w(this, str.c_str()); }
 #endif
   soap_dom_attribute& operator=(const soap_dom_attribute& att)  { return *soap_att_copy(this, &att); }
   soap_dom_attribute& att(const char *tag)                      { return *soap_att_add(this, NULL, tag); }
@@ -2543,56 +2541,56 @@ struct SOAP_CMAC soap_dom_element
   soap_dom_element(struct soap *soap, const wchar_t *tag);
   soap_dom_element(struct soap *soap, const char *ns, const char *tag);
   soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag);
-  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const char *text);
-  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const wchar_t *text);
-  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const char *text);
-  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *text);
+  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const char *str);
+  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const wchar_t *str);
+  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const char *str);
+  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *str);
 #ifndef WITH_COMPAT
-  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::string& text);
-  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::wstring& text);
-  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& text);
-  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& text);
+  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::string& str);
+  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::wstring& str);
+  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& str);
+  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& str);
 #endif
-  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const void *node, int type);
-  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const void *node, int type);
+  soap_dom_element(struct soap *soap, const char *ns, const char *tag, const void *nod, int typ);
+  soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const void *nod, int typ);
   ~soap_dom_element();
   soap_dom_element& set(const char *ns, const char *tag)                { return *soap_elt_set(this, ns, tag); }
   soap_dom_element& set(const char *ns, const wchar_t *tag)             { return *soap_elt_set_w(this, ns, tag); }
   soap_dom_element& set(bool b)                                         { return *soap_elt_bool(this, b); }
   soap_dom_element& set(int n)                                          { return *soap_elt_int(this, n); }
   soap_dom_element& set(LONG64 n)                                       { return *soap_elt_int(this, n); }
-  soap_dom_element& set(float x)                                       { return *soap_elt_double(this, x); }
+  soap_dom_element& set(float x)                                        { return *soap_elt_double(this, x); }
   soap_dom_element& set(double x)                                       { return *soap_elt_double(this, x); }
-  soap_dom_element& set(const char *text)                               { return *soap_elt_text(this, text); }
-  soap_dom_element& set(const wchar_t *text)                            { return *soap_elt_text_w(this, text); }
+  soap_dom_element& set(const char *str)                                { return *soap_elt_text(this, str); }
+  soap_dom_element& set(const wchar_t *str)                             { return *soap_elt_text_w(this, str); }
 #ifndef WITH_COMPAT
-  soap_dom_element& set(const std::string& text)                        { return *soap_elt_text(this, text.c_str()); }
-  soap_dom_element& set(const std::wstring& text)                       { return *soap_elt_text_w(this, text.c_str()); }
+  soap_dom_element& set(const std::string& str)                         { return *soap_elt_text(this, str.c_str()); }
+  soap_dom_element& set(const std::wstring& str)                        { return *soap_elt_text_w(this, str.c_str()); }
 #endif
-  soap_dom_element& set(const void *node, int type)                     { return *soap_elt_node(this, node, type); }
+  soap_dom_element& set(const void *nod, int typ)                       { return *soap_elt_node(this, nod, typ); }
   soap_dom_element& add(soap_dom_element& elt)                          { return *soap_add_elt(this, &elt); }
   soap_dom_element& add(soap_dom_element *elt)                          { return *soap_add_elt(this, elt); }
   soap_dom_element& add(soap_dom_attribute& att)                        { return *soap_add_att(this, &att); }
   soap_dom_element& add(soap_dom_attribute *att)                        { return *soap_add_att(this, att); }
-  soap_dom_element& adds(soap_dom_element& elts)                        { return *soap_add_elts(this, &elts); }
-  soap_dom_element& adds(soap_dom_element *elts)                        { return *soap_add_elts(this, elts); }
-  soap_dom_element& adds(soap_dom_attribute& atts)                      { return *soap_add_atts(this, &atts); }
-  soap_dom_element& adds(soap_dom_attribute *atts)                      { return *soap_add_atts(this, atts); }
+  soap_dom_element& adds(soap_dom_element& elt)                         { return *soap_add_elts(this, &elt); }
+  soap_dom_element& adds(soap_dom_element *elt)                         { return *soap_add_elts(this, elt); }
+  soap_dom_element& adds(soap_dom_attribute& att)                       { return *soap_add_atts(this, &att); }
+  soap_dom_element& adds(soap_dom_attribute *att)                       { return *soap_add_atts(this, att); }
   soap_dom_element& operator=(bool b)                                   { return *soap_elt_bool(this, b); }
   soap_dom_element& operator=(int n)                                    { return *soap_elt_int(this, n); }
   soap_dom_element& operator=(LONG64 n)                                 { return *soap_elt_int(this, n); }
   soap_dom_element& operator=(float x)                                  { return *soap_elt_double(this, x); }
   soap_dom_element& operator=(double x)                                 { return *soap_elt_double(this, x); }
-  soap_dom_element& operator=(const char *text)                         { return *soap_elt_text(this, text); }
-  soap_dom_element& operator=(const wchar_t *text)                      { return *soap_elt_text_w(this, text); }
+  soap_dom_element& operator=(const char *str)                          { return *soap_elt_text(this, str); }
+  soap_dom_element& operator=(const wchar_t *str)                       { return *soap_elt_text_w(this, str); }
 #ifndef WITH_COMPAT
-  soap_dom_element& operator=(const std::string& text)                  { return *soap_elt_text(this, text.c_str()); }
-  soap_dom_element& operator=(const std::wstring& text)                 { return *soap_elt_text_w(this, text.c_str()); }
+  soap_dom_element& operator=(const std::string& str)                   { return *soap_elt_text(this, str.c_str()); }
+  soap_dom_element& operator=(const std::wstring& str)                  { return *soap_elt_text_w(this, str.c_str()); }
 #endif
   soap_dom_element& operator=(const soap_dom_element& elt)              { return *soap_elt_copy(this, &elt); }
-  template<class T> soap_dom_element& operator=(const T& node)          { return this->set(&node, node.soap_type()); }
-  template<class T> soap_dom_element& operator=(const T *node)          { return this->set(node, node->soap_type()); }
-  template<class T> soap_dom_element& operator=(T *node)                { return this->set(node, node->soap_type()); }
+  template<class T> soap_dom_element& operator=(const T& nod)           { return this->set(&nod, nod.soap_type()); }
+  template<class T> soap_dom_element& operator=(const T *nod)           { return this->set(nod, nod->soap_type()); }
+  template<class T> soap_dom_element& operator=(T *nod)                 { return this->set(nod, nod->soap_type()); }
   soap_dom_attribute& att(const char *tag)                              { return *soap_att(this, NULL, tag); }
   soap_dom_attribute& att(const wchar_t *tag)                           { return *soap_att_w(this, NULL, tag); }
   soap_dom_attribute& att(const char *ns, const char *tag)              { return *soap_att(this, ns, tag); }
@@ -2644,8 +2642,8 @@ struct SOAP_CMAC soap_dom_element
   LONG64 get_int() const                                                { return soap_elt_get_LONG64(this); }
   double get_double() const                                             { return soap_elt_get_double(this); }
   const char *get_text() const                                          { return this->text; }
-  const void *get_node(int type) const                                  { return soap_elt_get_node(this, type); }
-  int get_type(const void **node) const                                 { return soap_elt_get_type(this, node); }
+  const void *get_node(int typ) const                                   { return soap_elt_get_node(this, typ); }
+  int get_type(const void **nod) const                                  { return soap_elt_get_type(this, nod); }
   operator bool() const                                                 { return soap_elt_is_true(this) != 0; }
   operator int() const                                                  { return soap_elt_get_int(this); }
   operator LONG64() const                                               { return soap_elt_get_LONG64(this); }

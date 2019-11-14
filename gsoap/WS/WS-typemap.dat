@@ -392,7 +392,6 @@ typedef struct ds__KeyInfoType\n\
 	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;\n\
 	@char*					Id;\n\
 } ds__KeyInfoType, _ds__KeyInfo;\n\
-#import "wsse.h"
 
 ds__SignatureType =\
 typedef char *_ds__SignatureValue;\n\

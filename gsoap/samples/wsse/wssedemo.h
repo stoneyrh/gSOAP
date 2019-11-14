@@ -36,6 +36,8 @@
  *                                                                            *
 \******************************************************************************/
 
+// Choose WS-Security 1.1 or 1.0:
+// #import "wsse11.h"	// wsse = <http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd>
 #import "wsse.h"	// wsse = <http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd>
 
 /******************************************************************************\

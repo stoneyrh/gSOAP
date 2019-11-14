@@ -29,6 +29,7 @@
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_ds	"http://www.w3.org/2000/09/xmldsig#"
 //gsoap ds    schema import:	http://www.w3.org/2000/09/xmldsig#
 //gsoap ds    schema elementForm:	qualified
 //gsoap ds    schema attributeForm:	unqualified
@@ -87,7 +88,6 @@ typedef struct ds__KeyInfoType
 	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;
 	@char*					Id;
 } ds__KeyInfoType, _ds__KeyInfo;
-#import "wsse.h"
 
 /// Typedef synonym for struct ds__KeyValueType.
 typedef struct ds__KeyValueType ds__KeyValueType;

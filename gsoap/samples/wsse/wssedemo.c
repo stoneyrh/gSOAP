@@ -668,8 +668,8 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
     soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
     return err;
   }
-  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
-   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  if (soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsu, "Timestamp") == 0
+   || soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsse, "UsernameToken") == 0)
   {
     soap_wsse_delete_Security(soap);
     return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);
@@ -788,8 +788,8 @@ int ns1__sub(struct soap *soap, double a, double b, double *result)
     soap_wsse_delete_Security(soap);
     return soap->error;
   }
-  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
-   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  if (soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsu, "Timestamp") == 0
+   || soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsse, "UsernameToken") == 0)
   {
     soap_wsse_delete_Security(soap);
     return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);
@@ -835,8 +835,8 @@ int ns1__mul(struct soap *soap, double a, double b, double *result)
     soap_wsse_delete_Security(soap);
     return soap->error;
   }
-  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
-   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  if (soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsu, "Timestamp") == 0
+   || soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsse, "UsernameToken") == 0)
   {
     soap_wsse_delete_Security(soap);
     return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);
@@ -883,8 +883,8 @@ int ns1__div(struct soap *soap, double a, double b, double *result)
     soap_wsse_delete_Security(soap);
     return soap->error;
   }
-  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
-   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  if (soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsu, "Timestamp") == 0
+   || soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsse, "UsernameToken") == 0)
   {
     soap_wsse_delete_Security(soap);
     return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);

@@ -379,11 +379,13 @@ infile  header file to parse (if none reads stdin)\n\
     }
     else if (!(yyin = fopen(argv[i], "r")))
     {
-      sprintf(errbuf, "Cannot open file \"%s\" for reading", argv[i]);
+      sprintf(errbuf, "Cannot open file \"%s\" for reading: %s", argv[i], strerror(errno));
       execerror(errbuf);
     }
     else
+    {
       filename = argv[i];
+    }
   }
   fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n");
   if (filename == NULL)

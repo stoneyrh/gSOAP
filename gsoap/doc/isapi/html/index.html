@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The ISAPI extension</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Jun 3 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Nov 5 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -46,6 +46,7 @@
 <ul><li class="level1"><a href="#overview">Overview                                                             </a></li>
 <li class="level1"><a href="#install">Installation                                                          </a></li>
 <li class="level1"><a href="#deploy">Deploying services with ISAPI                                          </a></li>
+<li class="level1"><a href="#settings">IIS Settings                                                         </a></li>
 <li class="level1"><a href="#debug">Troubleshooting                                                         </a></li>
 <li class="level1"><a href="#vroot">Creating the virtual root                                               </a></li>
 <li class="level1"><a href="#license">License                                                               </a></li>
@@ -119,6 +120,20 @@ Deploying services with ISAPI                                          </h1>
 <p>The requested URL is evaluated by IIS and the query string (the part after the <code>?</code>) is used to dispatch the service request to the <code>calc.dll</code> service.</p>
 <p>Note that instead of <code>127.0.0.1</code> (which is the <code>localhost</code>), clients on the network should use the full domain name of the machine.</p>
 <p>For security reasons only DLLs stored in the same directory as <code>mod_gsoap.dll</code> can be used. If you want to do specialized initializations in your DLL then you may want to add and export a <code>DllMain</code> function, which will be called when the IIS process attaches to your DLL and before it detaches it. Do not rely on the Thread attach/detach callback: in my experience IIS does not always call <code>DllMain</code> in your DLL if these threads were already in the thread pool before your DLL was loaded. Use thread local storage instead.</p>
+<h1><a class="anchor" id="settings"></a>
+IIS Settings                                                         </h1>
+<p>This depends on the version of the Windows OS.</p>
+<p>The gSOAP ISAPI extension uses <code>ReadClient</code>. The documentation of this function states: *"The number of bytes that the Web Server reads when receiving POST data is specified in the <code>HKEY_LOCAL_MACHINE\COMM\HTTPD\PostReadSize</code> registry key. The Web Server will read in, at most, the number of bytes specified in this registry value before calling the ISAPI extension."* This value should be changed if it is too small to handle POST requests that are larger than this value.</p>
+<p>Furthermore, IIS enforces file upload size limits, which by default is 2MB. This is a problem for POST requests that are larger than the default. The IIS settings should be updated in <code>web.config</code>, for example to increase the allowed size of the POST request messages to 100MB: </p><pre class="fragment">&lt;configuration&gt;
+    &lt;system.webServer&gt;
+        &lt;security&gt;
+          &lt;requestFiltering&gt;
+            &lt;requestLimits maxAllowedContentLength="100000000"/&gt;
+          &lt;/requestFiltering&gt;
+        &lt;/security&gt;
+    &lt;/system.webServer&gt;
+&lt;/configuration&gt;
+</pre><p>The gSOAP engine limits the size of requests to 2GB max, which can be changed by setting the value of <code>soap-&gt;recv_maxlength</code> to the max number of bytes allowed to receive. For other gSOAP settings, please see the gSOAP documentation.</p>
 <h1><a class="anchor" id="debug"></a>
 Troubleshooting                                                         </h1>
 <p>If the client receives an error from the ISAPI service, such as for example: </p><pre class="fragment">SOAP FAULT: SOAP-ENV:Client
@@ -160,10 +175,10 @@ Further reading                                                    </h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Jun 3 2017 22:04:06 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Nov 5 2019 08:30:05 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

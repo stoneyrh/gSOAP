@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Security plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Sep 23 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Nov 14 2019 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -46,7 +46,8 @@
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#wsse_5">Security Header</a><ul><li class="level2"><a href="#wsse_5_1">Getting started</a></li>
+<ul><li class="level1"><a href="#Standards">compliance</a></li>
+<li class="level1"><a href="#wsse_5">Security Header</a><ul><li class="level2"><a href="#wsse_5_1">Getting started</a></li>
 <li class="level2"><a href="#wsse_5_2">Warning</a></li>
 <li class="level2"><a href="#wsse_5_3">Introduction</a></li>
 </ul>
@@ -76,9 +77,28 @@
 <li class="level1"><a href="#wsse_wsc">WS-SecureConversation and WS-Trust</a></li>
 </ul>
 </div>
-<div class="textblock"><h1><a class="anchor" id="wsse_5"></a>
+<div class="textblock"><h1><a class="anchor" id="Standards"></a>
+compliance</h1>
+<p>The WS-Security plugin conforms to:</p>
+<ul>
+<li>WS-Security 1.1 (and backward compatibility with WS-Security 1.0)</li>
+<li>XML Signature Syntax and Processing (XMLDSIG)</li>
+<li>XML Encryption Syntax and Processing (XMLENC)</li>
+<li>SAML 1.0 and 2.0</li>
+</ul>
+<p>WS-Security 1.1 with the following 1.1.1 additions:</p>
+<ul>
+<li>Web Services Security SOAP Message Security 1.1.1</li>
+<li>Web Services Security Username Token Profile 1.1.1</li>
+<li>Web Services Security Kerberos Token Profile 1.1.1</li>
+<li>Web Services Security SAML Token Profile 1.1.1</li>
+<li>Web Services Security X.509 Certificate Token Profile 1.1.1</li>
+<li>Web Services Security Rights Expression Language (REL) Token Profile 1.1.1</li>
+</ul>
+<p>Note on Basic Security Profile 1.1 compliance: the gSOAP wsse plugin cannot automatically verify that the wsse API calls made by an application comply with the profile's requirements. Users should verify the security considerations stated by the <a href="http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html">Basic Security Profile 1.1</a>, in particular giving close attention to section 19.</p>
+<h1><a class="anchor" id="wsse_5"></a>
 Security Header</h1>
-<p>The material in this section relates to the WS-Security specification section 5.</p>
+<p>The material in this section relates to the WS-Security specification.</p>
 <h2><a class="anchor" id="wsse_5_1"></a>
 Getting started</h2>
 <p>To use the wsse plugin:</p><ol type="1">
@@ -89,8 +109,8 @@ Getting started</h2>
 </ol>
 <p>An example WS-Security client/server application can be found in gsoap/samples/wsse that illustrates the use of the API to cover a wide range of WS-Security features. As a demo of the API, this example is not intended as a typical WS-Security client or server application.</p>
 <p>Another example WS-Security client/server application that is designed to interoperate with WCF can be found in gsoap/samples/WCF/Basic/MessageSecurity.</p>
-<dl class="section warning"><dt>Warning</dt><dd>The security token handler callback function parameters have changed in 2.8.34 and greater with the addition of KeyIdentifier information <code>keyid</code> and <code>keyidlen</code>. To register your own security token handler function with the plugin, make sure that your functions matches these function parameters: <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">void</span> *security_token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> *alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *keyid, <span class="keywordtype">int</span> keyidlen, <span class="keywordtype">int</span> *keylen);</div></div><!-- fragment --></dd></dl>
-<p>The wsse engine is thread safe. However, if HTTPS is required then please follow the instructions in Section <a class="el" href="wsse.html#wsse_11">WS-Security and HTTPS</a> to ensure thread-safety of WS-Security with HTTPS.</p>
+<dl class="section warning"><dt>Warning</dt><dd>The security token handler callback function parameters have changed in 2.8.34 and greater with the addition of KeyIdentifier information <code>keyid</code> and <code>keyidlen</code>. To register your own security token handler function with the plugin, make sure that your callback functions matches these function parameters: <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">void</span> *security_token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> *alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *keyid, <span class="keywordtype">int</span> keyidlen, <span class="keywordtype">int</span> *keylen);</div></div><!-- fragment --></dd></dl>
+<p>The wsse engine is thread safe. However, if HTTPS is required then please follow the instructions in Section <a class="el" href="wsse.html#wsse_11">WS-Security and HTTPS</a> to ensure thread-safety of WS-Security when combined with HTTPS.</p>
 <p>The wsse API code is implemented in:</p>
 <ul>
 <li><code><a class="el" href="wsseapi_8h.html">gsoap/plugin/wsseapi.h</a></code> wsse API declarations.</li>
@@ -104,8 +124,10 @@ Getting started</h2>
 <li>if you have zlib installed, compile all sources also with <code>-DWITH_GZIP</code>.</li>
 <li>link with <code>-lssl -lcrypto -lz -lgsoapssl++</code> (or <code>-lgsoapssl</code> for C, or compile <code>stdsoap2.cpp</code> for C++ and <code>stdsoap2.c</code> for C).</li>
 </ul>
-<p>The gSOAP header file (generated with wsdl2h, and containing the data binding interface for soapcpp2) should import <a class="el" href="wsse_8h.html">wsse.h</a> (or the older 2002 version wsse2.h):</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#import &quot;<a class="code" href="wsse_8h.html">wsse.h</a>&quot;</span></div></div><!-- fragment --><p>The wsdl2h tool then adds the necessary imports to the generated header file if the WSDL declares the use of WS-Security. If not, you may have to add the import manually before running soapcpp2.</p>
+<p>The gSOAP header file (generated with wsdl2h, and containing the data binding interface for soapcpp2) should import <a class="el" href="wsse_8h.html">wsse.h</a>:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#import &quot;<a class="code" href="wsse_8h.html">wsse.h</a>&quot;</span></div></div><!-- fragment --><p>This declaration supports WS-Security 1.0 by default and accepts WS-Security 1.1. Vice versa, to support WS-Security 1.1 by default and accept 1.0:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#import &quot;wsse11.h&quot;</span></div></div><!-- fragment --><p>The wsdl2h tool adds the necessary import directives to the generated header file if the WSDL declares the use of WS-Security. If not, you may have to add the import directive shown above manually before running soapcpp2. Instead of manually adding the directive, you can let wsdl2h do this for you by adding the following lines to typemap.dat:</p>
+<div class="fragment"><div class="line">[</div><div class="line"><span class="preprocessor">#import &quot;<a class="code" href="wsse_8h.html">wsse.h</a>&quot;</span></div><div class="line">]</div></div><!-- fragment --><p>The wsdl2h tool uses typemap.dat to add or modify the generated code.</p>
 <h2><a class="anchor" id="wsse_5_2"></a>
 Warning</h2>
 <p>The following sections describe the wsse plugin API. The narrative must not be interpreted as a set of requirements to implement WS-Security, should not be used as a guide to select certain keys and key sizes, or as a recommendation in general. Rather, the API description explains which API functions are available to implement WS-Security operations vis-a-vis sections of the WS-Security standard. It is implicitly assumed that WS-Security API requirement policies are followed by the developers of the WS-Security Web API, such as defined by <a href="http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html">Basic Security Profiles</a>.</p>
@@ -198,7 +220,8 @@ Token References</h1>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a25240140007f1776479e81dd43457f40">soap_wsse_add_KeyInfo_KeyName</a>(soap, <span class="stringliteral">&quot;name&quot;</span>);</div></div><!-- fragment --><h1><a class="anchor" id="wsse_8"></a>
 Signatures</h1>
 <p>The material in this section relates to the WS-Security specification section 8.</p>
-<p>The wsse plugin must be registered to sign and verify messages:</p>
+<p>When signatures are used with encryption (<a class="el" href="wsse.html#wsse_9">Encryption</a>), then encryption is always applied after signing. It is generally known that it is safe to perform encryption after signing, but not vice versa. In particular, this order allows for the encryption of the signature and its digests, as required by <a href="http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html">Basic Security Profile 1.1</a> section 19.4.</p>
+<p>First, the wsse plugin must be registered to sign and verify messages:</p>
 <div class="fragment"><div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div></div><!-- fragment --><p>XML signatures are usually computed over normalized XML (to ensure the XML processors of intermediate nodes can accurately reproduce the XML). To this end, the exclusive canonical XML standard (exc-c14n) is required, which is set using the <code>SOAP_XML_CANONICAL</code> flag:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div><div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div></div><!-- fragment --><p>To send messages with inclusive canonicalization, in addition to the <code>SOAP_XML_CANONICAL</code> flag also use:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a7a1670c6ee444704c8fb7ac612db37ff">soap_wsse_set_InclusiveNamespaces</a>(soap, <span class="stringliteral">&quot;*&quot;</span>);</div></div><!-- fragment --><p>However, exclusive canonicalization is recommended over inclusive canonicalization, or no canonicalization at all. WS Basic Security profiles 1.0 and 1.1 require exclusive canonicalization.</p>
@@ -318,7 +341,8 @@ Signature Validation</h2>
 <h1><a class="anchor" id="wsse_9"></a>
 Encryption</h1>
 <p>The material in this section relates to the WS-Security specification section 9.</p>
-<p>The wsse plugin must be registered:</p>
+<p>When encryption is used with signing (<a class="el" href="wsse.html#wsse_8">Signatures</a>), then encryption is always applied after signing. It is generally known that it is safe to perform encryption after signing, but not vice versa. In particular, this order allows for the encryption of the signature and its digests, as required by <a href="http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html">Basic Security Profile 1.1</a> section 19.4. The profile also requires the signature in the header to be encrypted and the entire SOAP Body, rather than parts of the SOAP Body. To this end, use <code>soap_wsse_add_EncryptedKey_encrypt_only(..., "ds:Signature SOAP-ENV:Body")</code> as described further below.</p>
+<p>First, the wsse plugin must be registered:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div><div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div></div><!-- fragment --><p>To send messages with inclusive canonicalization, in addition to the <code>SOAP_XML_CANONICAL</code> flag also use:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a7a1670c6ee444704c8fb7ac612db37ff">soap_wsse_set_InclusiveNamespaces</a>(soap, <span class="stringliteral">&quot;*&quot;</span>);</div></div><!-- fragment --><p>However, exclusive canonicalization is recommended over inclusive canonicalization, or no canonicalization at all. WS Basic Security profile 1.0 requires exclusive canonicalization.</p>
 <p>Flags to consider:</p>
@@ -442,6 +466,7 @@ wsdl2h -cuxy -o xenc.h -t WS/WS-typemap.dat WS/xenc.xsd
 Limitations and Security Considerations</h1>
 <ul>
 <li>Encryption of simple content (CDATA content) directly with <code>soap_wsse_add_EncryptedKey_encrypt_only</code> is not supported. You can encrypt elements with complex content (complexType and complexContent elements that have sub elements). This is not a limitation for decryption with the WSSE plugin, which is not limited to elements with complex content.</li>
+<li><code>EncryptedHeader</code> elements (WS-Security 1.1.1) are not supported. Any or all subelements of a SOAP Header may be encrypted, but not the SOAP Header itself, replaced by <code>&lt;wsse11:EncryptedHeader&gt;</code> with encrypted contents.</li>
 <li>Encryption is performed after signing (likewise, signatures are verified after decryption). Signing after encryption is not supported in the current plugin release. It is generally known that it is safer to perform encryption after signing as the wsse plugin performs, and not vice versa. In particular, this order allows for the encryption of the signature and its digests, as required by <a href="http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html">Basic Security Profile 1.1</a> section 19.4. To this end, use <code>soap_wsse_add_EncryptedKey_encrypt_only(..., "ds:Signature SOAP-ENV:Body")</code>.</li>
 <li>Signing and encrypting XML containing QName content may lead to verification issues, because the W3C C14N exclusive canonicalization protocol has known limitations with QName content normalization. In fact, not signing the prefix bindings as in C14N exclusive canonicalization is a security risk, because the prefix-URI binding can be modified when placed at an ancestor node that is not included in the signed XML content. Use <code>soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")</code> to define all namespace prefixes (space-separated in the string) that should be considered inclusive. All prefixes used in QName content should be listed to mitigate the security risks outlined. The WSSE engine recognizes xsi:type, SOAP-ENC:arrayType, SOAP-ENC:itemType attribute QNames. Therefore, soapcpp2 option <code>-t</code> is always safe to use, but a non-gSOAP receiver may still fail.</li>
 </ul>
@@ -449,7 +474,7 @@ Limitations and Security Considerations</h1>
 Defending Against Signature Wrapping Attacks</h1>
 <p>Signature wrapping attacks exploit a vulnerability in the XML DSig standard by tricking the signature verifier to verify the signature of the signed content but when this content is moved to a different place in the XML document, for example where the content is ignored. In this attack, a signed XML element identified with an <code>id</code> attribute is moved in the document and replaced with an unsigned replacement element with aribitrary content that the attacker created and the receiver will use instead. We refer to online articles and publications on signature wrapping attacks for more details.</p>
 <p>To defend against signature wrapping attacks, it is recommended to sign the SOAP Body instead of individual elements of the SOAP Body. A receiver must verify that the SOAP Body received is indeed signed and verify that other parts of the message such as critical SOAP Headers are signed. You can do this on the receiving end by calling <code>soap_wsse_verify_body(soap)</code> and check that the return value is nonzero. This prevents signature wrapping attacks on the SOAP Body. If individual element(s) of the SOAP Body must be signed instead of the body itself, then make sure to use call <code>soap_wsse_verify_element(soap, "namespaceURI", "tag")</code> on the receiving end and check that the return value is nonzero to verify that all elements matching the namespaceURI and tag are signed.</p>
-<p>If SOAP Headers are signed such as the timestamp and username token then make sure to verify that the timestamp was indeed signed by calling <code>soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp")</code> and check that the return value is nonzero. Likewise, to verify that the usernameToken authentication credentials are signed, call <code>soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken")</code> and check that the return value is nonzero.</p>
+<p>If SOAP Headers are signed such as the timestamp and username token then make sure to verify that the timestamp was indeed signed by calling <code>soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsu, "Timestamp")</code> and check that the return value is nonzero. Likewise, to verify that the usernameToken authentication credentials are signed, call <code>soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsse, "UsernameToken")</code> and check that the return value is nonzero.</p>
 <p>To prevent signature wrapping attacks on XML namespace prefixes used in QNames, which are vulnerable when the prefix is bound to a namespace URI in an ancester node to the signed content, use <code>soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")</code>. This makes the namespace prefixes in the list (space-separated in the string) inclusive. Use <code>soap_wsse_set_InclusiveNamespaces(soap, "+")</code> to automatically add all prefixes defined in the namespace table (i.e. the .nsmap file) to the inclusive namespace list (this requires gSOAP 2.8.64 or greater).</p>
 <h1><a class="anchor" id="wsse_wsc"></a>
 WS-SecureConversation and WS-Trust</h1>
@@ -463,7 +488,7 @@ WS-SecureConversation and WS-Trust</h1>
 Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Sep 23 2019 14:53:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Nov 14 2019 15:57:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

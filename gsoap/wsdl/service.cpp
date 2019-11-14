@@ -3573,13 +3573,13 @@ void Service::generate(Types& types)
 
 void Service::add_import(const char *s)
 {
-  if (find_if(imports.begin(), imports.end(), eqstr(s)) == imports.end())
+  if (std::find_if(imports.begin(), imports.end(), eqstr(s)) == imports.end())
     imports.push_back(s);
 }
 
 void Service::del_import(const char *s)
 {
-  VectorOfString::iterator i = find_if(imports.begin(), imports.end(), eqstr(s));
+  VectorOfString::iterator i = std::find_if(imports.begin(), imports.end(), eqstr(s));
   if (i != imports.end())
     imports.erase(i);
 }

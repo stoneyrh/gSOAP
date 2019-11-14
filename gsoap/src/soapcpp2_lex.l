@@ -194,6 +194,7 @@ import          #{ws}*import{ws}+.*\n
                           else
                           { if (vflag)
                               fprintf(stderr, "End of %s\n\n", filename);
+                            fclose(yyin);
                             yy_delete_buffer(YY_CURRENT_BUFFER);
                             yy_switch_to_buffer(instk[imports]);
                             filename = fnstk[imports];
@@ -1171,7 +1172,7 @@ static void import(const char *file)
       while (s && !yyin);
     }
     if (!yyin)
-    { sprintf(errbuf, "#import: Cannot open file \"%s\" for reading.\nHint: use option -I<path> (for example -Igsoap" SOAP_PATHSEP "gsoap/import" SOAP_PATHSEP "gsoap/custom:.)", file);
+    { sprintf(errbuf, "Cannot open file \"%s\" to import: %s\nHint: use option -I<path> (for example -Igsoap" SOAP_PATHSEP "gsoap/import" SOAP_PATHSEP "gsoap/custom:.)", file, strerror(errno));
       execerror(errbuf);
     }
   }

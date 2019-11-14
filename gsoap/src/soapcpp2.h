@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.94" /* Current version */
-# define GSOAP_VERSION 20894
+# define VERSION "2.8.95" /* Current version */
+# define GSOAP_VERSION 20895
 #endif
 
 #ifdef WIN32
@@ -235,9 +235,9 @@ typedef struct Tnode
 {
   Type            type;
   void            *ref;
-  Symbol          *id;    /* struct/class/union/enum name */
-  Symbol          *base;  /* base class name */
-  Symbol          *sym;   /* typedef name */
+  Symbol          *id;     /* struct/class/union/enum name */
+  Symbol          *baseid; /* base class name */
+  Symbol          *sym;    /* typedef name */
   Symbol          *restriction;   /* restriction via typedef base id */
   Symbol          *synonym;       /* synonymous typedef base name for typedef base id */
   Symbol          *extsym;        /* typedef sym of external type w/ custom serializer */
@@ -246,6 +246,7 @@ typedef struct Tnode
   int             transient;
   const char      *imported;
   struct Tnode    *next;
+  struct Tnode    *base;
   Visited         visited;
   Bool            recursive;      /* recursive data type */
   Bool            generated;
@@ -410,6 +411,8 @@ typedef struct Pragma
 extern Entry *enter(Table*, Symbol*), *entry(Table*, Symbol*), *reenter(Table*, Symbol*), *enumentry(Symbol*);
 
 extern int merge(Table*, Table*);
+
+extern void base_of_derived(Entry*);
 
 extern Table *mktable(Table*);
 

@@ -4,7 +4,7 @@
         gSOAP interface for (signed) message digest
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2019, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -530,7 +530,11 @@ soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void
   switch ((alg & SOAP_SMD_ALGO))
   {
     case SOAP_SMD_HMAC:
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
       HMAC_Init((HMAC_CTX*)data->ctx, key, keylen, type);
+#else
+      HMAC_Init_ex((HMAC_CTX*)data->ctx, key, keylen, type, NULL);
+#endif
       break;
     case SOAP_SMD_DGST:
       EVP_DigestInit((EVP_MD_CTX*)data->ctx, type);

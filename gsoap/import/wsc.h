@@ -6,6 +6,8 @@
         wsdl2h -cex -o wsc.h -t WS/WS-typemap.dat WS/WS-SecureConversation.xsd
 
         - Removed //gsoapopt
+        - Removed #import "wsse.h"
+        - Removed #import "wsu.h"
         - Changed //gsoap wsc schema namespace directive to import directive
         - Added //gsoap wsc schema namespace2 directive
 */
@@ -23,9 +25,6 @@
  * Import                                                                     *
  *                                                                            *
 \******************************************************************************/
-
-#import "wsse.h"	// wsse = <http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd>
-#import "wsu.h"	// wsu = <http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd>
 
 /******************************************************************************\
  *                                                                            *

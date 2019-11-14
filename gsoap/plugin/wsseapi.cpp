@@ -63,9 +63,33 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 [TOC]
 
+@section Standards compliance
+
+The WS-Security plugin conforms to:
+
+- WS-Security 1.1 (and backward compatibility with WS-Security 1.0)
+- XML Signature Syntax and Processing (XMLDSIG)
+- XML Encryption Syntax and Processing (XMLENC)
+- SAML 1.0 and 2.0
+
+WS-Security 1.1 with the following 1.1.1 additions:
+
+- Web Services Security SOAP Message Security 1.1.1
+- Web Services Security Username Token Profile 1.1.1
+- Web Services Security Kerberos Token Profile 1.1.1
+- Web Services Security SAML Token Profile 1.1.1
+- Web Services Security X.509 Certificate Token Profile 1.1.1
+- Web Services Security Rights Expression Language (REL) Token Profile 1.1.1
+
+Note on Basic Security Profile 1.1 compliance: the gSOAP wsse plugin cannot
+automatically verify that the wsse API calls made by an application comply with
+the profile's requirements.  Users should verify the security
+considerations stated by the [Basic Security Profile 1.1](http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html),
+in particular giving close attention to section 19.
+
 @section wsse_5 Security Header
 
-The material in this section relates to the WS-Security specification section 5.
+The material in this section relates to the WS-Security specification.
 
 @subsection wsse_5_1 Getting started
 
@@ -95,14 +119,14 @@ interoperate with WCF can be found in gsoap/samples/WCF/Basic/MessageSecurity.
 The security token handler callback function parameters have changed in 2.8.34
 and greater with the addition of KeyIdentifier information `keyid` and
 `keyidlen`.  To register your own security token handler function with the
-plugin, make sure that your functions matches these function parameters:
+plugin, make sure that your callback functions matches these function parameters:
 @code
     const void *security_token_handler(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen);
 @endcode
 
 The wsse engine is thread safe. However, if HTTPS is required then please
 follow the instructions in Section @ref wsse_11 to ensure thread-safety of
-WS-Security with HTTPS.
+WS-Security when combined with HTTPS.
 
 The wsse API code is implemented in:
 
@@ -118,16 +142,32 @@ You will also need:
 - link with `-lssl -lcrypto -lz -lgsoapssl++` (or `-lgsoapssl` for C, or compile `stdsoap2.cpp` for C++ and `stdsoap2.c` for C).
 
 The gSOAP header file (generated with wsdl2h, and containing the data binding
-interface for soapcpp2) should import wsse.h (or the older 2002 version
-wsse2.h):
+interface for soapcpp2) should import wsse.h:
 
 @code
     #import "wsse.h"
 @endcode
 
-The wsdl2h tool then adds the necessary imports to the generated header file if
-the WSDL declares the use of WS-Security.  If not, you may have to add the
-import manually before running soapcpp2.
+This declaration supports WS-Security 1.0 by default and accepts WS-Security
+1.1.  Vice versa, to support WS-Security 1.1 by default and accept 1.0:
+
+@code
+    #import "wsse11.h"
+@endcode
+
+The wsdl2h tool adds the necessary import directives to the generated header
+file if the WSDL declares the use of WS-Security.  If not, you may have to add
+the import directive shown above manually before running soapcpp2.  Instead of
+manually adding the directive, you can let wsdl2h do this for you by adding the
+following lines to typemap.dat:
+
+@code
+    [
+    #import "wsse.h"
+    ]
+@endcode
+
+The wsdl2h tool uses typemap.dat to add or modify the generated code.
 
 @subsection wsse_5_2 Warning
 
@@ -685,7 +725,13 @@ be added with:
 
 The material in this section relates to the WS-Security specification section 8.
 
-The wsse plugin must be registered to sign and verify messages:
+When signatures are used with encryption (@ref wsse_9), then encryption is
+always applied after signing.  It is generally known that it is safe to perform
+encryption after signing, but not vice versa.  In particular, this order allows
+for the encryption of the signature and its digests, as required by
+[Basic Security Profile 1.1](http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html) section 19.4.
+
+First, the wsse plugin must be registered to sign and verify messages:
 
 @code
     soap_register_plugin(soap, soap_wsse);
@@ -1338,7 +1384,17 @@ To summarize the signature verification process:
 
 The material in this section relates to the WS-Security specification section 9.
 
-The wsse plugin must be registered:
+When encryption is used with signing (@ref wsse_8), then encryption is always
+applied after signing.  It is generally known that it is safe to perform
+encryption after signing, but not vice versa.  In particular, this order allows
+for the encryption of the signature and its digests, as required by
+[Basic Security Profile 1.1](http://docs.oasis-open.org/ws-brsp/BasicSecurityProfile/v1.1/cs01/BasicSecurityProfile-v1.1-cs01.html) section 19.4.
+The profile also requires the signature in the header to be encrypted and the
+entire SOAP Body, rather than parts of the SOAP Body.  To this end, use
+`soap_wsse_add_EncryptedKey_encrypt_only(..., "ds:Signature SOAP-ENV:Body")` as
+described further below.
+
+First, the wsse plugin must be registered:
 
 @code
     struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
@@ -2140,6 +2196,10 @@ include additional details.
   have sub elements).  This is not a limitation for decryption with the WSSE
   plugin, which is not limited to elements with complex content.
 
+- `EncryptedHeader` elements (WS-Security 1.1.1) are not supported.  Any or all
+  subelements of a SOAP Header may be encrypted, but not the SOAP Header
+  itself, replaced by `<wsse11:EncryptedHeader>` with encrypted contents.
+
 - Encryption is performed after signing (likewise, signatures are verified
   after decryption).  Signing after encryption is not supported in the current
   plugin release.  It is generally known that it is safer to perform encryption
@@ -2186,10 +2246,10 @@ the namespaceURI and tag are signed.
 
 If SOAP Headers are signed such as the timestamp and username token then make
 sure to verify that the timestamp was indeed signed by calling
-`soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp")`
+`soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsu, "Timestamp")`
 and check that the return value is nonzero. Likewise, to verify that the
 usernameToken authentication credentials are signed, call
-`soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken")`
+`soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_wsse, "UsernameToken")`
 and check that the return value is nonzero.
 
 To prevent signature wrapping attacks on XML namespace prefixes used in QNames,
@@ -2317,16 +2377,16 @@ const char *xenc_contentURI = "http://www.w3.org/2001/04/xmlenc#Content";
 const char *xenc_rsa15URI = "http://www.w3.org/2001/04/xmlenc#rsa-1_5";
 const char *xenc_rsaesURI = "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p";
 
-const char *wsse_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
+const char *wsse_URI = SOAP_NAMESPACE_OF_wsse;
+const char *wsu_URI = SOAP_NAMESPACE_OF_wsu;
+const char *saml1_URI = SOAP_NAMESPACE_OF_saml1;
+const char *saml2_URI = SOAP_NAMESPACE_OF_saml2;
 const char *xenc_URI = "http://www.w3.org/2001/04/xmlenc#";
 const char *ds_URI = "http://www.w3.org/2000/09/xmldsig#";
 const char *c14n_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
 const char *c14n_wc_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
 const char *exc_c14n_URI = "http://www.w3.org/2001/10/xml-exc-c14n#";
 const char *exc_c14n_wc_URI = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
-const char *wsu_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
-const char *saml1_URI = "urn:oasis:names:tc:SAML:1.0:assertion";
-const char *saml2_URI = "urn:oasis:names:tc:SAML:2.0:assertion";
 
 /******************************************************************************\
  *
@@ -2684,6 +2744,8 @@ soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *u
   /* populate the UsernameToken */
   security->UsernameToken->wsu__Id = soap_strdup(soap, id);
   security->UsernameToken->Username = soap_strdup(soap, username);
+  security->UsernameToken->Salt = NULL;
+  security->UsernameToken->Iteration = NULL;
   /* allocate and populate the Password */
   if (password)
   {
@@ -2765,6 +2827,8 @@ soap_wsse_add_UsernameTokenDigest_at(struct soap *soap, const char *id, const ch
   /* populate the remainder of the password, nonce, and created */
   security->UsernameToken->Password->Type = (char*)wsse_PasswordDigestURI;
   security->UsernameToken->Nonce = (struct wsse__EncodedString*)soap_malloc(soap, sizeof(struct wsse__EncodedString));
+  security->UsernameToken->Salt = NULL;
+  security->UsernameToken->Iteration = NULL;
   if (!security->UsernameToken->Nonce)
     return soap->error = SOAP_EOM;
   soap_default_wsse__EncodedString(soap, security->UsernameToken->Nonce);

@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.94
+        DOM API v5 gSOAP 2.8.95
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20894
+#define GSOAP_LIB_VERSION 20895
 
 #include "stdsoap2.h"
 
@@ -4591,90 +4591,90 @@ soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wcha
 
 /******************************************************************************/
 
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const char *text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const char *str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text(soap_elt_set(this, ns, tag), text);
+  (void)soap_elt_text(soap_elt_set(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const wchar_t *text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const wchar_t *str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text_w(soap_elt_set(this, ns, tag), text);
+  (void)soap_elt_text_w(soap_elt_set(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const char *text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const char *str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text(soap_elt_set_w(this, ns, tag), text);
+  (void)soap_elt_text(soap_elt_set_w(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text_w(soap_elt_set_w(this, ns, tag), text);
+  (void)soap_elt_text_w(soap_elt_set_w(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::string& text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::string& str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text(soap_elt_set(this, ns, tag), text.c_str());
+  (void)soap_elt_text(soap_elt_set(this, ns, tag), str.c_str());
 }
 #endif
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text(soap_elt_set_w(this, ns, tag), text.c_str());
+  (void)soap_elt_text(soap_elt_set_w(this, ns, tag), str.c_str());
 }
 #endif
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::wstring& text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const std::wstring& str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text_w(soap_elt_set(this, ns, tag), text.c_str());
+  (void)soap_elt_text_w(soap_elt_set(this, ns, tag), str.c_str());
 }
 #endif
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& text)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& str)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_text_w(soap_elt_set_w(this, ns, tag), text.c_str());
+  (void)soap_elt_text_w(soap_elt_set_w(this, ns, tag), str.c_str());
 }
 #endif
 
 /******************************************************************************/
 
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const void *node, int type)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const char *tag, const void *nod, int typ)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_node(soap_elt_set(this, ns, tag), node, type);
+  (void)soap_elt_node(soap_elt_set(this, ns, tag), nod, typ);
 }
 
 /******************************************************************************/
 
-soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const void *node, int type)
+soap_dom_element::soap_dom_element(struct soap *soap, const char *ns, const wchar_t *tag, const void *nod, int typ)
 {
   soap_default_xsd__anyType(soap, this);
-  (void)soap_elt_node(soap_elt_set_w(this, ns, tag), node, type);
+  (void)soap_elt_node(soap_elt_set_w(this, ns, tag), nod, typ);
 }
 
 /******************************************************************************/
@@ -4828,73 +4828,73 @@ soap_dom_attribute::soap_dom_attribute(struct soap *soap, const wchar_t *tag)
 
 /******************************************************************************/
 
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const char *text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const char *str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text(soap_att_set(this, ns, tag), text);
+  (void)soap_att_text(soap_att_set(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const wchar_t *text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const wchar_t *str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text_w(soap_att_set(this, ns, tag), text);
+  (void)soap_att_text_w(soap_att_set(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const char *text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const char *str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text(soap_att_set_w(this, ns, tag), text);
+  (void)soap_att_text(soap_att_set_w(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const wchar_t *str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text_w(soap_att_set_w(this, ns, tag), text);
+  (void)soap_att_text_w(soap_att_set_w(this, ns, tag), str);
 }
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::string& text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::string& str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text(soap_att_set(this, ns, tag), text.c_str());
+  (void)soap_att_text(soap_att_set(this, ns, tag), str.c_str());
 }
 #endif
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::wstring& text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const char *tag, const std::wstring& str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text_w(soap_att_set(this, ns, tag), text.c_str());
+  (void)soap_att_text_w(soap_att_set(this, ns, tag), str.c_str());
 }
 #endif
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::string& str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text(soap_att_set_w(this, ns, tag), text.c_str());
+  (void)soap_att_text(soap_att_set_w(this, ns, tag), str.c_str());
 }
 #endif
 
 /******************************************************************************/
 
 #ifndef WITH_COMPAT
-soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& text)
+soap_dom_attribute::soap_dom_attribute(struct soap *soap, const char *ns, const wchar_t *tag, const std::wstring& str)
 {
   soap_default_xsd__anyAttribute(soap, this);
-  (void)soap_att_text_w(soap_att_set_w(this, ns, tag), text.c_str());
+  (void)soap_att_text_w(soap_att_set_w(this, ns, tag), str.c_str());
 }
 #endif
 

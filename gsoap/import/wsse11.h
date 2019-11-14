@@ -1,21 +1,20 @@
 /*
-	wsse.h 1.1
-
-        This file is deprecated. Use wsse.h or wsse2.h.
+	wsse.h 1.1 (accepts 1.0)
 
 	Generated with:
-	wsdl2h -cegxy -o wsse.h -t WS/WS-typemap.dat WS/wsse.xsd
+	wsdl2h -cegxy -o wsse11.h -t WS/WS-typemap.dat WS/wsse.xsd
 
 	- Removed //gsoapopt
+        - Replaced http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd with http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd
 	- Added //gsoap wsse  schema import: http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd
-	- Changed namespace to v1.1
+	- Added //gsoap wsse  schema namespace2: http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
 	- Added mutable SOAP_ENV__Header struct
 
 */
 
 /******************************************************************************\
  *                                                                            *
- * http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd         *
+ * http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd*
  *                                                                            *
 \******************************************************************************/
 
@@ -34,8 +33,9 @@
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_wsse	"http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd"
 //gsoap wsse  schema import:		http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd
-//gsoap wsse  schema namespace2:	http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.0.xsd
+//gsoap wsse  schema namespace2:	http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
 //gsoap wsse  schema elementForm:	qualified
 //gsoap wsse  schema attributeForm:	unqualified
 
@@ -47,7 +47,7 @@
 
 
 
-/// Imported complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.1.xsd":AttributedString from typemap WS/WS-typemap.dat.
+/// Imported complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":AttributedString from typemap WS/WS-typemap.dat.
 /// @brief This type represents an element with arbitrary attributes.
 /// complexType definition intentionally left blank.
 
@@ -55,6 +55,8 @@
 /// @brief This type is used for password elements per Section 4.1.
 /// complexType definition intentionally left blank.
 
+/// @brief Typedef synonym for struct wsse__EncodedString.
+typedef struct wsse__EncodedString wsse__EncodedString;
 /// Imported complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":EncodedString from typemap WS/WS-typemap.dat.
 /// @brief This type is used for elements containing stringified binary data.
 /// complexType definition intentionally left blank.
@@ -109,13 +111,27 @@ enum wsse__FaultcodeEnum
 /// Typedef synonym for enum wsse__FaultcodeEnum.
 typedef enum wsse__FaultcodeEnum wsse__FaultcodeEnum;
 
+/// "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":EncodedString is a complexType with simpleContent.
+/// @brief This type is used for elements containing stringified binary data.
+struct wsse__EncodedString
+{
+/// __item wraps "xs:string" simpleContent.
+    char*                                __item                        ;
+/// Attribute "EncodingType" of XSD type xs:anyURI.
+   @char*                                EncodingType                   0;	///< Optional attribute.
+/// Imported attribute reference "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd":Id.
+   @char*                                wsu__Id                        0;	///< Optional attribute.
+};
+
 /// Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":UsernameToken of complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":UsernameTokenType.
 /// @brief This element defines the wsse:UsernameToken element per Section 4.1.
 /// Imported element _wsse__UsernameToken from typemap WS/WS-typemap.dat.
 typedef struct _wsse__UsernameToken
 {	char*					Username;
 	struct _wsse__Password*			Password;
-	char*					Nonce;
+	struct wsse__EncodedString*		Nonce;
+        char*                                   Salt;
+        unsigned int*                           Iteration;
 	char*					wsu__Created;
 	@char*					wsu__Id;
 } _wsse__UsernameToken;
@@ -164,7 +180,7 @@ typedef struct _wsse__SecurityTokenReference
 {	struct _wsse__Reference*		Reference;
 	struct _wsse__KeyIdentifier*		KeyIdentifier;
 	struct _wsse__Embedded*			Embedded;
-	struct ds__X509DataType*		X509Data;
+	struct ds__X509DataType*		ds__X509Data;
 	@char*					wsu__Id;
 	@char*					wsc__Instance;
 	@char*					Usage;
@@ -175,6 +191,8 @@ typedef struct _wsse__SecurityTokenReference
 /// Imported element _wsse__Security from typemap WS/WS-typemap.dat.
 #import "xenc.h"
 #import "wsc.h"
+#import "saml1.h" // remove this line to disable SAML1 and reduce generated code size
+#import "saml2.h" // remove this line to disable SAML2 and reduce generated code size
 typedef struct _wsse__Security
 {	struct _wsu__Timestamp*			wsu__Timestamp;
 	struct _wsse__UsernameToken*		UsernameToken;
@@ -183,6 +201,8 @@ typedef struct _wsse__Security
 	struct _xenc__ReferenceList*		xenc__ReferenceList;
 	struct wsc__SecurityContextTokenType*	wsc__SecurityContextToken;
 	struct ds__SignatureType*		ds__Signature;
+	struct saml1__AssertionType*		saml1__Assertion; // remove this line to disable SAML1 and reduce generated code size
+	struct saml2__AssertionType*		saml2__Assertion; // remove this line to disable SAML2 and reduce generated code size
 	@char*					SOAP_ENV__actor;
 	@char*					SOAP_ENV__role;
 } _wsse__Security;

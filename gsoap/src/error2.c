@@ -50,7 +50,7 @@ static int synerrno = 0;
 static int semerrno = 0;
 static int semwarno = 0;
 
-char errbuf[1024];	/* to hold error messages */
+char errbuf[2048];	/* to hold error messages */
 
 /*
 yyerror - auto-called by parser from an error production with nonterminal `error'

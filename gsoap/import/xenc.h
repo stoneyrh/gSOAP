@@ -31,6 +31,7 @@
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_xenc	"http://www.w3.org/2001/04/xmlenc#"
 //gsoap xenc  schema import:	http://www.w3.org/2001/04/xmlenc#
 //gsoap xenc  schema elementForm:	qualified
 //gsoap xenc  schema attributeForm:	unqualified

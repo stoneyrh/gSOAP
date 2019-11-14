@@ -1425,6 +1425,7 @@ case YY_STATE_EOF(INITIAL):
                           else
                           { if (vflag)
                               fprintf(stderr, "End of %s\n\n", filename);
+                            fclose(yyin);
                             yy_delete_buffer(YY_CURRENT_BUFFER);
                             yy_switch_to_buffer(instk[imports]);
                             filename = fnstk[imports];
@@ -1436,10 +1437,10 @@ case YY_STATE_EOF(INITIAL):
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 205 "soapcpp2_lex.l"
+#line 206 "soapcpp2_lex.l"
 ECHO;
 	YY_BREAK
-#line 1443 "soapcpp2_lex.c"
+#line 1444 "soapcpp2_lex.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2381,7 +2382,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 205 "soapcpp2_lex.l"
+#line 206 "soapcpp2_lex.l"
 
 
 
@@ -3352,7 +3353,7 @@ static void import(const char *file)
       while (s && !yyin);
     }
     if (!yyin)
-    { sprintf(errbuf, "#import: Cannot open file \"%s\" for reading.\nHint: use option -I<path> (for example -Igsoap" SOAP_PATHSEP "gsoap/import" SOAP_PATHSEP "gsoap/custom:.)", file);
+    { sprintf(errbuf, "Cannot open file \"%s\" to import: %s\nHint: use option -I<path> (for example -Igsoap" SOAP_PATHSEP "gsoap/import" SOAP_PATHSEP "gsoap/custom:.)", file, strerror(errno));
       execerror(errbuf);
     }
   }

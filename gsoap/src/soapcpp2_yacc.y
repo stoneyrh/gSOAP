@@ -1061,9 +1061,10 @@ type    : VOID          { $$ = mkvoid(); }
                             p->info.typ->ref = sp->table;
                             p->info.typ->width = sp->offset;
                             p->info.typ->id = p->sym;
-                            if (p->info.typ->base)
-                              sp->table->prev = (Table*)entry(classtable, p->info.typ->base)->info.typ->ref;
+                            if (p->info.typ->baseid)
+                              sp->table->prev = (Table*)entry(classtable, p->info.typ->baseid)->info.typ->ref;
                           }
+                          base_of_derived(p);
                           $$ = p->info.typ;
                           exitscope();
                         }
@@ -1082,11 +1083,12 @@ type    : VOID          { $$ = mkvoid(); }
                               sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s')'", $3->sym->name, $3->sym->name);
                               semerror(errbuf);
                             }
-                            p->info.typ->base = $3->info.typ->id;
+                            p->info.typ->baseid = $3->info.typ->id;
                           }
                           p->info.typ->ref = sp->table;
                           p->info.typ->width = sp->offset;
                           p->info.typ->id = p->sym;
+                          base_of_derived(p);
                           $$ = p->info.typ;
                           exitscope();
                         }
@@ -1143,6 +1145,7 @@ type    : VOID          { $$ = mkvoid(); }
                             p->info.typ->width = sp->offset;
                             p->info.typ->id = p->sym;
                           }
+                          base_of_derived(p);
                           $$ = p->info.typ;
                           exitscope();
                         }

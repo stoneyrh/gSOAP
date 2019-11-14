@@ -152,13 +152,13 @@ int xs__schema::insert(xs__schema& schema)
   if (targetNamespace && (!schema.targetNamespace || strcmp(targetNamespace, schema.targetNamespace)))
   {
     if (!Wflag)
-      fprintf(stderr, "\nWarning: attempt to include schema '%s' with mismatching targetNamespace '%s' into schema namespace '%s', assuming chameleon schema targetNamespace '%s'\n", schema.sourceLocation() ? schema.sourceLocation() : "", schema.targetNamespace, targetNamespace, targetNamespace);
+      fprintf(stderr, "\nWarning: attempt to include schema '%s' with mismatching targetNamespace '%s' into schema namespace '%s', assuming chameleon schema targetNamespace '%s'\n", schema.sourceLocation() ? schema.sourceLocation() : "", schema.targetNamespace ? schema.targetNamespace : "(null)", targetNamespace ? targetNamespace : "(null)", targetNamespace ? targetNamespace : "(null)");
     schema.targetNamespace = targetNamespace;
   }
   if (elementFormDefault != schema.elementFormDefault)
   {
     if (!Wflag)
-      fprintf(stderr, "\nWarning: attempt to include schema '%s' with mismatching elementFormDefault into schema namespace '%s', assuming elementFormDefault '%squalified'\n", schema.sourceLocation() ? schema.sourceLocation() : "", targetNamespace ?targetNamespace : "(null)", elementFormDefault == qualified ? "" : "un");
+      fprintf(stderr, "\nWarning: attempt to include schema '%s' with mismatching elementFormDefault into schema namespace '%s', assuming elementFormDefault '%squalified'\n", schema.sourceLocation() ? schema.sourceLocation() : "", targetNamespace ? targetNamespace : "(null)", elementFormDefault == qualified ? "" : "un");
     schema.elementFormDefault = elementFormDefault;
   }
   if (attributeFormDefault != schema.attributeFormDefault)

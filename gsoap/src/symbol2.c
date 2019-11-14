@@ -235,7 +235,6 @@ Entry *is_discriminant(Tnode*);
 Entry *is_dynamic_array(Tnode*);
 int is_pointer_to_derived(Entry*);
 void gen_match_derived(FILE *, Tnode*);
-Entry *base_type_of_derived(Tnode *typ);
 int is_transient(Tnode*);
 int is_external(Tnode*);
 int is_anyType(Tnode*);
@@ -678,7 +677,7 @@ mktype(Type type, void *ref, int width)
   p->type = type;
   p->ref = ref;
   p->id = lookup("/*?*/");
-  p->base = NULL;
+  p->baseid = NULL;
   p->sym = NULL;
   p->restriction = NULL;
   p->synonym = NULL;
@@ -690,6 +689,7 @@ mktype(Type type, void *ref, int width)
   p->generated = False;
   p->wsdl = False;
   p->next = Tptr[type];
+  p->base = NULL;
   p->transient = transient;
   p->imported = imported;
   p->hasmin = False;
@@ -1397,9 +1397,9 @@ compile(Table *table)
         {
           for (p = classtable->list; p; p = p->next)
           {
-            if ((p->info.typ->type == Tclass || p->info.typ->type == Tstruct) && p->info.typ->base && !is_transient(p->info.typ))
+            if ((p->info.typ->type == Tclass || p->info.typ->type == Tstruct) && p->info.typ->baseid && !is_transient(p->info.typ))
             {
-              Entry *e = entry(classtable, p->info.typ->base);
+              Entry *e = entry(classtable, p->info.typ->baseid);
               if (e && !is_transient(e->info.typ))
               {
                 found = 1;
@@ -1413,8 +1413,9 @@ compile(Table *table)
           fprintf(fout, "\n{\n\tdo\n\t{\tswitch (t)\n\t\t{\n");
           for (p = classtable->list; p; p = p->next)
           {
-            if ((p->info.typ->type == Tclass || p->info.typ->type == Tstruct) && p->info.typ->base && !is_transient(p->info.typ))
-            { Entry *e = entry(classtable, p->info.typ->base);
+            if ((p->info.typ->type == Tclass || p->info.typ->type == Tstruct) && p->info.typ->baseid && !is_transient(p->info.typ))
+            {
+              Entry *e = entry(classtable, p->info.typ->baseid);
               if (e && !is_transient(e->info.typ))
                 fprintf(fout, "\n\t\tcase %s: t = %s; break;", soap_type(p->info.typ), soap_type(e->info.typ));
             }
@@ -2158,8 +2159,8 @@ gen_class(FILE *fd, Entry *p)
       fprintf(fd, "\n    class SOAP_CMAC %s", ident(typ->id->name));
     else
       fprintf(fd, "class SOAP_CMAC %s", ident(typ->id->name));
-    if (typ->base)
-      fprintf(fd, " : public %s", ident(typ->base->name));
+    if (typ->baseid)
+      fprintf(fd, " : public %s", ident(typ->baseid->name));
     fprintf(fd, " {");
     for (q = ((Table*)typ->ref)->list; q; q = q->next)
     {
@@ -4867,13 +4868,17 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
           break;
       /* omit the auto-generated and user-defined response struct/class (when necessary) */
       if (!q)
+      {
         for (q = t->list; q; q = q->next)
+        {
           if (q->info.typ->type == Tfun && !(q->info.sto & Sextern) && !has_ns_eq(NULL, ((Entry*)q->info.typ->ref)->sym->name))
           {
             r = entry(t, q->sym);
             if (r && r->info.typ->ref && is_response(((Entry*)r->info.typ->ref)->info.typ) && p->info.typ == (Tnode*)((Entry*)r->info.typ->ref)->info.typ->ref)
               break;
           }
+        }
+      }
       if (q)
         continue;
       /* classes that are used for SOAP Fault details */
@@ -5160,15 +5165,14 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
     {
       if (typ->ref)
       {
-        Entry *base = base_type_of_derived(typ);
-        if (base)
+        if (typ->base && !is_transient(typ->base))
         {
           fprintf(fd, "    <complexType name=\"%s\">", ns_remove(p->sym->name));
           gen_type_documentation(fd, p, ns);
-          fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(base->sym->name));
-          gen_schema_elements(fd, typ, base->info.typ, ns, ns1);
+          fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(typ->base->id->name));
+          gen_schema_elements(fd, typ, typ->base, ns, ns1);
           fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
-          gen_schema_attributes(fd, typ, base->info.typ, ns, ns1);
+          gen_schema_attributes(fd, typ, typ->base, ns, ns1);
           fprintf(fd, "    </complexType>\n");
         }
         else
@@ -5187,7 +5191,6 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
     {
       if (typ->ref)
       {
-        Entry *base = base_type_of_derived(typ);
         if (((Table*)typ->ref)->prev && !is_transient(entry(classtable, ((Table*)typ->ref)->prev->sym)->info.typ) && strncmp(((Table*)typ->ref)->prev->sym->name, "xsd__anyType", 12))
         {
           fprintf(fd, "    <complexType name=\"%s\">", ns_remove(p->sym->name));
@@ -5198,25 +5201,28 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
           gen_schema_attributes(fd, typ, NULL, ns, ns1);
           fprintf(fd, "    </complexType>\n");
         }
-        else if (base)
-        {
-          fprintf(fd, "    <complexType name=\"%s\">", ns_remove(p->sym->name));
-          gen_type_documentation(fd, p, ns);
-          fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(base->sym->name));
-          gen_schema_elements(fd, typ, base->info.typ, ns, ns1);
-          fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
-          gen_schema_attributes(fd, typ, base->info.typ, ns, ns1);
-          fprintf(fd, "    </complexType>\n");
-        }
         else
         {
-          fprintf(fd, "    <complexType name=\"%s\">", ns_remove(p->sym->name));
-          gen_type_documentation(fd, p, ns);
-          fprintf(fd, "          <sequence>\n");
-          gen_schema_elements(fd, typ, NULL, ns, ns1);
-          fprintf(fd, "          </sequence>\n");
-          gen_schema_attributes(fd, typ, NULL, ns, ns1);
-          fprintf(fd, "    </complexType>\n");
+          if (typ->base && !is_transient(typ->base))
+          {
+            fprintf(fd, "    <complexType name=\"%s\">", ns_remove(p->sym->name));
+            gen_type_documentation(fd, p, ns);
+            fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(typ->base->id->name));
+            gen_schema_elements(fd, typ, typ->base, ns, ns1);
+            fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
+            gen_schema_attributes(fd, typ, typ->base, ns, ns1);
+            fprintf(fd, "    </complexType>\n");
+          }
+          else
+          {
+            fprintf(fd, "    <complexType name=\"%s\">", ns_remove(p->sym->name));
+            gen_type_documentation(fd, p, ns);
+            fprintf(fd, "          <sequence>\n");
+            gen_schema_elements(fd, typ, NULL, ns, ns1);
+            fprintf(fd, "          </sequence>\n");
+            gen_schema_attributes(fd, typ, NULL, ns, ns1);
+            fprintf(fd, "    </complexType>\n");
+          }
         }
       }
     }
@@ -6060,14 +6066,13 @@ gen_report_members(Entry *type, const char *nsa, const char *nse)
   if (is_dynamic_array(type->info.typ) || is_choice(type))
     return;
   fprintf(freport, "where:\n\n");
-  if (type->info.typ->base)
-    fprintf(freport, "- <code><a href=\"#%s\"> %s </a></code> is the base class of this derived class\n", ident(type->info.typ->base->name), ident(type->info.typ->base->name));
+  if (type->info.typ->baseid)
+    fprintf(freport, "- <code><a href=\"#%s\"> %s </a></code> is the base class of this derived class\n", ident(type->info.typ->baseid->name), ident(type->info.typ->baseid->name));
   for (q = classtable->list; q; q = q->next)
-    if (q->info.typ->base == type->sym)
+    if (q->info.typ->baseid == type->sym)
       fprintf(freport, "- <code><a href=\"#%s\"> %s </a></code> is a derived class of this base class\n", c_type(q->info.typ), c_type(q->info.typ));
-  q = base_type_of_derived(type->info.typ);
-  if (q)
-    fprintf(freport, "- <code><a href=\"#%s\"> %s </a></code> is the base type of this derived type\n", ident(q->sym->name), ident(q->sym->name));
+  if (type->info.typ->base && !is_transient(type->info.typ->base))
+    fprintf(freport, "- <code><a href=\"#%s\"> %s </a></code> is the base type of this derived type\n", ident(type->info.typ->base->id->name), ident(type->info.typ->base->id->name));
   for (q = ((Table*)type->info.typ->ref)->list; q; q = q->next)
     if (is_pointer_to_derived(q))
       fprintf(freport, "- <code><a href=\"#%s\"> %s </a></code> is a derived type of this base type\n", c_type(q->info.typ->ref), c_type(q->info.typ->ref));
@@ -11159,37 +11164,32 @@ gen_match_derived(FILE *fd, Tnode *typ)
   }
 }
 
-Entry *
-base_type_of_derived(Tnode *typ)
+void
+base_of_derived(Entry *p)
 {
-  Entry *base = NULL;
-  if ((typ->type == Tstruct || typ->type == Tclass) && !is_transient(typ))
+  if (p->info.typ->ref)
   {
-    Entry *p;
-    for (p = classtable->list; p; p = p->next)
+    Entry *e;
+    for (e = ((Table*)p->info.typ->ref)->list; e; e = e->next)
     {
-      if ((p->info.typ->type == Tstruct || p->info.typ->type == Tclass) && !is_transient(p->info.typ) && p->info.typ->ref)
+      if (!is_soapref(e->info.typ) && e->info.typ->type == Tpointer && !(e->info.sto & (Sconst | Sprivate | Sprotected)) && is_transient(e->info.typ))
       {
-        Entry *e;
-        for (e = ((Table*)p->info.typ->ref)->list; e; e = e->next)
+        Tnode *q = (Tnode*)e->info.typ->ref;
+        if (q && q->id && is_eq(q->sym ? q->sym->name : q->id->name, e->sym->name))
         {
-          if (is_pointer_to_derived(e) && e->info.typ->ref == typ)
+          if (q->baseid || q->base)
           {
-            if (!base)
-            {
-              base = p;
-            }
-            else
-            {
-              sprintf(errbuf, "%s declared at %s:%d has multiple base types, including %s", c_type(typ), p->filename, p->lineno, base->sym->name);
-              semwarn(errbuf);
-            }
+            sprintf(errbuf, "%s declared at %s:%d has multiple base types, including %s", c_type(p->info.typ), p->filename, p->lineno, c_type(q));
+            semwarn(errbuf);
+          }
+          else
+          {
+            q->base = p->info.typ;
           }
         }
       }
     }
   }
-  return base;
 }
 
 int
@@ -13943,12 +13943,12 @@ detect_recursive_type(Tnode *p)
       Entry *e, *b = NULL;
       Tnode *q;
       p->visited = Hot;
-      if ((p->type == Tclass || p->type == Tstruct) && p->base)
+      if ((p->type == Tclass || p->type == Tstruct) && p->baseid)
       {
         q = p;
-        while (q->base)
+        while (q->baseid)
         {
-          b = entry(classtable, q->base);
+          b = entry(classtable, q->baseid);
           if (!b)
             break;
           q = b->info.typ;
@@ -13966,12 +13966,12 @@ detect_recursive_type(Tnode *p)
         for (t = (Table*)p->ref; t; t = t->prev)
           for (e = t->list; e; e = e->next)
             detect_recursive_type(e->info.typ);
-      if ((p->type == Tclass || p->type == Tstruct) && p->base)
+      if ((p->type == Tclass || p->type == Tstruct) && p->baseid)
       {
         q = p;
-        while (q->base)
+        while (q->baseid)
         {
-          b = entry(classtable, q->base);
+          b = entry(classtable, q->baseid);
           if (!b)
             break;
           q = b->info.typ;
@@ -14956,19 +14956,22 @@ soap_dup(Tnode *typ)
           {
             for (q = t->list; q; q = q->next)
             {
-              const char *f = ident(q->sym->name);
-              fprintf(fout, "\n\t\tcase %s:", soap_union_member(p->next->info.typ, q));
-              if (is_XML(q->info.typ) && is_string(q->info.typ))
-                fprintf(fout, "\n\t\t\td->%s%s%s.%s = soap_strdup(soap, a->%s%s%s.%s);", b, c, e, f, b, c, e, f);
-              else if (is_XML(q->info.typ) && is_wstring(q->info.typ))
-                fprintf(fout, "\n\t\t\td->%s%s%s.%s = soap_wstrdup(soap, a->%s%s%s.%s);", b, c, e, f, b, c, e, f);
-              else if (is_primitive(q->info.typ))
-                fprintf(fout, "\n\t\t\td->%s%s%s.%s = a->%s%s%s.%s;", b, c, e, f, b, c, e, f);
-              else if (is_transient(q->info.typ))
-                fprintf(fout, "\n\t\t\td->%s%s%s.%s = a->%s%s%s.%s; /* transient (shallow copy) */", b, c, e, f, b, c, e, f);
-              else if (q->info.typ->type == Tclass || q->info.typ->type == Tstruct || q->info.typ->type == Ttemplate || q->info.typ->type == Tpointer)
-                fprintf(fout, "\n\t\t\t%s_dup_%s(soap, &d->%s%s%s.%s, &a->%s%s%s.%s);", fprefix, c_ident(q->info.typ), b, c, e, f, b, c, e, f);
-              fprintf(fout, "\n\t\t\tbreak;");
+              if (q->info.typ->type != Tfun && q->info.typ->type != Tunion)
+              {
+                const char *f = ident(q->sym->name);
+                fprintf(fout, "\n\t\tcase %s:", soap_union_member(p->next->info.typ, q));
+                if (is_XML(q->info.typ) && is_string(q->info.typ))
+                  fprintf(fout, "\n\t\t\td->%s%s%s.%s = soap_strdup(soap, a->%s%s%s.%s);", b, c, e, f, b, c, e, f);
+                else if (is_XML(q->info.typ) && is_wstring(q->info.typ))
+                  fprintf(fout, "\n\t\t\td->%s%s%s.%s = soap_wstrdup(soap, a->%s%s%s.%s);", b, c, e, f, b, c, e, f);
+                else if (is_primitive(q->info.typ))
+                  fprintf(fout, "\n\t\t\td->%s%s%s.%s = a->%s%s%s.%s;", b, c, e, f, b, c, e, f);
+                else if (is_transient(q->info.typ))
+                  fprintf(fout, "\n\t\t\td->%s%s%s.%s = a->%s%s%s.%s; /* transient (shallow copy) */", b, c, e, f, b, c, e, f);
+                else if (q->info.typ->type == Tclass || q->info.typ->type == Tstruct || q->info.typ->type == Ttemplate || q->info.typ->type == Tpointer)
+                  fprintf(fout, "\n\t\t\t%s_dup_%s(soap, &d->%s%s%s.%s, &a->%s%s%s.%s);", fprefix, c_ident(q->info.typ), b, c, e, f, b, c, e, f);
+                fprintf(fout, "\n\t\t\tbreak;");
+              }
             }
           }
           fprintf(fout, "\n\t}");
@@ -18243,7 +18246,7 @@ soap_out(Tnode *typ)
           for (j = 0; j < i-1; j++)
             t = t->prev;
           e = entry(classtable, t->sym);
-          if (!t->prev && e && e->info.typ && e->info.typ->base && !strcmp(e->info.typ->base->name, "soap_dom_element"))
+          if (!t->prev && e && e->info.typ && e->info.typ->baseid && !strcmp(e->info.typ->baseid->name, "soap_dom_element"))
             fprintf(fout, "\n\tif (soap_out_xsd__anyType(soap, NULL, -1, static_cast<const soap_dom_element*>(a), NULL))\n\t\treturn soap->error;");
           nse1 = e ? ns_qualifiedElement(e->info.typ) : nse;
           for (p = t->list; p != (Entry*) 0; p = p->next)
@@ -19971,7 +19974,7 @@ soap_in(Tnode *typ)
             if (!t->prev)
             {
               Entry *e = entry(classtable, t->sym);
-              if (e && e->info.typ && e->info.typ->base && !strcmp(e->info.typ->base->name, "soap_dom_element"))
+              if (e && e->info.typ && e->info.typ->baseid && !strcmp(e->info.typ->baseid->name, "soap_dom_element"))
                 fprintf(fout, "\n\tsize_t soap_flag_soap_dom_element = 1;");
             }
             for (p = t->list; p; p = p->next)
@@ -20373,7 +20376,7 @@ soap_in(Tnode *typ)
                 fprintf(fout, "\n\t\t\t}");
               }
             }
-            if (!t->prev && e && e->info.typ && e->info.typ->base && !strcmp(e->info.typ->base->name, "soap_dom_element"))
+            if (!t->prev && e && e->info.typ && e->info.typ->baseid && !strcmp(e->info.typ->baseid->name, "soap_dom_element"))
             {
               fprintf(fout, "\n\t\t\tif (soap_flag_soap_dom_element && soap->error == SOAP_TAG_MISMATCH)\n\t\t\t\tif (soap_in_xsd__anyType(soap, NULL, static_cast<soap_dom_element*>(a), NULL))");
               fprintf(fout, "\n\t\t\t\t{\tsoap_flag_soap_dom_element = 0;");

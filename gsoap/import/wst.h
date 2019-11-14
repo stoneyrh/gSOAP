@@ -6,6 +6,7 @@
 	wsdl2h -cguxy -o wst.h -t WS/WS-typemap.dat WS/WS-Trust.xsd
 
 	- Removed //gsoapopt
+        - Added #import "wsse11.h" to choose between WS-Security 1.1 and 1.0
 	- Changed http://docs.oasis-open.org/ws-sx/ws-trust/200512 to remove trailing /
 	- Changed //gsoap wst schema namespace directive to import directive
         - Added //gsoap wst schema namespace2 directive
@@ -28,8 +29,11 @@
  *                                                                            *
 \******************************************************************************/
 
+// Choose between WS-Security 1.1 or 1.0:
+// #import "wsse11.h"	// wsse = <http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd>
 #import "wsse.h"	// wsse = <http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd>
-#import "wsu.h"	// wsu = <http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd>
+
+#import "wsu.h" 	// wsu = <http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd>
 #import "wsa5.h"	// wsa5 = <http://www.w3.org/2005/08/addressing>
 #import "wsp_appliesto.h"
 
