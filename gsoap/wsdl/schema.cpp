@@ -1322,11 +1322,15 @@ int xs__import::preprocess(xs__schema &schema)
         }
         if (schemaRef)
         {
-          if (!schemaRef->targetNamespace || !*schemaRef->targetNamespace)
+          if (namespace_ && (!schemaRef->targetNamespace || !*schemaRef->targetNamespace))
+          {
             schemaRef->targetNamespace = namespace_;
+          }
           else if (!namespace_ || strcmp(schemaRef->targetNamespace, namespace_))
+          {
             if (!Wflag)
               fprintf(stderr, "\nWarning: schema import '%s' with schema targetNamespace '%s' mismatch\n", namespace_ ? namespace_ : "(null)", schemaRef->targetNamespace);
+          }
         }
       }
     }

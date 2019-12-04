@@ -383,7 +383,7 @@ typedef struct ds__TransformType\n\
 	@char*					Algorithm;\n\
 } ds__TransformType, _ds__Transform;
 
-ds__KeyInfoType = \
+ds__KeyInfoType =\
 typedef struct ds__KeyInfoType\n\
 {	char*					KeyName;\n\
 	struct ds__KeyValueType*		KeyValue;\n\

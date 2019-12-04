@@ -218,7 +218,7 @@ var NAVTREE =
     [ "SOAP Fault processing", "index.html#fault", null ],
     [ "MIME attachments", "index.html#MIME", [
       [ "Sending a collection of MIME attachments (SwA)", "index.html#SWAsending", null ],
-      [ "Retrieving a collection of MIME attachments (SwA)", "index.html#SWAreceiving", null ]
+      [ "Retrieving a collection of MIME/MTOM attachments (SwA)", "index.html#SWAreceiving", null ]
     ] ],
     [ "DIME attachments", "index.html#DIME", [
       [ "Sending a collection of DIME attachments", "index.html#DIMEsending", null ],

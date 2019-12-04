@@ -7956,7 +7956,7 @@ void soap_serializeheader(struct soap *soap) ///< `::soap` context
 
 /// The HTTP GET plugin registration function
 /**
-This function is used to register the `::http_get` HTTP GET plugin with `soap_register_plugin_arg(soap, http_get, http_get_handler)` where the `http_get_handler` is a user-defined function to handle HTTP GET requests.  The HTTP GET plugin API is declared and defined in <i>`gsoap/plugin/httpget.h`</i> and <i>`gsoap/plugin/httpget.c`</i>.
+This function is used to register the `::http_get` HTTP GET plugin with `soap_register_plugin_arg(soap, http_get, http_get_handler)` where the `http_get_handler` is a user-defined function to handle HTTP GET requests.  The HTTP GET plugin API is declared and defined in <i>`gsoap/plugin/httpget.h`</i> and <i>`gsoap/plugin/httpget.c`</i>.  The `::soap::path` string contains the URL path, starting with a leading `/`.
 
 @par Example:
 
@@ -7995,7 +7995,9 @@ int http_get_handler(struct soap *soap)
 }
 ~~~
 
-@see `::soap_http_get_stats`, `::soap_query`.
+@warning When serving files as responses to requests, we need to be vary careful, because we don't want requests to snoop around in directories and serve files that should be protected from public view.  Therefore, when adding logic to serve files, we must reject request that have `::soap::path` values with a `/` or a `\` .  If these are allowed, then we must at least check for `..` in the path to avoid request from snooping around in higher directories all the way up to the root.  See the <i>`gsoap/samples/webserver/webserver.c`</i> example for details.
+
+@see `::soap_http_get_stats`, `::soap_query`, `::soap::fget`.
 */
 int http_get(struct soap*, struct soap_plugin*, void*);
 
@@ -10162,7 +10164,7 @@ void soap_clr_mime(struct soap *soap) ///< `::soap` context
 
 /// Enable post-processing of MIME/MTOM attachments
 /**
-This function enables post-processing of MTOM/MIME attachments received.  This means that the presence of MIME/MTOM attachments must be explicitly checked and retrieved by calling `::soap_check_mime_attachments` and when successul `::soap_recv_mime_attachment` should be called to retrieve each attachment.
+This function enables post-processing of MTOM/MIME attachments attached to a message and is useful when MIME/MTOM are streamed (asynchronously) by configuring the callbacks `::fmimewriteopen`, `::soap::fmimewrite`, and `::soap::fmimewriteclose` to write the attachment to memory, file or, other resources.  By calling this function, the presence of MIME/MTOM attachments must be explicitly checked after each message is received by calling `::soap_check_mime_attachments`.  When this function returns nonzero (true), `::soap_recv_mime_attachment` must be called repeatedly to retrieve each attachment until this function returns NULL indicating the end of attachments and the channel is closed, or if an error occurred with `::soap::error` set to a nonzero `::soap_status` error code.
 
 If attachments are not referenced by the SOAP/XML message received, then normallly an error will be produced to indicate that attachments exist that were not converted into binary `::xsd__base64Binary` or `::_xop__Include` structures (i.e. deserialized from the message by resolving references to MIME/MTOM attachments).  This error can be avoided by using `::soap_post_check_mime_attachments` to indicate that attachments may appear that cannot be automatically resolved and should be handled explicitly by calling `::soap_check_mime_attachments` and `::soap_recv_mime_attachment`.
 
@@ -10248,6 +10250,8 @@ int main()
   soap_free(soap);
 }
 ~~~
+
+@warning When `::soap_post_check_mime_attachments` is used, every message received must be followed by a call to `::soap_check_mime_attachments`.  When this function returns nonzero, `::soap_check_mime_attachments` must be called repeatedly until this function returns NULL.  This sequence of calls is necessary to properly handle messages with and without attachments.  The connection is closed if HTTP keep-alive is not enabled.  With HTTP keep-alive enabled, this sequence of calls allows the next message to be properly received.
 
 @see `::soap_check_mime_attachments`, `::soap_recv_mime_attachment`, `::soap::fmimewriteopen`, `::soap::fmimewrite`, `::soap::fmimewriteclose`.
 */

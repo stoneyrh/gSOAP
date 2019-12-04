@@ -2302,7 +2302,7 @@ For example:
 
 In this example, the `_a`, `_b`, and `_return` are anonymous parameters.
 
-@warning when anonymous parameter names are used, the order of the parameters
+@warning When anonymous parameter names are used, the order of the parameters
 in the function prototype of a service operation is significant.
 
 🔝 [Back to table of contents](#)
@@ -2908,7 +2908,7 @@ The advantage of the code shown above is that the machine cannot be overloaded w
       next = (tail + 1) % MAX_QUEUE;
       if (next == head)
         COND_WAIT(queue_notfull, queue_lock);
-      jobs[tail] = s;
+      queue[tail] = s;
       tail = next;
       COND_SIGNAL(queue_notempty);
       MUTEX_UNLOCK(queue_lock);
@@ -2921,7 +2921,7 @@ The advantage of the code shown above is that the machine cannot be overloaded w
       MUTEX_LOCK(queue_lock);
       if (head == tail)
         COND_WAIT(queue_notempty, queue_lock);
-      s = jobs[head];
+      s = queue[head];
       head = (head + 1) % MAX_QUEUE;
       COND_SIGNAL(queue_notfull);
       MUTEX_UNLOCK(queue_lock);
@@ -12188,13 +12188,13 @@ The server-side code to transmit MIME attachments back to a client:
 
 🔝 [Back to table of contents](#)
 
-## Retrieving a collection of MIME attachments (SwA)  {#SWAreceiving}
+## Retrieving a collection of MIME/MTOM attachments (SwA)  {#SWAreceiving}
 
 MIME attachments are automatically parsed and stored in memory managed by the `::soap` context.
-After receiving a set of MIME attachments, either at the client-side or
-the server-side, the list of MIME attachments can be traversed to extract
+After receiving a set of MIME/MTOM attachments, either at the client-side or
+the server-side, the list of MIME/MTOM attachments can be traversed to extract
 meta data and the attachment content. The first attachment in the collection of
-MIME attachments always contains meta data about the SOAP message
+MIME/MTOM attachments always contains meta data about the SOAP message
 itself (because the SOAP message was processed the attachment does not contain
 any useful data).
 
@@ -13107,7 +13107,7 @@ accept or reject them.
 The explicit MIME/MTOM streaming mechanism consists of three API functions:
 
 * `void soap_post_check_mime_attachments(struct soap *soap)` 
-  This function enables post-processing of MIME/MTOM attachments received.  This means that the presence of MIME/MTOM attachments must be explicitly checked and retrieved by calling `::soap_check_mime_attachments` and when successful `::soap_recv_mime_attachment` should be called to retrieve each attachment.
+  This function enables post-processing of MIME/MTOM attachments received.  This means that the presence of MIME/MTOM attachments must be explicitly checked by calling `::soap_check_mime_attachments` after the message was received.  When this function returns nonzero (true), then the attachments can be retrieved by calling `::soap_recv_mime_attachment` repeatedly to retrieve each attachment until this function returns NULL. This function returns a pointer to a `struct soap_multipart` attachment.
 
 * `int soap_check_mime_attachments(struct soap *soap)`
   This function checks the presence of a MIME/MTOM attachment after calling a service operation by returning nonzero when attachments are present.  Returns nonzero if attachments are present.  Requires `::soap_post_check_mime_attachments`.
@@ -13321,8 +13321,8 @@ Section \ref wsaudp.
     // Send the message over UDP: 
     if (soap_send_ns__echoString(&soap, "soap.udp://endpoint", "SOAP action", "hello world!")) 
       soap_print_fault(&soap, stderr); // error 
-    soap_end(&soap);
     soap_destroy(&soap);
+    soap_end(&soap);
     soap_done(&soap);
 ~~~
 
@@ -15421,6 +15421,10 @@ The example below produces a WSDL file upon a HTTP GET with path `?wsdl`:
     }
 ~~~
 
+This example shows how one predetermined file is served.  The <i>`gsoap/samples/webserver`</i> demonstrates how files should be served in general, by adding the necessary logic to add media types to HTTP headers and to restrict the selection of files that should be served.
+
+@warning When serving files as responses to requests, we need to be vary careful, because we don't want requests to snoop around in directories and serve files that should be protected from public view.  Therefore, when adding logic to serve files, we must reject request that have `::soap::path` values with a `/` or a `\` (`::soap::path` is a string with the path part of the URL, starting with a `/`).  If these are allowed, then we must at least check for `..` in the path to avoid request from snooping around in higher directories all the way up to the root.
+
 For a one-way SOAP/XML message, you can also return a SOAP/XML response:
 
 ~~~{.cpp}
@@ -15944,11 +15948,11 @@ Negative timeout values measure timeouts in microseconds, for example:
     soap->recv_timeout = 10;
 ~~~
 
-@warning many Linux versions do not support non-blocking `connect()`.
+@warning Many Linux versions do not support non-blocking `connect()`.
 Therefore, setting `::soap::connect_timeout` for non-blocking
 `soap_call_ns__webmethod` calls may not work under Linux.
 
-@warning interrupts (EINTR) can affect the blocking time in I/O operations.
+@warning Interrupts (EINTR) can affect the blocking time in I/O operations.
 The maximum number of EINTR that will not trigger an error is set by
 `#SOAP_MAXEINTR` in <i>`gsoap/stdsoap2.h`</i>, which is 10 by default. Each EINTR
 may increase the blocking time by up to one second, up to `#SOAP_MAXEINTR`
@@ -16210,7 +16214,7 @@ some protection and the password is used in the client/server code to read the
 keyfile. GNUTLS does not support this feature and cannot encrypt or decrypt a
 keyfile.
 
-@warning it is important that the `#WITH_OPENSSL` macro must be consistently defined to
+@warning It is important that the `#WITH_OPENSSL` macro must be consistently defined to
 compile the sources, such as <i>`gsoap/stdsoap2.cpp`</i>, <i>`soapC.cpp`</i>,
 <i>`soapClient.cpp`</i>, <i>`soapServer.cpp`</i>, and all application sources that
 include <i>`gsoap/stdsoap2.h`</i> or <i>`soapH.h`</i>. If the macros are not consistently
@@ -16600,7 +16604,7 @@ Receiving gzip compressed content is automatic, even in the absence of HTTP head
 Receiving deflate compressed content is not automatic in the absence of HTTP headers and requires the flag
 `#SOAP_ENC_ZLIB` to be set for the input mode to decompress deflated data.
 
-@warning it is important that the `#WITH_GZIP` and `#WITH_ZLIB` macros must be consistently defined to
+@warning It is important that the `#WITH_GZIP` and `#WITH_ZLIB` macros must be consistently defined to
 compile the sources, such as <i>`gsoap/stdsoap2.cpp`</i>, <i>`soapC.cpp`</i>,
 <i>`soapClient.cpp`</i>, <i>`soapServer.cpp`</i>, and all application sources that
 include <i>`gsoap/stdsoap2.h`</i> or <i>`soapH.h`</i>. If the macros are not consistently

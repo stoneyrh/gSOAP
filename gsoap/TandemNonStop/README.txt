@@ -1,12 +1,14 @@
 
-The Tandem NonStop bridge enables the gSOAP toolkit for Tandem NonStop
-platforms. The bridge replaces the IO operation of the gSOAP engine with Tandem
-NonStop IO operations.
+The Tandem NonStop bridge included in this directory enables the gSOAP toolkit
+for Tandem NonStop platforms. The bridge replaces the IO operation of the gSOAP
+engine with Tandem NonStop IO operations.
 
-The approach requires the code to be generated on any platform with the wsdl2h
-and soapcpp2 tools. The generated code can be compiled an run on Tandem using
-the bridge with the gSOAP engine (implemented in stdsoap2.c/.cpp). The wsdl2h
-and soapcpp2 tools will not run on Tandem, which would not be necessary.
+This approach requires the code to be generated on any platform (except Tandem
+NonStop, e.g. linux) with the wsdl2h and soapcpp2 tools, that should be build
+on the platform of choice to generate the source code. The generated code can
+be compiled an run on Tandem using the bridge, together with the gSOAP engine
+(implemented in stdsoap2.c/.cpp). The wsdl2h and soapcpp2 tools will not run on
+Tandem.
 
 When your environment supports OSS sockets then this bridge is not required.
 

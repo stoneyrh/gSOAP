@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.95
+        stdsoap2.c[pp] 2.8.96
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20895
+#define GSOAP_LIB_VERSION 20896
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.95 2019-11-14 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.96 2019-12-04 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.95 2019-11-14 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.96 2019-12-04 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -11903,14 +11903,20 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   copy->z_crc = soap->z_crc;
   copy->z_ratio_in = soap->z_ratio_in;
   copy->z_ratio_out = soap->z_ratio_out;
-  copy->z_buf = NULL;
-  copy->z_buflen = soap->z_buflen;
   copy->z_level = soap->z_level;
   if (soap->z_buf && soap->zlib_state != SOAP_ZLIB_NONE)
   {
-    copy->z_buf = (char*)SOAP_MALLOC(copy, sizeof(soap->buf));
+    if (!copy->z_buf)
+      copy->z_buf = (char*)SOAP_MALLOC(copy, sizeof(soap->buf));
     if (copy->z_buf)
       (void)soap_memcpy((void*)copy->z_buf, sizeof(soap->buf), (const void*)soap->z_buf, sizeof(soap->buf));
+    else
+      copy->z_buflen = 0;
+  }
+  else
+  {
+    copy->z_buf = NULL;
+    copy->z_buflen = 0;
   }
   copy->z_dict = soap->z_dict;
   copy->z_dict_len = soap->z_dict_len;
@@ -19667,7 +19673,7 @@ soap_check_mime_attachments(struct soap *soap)
 {
   if ((soap->mode & SOAP_MIME_POSTCHECK))
     return soap_recv_mime_attachment(soap, NULL) != NULL;
-  return SOAP_OK;
+  return 0;
 }
 #endif
 
@@ -19685,13 +19691,13 @@ soap_recv_mime_attachment(struct soap *soap, void *handle)
   struct soap_multipart *content;
   short flag = 0;
   if (!(soap->mode & SOAP_ENC_MIME))
-    return NULL;
+    goto post_check_exit;
   content = soap->mime.last;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Get MIME (%p)\n", (void*)content));
   if (!content)
   {
     if (soap_getmimehdr(soap))
-      return NULL;
+      goto post_check_exit;
     content = soap->mime.last;
   }
   else if (content != soap->mime.first)
@@ -19699,14 +19705,14 @@ soap_recv_mime_attachment(struct soap *soap, void *handle)
     if (soap->fmimewriteopen && ((content->ptr = (char*)soap->fmimewriteopen(soap, (void*)handle, content->id, content->type, content->description, content->encoding)) != NULL || soap->error))
     {
       if (!content->ptr)
-        return NULL;
+        goto post_check_exit;
     }
   }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Parsing MIME content id='%s' type='%s'\n", content->id ? content->id : SOAP_STR_EOS, content->type ? content->type : SOAP_STR_EOS));
   if (!content->ptr && soap_alloc_block(soap) == NULL)
   {
     soap->error = SOAP_EOM;
-    return NULL;
+    goto post_check_exit;
   }
   for (;;)
   {
@@ -19720,7 +19726,7 @@ soap_recv_mime_attachment(struct soap *soap, void *handle)
       if (!s)
       {
         soap->error = SOAP_EOM;
-        return NULL;
+        goto post_check_exit;
       }
     }
     for (i = 0; i < sizeof(soap->tmpbuf); i++)
@@ -19740,7 +19746,7 @@ soap_recv_mime_attachment(struct soap *soap, void *handle)
             if (content->ptr && soap->fmimewriteclose)
               soap->fmimewriteclose(soap, (void*)content->ptr);
             soap->error = SOAP_CHK_EOF;
-            return NULL;
+            goto post_check_exit;
           }
         }
         if (flag || c == '\r')
@@ -19752,7 +19758,7 @@ soap_recv_mime_attachment(struct soap *soap, void *handle)
             if (soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), soap->mime.boundary, sizeof(soap->msgbuf) - 4))
             {
               soap->error = SOAP_MIME_ERROR;
-              return NULL;
+              goto post_check_exit;
             }
           }
           t = soap->msgbuf;
@@ -19765,7 +19771,7 @@ soap_recv_mime_attachment(struct soap *soap, void *handle)
             if (content->ptr && soap->fmimewriteclose)
               soap->fmimewriteclose(soap, (void*)content->ptr);
             soap->error = SOAP_CHK_EOF;
-            return NULL;
+            goto post_check_exit;
           }
           if (!*--t)
             goto end;
@@ -19793,7 +19799,7 @@ end:
     if (soap->fmimewriteclose)
       soap->fmimewriteclose(soap, (void*)content->ptr);
     if (soap->error)
-      return NULL;
+      goto post_check_exit;
   }
   else
   {
@@ -19805,12 +19811,13 @@ end:
   if (c == '-' && soap_getchar(soap) == '-')
   {
     soap->mode &= ~SOAP_ENC_MIME;
-    if ((soap->mode & SOAP_MIME_POSTCHECK) && soap_end_recv(soap))
+    if ((soap->mode & SOAP_MIME_POSTCHECK))
     {
+      if (soap_end_recv(soap))
+        goto post_check_exit;
       if (soap->keep_alive == -2) /* special case to keep alive */
         soap->keep_alive = 0;
       soap_closesock(soap);
-      return NULL;
     }
   }
   else
@@ -19820,12 +19827,20 @@ end:
     if (c != '\r' || soap_getchar(soap) != '\n')
     {
       soap->error = SOAP_MIME_ERROR;
-      return NULL;
+      goto post_check_exit;
     }
     if (soap_getmimehdr(soap))
-      return NULL;
+      goto post_check_exit;
   }
   return content;
+post_check_exit:
+  if ((soap->mode & SOAP_MIME_POSTCHECK))
+  {
+    if (soap->keep_alive == -2) /* special case to keep alive */
+      soap->keep_alive = 0;
+    soap_closesock(soap);
+  }
+  return NULL;
 }
 #endif
 

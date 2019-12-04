@@ -8754,7 +8754,7 @@ gen_data(const char *buf, Table *t, const char *ns, const char *encoding)
               fprintf(fd, "\n");
             }
             for (r = ((Table*)((Tnode*)q->info.typ->ref)->ref)->list; r; r = r->next)
-              gen_field(fd, 3, r, nse, nsa, method_response_encoding, q->info.minOccurs == 0, 0);
+              gen_field(fd, 3, r, nse, nsa, method_response_encoding, r->info.minOccurs == 0, 0);
             if (!is_invisible(xtag))
               gen_element_end(fd, 2, ns_addx(xtag, nse));
           }
@@ -11213,6 +11213,10 @@ is_transient(Tnode *typ)
     case Tarray:
     case Ttemplate:
       return is_transient((Tnode*)typ->ref);
+    case Tstruct:
+    case Tclass:
+    case Tunion:
+      return typ->ref == NULL; /* declared but undefined structs, classes, and unions are transient */
     case Tnone:
     case Tvoid:
     case Twchar: /* wchar_t is transient */
@@ -11328,7 +11332,7 @@ is_item(Entry *p)
 {
   if (p)
   {
-    int n;
+    size_t n;
     const char *s = p->sym->name;
     for (n = strlen(s) - 1; n && s[n] == '_'; n--)
       ;
@@ -11342,7 +11346,7 @@ is_self(Entry *p)
 {
   if (p)
   {
-    int n;
+    size_t n;
     const char *s = p->sym->name;
     for (n = strlen(s) - 1; n && s[n] == '_'; n--)
       ;
