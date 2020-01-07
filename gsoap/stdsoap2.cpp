@@ -1,10 +1,10 @@
 /*
-        stdsoap2.c[pp] 2.8.96
+        stdsoap2.c[pp] 2.8.97
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20896
+#define GSOAP_LIB_VERSION 20897
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.96 2019-12-04 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.97 2020-01-07 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.96 2019-12-04 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.97 2020-01-07 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -316,8 +316,8 @@ static const char *soap_strerror(struct soap*);
     ioctl(fd, 0/*FIONBIO*/, &nonblocking); \
   }
 #else
-  #define SOAP_SOCKBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL)&~O_NONBLOCK);
-  #define SOAP_SOCKNONBLOCK(fd) fcntl(fd, F_SETFL, fcntl(fd, F_GETFL)|O_NONBLOCK);
+  #define SOAP_SOCKBLOCK(fd) (void)fcntl(fd, F_SETFL, fcntl(fd, F_GETFL)&~O_NONBLOCK);
+  #define SOAP_SOCKNONBLOCK(fd) (void)fcntl(fd, F_SETFL, fcntl(fd, F_GETFL)|O_NONBLOCK);
 #endif
 
 #endif
@@ -4152,10 +4152,10 @@ soap_ssl_init()
       do 
       {
 #ifdef HAVE_RANDOM
-        long r = random(); /* we actually do no use random() anywhere, except to help seed the OpenSSL PRNG */
+        long r = random(); /* we actually do no use random() anywhere, except to further seed the OpenSSL PRNG */
         RAND_seed(&r, sizeof(long));
 #else
-        int r = rand(); /* we actually do no use rand() anywhere, except to help seed the OpenSSL PRNG */
+        int r = rand(); /* we actually do no use rand() anywhere, except when random() is not available and to further seed the OpenSSL PRNG */
         RAND_seed(&r, sizeof(int));
 #endif
       } while (!RAND_status());

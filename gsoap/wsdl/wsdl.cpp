@@ -113,7 +113,7 @@ wsdl__definitions::wsdl__definitions()
   soap->proxy_userid = proxy_userid;
   soap->proxy_passwd = proxy_passwd;
   name = NULL;
-  targetNamespace = soap_strdup(soap, "");
+  targetNamespace = (char*)"";
   documentation = NULL;
   types = NULL;
   updated = false;
@@ -133,6 +133,10 @@ wsdl__definitions::wsdl__definitions(struct soap *copy)
   soap_default(soap);
   soap->fignore = warn_ignore;
   soap->encodingStyle = NULL;
+  name = NULL;
+  targetNamespace = (char*)"";
+  documentation = NULL;
+  types = NULL;
   updated = false;
   location = NULL;
   redirs = 0;
@@ -149,6 +153,10 @@ wsdl__definitions::wsdl__definitions(struct soap *copy, const char *cwd, const c
   soap_default(soap);
   soap->fignore = warn_ignore;
   soap->encodingStyle = NULL;
+  name = NULL;
+  targetNamespace = (char*)"";
+  documentation = NULL;
+  types = NULL;
   updated = false;
   location = NULL;
   redirs = 0;
@@ -504,9 +512,16 @@ again:
         std::vector<xs__schema*>::const_iterator j;
         if (!(*i)->targetNamespace)
         {
-          (*i)->targetNamespace = targetNamespace;
-          if (!Wflag)
-            std::cerr << "\nWarning: schema imported without namespace, assigning namespace '" << (targetNamespace ? targetNamespace : "(null)") << "'" << std::endl;
+          if (!zflag || zflag > 10)
+          {
+            (*i)->targetNamespace = (char*)"";
+          }
+          else
+          {
+            (*i)->targetNamespace = targetNamespace;
+            if (!Wflag)
+              std::cerr << "\nWarning: schema imported without namespace, assigning namespace '" << (targetNamespace ? targetNamespace : "(null)") << "'" << std::endl;
+          }
         }
         for (j = types->xs__schema_.begin(); j != types->xs__schema_.end(); ++j)
         {
@@ -861,7 +876,7 @@ int wsdl__port::traverse(wsdl__definitions& definitions)
   }
   if (!bindingRef)
     if (!Wflag)
-      std::cerr << "\nWarning: no port/endpoint '" << (name ? name : "(null)") << "' binding '" << (binding ? binding : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+      std::cerr << "\nWarning: no port/endpoint '" << (name ? name : "(undefined)") << "' binding '" << (binding ? binding : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
   if (wsp__PolicyReference_)
@@ -963,9 +978,9 @@ int wsdl__binding::traverse(wsdl__definitions& definitions)
     if (!Wflag)
     {
       if (interface_)
-        std::cerr << "\nWarning: no binding '" << (name ? name : "(null)") << "' interface '" << (interface_ ? interface_ : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no binding '" << (name ? name : "(undefined)") << "' interface '" << (interface_ ? interface_ : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
       else
-        std::cerr << "\nWarning: no binding '" << (name ? name : "(null)") << "' portType '" << (type ? type : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no binding '" << (name ? name : "(undefined)") << "' portType '" << (type ? type : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
   }
   // WSDL 2.0
@@ -1069,13 +1084,15 @@ int wsdl__ext_operation::traverse(wsdl__definitions& definitions, wsdl__portType
            && (((*j).__union1 == SOAP_UNION_wsdl__union_ioput_input && (*j).__ioput1.input->name && !strcmp((*j).__ioput1.input->name, input->name))
             || ((*j).__union2 == SOAP_UNION_wsdl__union_ioput_input && (*j).__ioput2.input->name && !strcmp((*j).__ioput2.input->name, input->name))
               ))
-            std::cerr << "\nWarning: no matching portType operation input name '" << input->name << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+            if (!Wflag)
+              std::cerr << "\nWarning: no matching portType operation input name '" << input->name << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
           if (output
            && output->name
            && (((*j).__union1 == SOAP_UNION_wsdl__union_ioput_output && (*j).__ioput1.output->name && !strcmp((*j).__ioput1.output->name, output->name))
             || ((*j).__union2 == SOAP_UNION_wsdl__union_ioput_output && (*j).__ioput2.output->name && !strcmp((*j).__ioput2.output->name, output->name))
               ))
-            std::cerr << "\nWarning: no matching portType operation output name '" << output->name << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+            if (!Wflag)
+              std::cerr << "\nWarning: no matching portType operation output name '" << output->name << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
           operationRef = &(*j);
           if (vflag)
             std::cerr << "   Found operation '" << name << "'" << std::endl;
@@ -1089,9 +1106,9 @@ int wsdl__ext_operation::traverse(wsdl__definitions& definitions, wsdl__portType
     if (!Wflag)
     {
       if (ref)
-        std::cerr << "\nWarning: no matching interface operation '" << (ref ? ref : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no matching interface operation '" << (ref ? ref : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
       else
-        std::cerr << "\nWarning: no matching portType operation '" << (name ? name : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no matching portType operation '" << (name ? name : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
   }
   else
@@ -1126,7 +1143,7 @@ int wsdl__ext_operation::traverse(wsdl__definitions& definitions, wsdl__portType
       }
       if (!(*i).faultPtr())
         if (!Wflag)
-          std::cerr << "\nWarning: no soap:fault '" << ((*i).name ? (*i).name : "(null)") << "' message in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' operation '" << (name ? name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+          std::cerr << "\nWarning: no soap:fault '" << ((*i).name ? (*i).name : "(undefined)") << "' message in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' operation '" << (name ? name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
   }
   if (wsp__Policy_)
@@ -1211,7 +1228,7 @@ int wsdl__ext_fault::traverse(wsdl__definitions& definitions, wsdl__portType *po
     }
     if (!faultRef)
       if (!Wflag)
-        std::cerr << "\nWarning: no fault '" << (ref ? ref : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' interface '" << (portTypeRef->name ? portTypeRef->name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no fault '" << (ref ? ref : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' interface '" << (portTypeRef->name ? portTypeRef->name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
   }
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
@@ -1371,7 +1388,7 @@ int wsdl__ioput::traverse(wsdl__definitions& definitions)
         definitions.builtinElement(element);
       else
         if (!Wflag)
-          std::cerr << "\nWarning: no input/output '" << (messageLabel ? messageLabel : "(null)") << "' element '" << element << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+          std::cerr << "\nWarning: no input/output '" << (messageLabel ? messageLabel : "(undefined)") << "' element '" << element << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
   }
   else
@@ -1416,7 +1433,7 @@ int wsdl__ioput::traverse(wsdl__definitions& definitions)
     }
     if (!messageRef)
       if (!Wflag)
-        std::cerr << "\nWarning: no input/output '" << (name ? name : "(null)") << "' message '" << (message ? message : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no input/output '" << (name ? name : "(undefined)") << "' message '" << (message ? message : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
   }
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
@@ -1517,7 +1534,7 @@ int wsdl__fault::traverse(wsdl__definitions& definitions)
         definitions.builtinElement(element);
       else
         if (!Wflag)
-          std::cerr << "\nWarning: no fault '" << (messageLabel ? messageLabel : "(null)") << "' ref '" << ref << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+          std::cerr << "\nWarning: no fault '" << (messageLabel ? messageLabel : "(undefined)") << "' ref '" << ref << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
   }
   else if (element)
@@ -1548,7 +1565,7 @@ int wsdl__fault::traverse(wsdl__definitions& definitions)
         definitions.builtinElement(element);
       else
         if (!Wflag)
-          std::cerr << "\nWarning: no fault '" << (messageLabel ? messageLabel : "(null)") << "' element '" << element << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+          std::cerr << "\nWarning: no fault '" << (messageLabel ? messageLabel : "(undefined)") << "' element '" << element << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
   }
   else
@@ -1593,7 +1610,7 @@ int wsdl__fault::traverse(wsdl__definitions& definitions)
     }
     if (!messageRef)
       if (!Wflag)
-        std::cerr << "\nWarning: no operation fault '" << (name ? name : "(null)") << "' message '" << (message ? message : "(null)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no operation fault '" << (name ? name : "(undefined)") << "' message '" << (message ? message : "(undefined)") << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
   }
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
@@ -1723,7 +1740,7 @@ int wsdl__part::traverse(wsdl__definitions& definitions)
         definitions.builtinElement(element);
       else
         if (!Wflag)
-          std::cerr << "\nWarning: no message part '" << (name ? name : "(null)") << "' element '" << element << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+          std::cerr << "\nWarning: no message part '" << (name ? name : "(undefined)") << "' element '" << element << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
     else if (type)
     {
@@ -1731,11 +1748,11 @@ int wsdl__part::traverse(wsdl__definitions& definitions)
         definitions.builtinType(type);
       else
         if (!Wflag)
-          std::cerr << "\nWarning: no message part '" << (name ? name : "(null)") << "' type '" << type << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+          std::cerr << "\nWarning: no message part '" << (name ? name : "(undefined)") << "' type '" << type << "' in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
     }
     else
       if (!Wflag)
-        std::cerr << "\nWarning: no message part '" << (name ? name : "(null)") << "' element or type in wsdl definitions '" << (definitions.name ? definitions.name : "(null)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(null)") << "'" << std::endl;
+        std::cerr << "\nWarning: no message part '" << (name ? name : "(undefined)") << "' element or type in wsdl definitions '" << (definitions.name ? definitions.name : "(undefined)") << "' namespace '" << (definitions.targetNamespace ? definitions.targetNamespace : "(undefined)") << "'" << std::endl;
   }
   return SOAP_OK;
 }
@@ -1946,17 +1963,24 @@ again:
               if (*schema3 == importschema)
               {
                 found = true;
+                break;
               }
-              else if ((*schema3)->targetNamespace && (*import).namespace_ && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
+            }
+          }
+          if (!found)
+          {
+            for (std::vector<xs__schema*>::const_iterator schema4 = xs__schema_.begin(); schema4 != xs__schema_.end(); ++schema4)
+            {
+              if ((!(*schema4)->targetNamespace && !(*import).namespace_) || ((*schema4)->targetNamespace && (*import).namespace_ && !strcmp((*import).namespace_, (*schema4)->targetNamespace)))
               {
-                (*import).schemaPtr(*schema3);
-                if ((*schema3) == this || // WSDL 2.0 <types> has no FormDefaults
-                    (*schema3)->empty())  // schema w/o components, only imports
+                (*import).schemaPtr(*schema4);
+                if ((*schema4) == this || // WSDL 2.0 <types> has no FormDefaults
+                    (*schema4)->empty())  // schema w/o components, only imports
                 {
-                  (*schema3)->elementFormDefault = importschema->elementFormDefault;
-                  (*schema3)->attributeFormDefault = importschema->attributeFormDefault;
+                  (*schema4)->elementFormDefault = importschema->elementFormDefault;
+                  (*schema4)->attributeFormDefault = importschema->attributeFormDefault;
                 }
-                (*schema3)->insert(*importschema); // merge content
+                (*schema4)->insert(*importschema); // merge content
                 goto again;
               }
             }
@@ -1965,13 +1989,13 @@ again:
           {
             xs__schema_.push_back(importschema);
             if (vflag)
-              std::cerr << "Adding schema '" << importschema->targetNamespace << "'" << std::endl;
+              std::cerr << "Adding schema '" << (importschema->targetNamespace ? importschema->targetNamespace : "(null)") << "'" << std::endl;
             goto again;
           }
         }
         else if (!Wflag)
         {
-          fprintf(stderr, "\nWarning: no schemaLocation in <import namespace=\"%s\"> to load schema: unknown schema\n", (*import).namespace_ ? (*import).namespace_ : "(null)");
+          fprintf(stderr, "\nWarning: no schemaLocation in <import namespace=\"%s\"> to load schema: unknown schema\n", (*import).namespace_ ? (*import).namespace_ : "(undefined)");
         }
       }
     }
@@ -2100,7 +2124,7 @@ int wsdl__import::preprocess(wsdl__definitions& definitions)
       std::cerr << "Importing '" << location << "' into '" << (source ? source : "(source location not set)") << "'" << std::endl;
     definitionsRef = new wsdl__definitions(definitions.soap);
     if (!definitionsRef)
-      return SOAP_EOF;
+      return SOAP_EOM;
     included[location] = definitionsRef;
     definitionsRef->read(source, location, relative_location);
     if (!namespace_)

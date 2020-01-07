@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -770,7 +770,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
       URI = NULL;
     }
   }
-  if (URI && *URI)
+  if (URI)
     p = nsprefix(prefix, URI);
   else if (s)
     p = s;
@@ -793,7 +793,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
         *t++ = ':';
       else if (prefix && *prefix == '_')
       {
-        if (!URI || !*URI)
+        if (!URI)
           *t++ = '_';
         if (prefix[1] == '_') // ensures ns prefix starts with __
         {
@@ -3023,7 +3023,7 @@ void Types::gen(const char *URI, const xs__attribute& attribute, SetOfString& me
     if (attribute.attributePtr()->schemaPtr())
     {
       typeURI = attribute.attributePtr()->schemaPtr()->targetNamespace;
-      if (attribute.form && *attribute.form == unqualified)
+      if (((!zflag || zflag > 10) && (!typeURI || !*typeURI)) || (attribute.form && *attribute.form == unqualified))
         nameprefix = ":";
       else if (zflag != 3 && zflag != 2
        && URI
@@ -3047,6 +3047,8 @@ void Types::gen(const char *URI, const xs__attribute& attribute, SetOfString& me
   }
   else if (name && type)
   {
+    if ((!zflag || zflag > 10) && attribute.simpleTypePtr() && attribute.simpleTypePtr()->schemaPtr() && attribute.simpleTypePtr()->schemaPtr()->targetNamespace && !*attribute.simpleTypePtr()->schemaPtr()->targetNamespace)
+      URI = NULL;
     fprintf(stream, "/// Attribute \"%s\" of type %s.\n", name, type);
     fprintf(stream, attributeformat, pname(is_optional, true, NULL, URI, type), aname(nameprefix, nameURI, name, &members)); // make sure no name - type clash
   }
@@ -3365,7 +3367,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     if (element.elementPtr()->schemaPtr())
     {
       typeURI = element.elementPtr()->schemaPtr()->targetNamespace;
-      if (element.form && *element.form == unqualified)
+      if (((!zflag || zflag > 10) && (!typeURI || !*typeURI)) || (element.form && *element.form == unqualified))
         nameprefix = ":";
       else if (zflag != 3 && zflag != 2
        && URI
@@ -3448,6 +3450,13 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   }
   else if (name && type)
   {
+    if (!zflag || zflag > 10)
+    {
+      if (element.simpleTypePtr() && element.simpleTypePtr()->schemaPtr() && element.simpleTypePtr()->schemaPtr()->targetNamespace && !*element.simpleTypePtr()->schemaPtr()->targetNamespace)
+        URI = NULL;
+      else if (element.complexTypePtr() && element.complexTypePtr()->schemaPtr() && element.complexTypePtr()->schemaPtr()->targetNamespace && !*element.complexTypePtr()->schemaPtr()->targetNamespace)
+        URI = NULL;
+    }
     if (substok && element.abstract)
     {
       fprintf(stream, "/// Abstract element \"%s\" of type %s.\n", name, type);

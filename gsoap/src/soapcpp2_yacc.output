@@ -491,9 +491,9 @@ TEMPLATE <sym> (310) 122
 EXPLICIT <sym> (311) 189
 TYPENAME <sym> (312) 173
 MUTABLE <sym> (313) 203
-FINAL <sym> (314) 194 206
-null <sym> (315) 237
-RESTRICT <sym> (316)
+null <sym> (314) 237
+RESTRICT <sym> (315)
+FINAL <sym> (316) 194 206
 OVERRIDE <sym> (317) 195 207
 UCHAR <sym> (318) 117
 USHORT <sym> (319) 118

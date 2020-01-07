@@ -1566,11 +1566,18 @@ Version 2.8.95 (11/14/2019)
 - Updated WS-Security WSSE plugin, documentation, and demo.
 - Improved soapcpp2 execution speed to generate WSDL and XSD files.
 
-Version 2.8.96 (12/4/2019) {#latest}
+Version 2.8.96 (12/4/2019)
 ---
 
 - Improved `soap_check_mime_attachments()` and `soap_recv_mime_attachment()` functions and documentation, ensure proper close when MIME/MTOM errors occur.
 - Minor improvements.
+
+Version 2.8.97 (1/7/2020) {#latest}
+---
+
+- Fixed wsdl2h processing of schemas with a cyclic schema `<xs:include>` that may cause wsdl2h to hang when schemas have no `targetNamespace` attribute.
+- Improved wsdl2h code generation of unqualified types and names defined in imported schemas (with `<xs:import>`) when these schemas have no `targetNamespace`.  Use wsdl2h option `-z10` or lesser to revert to the code generation behavior of versions prior to 2.8.97.
+- Other minor improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

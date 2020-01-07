@@ -5,7 +5,7 @@ gSOAP user guide                                                    {#mainpage}
 
 # User guide
 
-<div align="right"><i>Copyright (c) 2000-2019, Genivia Inc.<br>All rights reserved.</i></div>
+<div align="right"><i>Copyright (c) 2000-2020, Genivia Inc.<br>All rights reserved.</i></div>
 
 # Introduction                                                         {#intro}
 
@@ -4945,6 +4945,7 @@ option                                    | result
 [`-z7`](#wsdl2h-z)                        | compatibility up to 2.8.59: don't generate `std::vector` of class of union
 [`-z8`](#wsdl2h-z)                        | compatibility up to 2.8.74: don't generate qualifiers for doc/lit wrapped patterns
 [`-z9`](#wsdl2h-z)                        | compatibility up to 2.8.93: always qualify element/attribute referenced members, even when defined in the same namespace with default forms unqualified
+[`-z10`](#wsdl2h-z)                       | compatibility up to 2.8.96: generate qualifiers even when defined without namespace
 [`-_`](#wsdl2h-_)                         | don't generate `_USCORE` (replace with Unicode `_x005f`) 
 
 The following subsections explain the options in detail.  The source code
@@ -6561,6 +6562,7 @@ These options are for backward compatiility with older gSOAP releases:
 - <b>`-z7`</b> compatibility up to 2.8.59: don't generate `std::vector` of class of union
 - <b>`-z8`</b> compatibility up to 2.8.74: don't generate qualifiers for doc/lit wrapped patterns
 - <b>`-z9`</b> compatibility up to 2.8.93: always qualify element/attribute referenced members, even when defined in the same namespace with default forms unqualified
+- <b>`-z10`</b> compatibility up to 2.8.96: generate qualifiers even when defined without namespace
 
 🔝 [Back to table of contents](#)
 
@@ -18472,4 +18474,4 @@ For more details, see the [WS-Discovery plugin](../../wsdd/html/wsdd_0.html) doc
 Copyright                                                           {#copyright}
 =========
 
-<i>Copyright (c) 2000-2019, Robert A. van Engelen, Genivia Inc.<br>All rights reserved.</i>
+<i>Copyright (c) 2000-2020, Robert A. van Engelen, Genivia Inc.<br>All rights reserved.</i>

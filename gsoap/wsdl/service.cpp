@@ -394,7 +394,7 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                       service->location.insert(urienc(definitions.soap, (*port).wsa__EndpointReference->Address));
                     if ((*port).http__address_ && (*port).http__address_->location)
                       service->location.insert(urienc(definitions.soap, (*port).http__address_->location));
-                    if ((*port).wsaw__UsingAddressing)
+                    if ((*port).wsaw__UsingAddressing || (*binding).wsaw__UsingAddressing)
                       service->add_import("wsa5.h");
                     // collect service documentation
                     if ((*s).documentation)

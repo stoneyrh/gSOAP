@@ -173,7 +173,7 @@ Node       tmp, c;
 %token  <sym> TIME     USING    NAMESPACE ULLONG
 %token  <sym> MUSTUNDERSTAND    SIZE      FRIEND
 %token  <sym> TEMPLATE EXPLICIT TYPENAME  MUTABLE
-%token  <sym> FINAL    null     RESTRICT  OVERRIDE
+%token  <sym> null     RESTRICT FINAL     OVERRIDE
 %token  <sym> UCHAR    USHORT   UINT      ULONG
 /* */
 %token  NONE

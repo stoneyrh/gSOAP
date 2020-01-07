@@ -198,6 +198,8 @@ COMMAND LINE OPTIONS
 -z6     compatibility up to 2.8.17: don't include minor improvements
 -z7     compatibility up to 2.8.59: don't generate std::vector of class of union
 -z8     compatibility up to 2.8.74: don't gen quals for doc/lit wrapped patterns
+-z9     compatibility up to 2.8.93: always qualify element/attribute refs
+-z10    compatibility up to 2.8.96: gen quals even when defined w/o namespace
 -_      don't generate _USCORE (replace with Unicode code point _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 

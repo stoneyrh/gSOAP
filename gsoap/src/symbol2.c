@@ -7223,7 +7223,7 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
   }
   if (!Aflag)
   {
-    fprintf(fd, "\n\tsoap_peek_element(%s);", soap);
+    fprintf(fd, "\n\t(void)soap_peek_element(%s);", soap);
     catch_method = NULL;
     for (method = table->list; method; method = method->next)
     {
@@ -8265,19 +8265,19 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
     }
     else if (result->info.typ->type == Tpointer && is_XML((Tnode*)result->info.typ->ref) && is_string((Tnode*)result->info.typ->ref))
     {
-      fprintf(fd, "\n\tsoap_inliteral(soap, NULL, (char**)%s);", ident(result->sym->name));
+      fprintf(fd, "\n\tsoap_inliteral(soap, \"%s\", (char**)%s);", xtag, ident(result->sym->name));
     }
     else if (result->info.typ->type == Treference && is_XML((Tnode*)result->info.typ->ref) && is_string((Tnode*)result->info.typ->ref))
     {
-      fprintf(fd, "\n\tsoap_inliteral(soap, NULL, (char**)&%s);", ident(result->sym->name));
+      fprintf(fd, "\n\tsoap_inliteral(soap, \"%s\", (char**)&%s);", xtag, ident(result->sym->name));
     }
     else if (result->info.typ->type == Tpointer && is_XML((Tnode*)result->info.typ->ref) && is_wstring((Tnode*)result->info.typ->ref))
     {
-      fprintf(fd, "\n\tsoap_inwliteral(soap, NULL, (wchar_t**)%s);", ident(result->sym->name));
+      fprintf(fd, "\n\tsoap_inwliteral(soap, \"%s\", (wchar_t**)%s);", xtag, ident(result->sym->name));
     }
     else if (result->info.typ->type == Treference && is_XML((Tnode*)result->info.typ->ref) && is_wstring((Tnode*)result->info.typ->ref))
     {
-      fprintf(fd, "\n\tsoap_inwliteral(soap, NULL, (wchar_t**)&%s);", ident(result->sym->name));
+      fprintf(fd, "\n\tsoap_inwliteral(soap, \"%s\", (wchar_t**)&%s);", xtag, ident(result->sym->name));
     }
     else if (result->info.typ->type == Treference)
     {
@@ -10665,7 +10665,7 @@ soap_serve(Table *table)
     }
     if (!Aflag)
     {
-      fprintf(fserver, "\n\tsoap_peek_element(soap);");
+      fprintf(fserver, "\n\t(void)soap_peek_element(soap);");
       catch_method = NULL;
       for (method = table->list; method; method = method->next)
       {

@@ -308,6 +308,7 @@ class wsdl__binding
         std::vector<wsp__PolicyReference> wsp__PolicyReference_;// <wsp:PolicyReference>*
         soap__binding                   *soap__binding_;        // <soap:binding>?
         http__binding                   *http__binding_;        // <http:binding>?
+        xsd__string                     *wsaw__UsingAddressing; // <wsaw:UsingAddressing wsdl:required="true">?
         std::vector<wsoap__module>      wsoap__module_;         // <wsoap:module>* WSDL 2.0
         std::vector<wsdl__ext_fault>    fault;                  // <wsdl:fault>* WSDL 2.0
         std::vector<wsdl__ext_operation> operation;             // <wsdl:operation>*
