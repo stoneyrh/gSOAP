@@ -10,6 +10,6 @@ include ../Makefile.defines
 include ../Makefile.cpp_proxy_rules_j
 SOAP_NS = AmazonS3SoapBinding.nsmap
 
-aws_CPPFLAGS = -DWITH_OPENSSL
+aws_CPPFLAGS = $(WSDL2H_EXTRA_FLAGS)
 aws_SOURCES = aws-s3.cpp $(SOAPHEADER) $(SOAP_CPP_CORE) soapAmazonS3SoapBindingProxy.cpp
 aws_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)

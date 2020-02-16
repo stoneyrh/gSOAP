@@ -1421,7 +1421,8 @@ Optional Features:
   --disable-c-locale      compile library without c locale usage
   --enable-ipv6           compile library with IPv6 support
   --enable-ipv6-v6only    compile library with IPv6-v6only support
-  --disable-ssl           build without SSL/TLS
+  --disable-ssl           build without SSL/TLS -- note: the wsse and wst
+                          examples will fail to build
   --enable-gnutls         build with GNUTLS SSL/TLS
   --enable-samples	  enable compile for the gsoap samples
 

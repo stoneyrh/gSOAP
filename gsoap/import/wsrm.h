@@ -3,10 +3,18 @@
 
 	Usage: See import/wsrx.h and plugin/wsrmapi.c
 
+        Requires:
+        - plugin/wsrmapi.h and plugin/wsrmapi.c
+        - plugin/wsaapi.h and plugin/wsaapi.c
+        - custom/duration.c
+
 	Generated with:
 	wsdl2h -cyex -o wsrm.h -t WS/WS-typemap.dat WS/WS-ReliableMessaging.xsd
 
-	Modified by Robert van Engelen:
+        This file imports:
+        - wsa5.h
+        - custom/duration.h
+        - wsrx.h
 
 	- Removed //gsoapopt
 	- Changed //gsoap wsrm schema namespace directive to import directive

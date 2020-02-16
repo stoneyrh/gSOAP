@@ -2713,7 +2713,7 @@ This code is used with `::soap_response` to return a file-based response message
 
 /**
 \defgroup group_context Context with engine state
-@brief This module defines the `::soap` context structure with the engine state and functions to allocate, initialize, copy and delete contexts
+@brief This module defines the `::soap` \ref soap "context structure with the engine state" and functions to allocate, initialize, copy and delete contexts
 
 @{
 */
@@ -2946,7 +2946,7 @@ struct soap {
   struct SOAP_ENV__Header *header;
   /// The `::soap::fault` points to a `::SOAP_ENV__Fault` structure with the SOAP Fault that was received or that can be populated by the user to be sent, or NULL when no SOAP Fault is present
   struct SOAP_ENV__Fault *fault;
-  /// User-definable variable that may point to user-specified data to pass the data through callbacks and plugins to the user's code
+  /// User-definable variable that may point to user-specified data of any type to pass the data through to callbacks and plugins
   void *user;
   /// The `::soap::mustUnderstand` flag is set when a SOAP Header element carries a <i>`SOAP-ENV:mustUnderstand`</i> attribute that is true
   short mustUnderstand;
@@ -4232,9 +4232,11 @@ struct soap {
   /// Callback that reads and parses HTTP and MIME headers
   /**
   @ingroup group_callbacks
-  This callback is called by the engine (as a client or server) to read and parse HTTP headers or MIME headers.  When redefined, this function should at read or skip the entire HTTP header to reach the message body.  Function `::soap_getline` is used by this callback to read each header line into an internal buffer `::soap::msgbuf` with `::soap_getline(soap, soap->msgbuf, sizeof(soap->msgbuf))`.  Returns `#SOAP_OK`, or a gSOAP error code.  The built-in function assigned to `::soap::fparse` is `http_parse`.
+  This callback is called by the engine (as a client or server) to read and parse HTTP headers or MIME headers.  When redefined, this function should read or skip the entire HTTP header to reach the message body.  Function `::soap_getline` is used by this callback to read each header line into an internal buffer `::soap::msgbuf` with `::soap_getline(soap, soap->msgbuf, sizeof(soap->msgbuf))`.  Returns `#SOAP_OK`, or a gSOAP error code.  The built-in function assigned to `::soap::fparse` is `http_parse`.
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
+
+  @see `::soap::fparsehdr`.
   */
   int (*fparse)(struct soap *soap);
   /// Callback that consumes an HTTP header that consists of a key-value pair
@@ -4244,9 +4246,29 @@ struct soap {
 
   @note This callback can be used to parse (custom) HTTP headers, which is typically done by plugins.
 
+  @see `::soap::fparse`, `::soap::http_extra_header`, `::soap::user`.
+
+  @par Example:
+
+  ~~~{.cpp}
+  int main()
+  {
+    struct soap *soap = soap_new();
+    soap->user = (void*)soap->fparsehdr; // to call the engine's fparsehdr()
+    soap->fparsehdr = parse_header;
+    ... //
+  }
+
+  int parse_header(struct soap *soap, const char *key, const char *val)
+  {
+    ... // use key and val, then pass the key-val to the engine:
+    return ((int(*)(struct soap*, const char*, const char*))(soap->user))(soap, key, val);
+  }
+  ~~~
+
   @param soap `::soap` context
-  @param key HTTP header key received (string)
-  @param val optional HTTP header value received (string), or NULL
+  @param key HTTP header key received (non-NULL string)
+  @param val HTTP header value received (non-NULL string) or an empty string
   @returns `#SOAP_OK`, `#SOAP_STOP` or a `::soap_status` error code
   */
   int (*fparsehdr)(struct soap *soap, const char *key, const char *val);
@@ -4255,7 +4277,43 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the service dispatcher when an HTTP GET request is pending.  Redefine this callback to respond to HTTP GET requests with content, see the `::http_get` HTTP GET plugin for more details.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fget` is the internal static function `http_get` that returns the `#SOAP_GET_METHOD` error.
 
-  @see `::http_get`.
+  @see `::http_get`, `::soap::user`.
+
+  @par Example
+
+  ~~~{.cpp}
+  int main()
+  {
+    struct soap *soap = soap_new();
+    soap->user = ... // set this to pass data to the callback
+    soap->fget = http_get;
+    ... //
+  }
+
+  // return a service.wsdl WSDL document on HTTP GET service path ending in ?wsdl
+  int http_get(struct soap * soap)
+  {
+    FILE *fd = NULL;
+    char *s = strchr(soap->path, '?'); // soap->path has the URL path of soap->endpoint
+    if (s == NULL || strcmp(s, "?wsdl") != 0) 
+      return SOAP_GET_METHOD;  // return GET method not available error
+    fd = fopen("service.wsdl", "r"); // open WSDL file to copy 
+    if (!fd) 
+      return 404; // return HTTP not found error 
+    soap->http_content = "text/xml"; // HTTP header with text/xml content 
+    soap_response(soap, SOAP_FILE); 
+    while (1)
+    {
+      size_t r = fread(soap->tmpbuf, 1, sizeof(soap->tmpbuf), fd); 
+      if (r == 0) 
+        break; 
+      if (soap_send_raw(soap, soap->tmpbuf, r)) 
+        break; // can't send
+    } 
+    fclose(fd); 
+    return soap_end_send(soap); 
+  }
+  ~~~
 
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4266,7 +4324,7 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the service dispatcher when an HTTP PUT request is pending.  Redefine this callback to respond to HTTP PUT requests, see the `::http_post` HTTP POST plugin for more details.  Returns `#SOAP_OK` or a `::soap_status` error code.  The built-in function assigned to `::soap::fput` is the internal static function `http_put` that returns the `#SOAP_PUT_METHOD` error.
 
-  @see `::http_post`.
+  @see `::http_post`, `::soap::user`.
 
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4277,7 +4335,7 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the service dispatcher when an HTTP PATCH request is pending.  Redefine this callback to respond to HTTP PATCH requests, see the `::http_post` HTTP POST plugin for more details.  Returns `#SOAP_OK` or a `::soap_status` error code.  The built-in function assigned to `::soap::fpatch` is the internal static function `http_patch` that returns the `#SOAP_PATCH_METHOD` error.
 
-  @see `::http_post`.
+  @see `::http_post`, `::soap::user`.
 
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4288,7 +4346,7 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the service dispatcher when an HTTP DELETE request is pending.  Redefine this callback to respond to HTTP DELETE requests, see the `::http_post` HTTP POST plugin for more details.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fdel` is the internal static function `http_del` that returns the `#SOAP_DEL_METHOD` error.
 
-  @see `::http_post`.
+  @see `::http_post`, `::soap::user`.
 
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4299,6 +4357,8 @@ struct soap {
   @ingroup group_callbacks
   Called by the service dispatcher when an HTTP OPTION request is pending.  Redefine this callback to respond to HTTP OPTION requests, see the `::http_post` HTTP POST plugin for more details.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fopt` is the internal static function `http_200` that returns HTTP 200 OK.
 
+  @see `::http_post`, `::soap::user`.
+
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
   */
@@ -4307,6 +4367,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the service dispatcher when an HTTP HEAD request is pending.  Redefine this callback to respond to HTTP HEAD requests more specifically.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fhead` is the internal static function `http_200` that returns HTTP 200 OK.
+
+  @see `::http_opt`, `::soap::user`.
 
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4317,6 +4379,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the HTTP FORM handler plugin to parse HTML forms received with HTTP POST and PUT requests, see the <i>`;:http_form`</i> HTTP FORM plugin for more details.  The HTTP body with the form data should be parsed by this callback, otherwise HTTP keep-alive messages will end up out of sync as a result of the current position not being advanced to the end of the HTTP body.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  No built-in function is assigned to `::soap::fform`.
 
+  @see `::http_post`, `::soap::user`.
+
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
   */
@@ -4326,7 +4390,7 @@ struct soap {
   @ingroup group_callbacks
   This callback is called immediately after parsing a SOAP Header into the `::soap::header` structure.  The SOAP Header structure `::soap::header` can be inspected by this function and verified or rejected before the rest of the message with the SOAP Body is consumed.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  No built-in function is assigned to `::soap::fheader`.
 
-  @see `::http_form`.
+  @see `::http_form`, `::soap::user`.
 
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4338,6 +4402,8 @@ struct soap {
   This callback is called when an unrecognized XML element was encountered on the input that could be ignored depending on some specified logic.  The `tag` parameter is the offending XML element tag name string.  The callback should return `#SOAP_OK` to ignore the element or return an `::soap_status` error code such as `#SOAP_TAG_MISMATCH` to trigger a validation error.  This callback also overrides `mustUnderstand` attributes on unrecognized SOAP Header elements that normally raise faults.  It is strongly recommended that the callback returns `#SOAP_MUSTUNDERSTAND` when `::soap::mustUnderstand` != `0`.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  No built-in function is assigned to `::soap::fignore`.
 
   @note This callback was not called in gSOAP versions prior to 2.8.54 when `#SOAP_XML_STRICT` is set.
+
+  @see `::soap::user`.
 
   @par Example:
 
@@ -4371,6 +4437,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called to validate a string against an XML regex pattern.  Patterns use XML schema regex syntax.  This callback allows user-defined pattern validation that is normally disabled.  Returns `#SOAP_OK` when the string matches the pattern or `#SOAP_TYPE` when the string does not match.  No built-in function is assigned to `::soap::fsvalidate`.
 
+  @see `::soap::fwvalidate`,`::soap::user`.
+
   @param soap `::soap` context
   @param pattern regex in XML schema syntax
   @param string to match pattern against
@@ -4381,6 +4449,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called to validate a wide string against an XML regex pattern.  Patterns use XML schema regex syntax.  This callback allows user-defined pattern validation that is normally disabled.  Returns `#SOAP_OK` when the string matches the pattern or `#SOAP_TYPE` when the string does not match.  No built-in function is assigned to `::soap::fwvalidate`.
+
+  @see `::soap::fsvalidate`, `::soap::user`.
 
   @param soap `::soap` context
   @param pattern regex in XML schema syntax
@@ -4393,6 +4463,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine when an error is raised to allow inspection or overriding of the fault code or fault string messages before the error is reported or transmitted.  No built-in function is assigned to `::soap::fseterror`.
 
+  @see `::soap::user`.
+
   @param soap `::soap` context
   @param faultcode pointer to a string with the fault code message or NULL, can be reassigned
   @param faultstring pointer to a string with the fault string message or NULL, can be reassigned
@@ -4402,6 +4474,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine at the client-side by `::soap_connect` or `::soap_connect_command` to open a TCP or UDP connection to a server specified at an endpoint.  Parameters `host` and `port` are micro-parsed from `endpoint` before being passed to `::soap::fopen`.  Returns a valid socket or `#SOAP_INVALID_SOCKET` with a `::soap::error` set to a `::soap_status` (int) error code and `::soap::errnum` set to `errno` of the connection failure.  The built-in function assigned to `::soap::fopen` is `tcp_connect`.
+
+  @see `::soap::faccept`, `::soap::user`.
 
   @param soap `::soap` context
   @param endpoint URL of the endpoint to connect to (string)
@@ -4415,6 +4489,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by `::soap_accept` (or the C++ service class `accept` method) to wait for and accept a socket connection requested by a client.  Returns a valid socket or `#SOAP_INVALID_SOCKET` when an error occurred and sets `::soap::error` to a `::soap_status` value.  The built-in function assigned to `::soap::faccept` is `tcp_accept`.
 
+  @see `::soap::fopen`, `::soap::user`.
+
   @param soap `::soap` context
   @param sock master socket
   @param addr points to a `sockaddr` structure to be populated
@@ -4427,6 +4503,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine at the client-side to close the current socket connection before a new socket connection is established.  This callback may be called multiple times (e.g. by the engine and by plugins) to close the same socket `::soap::socket`.  Checks internally if `::soap::socket` == `#SOAP_INVALID_SOCKET` before closing, which means that the socket was already closed.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fclose` is `tcp_disconnect`.
 
+  @see `::soap::fopen`, `::soap::faccept`, `::soap::user`.
+
   @param soap `::soap` context
   @returns socket or `#SOAP_INVALID_SOCKET` if an error occurred
   */
@@ -4435,6 +4513,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by `::soap_bind` (or the C++ service class `bind` method) at the server-side and by `::soap_connect` or `::soap_connect_command` at the client-side with a host `name` parameter to resolve to address `inaddr` by address translation.  When successful sets parameter `inaddr` and returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fresolve` is `tcp_gethost`.
+
+  @see `::soap::user`.
 
   @param soap `::soap` context
   @param name host name (string)
@@ -4446,6 +4526,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to optionally override client-side connecting.  The parameters `host` and `port` were micro-parsed from the `endpoint` prior to passing them to this callback.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  No built-in function is assigned to `::soap::fconnect`.
+
+  @see `::soap::user`.
 
   @param soap `::soap` context
   @param endpoint URL of the endpoint connected to (string)
@@ -4459,6 +4541,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine `::soap_closesock` before the `::soap::fclose` callback is called to shutdown/disconnect.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  No built-in function is assigned to `::soap::fdisconnect`.
 
+  @see `::soap::user`.
+
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
   */
@@ -4467,6 +4551,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called to close a socket by the engine.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fclosesocket` is `tcp_closesocket`.
+
+  @see `::soap::user`.
 
   @param soap `::soap` context
   @param sock socket to close
@@ -4477,6 +4563,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called to shut down a socket by the engine.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fshutdownsocket` is `tcp_shutdownsocket`.
+
+  @see `::soap::user`.
 
   @param soap `::soap` context
   @param sock socket to shut down
@@ -4489,6 +4577,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine to wait for activity on the `::soap::socket` or `::soap::master` socket using `poll` or `select`.  Times out when `::soap::send_timeout` or `::soap::recv_timeout` are nonzero.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fpoll` is `::soap_poll`.
 
+  @see `::soap::user`.
+
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
   */
@@ -4497,6 +4587,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to receive (or read) data into a specified buffer `buf` and `len`.  The source for the data to read by this callback is `::soap::is` when non-NULL, `::soap::socket` when valid, or `::soap::recvfd`.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::frecv` is `frecv`.
+
+  @see `::soap::user`.
 
   @param soap `::soap` context
   @param buf buffer to fill with bytes to be read (string)
@@ -4509,6 +4601,8 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine to send (or write) data specified by `data` bytes of length `len`.  The sink for the data to be sent to is typically `::soap::socket`, `::soap::sendfd` or `::soap::os`.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fsend` is `fsend`.
 
+  @see `::soap::user`.
+
   @param soap `::soap` context
   @param data bytes to be send (string)
   @param len number of bytes to be send (size_t)
@@ -4519,6 +4613,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called after each successful completion of a server operation in the server loop.  Executes immediately after sending the response to a client and before the next keep-alive server loop iteration when enabled with `#SOAP_IO_KEEPALIVE`.  This callback can be used to reclaim resources in the keep-alive server loop, for example managed memory can be reclaimed by calling `::soap_destroy` and `::soap_end` in that order and all deserialized and other dynamically-allocated data managed by the context will be deallocated.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  No built-in function is assigned to `::soap::fserveloop`.
+
+  @see `::soap::user`.
 
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4531,6 +4627,8 @@ struct soap {
 
   @warning Deprecated since 2.8.72.  Define `#SOAP_MALLOC` and `#SOAP_FREE` instead.
 
+  @see `::soap::user`.
+
   @param soap `::soap` context
   @param size number of bytes to allocate
   @returns pointer to allocated memory or NULL on failure to allocate (out of memory)
@@ -4540,6 +4638,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to start sending a streaming DIME attachment.  This callback opens a stream to start reading the attachment data to send.  The actual data stream will be read in chunks using the `::soap::fdimeread` callback until no more data is available and the `::soap::fdimereadclose` callback is called to close the stream.  The `handle` parameter contains the value of the `__ptr` member variable of the attachment struct/class with data (e.g. `::xsd__base64Binary` or `::_xop__Include` with `__ptr`, `__size`, `id`, `type` and `options` members), which should be a pointer to specific information such as a file descriptor or a pointer to a some application-specific data to be passed to this callback.  Both the `__ptr` and `__size` members of the attachment struct/class should have been set by the application prior to the serialization of the message with attachments.  If the `__size` is zero and HTTP chunking is enabled (with `#SOAP_IO_CHUNK`), then chunked DIME attachments are sent, see `::soap::fdimeread`.  The `id`, `type` and `options` parameters are the `id` (optional ID), `type` (a MIME type) and `options` (DIME options are set with `::soap_dime_option`) of the attachment struct/class, respectively, of which at least one member should be non-NULL.  The callback should return the `handle` parameter value or another pointer value, which is passed as the new `handle` parameter to `::soap::fdimeread` and `::soap::fdimereadclose` callbacks.  When an error occurred in this callback, the callback should return NULL and set `::soap::error` to an error code, e.g. using `::soap_receiver_fault`.  The callback may return NULL and set `::soap::error` to `#SOAP_OK` when this specific DIME attachment should not to be streamed and the engine will simply skip it.
+
+  @see `#SOAP_ENC_DIME`, `::soap::user`.
 
   @par Example:
 
@@ -4575,8 +4675,6 @@ struct soap {
 
   The maximum size of DIME attachments that the engine allows to be received is limited to `#SOAP_MAXDIMESIZE`.  Increase this size as necessary.
 
-  @see `#SOAP_ENC_DIME`.
-
   @param soap `::soap` context
   @param handle the value of the `__ptr` member variable of the attachment struct/class with data
   @param id the value of the `id` member variable of the attachment struct/class with data
@@ -4589,6 +4687,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to read a chunk of attachment data to transmit.  The `handle` parameter contains the handle returned by the `::soap::fdimereadopen` callback.  The `buf` parameter is the buffer of length `len` into which a chunk of data should be written by the callback.  The actual amount of data written into the buffer may be less than `len` and this actual amount should be returned by the callback.  A return value of zero indicates an error and `::soap::error` should be set.  The `__size` member variable of the attachment struct/class with data (e.g. `::xsd__base64Binary` or `::_xop__Include` with `__ptr`, `__size`, `id`, `type` and `options` members) should be set by the application prior to the serialization of the message with attachments.  The value of `__size` indicates the total size of the attachment data to be transmitted.  If the `__size` member variable is zero and HTTP chunking is enabled (with `#SOAP_IO_CHUNK`), then DIME chunked transfers are activated by the engine, which is more flexible since the attachment data size does not need to be determined in adance.  To use DIME chunked transfers, enable HTTP chunking with `#SOAP_IO_CHUNK` (also `#SOAP_IO_STORE` can be used, but this buffers the entire message in memory before transmission) and set the `__size` member variable of the attachment struct/class to zero.  When DIME attachment chunking is enabled, this callback should completely fill the `buf` buffer with `len` bytes unless the last data chunk is reached and fewer bytes are returned.
+
+  @see `#SOAP_ENC_DIME`, `::soap::user`.
 
   @par Example:
 
@@ -4618,6 +4718,10 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine to close the DIME attachment stream after reading.  The `handle` parameter contains the handle returned by the `::soap::fdimereadopen` callback.
 
+  @see `#SOAP_ENC_DIME`, `::soap::fdimereadopen`, `::soap::fdimeread`, `::soap::user`.
+
+  @par Example:
+
   See the examples provided with the documentation for `::soap::fdimereadopen` and `::soap::fdimeread`.
 
   @param soap `::soap` context
@@ -4628,6 +4732,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   Called by the to start receiving a streaming DIME attachment.  This callback opens a stream to start writing the attachment data received.  The actual data stream will be written in chunks using the `::soap::fdimewrite` callback until no more data is available and the `::soap::fdimewriteclose` callback is called to close the stream.  The `id`, `type` and `options` parameters are the `id`, `type` and `options` of the attachment struct/class (e.g. `::xsd__base64Binary` or `::_xop__Include` with `__ptr`, `__size`, `id`, `type` and `options` members), respectively.  The callback should return a handle, which is passed to the `::soap::fdimewrite` and `::soap::fdimewriteclose` callbacks.  The `__ptr` member variable of the attachment struct/class is set by the engine to the value of this handle.  The `__size` member variable is set to the size of the attachment received.  The maximum DIME attachment size received is limited by `#SOAP_MAXDIMESIZE`.
+
+  @see `#SOAP_ENC_DIME`, `::soap::user`.
 
   @par Example:
 
@@ -4697,6 +4803,9 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to write a chunk of attachment data received.  The `handle` parameter contains the handle returned by the `::soap::fdimewriteopen` callback.  The `buf` parameter contains the data of length `len`.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.
+
+  @see `#SOAP_ENC_DIME`, `::soap::user`.
+
   @param soap `::soap` context
   @param handle the value of the handle returned by `::soap::fdimewriteopen`
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4706,6 +4815,9 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to close the DIME attachment stream after writing.  The `handle` parameter contains the handle returned by the `::soap::fdimewriteopen` callback.
+
+  @see `#SOAP_ENC_DIME`, `::soap::user`.
+
   @param soap `::soap` context
   @param handle the value of the of the handle returned by `::soap::fdimewriteopen`
   */
@@ -4714,6 +4826,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to start sending a streaming MIME/MTOM attachment.  This callback opens a stream to start reading the attachment data to send.  The actual data stream will be read in chunks using the `::soap::fmimeread` callback until no more data is available and the `::soap::fmimereadclose` callback is called to close the stream.  The `handle` parameter contains the value of the `__ptr` member variable of the attachment struct/class with data (e.g. `::xsd__base64Binary` or `::_xop__Include` with `__ptr`, `__size`, `id`, `type` and `options` members), which should be a pointer to specific information such as a file descriptor or a pointer to a some application-specific data to be passed to this callback.  Both the `__ptr` and `__size` members of the attachment struct/class should have been set by the application prior to the serialization of the message with attachments.  If the `__size` is zero and HTTP chunking is enabled (with `#SOAP_IO_CHUNK`), then chunked MIME/MTOM attachments are sent, see `::soap::fmimeread`.  The `id`, `type` and `options` parameters are the `id` (an optional ID), `type` (a MIME type) and `options` (a descriptive string) of the attachment struct/class, respectively, of which at least one member should be non-NULL.  The callback should return the `handle` parameter value or another pointer value, which is passed as the new `handle` parameter to `::soap::fmimeread` and `::soap::fmimereadclose` callbacks.  When an error occurred in this callback, the callback should return NULL and set `::soap::error` to an error code, e.g. using `::soap_receiver_fault`.  The callback may return NULL and set `::soap::error` to `#SOAP_OK` when this specific MIME/MTOM attachment should not to be streamed and the engine will simply skip it.
+
+  @see `#SOAP_ENC_DIME`, `::soap::user`.
 
   @par Example:
 
@@ -4776,7 +4890,11 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine to read a chunk of attachment data to transmit.  The `handle` parameter contains the handle returned by the `::soap::fmimereadopen` callback.  The `buf` parameter is the buffer of length `len` into which a chunk of data should be written by the callback.  The actual amount of data written into the buffer may be less than `len` and this actual amount should be returned by the callback.  A return value of zero indicates an error and `::soap::error` should be set.  The `__size` member variable of the attachment struct/class with data (e.g. `::xsd__base64Binary` or `::_xop__Include` with `__ptr`, `__size`, `id`, `type` and `options` members) should be set by the application prior to the serialization of the message with attachments.  The value of `__size` indicates the total size of the attachment data to be transmitted.  If the `__size` member variable is zero and HTTP chunking is enabled (with `#SOAP_IO_CHUNK`), then MIME/MTOM chunked transfers are activated by the engine, which is more flexible since the attachment data size does not need to be determined in advance.  To use MIME/MTOM chunked transfers, enable HTTP chunking with `#SOAP_IO_CHUNK` (also `#SOAP_IO_STORE` can be used, but this buffers the entire message in memory before transmission) and set the `__size` member variable of the attachment struct/class to zero.  When MIME/MTOM attachment chunking is enabled, this callback should completely fill the `buf` buffer with `len` bytes unless the last data chunk is reached and fewer bytes are returned.
 
-  @see The example provided with the documentation for `::soap::fmimereadopen`.
+  @see `#SOAP_ENC_MIME`, `#SOAP_ENC_MTOM`, `::soap::fmimereadopen`, `::soap::user`.
+
+  @par Example:
+
+  See the example provided with the documentation for `::soap::fmimereadopen`.
 
   @param soap `::soap` context
   @param handle the value of the handle returned by `::soap::fmimereadopen`
@@ -4790,7 +4908,11 @@ struct soap {
   @ingroup group_callbacks
   This callback is called by the engine to close the MIME/MTOM attachment stream after reading.  The `handle` parameter contains the handle returned by the `::soap::fmimereadopen` callback.
 
-  @see The example provided with the documentation for `::soap::fmimereadopen`.
+  @see `#SOAP_ENC_MIME`, `#SOAP_ENC_MTOM`, `::soap::fmimereadopen`, `::soap::user`.
+
+  @par Example:
+
+  See the example provided with the documentation for `::soap::fmimereadopen`.
 
   @param soap `::soap` context
   @param handle the value of the of the handle returned by `::soap::fmimereadopen`
@@ -4800,6 +4922,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   Called by the to start receiving a streaming MIME/MTOM attachment.  This callback opens a stream to start writing the attachment data received.  The actual data stream will be written in chunks using the `::soap::fmimewrite` callback until no more data is available and the `::soap::fmimewriteclose` callback is called to close the stream.  The `id`, `type` and `options` parameters are the `id`, `type` and `options` of the attachment struct/class (e.g. `::xsd__base64Binary` or `::_xop__Include` with `__ptr`, `__size`, `id`, `type` and `options` members), respectively.  The callback should return a handle, which is passed to the `::soap::fmimewrite` and `::soap::fmimewriteclose` callbacks.  The `__ptr` member variable of the attachment struct/class is set by the engine to the value of this handle.  The `__size` member variable is set to the size of the attachment received.
+
+  @see `#SOAP_ENC_MIME`, `#SOAP_ENC_MTOM`, `::soap::fmimereadopen`, `::soap::user`.
 
   @par Example:
 
@@ -4867,6 +4991,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to write a chunk of attachment data received.  The `handle` parameter contains the handle returned by the `::soap::fmimewriteopen` callback.  The `buf` parameter contains the data of length `len`.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.
+  @see `#SOAP_ENC_MIME`, `#SOAP_ENC_MTOM`, `::soap::user`.
+
   @param soap `::soap` context
   @param handle the value of the handle returned by `::soap::fmimewriteopen`
   @returns `#SOAP_OK` or a `::soap_status` error code
@@ -4876,6 +5002,9 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to close the MIME/MTOM attachment stream after writing.  The `handle` parameter contains the handle returned by the `::soap::fmimewriteopen` callback.
+
+  @see `#SOAP_ENC_MIME`, `#SOAP_ENC_MTOM`, `::soap::user`.
+
   @param soap `::soap` context
   @param handle the value of the of the handle returned by `::soap::fmimewriteopen`
   */
@@ -4884,6 +5013,9 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called to initialize the OpenSSL or GNUTLS context for HTTPS connections configured with the parameters passed to `::soap_ssl_client_context` and `::soap_ssl_server_context`.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap::fsslauth` is `ssl_auth_init`.
+
+  @see `::soap::user`.
+
   @param soap `::soap` context
   @returns `#SOAP_OK` or a `::soap_status` error code
   */
@@ -4892,6 +5024,8 @@ struct soap {
   /**
   @ingroup group_callbacks
   This callback is called by the engine to manage the verification of the certificate provided by a peer, such as the certificate provided by a server connected over HTTPS or to verify the certificate included with a WS-Security message.  To require certificate verification of a server connected via HTTPS, use `::soap_ssl_client_context` with `#SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION`.  To require certificate verification of a client connected to a server, use `::soap_ssl_server_context` with `#SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION`.  The `ok` parameter of this callback indicates whether the verification of the certificate in question passed (`ok` == 1) or failed (`ok` == 0) as determined by the OpenSSL library based on the `::soap_ssl_client_context` or `::soap_ssl_server_context` configuration.  If the callback returns 1 then the handshake is continued and the connection maybe established.  To return 1 when `ok` == 0 requires resetting the error state with `X509_STORE_CTX_set_error(store, X509_V_OK)`.  If the callback returns 0 then the handshake is immediately terminated with "verification failed" and a verification failure alert is sent to the peer.  The built-in function assigned to `::soap::fsslverify` is `ssl_verify_callback` or when `#SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE` is used `ssl_verify_callback_allow_expired_certificate`.
+
+  @see `::soap::user`.
 
   @par Example:
 

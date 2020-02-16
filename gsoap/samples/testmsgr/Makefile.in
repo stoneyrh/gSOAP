@@ -89,6 +89,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = testmsgr$(EXEEXT)
+@WITH_OPENSSL_TRUE@am__append_1 = $(top_srcdir)/gsoap/plugin/httpda.c $(top_srcdir)/gsoap/plugin/smdevp.c
 subdir = gsoap/samples/testmsgr
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -100,13 +101,19 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
+am__testmsgr_SOURCES_DIST = testmsgr.cpp ../../import/dom.h soapC.cpp \
+	$(top_srcdir)/gsoap/plugin/httpda.c \
+	$(top_srcdir)/gsoap/plugin/smdevp.c
 am__objects_1 =
 am__objects_2 = soapC.$(OBJEXT)
+am__dirstamp = $(am__leading_dot)dirstamp
+@WITH_OPENSSL_TRUE@am__objects_3 = $(top_builddir)/gsoap/plugin/testmsgr-httpda.$(OBJEXT) \
+@WITH_OPENSSL_TRUE@	$(top_builddir)/gsoap/plugin/testmsgr-smdevp.$(OBJEXT)
 am_testmsgr_OBJECTS = testmsgr.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_2)
+	$(am__objects_2) $(am__objects_3)
 testmsgr_OBJECTS = $(am_testmsgr_OBJECTS)
 am__DEPENDENCIES_1 =
-testmsgr_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1) \
+testmsgr_DEPENDENCIES = $(SOAP_CPP_LIB_SSL) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -123,8 +130,27 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/soapC.Po ./$(DEPDIR)/testmsgr.Po
+am__depfiles_remade =  \
+	$(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Po \
+	$(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Po \
+	./$(DEPDIR)/soapC.Po ./$(DEPDIR)/testmsgr.Po
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 AM_V_CXX = $(am__v_CXX_@AM_V@)
@@ -138,20 +164,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
 SOURCES = $(testmsgr_SOURCES)
-DIST_SOURCES = $(testmsgr_SOURCES)
+DIST_SOURCES = $(am__testmsgr_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -335,14 +349,15 @@ LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 BUILT_SOURCES = $(SOAP_CPP_SRC) 
 CLEANFILES = $(SOAP_CPP_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.cpp soap*Proxy.h soap*Proxy.cpp soap*Object.h soap*Service.h soap*Service.cpp soapClient.cpp soapServer.cpp soapClientLib.cpp soapServerLib.cpp *~
 SOAP_NS = $(SOAP_NS_DEF)
-testmsgr_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
-testmsgr_SOURCES = testmsgr.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
-testmsgr_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+testmsgr_CFLAGS = $(WSDL2H_EXTRA_FLAGS)
+testmsgr_SOURCES = testmsgr.cpp $(SOAPHEADER) $(SOAP_CPP_CORE) \
+	$(am__append_1)
+testmsgr_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .o .obj
+.SUFFIXES: .c .cpp .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../Makefile.defines $(srcdir)/../Makefile.cpp_rules $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -376,6 +391,18 @@ $(am__aclocal_m4_deps):
 
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+$(top_builddir)/gsoap/plugin/$(am__dirstamp):
+	@$(MKDIR_P) $(top_builddir)/gsoap/plugin
+	@: > $(top_builddir)/gsoap/plugin/$(am__dirstamp)
+$(top_builddir)/gsoap/plugin/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) $(top_builddir)/gsoap/plugin/$(DEPDIR)
+	@: > $(top_builddir)/gsoap/plugin/$(DEPDIR)/$(am__dirstamp)
+$(top_builddir)/gsoap/plugin/testmsgr-httpda.$(OBJEXT):  \
+	$(top_builddir)/gsoap/plugin/$(am__dirstamp) \
+	$(top_builddir)/gsoap/plugin/$(DEPDIR)/$(am__dirstamp)
+$(top_builddir)/gsoap/plugin/testmsgr-smdevp.$(OBJEXT):  \
+	$(top_builddir)/gsoap/plugin/$(am__dirstamp) \
+	$(top_builddir)/gsoap/plugin/$(DEPDIR)/$(am__dirstamp)
 
 testmsgr$(EXEEXT): $(testmsgr_OBJECTS) $(testmsgr_DEPENDENCIES) $(EXTRA_testmsgr_DEPENDENCIES) 
 	@rm -f testmsgr$(EXEEXT)
@@ -383,10 +410,13 @@ testmsgr$(EXEEXT): $(testmsgr_OBJECTS) $(testmsgr_DEPENDENCIES) $(EXTRA_testmsgr
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f $(top_builddir)/gsoap/plugin/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@$(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@$(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testmsgr.Po@am__quote@ # am--include-marker
 
@@ -395,6 +425,50 @@ $(am__depfiles_remade):
 	@echo '# dummy' >$@-t && $(am__mv) $@-t $@
 
 am--depfiles: $(am__depfiles_remade)
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+$(top_builddir)/gsoap/plugin/testmsgr-httpda.o: $(top_builddir)/gsoap/plugin/httpda.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -MT $(top_builddir)/gsoap/plugin/testmsgr-httpda.o -MD -MP -MF $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Tpo -c -o $(top_builddir)/gsoap/plugin/testmsgr-httpda.o `test -f '$(top_builddir)/gsoap/plugin/httpda.c' || echo '$(srcdir)/'`$(top_builddir)/gsoap/plugin/httpda.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Tpo $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/gsoap/plugin/httpda.c' object='$(top_builddir)/gsoap/plugin/testmsgr-httpda.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/gsoap/plugin/testmsgr-httpda.o `test -f '$(top_builddir)/gsoap/plugin/httpda.c' || echo '$(srcdir)/'`$(top_builddir)/gsoap/plugin/httpda.c
+
+$(top_builddir)/gsoap/plugin/testmsgr-httpda.obj: $(top_builddir)/gsoap/plugin/httpda.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -MT $(top_builddir)/gsoap/plugin/testmsgr-httpda.obj -MD -MP -MF $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Tpo -c -o $(top_builddir)/gsoap/plugin/testmsgr-httpda.obj `if test -f '$(top_builddir)/gsoap/plugin/httpda.c'; then $(CYGPATH_W) '$(top_builddir)/gsoap/plugin/httpda.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/gsoap/plugin/httpda.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Tpo $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/gsoap/plugin/httpda.c' object='$(top_builddir)/gsoap/plugin/testmsgr-httpda.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/gsoap/plugin/testmsgr-httpda.obj `if test -f '$(top_builddir)/gsoap/plugin/httpda.c'; then $(CYGPATH_W) '$(top_builddir)/gsoap/plugin/httpda.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/gsoap/plugin/httpda.c'; fi`
+
+$(top_builddir)/gsoap/plugin/testmsgr-smdevp.o: $(top_builddir)/gsoap/plugin/smdevp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -MT $(top_builddir)/gsoap/plugin/testmsgr-smdevp.o -MD -MP -MF $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Tpo -c -o $(top_builddir)/gsoap/plugin/testmsgr-smdevp.o `test -f '$(top_builddir)/gsoap/plugin/smdevp.c' || echo '$(srcdir)/'`$(top_builddir)/gsoap/plugin/smdevp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Tpo $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/gsoap/plugin/smdevp.c' object='$(top_builddir)/gsoap/plugin/testmsgr-smdevp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/gsoap/plugin/testmsgr-smdevp.o `test -f '$(top_builddir)/gsoap/plugin/smdevp.c' || echo '$(srcdir)/'`$(top_builddir)/gsoap/plugin/smdevp.c
+
+$(top_builddir)/gsoap/plugin/testmsgr-smdevp.obj: $(top_builddir)/gsoap/plugin/smdevp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -MT $(top_builddir)/gsoap/plugin/testmsgr-smdevp.obj -MD -MP -MF $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Tpo -c -o $(top_builddir)/gsoap/plugin/testmsgr-smdevp.obj `if test -f '$(top_builddir)/gsoap/plugin/smdevp.c'; then $(CYGPATH_W) '$(top_builddir)/gsoap/plugin/smdevp.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/gsoap/plugin/smdevp.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Tpo $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/gsoap/plugin/smdevp.c' object='$(top_builddir)/gsoap/plugin/testmsgr-smdevp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testmsgr_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/gsoap/plugin/testmsgr-smdevp.obj `if test -f '$(top_builddir)/gsoap/plugin/smdevp.c'; then $(CYGPATH_W) '$(top_builddir)/gsoap/plugin/smdevp.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/gsoap/plugin/smdevp.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -530,6 +604,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(top_builddir)/gsoap/plugin/$(DEPDIR)/$(am__dirstamp)" || rm -f $(top_builddir)/gsoap/plugin/$(DEPDIR)/$(am__dirstamp)
+	-test -z "$(top_builddir)/gsoap/plugin/$(am__dirstamp)" || rm -f $(top_builddir)/gsoap/plugin/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -540,7 +616,9 @@ clean: clean-am
 clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/soapC.Po
+		-rm -f $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Po
+	-rm -f $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Po
+	-rm -f ./$(DEPDIR)/soapC.Po
 	-rm -f ./$(DEPDIR)/testmsgr.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -587,7 +665,9 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/soapC.Po
+		-rm -f $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-httpda.Po
+	-rm -f $(top_builddir)/gsoap/plugin/$(DEPDIR)/testmsgr-smdevp.Po
+	-rm -f ./$(DEPDIR)/soapC.Po
 	-rm -f ./$(DEPDIR)/testmsgr.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

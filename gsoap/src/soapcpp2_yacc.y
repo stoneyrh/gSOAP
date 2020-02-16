@@ -360,9 +360,13 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                 p->info.typ->extsym = $2;
                               }
                               else if (is_external($3.typ))
+                              {
                                 p->info.typ->transient = -3; /* extern and volatile */
+                              }
                               else
+                              {
                                 p->info.typ->transient = $3.typ->transient;
+                              }
                               if (p->info.typ->width == 0)
                                 p->info.typ->width = 8;
                               p->info.sto = $3.sto;

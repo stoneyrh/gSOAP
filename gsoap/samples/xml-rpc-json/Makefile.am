@@ -13,11 +13,11 @@ SOAP_NS = $(SOAP_NS_DEF)
 jsoncpp_SOURCES = jsoncpp.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 jsoncpp_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 
-json_GitHub_CPPFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+json_GitHub_CPPFLAGS = $(WSDL2H_EXTRA_FLAGS)
 json_GitHub_SOURCES = json-GitHub.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_GitHub_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 
-json_gdm_CPPFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+json_gdm_CPPFLAGS = $(WSDL2H_EXTRA_FLAGS)
 json_gdm_SOURCES = json-GoogleDistanceMatrix.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_gdm_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 

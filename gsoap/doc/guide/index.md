@@ -2648,10 +2648,10 @@ The following example illustrates the use of threads to improve the quality of s
           s = soap_accept(&soap); 
           if (soap_valid_socket(s)) 
           {
-            fprintf(stderr, "Thread %d accepts socket %d connection from IP %d.%d.%d.%d\n", i, s, (soap.ip>>24)&0xFF, (soap.ip>>16)&0xFF, (soap.ip>>8)&0xFF, soap.ip&0xFF); 
+            fprintf(stderr, "Accept socket %d connection from IP %d.%d.%d.%d\n", s, (soap.ip>>24)&0xFF, (soap.ip>>16)&0xFF, (soap.ip>>8)&0xFF, soap.ip&0xFF); 
             tsoap = soap_copy(&soap); // make a copy 
             if (!tsoap) 
-              soap_force_closesock(soap);
+              soap_force_closesock(&soap);
             else
               while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
                 sleep(1); // failed, try again
@@ -2672,8 +2672,9 @@ The following example illustrates the use of threads to improve the quality of s
       return 0; 
     } 
 
-    void *process_request(struct soap *soap) 
+    void *process_request(void* tsoap) 
     {
+      struct soap *soap = (struct soap*)tsoap;
       THREAD_DETACH(THREAD_ID); 
       soap_serve(soap); 
       soap_destroy(soap); // delete managed class instances 
@@ -2851,7 +2852,7 @@ The advantage of the code shown above is that the machine cannot be overloaded w
           s = soap_accept(&soap); 
           if (soap_valid_socket(s)) 
           {
-            fprintf(stderr, "Thread %d accepts socket %d connection from IP %d.%d.%d.%d\n", i, s, (soap.ip>>24)&0xFF, (soap.ip>>16)&0xFF, (soap.ip>>8)&0xFF, soap.ip&0xFF); 
+            fprintf(stderr, "Accept socket %d connection from IP %d.%d.%d.%d\n", s, (soap.ip>>24)&0xFF, (soap.ip>>16)&0xFF, (soap.ip>>8)&0xFF, soap.ip&0xFF); 
             enqueue(s);
           }
           else if (soap.errnum) // accept failed, try again after 1 second
@@ -2884,19 +2885,20 @@ The advantage of the code shown above is that the machine cannot be overloaded w
       return 0; 
     } 
 
-    void *process_queue(void *soap) 
+    void *process_queue(void *tsoap) 
     {
-      struct soap *tsoap = (struct soap*)soap; 
+      struct soap *soap = (struct soap*)tsoap; 
       while (1)
       {
-        tsoap->socket = dequeue(); 
-        if (!soap_valid_socket(tsoap->socket)) 
+        soap->socket = dequeue(); 
+        if (!soap_valid_socket(soap->socket)) 
           break; 
-        soap_serve(tsoap); 
-        soap_destroy(tsoap); 
-        soap_end(tsoap); 
+        soap_serve(soap); 
+        soap_destroy(soap); 
+        soap_end(soap); 
         fprintf(stderr, "served\n"); 
       } 
+      soap_free(soap);
       return NULL; 
     } 
 
@@ -15514,10 +15516,10 @@ each thread handles the client connection:
         s = soap_accept(&soap); 
         if (soap_valid_socket(s)) 
         {
-          fprintf(stderr, "Accepts socket %d connection from IP %d.%d.%d.%d\n", s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF); 
+          fprintf(stderr, "Accept socket %d connection from IP %d.%d.%d.%d\n", s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF); 
           tsoap = soap_copy(&soap); 
           if (!tsoap)
-            soap_force_closesock(soap);
+            soap_force_closesock(&soap);
           else
             while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
               sleep(1); // failed, try again
@@ -15536,15 +15538,16 @@ each thread handles the client connection:
       return 0; 
     } 
 
-    void *process_request(void *soap) 
+    void *process_request(void *tsoap) 
     {
+      struct *soap = (struct soap*)tsoap;
       THREAD_DETACH(THREAD_ID); 
       ((struct soap*)soap)->recv_timeout = 60; // Timeout after 1 minute stall on recv 
       ((struct soap*)soap)->send_timeout = 10; // Timeout after 10 second stall on send 
-      soap_serve((struct soap*)soap); 
-      soap_destroy((struct soap*)soap); 
-      soap_end((struct soap*)soap); 
-      soap_free((struct soap*)soap); 
+      soap_serve(soap); 
+      soap_destroy(soap); 
+      soap_end(soap); 
+      soap_free(soap); 
       return NULL; 
     }
 ~~~
@@ -16108,8 +16111,9 @@ multi-threaded stand-alone SOAP Web Service:
       return 0; 
     }  
 
-    void *process_request(struct soap *soap) 
+    void *process_request(void *tsoap) 
     {
+      struct soap *soap = (struct soap*)tsoap;
       THREAD_DETACH(THREAD_ID); 
       if (soap_ssl_accept(soap)) 
         soap_print_fault(soap, stderr); 

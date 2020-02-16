@@ -4,7 +4,16 @@
 	Generated with:
 	wsdl2h -cyex -o wsdd10.h -t WS/WS-typemap.dat WS/discovery.xsd
 
-        Modified by Robert van Engelen:
+        Requires:
+        - plugin/wsddapi.h and plugin/wsddapi.c
+        - plugin/wsaapi.h and plugin/wsaapi.c
+        - custom/duration.c
+
+        This file imports:
+        - wsa.h
+        - custom/duration.h
+        - wsdx.h
+
 
         - Removed //gsoapopt
         - Changed //gsoap wssd schema namespace directive to import directive

@@ -792,7 +792,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 extern int isatty(int); /* silence warnings */
 
 #ifdef WITH_BISON
-YYSTYPE yylval;
+extern YYSTYPE yylval;
 #undef YY_NEED_STRLEN
 #define YY_INPUT(buf, result, max_size) \
         { \

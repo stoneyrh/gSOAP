@@ -1572,11 +1572,22 @@ Version 2.8.96 (12/4/2019)
 - Improved `soap_check_mime_attachments()` and `soap_recv_mime_attachment()` functions and documentation, ensure proper close when MIME/MTOM errors occur.
 - Minor improvements.
 
-Version 2.8.97 (1/7/2020) {#latest}
+Version 2.8.97 (1/7/2020)
 ---
 
 - Fixed wsdl2h processing of schemas with a cyclic schema `<xs:include>` that may cause wsdl2h to hang when schemas have no `targetNamespace` attribute.
 - Improved wsdl2h code generation of unqualified types and names defined in imported schemas (with `<xs:import>`) when these schemas have no `targetNamespace`.  Use wsdl2h option `-z10` or lesser to revert to the code generation behavior of versions prior to 2.8.97.
+- Other minor improvements.
+
+Version 2.8.98 (2/16/2020) {#latest}
+---
+
+- Updated the WS-Security and WS-Trust APIs that use SAML with higher precision timestamps in microseconds, using the `custom/struct_timeval.h` serializer for `xsd__dateTime`.  The WS-Security and WS-Trust updates require compiling and linking with `custom/struct_timeval.c`.
+- Updated `ds__KeyInfoType` declared in `ds.h` to include a `xenc__EncryptedKey` member when `xenc.h` is imported, i.e. by making `ds__KeyInfoType` a mutable struct that is extended in `xenc.h`.
+- Updated Test Messenger tool for unit testing, regression testing, and fuzz testing.  New options `-X` and `-Y`.
+- Updated DOM API, whitespace at both edges of text elements in the DOM is no longer trimmed.
+- Fixed an issue with soapcpp2 code generation of `wchar_t*` serializers when combined with a custom serializer with base type `wchar_t*`, i.e. when `extern typedef wchar_t* name` is declared.
+- Fixed an issue with soapcpp2 code generation when an element tag names starts with an underscore and the element is namespace qualified.
 - Other minor improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)

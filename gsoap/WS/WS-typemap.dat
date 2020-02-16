@@ -9,6 +9,8 @@
 #A commercial use license is available from Genivia, Inc., contact@genivia.com
 #-------------------------------------------------------------------------------
 
+xsd__dateTime = #import "custom/struct_timeval.h" | xsd__dateTime
+
 #	Bindings for WS-* protocols:
 
 wsrp	= "http://schemas.xmlsoap.org/rp/"
@@ -384,14 +386,15 @@ typedef struct ds__TransformType\n\
 } ds__TransformType, _ds__Transform;
 
 ds__KeyInfoType =\
-typedef struct ds__KeyInfoType\n\
+mutable struct ds__KeyInfoType\n\
 {	char*					KeyName;\n\
 	struct ds__KeyValueType*		KeyValue;\n\
 	struct ds__RetrievalMethodType*		RetrievalMethod;\n\
 	struct ds__X509DataType*		X509Data;\n\
 	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;\n\
 	@char*					Id;\n\
-} ds__KeyInfoType, _ds__KeyInfo;\n\
+};\n\
+typedef struct ds__KeyInfoType ds__KeyInfoType, _ds__KeyInfo;
 
 ds__SignatureType =\
 typedef char *_ds__SignatureValue;\n\

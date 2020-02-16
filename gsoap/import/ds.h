@@ -4,6 +4,9 @@
 	Generated with:
 	wsdl2h -cuxy -o ds.h -t WS/WS-typemap.dat WS/ds.xsd
 
+        This file imports:
+        - c14n.h
+
 	- Removed //gsoapopt
 	- Added //gsoap ds    schema import: http://www.w3.org/2000/09/xmldsig#
 
@@ -80,14 +83,15 @@ typedef struct ds__TransformType
 typedef struct ds__DigestMethodType ds__DigestMethodType;
 
 /// Imported complexType "http://www.w3.org/2000/09/xmldsig#":KeyInfoType from typemap WS/WS-typemap.dat.
-typedef struct ds__KeyInfoType
+mutable struct ds__KeyInfoType
 {	char*					KeyName;
 	struct ds__KeyValueType*		KeyValue;
 	struct ds__RetrievalMethodType*		RetrievalMethod;
 	struct ds__X509DataType*		X509Data;
 	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;
 	@char*					Id;
-} ds__KeyInfoType, _ds__KeyInfo;
+};
+typedef struct ds__KeyInfoType ds__KeyInfoType, _ds__KeyInfo;
 
 /// Typedef synonym for struct ds__KeyValueType.
 typedef struct ds__KeyValueType ds__KeyValueType;

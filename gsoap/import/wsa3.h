@@ -7,7 +7,8 @@
 	Generated with:
 	wsdl2h -cgye -o wsa3.h -t WS/WS-typemap.dat WS/WS-Addressing03.xsd
 
-	Modified by Robert van Engelen:
+        Requires:
+        - plugin/wsaapi.h and plugin/wsaapi.c
 
 	- Removed //gsoapopt
 	- Added the following directive to import WS-Addressing namespace:

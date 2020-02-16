@@ -57,6 +57,11 @@ int main()
 {
   struct soap soap;
   double a, b, result;
+  /* Init gSOAP context */
+  soap_init(&soap);
+  a = 10.0;
+  b = 20.0;
+#if defined(WITH_OPENSSL)
   /* Uncomment to call this first before all else if SSL is initialized elsewhere, e.g. in application code */
   /* soap_ssl_noinit(); */
   /* Init SSL before any threads are started (do this just once) */
@@ -67,10 +72,6 @@ int main()
     fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
     exit(1);
   }
-  a = 10.0;
-  b = 20.0;
-  /* Init gSOAP context */
-  soap_init(&soap);
   /* The supplied server certificate "server.pem" assumes that the server is
      running on 'localhost', so clients can only connect from the same host when
      verifying the server's certificate. Use SOAP_SSL_NO_AUTHENTICATION to omit
@@ -129,6 +130,7 @@ int main()
     soap_print_fault(&soap, stderr);
     exit(EXIT_FAILURE);
   }
+#endif
   soap.connect_timeout = 30;	/* try to connect for up to 30 seconds */
   soap.send_timeout = soap.recv_timeout = 10;	/* max I/O idle time is 10 seconds */
   if (soap_call_ns__add(&soap, server, "", a, b, &result) == SOAP_OK)

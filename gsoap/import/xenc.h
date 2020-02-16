@@ -4,8 +4,18 @@
 	Generated with:
 	wsdl2h -cuxy -o xenc.h -t WS/WS-typemap.dat WS/xenc.xsd
 
+        This file imports:
+        - ds.h
+        - c14n.h
+
 	- Removed //gsoapopt
 	- Added //gsoap xenc    schema import: http://www.w3.org/2001/04/xmlenc#
+	- Added before #import "ds.h":
+	    // Add xenc:Encrypted to ds:KeyInfoType
+	    mutable struct ds__KeyInfoType
+            {
+                struct xenc__EncryptedKeyType* xenc__EncryptedKey;
+            };
 
 */
 
@@ -22,6 +32,12 @@
  * Import                                                                     *
  *                                                                            *
 \******************************************************************************/
+
+// Add xenc:Encrypted to ds:KeyInfoType
+mutable struct ds__KeyInfoType
+{
+	struct xenc__EncryptedKeyType*		xenc__EncryptedKey;
+};
 
 #import "ds.h"	// ds = <http://www.w3.org/2000/09/xmldsig#>
 

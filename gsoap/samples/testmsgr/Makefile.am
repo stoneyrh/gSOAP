@@ -10,6 +10,9 @@ include ../Makefile.defines
 include ../Makefile.cpp_rules
 SOAP_NS = $(SOAP_NS_DEF)
 
-testmsgr_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+testmsgr_CFLAGS = $(WSDL2H_EXTRA_FLAGS)
 testmsgr_SOURCES = testmsgr.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
-testmsgr_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+testmsgr_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+if WITH_OPENSSL
+testmsgr_SOURCES+=$(top_srcdir)/gsoap/plugin/httpda.c $(top_srcdir)/gsoap/plugin/smdevp.c
+endif

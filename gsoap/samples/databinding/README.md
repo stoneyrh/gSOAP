@@ -3991,6 +3991,8 @@ on a context-managed heap:
 The above functions can be invoked with a NULL `soap` context, but we will be
 responsible to use `delete T` to remove this instance from the unmanaged heap.
 
+The allocation functions return NULL when memory allocation failed.
+
 🔝 [Back to table of contents](#)
 
 Special classes and structs                                           {#toxsd10}
@@ -5115,6 +5117,9 @@ or <b>`soapcpp2 -c`</b> option <b>`-c`</b>), data is allocated on the managed he
 
 - `void *soap_malloc(struct soap*, size_t len)`.
 
+This function allocates `len` bytes on the heap managed by the specified
+context and returns NULL when allocation failed.
+
 You can also make shallow copies of data with `soap_memdup` that uses
 `soap_malloc` and a safe version of `memcpy` to copy a chunk of data `src` with
 length `len` to the context-managed heap:
@@ -5132,11 +5137,12 @@ allocate and initialize data of type `T` on the managed heap:
 This function returns an array of length `n` of type `T` data that is default
 initialized (by internally calling `soap_malloc(soap, n * sizeof(T))` and then
 `soap_default_T(soap, T*)` on each array value).  Use a negative value or `n=1`
-to allocate and initialize a single value.
+to allocate and initialize a single value.  This function returns NULL when
+allocation failed.
 
-The `soap_malloc` function is a wrapper around `malloc`, but which also permits
-the `soap` context to track all heap allocations for collective deletion
-with `soap_end(soap)`:
+The `soap_malloc` function is essentially a wrapper around `malloc`, but
+permits the `soap` context to track all heap allocations for collective
+deletion with `soap_end(soap)`:
 
 ~~~{.cpp}
     #include "soapH.h"
@@ -5418,15 +5424,13 @@ allocation is tracked by the `soap` context for collective deletion with
 `soap_end(soap)` for everything else.
 
 You should only use `soap_malloc(struct soap*, size_t len)` to allocate
-primitive types, but `soap_new_T` is preferred.  The auto-generated `T *
-soap_new_T(struct soap*)` returns data allocated on the managed heap for type
-`T`.  The data is mass-deleted with `soap_destroy(soap)` followed by
-`soap_end(soap)`.
+primitive types because constructors are not invoked.  Therefore, `soap_new_T`
+is preferred.  The auto-generated `T * soap_new_T(struct soap*)` returns data
+allocated on the managed heap for type `T`.  The data is mass-deleted with
+`soap_destroy(soap)` followed by `soap_end(soap)`.
 
 The `soap_new_T` functions return NULL when allocation fails.  C++ exceptions
-are never raised by the engine and serializers when data is allocated, unless
-`SOAP_NOTHROW` (set to `(std::nothrow)`) is redefined to permit `new` to throw
-exceptions.
+are never raised by the engine and serializers when data is allocated.
 
 There are four variations of `soap_new_T` functions to allocate data of type
 `T` that soapcpp2 auto-generates:
@@ -5461,17 +5465,87 @@ For example, to allocate a managed `std::string` you can use:
     std::string *s = soap_new_std__string(soap);
 ~~~
 
-Primitive types and arrays of these are allocated with `soap_malloc`
-(`soap_new_T` calls `soap_malloc` for primitive type `T`).  All primitive types
-(i.e. no classes, structs, class templates, containers, and smart pointers) are
-allocated with `soap_malloc` for reasons of efficiency.
+To throw a `std::bad_alloc` exception when memory allocation fails, we can define the
+following class and macro:
+
+~~~{.cpp}
+    class alloc_check {
+     public:
+      alloc_check()
+      { }
+      template<typename T>
+      T operator=(T ptr)
+      {
+        if (ptr == NULL)
+          throw std::bad_alloc();
+        return ptr;
+      }
+    };
+
+    #define CHECK alloc_check() =
+~~~
+
+And use `CHECK` as follows to throw an exception when memory allocation fails:
+
+~~~{.cpp}
+    std::string *s = CHECK soap_new_std__string(soap);
+~~~
+
+To throw a `std::runtime_exception` when memory allocation fails, with file
+and line number information where the error occurred, we can define the
+following revised version of our exception-throwing macro:
+
+~~~{.cpp}
+    class alloc_failure : public std::runtime_error {
+     public:
+      alloc_failure(const char *file, size_t line) : std::runtime_error(error(file, line))
+      { }
+     private:
+      std::string error(const char *file, size_t line) const
+      {
+        std::stringstream ss;
+        ss << "Memory allocation failed in " << file << " at line " << line;
+        return ss.str();
+      }
+    };
+
+    class alloc_check_with_info {
+     public:
+      alloc_check_with_info(const char *file, size_t line) : file(file), line(line)
+      { }
+      template<typename T>
+      T operator=(T ptr) const
+      {
+        if (ptr == NULL)
+          throw alloc_failure(file, line);
+        return ptr;
+      }
+      const char *file;
+      size_t line;
+    };
+
+    #define CHECK alloc_check_with_info(__FILE__, __LINE__) =
+~~~
+
+And use `CHECK` as follows to throw an exception with the file and line number
+of the location where memory allocation failed:
+
+~~~{.cpp}
+    std::string *s = CHECK soap_new_std__string(soap);
+~~~
+
+Primitive types and arrays of primitive values may be allocated with
+`soap_malloc` (actually, `soap_new_T` calls `soap_malloc` for primitive type
+`T`).  All primitive types (i.e. no classes, structs, class templates,
+containers, and smart pointers) are allocated with `soap_malloc` for reasons of
+efficiency.
 
 You can use a C++ template to simplify the managed allocation and initialization
 of primitive values as follows (this is for primitive types only):
 
 ~~~{.cpp}
     template<class T>
-    T * soap_make(struct soap *soap, T val) throw (std::bad_alloc)
+    T * soap_make(struct soap *soap, T val)
     {
       T *p = (T*)soap_malloc(soap, sizeof(T));
       if (p == NULL)
@@ -5941,8 +6015,7 @@ Error messages can be displayed with:
   and part of the XML where the parser encountered an error.
 
 C++ exceptions are never raised by the engine or serializers, even when data is
-allocated.  (That is unless the `SOAP_NOTHROW` macro (set to `(std::nothrow)`
-by default) is redefined to permit `new` to throw exceptions.)
+allocated.
 
 A `SOAP_EOM` error code is returned when memory was exhausted during
 processing of input and/or output of data.

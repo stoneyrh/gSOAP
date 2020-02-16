@@ -109,7 +109,8 @@ am_wstdemo_OBJECTS = wstdemo-wstdemo.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_4) wstdemo-stdsoap2.$(OBJEXT) \
 	wstdemo-dom.$(OBJEXT) wstdemo-wstapi.$(OBJEXT) \
 	wstdemo-wsseapi.$(OBJEXT) wstdemo-wsaapi.$(OBJEXT) \
-	wstdemo-smdevp.$(OBJEXT) wstdemo-mecevp.$(OBJEXT)
+	wstdemo-smdevp.$(OBJEXT) wstdemo-mecevp.$(OBJEXT) \
+	wstdemo-struct_timeval.$(OBJEXT)
 wstdemo_OBJECTS = $(am_wstdemo_OBJECTS)
 am__DEPENDENCIES_1 =
 wstdemo_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -134,9 +135,10 @@ am__depfiles_remade = ./$(DEPDIR)/wstdemo-dom.Po \
 	./$(DEPDIR)/wstdemo-mecevp.Po ./$(DEPDIR)/wstdemo-smdevp.Po \
 	./$(DEPDIR)/wstdemo-soapC.Po ./$(DEPDIR)/wstdemo-soapClient.Po \
 	./$(DEPDIR)/wstdemo-soapServer.Po \
-	./$(DEPDIR)/wstdemo-stdsoap2.Po ./$(DEPDIR)/wstdemo-wsaapi.Po \
-	./$(DEPDIR)/wstdemo-wsseapi.Po ./$(DEPDIR)/wstdemo-wstapi.Po \
-	./$(DEPDIR)/wstdemo-wstdemo.Po
+	./$(DEPDIR)/wstdemo-stdsoap2.Po \
+	./$(DEPDIR)/wstdemo-struct_timeval.Po \
+	./$(DEPDIR)/wstdemo-wsaapi.Po ./$(DEPDIR)/wstdemo-wsseapi.Po \
+	./$(DEPDIR)/wstdemo-wstapi.Po ./$(DEPDIR)/wstdemo-wstdemo.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -339,9 +341,9 @@ LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
 BUILT_SOURCES = $(SOAP_C_SRC) 
 CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
 SOAP_NS = wstdemo.nsmap
-wstdemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP -DSKIP_CERTIFICATE_VERIFICATION
-wstdemo_SOURCES = wstdemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wstapi.c ../../plugin/wsseapi.c ../../plugin/wsaapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c
-wstdemo_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
+wstdemo_CFLAGS = -DWITH_DOM $(WSDL2H_EXTRA_FLAGS) -DSKIP_CERTIFICATE_VERIFICATION
+wstdemo_SOURCES = wstdemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wstapi.c ../../plugin/wsseapi.c ../../plugin/wsaapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c ../../custom/struct_timeval.c
+wstdemo_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -398,6 +400,7 @@ include ./$(DEPDIR)/wstdemo-soapC.Po # am--include-marker
 include ./$(DEPDIR)/wstdemo-soapClient.Po # am--include-marker
 include ./$(DEPDIR)/wstdemo-soapServer.Po # am--include-marker
 include ./$(DEPDIR)/wstdemo-stdsoap2.Po # am--include-marker
+include ./$(DEPDIR)/wstdemo-struct_timeval.Po # am--include-marker
 include ./$(DEPDIR)/wstdemo-wsaapi.Po # am--include-marker
 include ./$(DEPDIR)/wstdemo-wsseapi.Po # am--include-marker
 include ./$(DEPDIR)/wstdemo-wstapi.Po # am--include-marker
@@ -577,6 +580,20 @@ wstdemo-mecevp.obj: ../../plugin/mecevp.c
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wstdemo_CFLAGS) $(CFLAGS) -c -o wstdemo-mecevp.obj `if test -f '../../plugin/mecevp.c'; then $(CYGPATH_W) '../../plugin/mecevp.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/mecevp.c'; fi`
 
+wstdemo-struct_timeval.o: ../../custom/struct_timeval.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wstdemo_CFLAGS) $(CFLAGS) -MT wstdemo-struct_timeval.o -MD -MP -MF $(DEPDIR)/wstdemo-struct_timeval.Tpo -c -o wstdemo-struct_timeval.o `test -f '../../custom/struct_timeval.c' || echo '$(srcdir)/'`../../custom/struct_timeval.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/wstdemo-struct_timeval.Tpo $(DEPDIR)/wstdemo-struct_timeval.Po
+#	$(AM_V_CC)source='../../custom/struct_timeval.c' object='wstdemo-struct_timeval.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wstdemo_CFLAGS) $(CFLAGS) -c -o wstdemo-struct_timeval.o `test -f '../../custom/struct_timeval.c' || echo '$(srcdir)/'`../../custom/struct_timeval.c
+
+wstdemo-struct_timeval.obj: ../../custom/struct_timeval.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wstdemo_CFLAGS) $(CFLAGS) -MT wstdemo-struct_timeval.obj -MD -MP -MF $(DEPDIR)/wstdemo-struct_timeval.Tpo -c -o wstdemo-struct_timeval.obj `if test -f '../../custom/struct_timeval.c'; then $(CYGPATH_W) '../../custom/struct_timeval.c'; else $(CYGPATH_W) '$(srcdir)/../../custom/struct_timeval.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/wstdemo-struct_timeval.Tpo $(DEPDIR)/wstdemo-struct_timeval.Po
+#	$(AM_V_CC)source='../../custom/struct_timeval.c' object='wstdemo-struct_timeval.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wstdemo_CFLAGS) $(CFLAGS) -c -o wstdemo-struct_timeval.obj `if test -f '../../custom/struct_timeval.c'; then $(CYGPATH_W) '../../custom/struct_timeval.c'; else $(CYGPATH_W) '$(srcdir)/../../custom/struct_timeval.c'; fi`
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
 tags: tags-am
@@ -712,6 +729,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/wstdemo-soapClient.Po
 	-rm -f ./$(DEPDIR)/wstdemo-soapServer.Po
 	-rm -f ./$(DEPDIR)/wstdemo-stdsoap2.Po
+	-rm -f ./$(DEPDIR)/wstdemo-struct_timeval.Po
 	-rm -f ./$(DEPDIR)/wstdemo-wsaapi.Po
 	-rm -f ./$(DEPDIR)/wstdemo-wsseapi.Po
 	-rm -f ./$(DEPDIR)/wstdemo-wstapi.Po
@@ -768,6 +786,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/wstdemo-soapClient.Po
 	-rm -f ./$(DEPDIR)/wstdemo-soapServer.Po
 	-rm -f ./$(DEPDIR)/wstdemo-stdsoap2.Po
+	-rm -f ./$(DEPDIR)/wstdemo-struct_timeval.Po
 	-rm -f ./$(DEPDIR)/wstdemo-wsaapi.Po
 	-rm -f ./$(DEPDIR)/wstdemo-wsseapi.Po
 	-rm -f ./$(DEPDIR)/wstdemo-wstapi.Po

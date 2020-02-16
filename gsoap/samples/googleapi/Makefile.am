@@ -15,10 +15,10 @@ CLEANFILES = gdmStub.h gdmH.h gdmC.cpp soapStub.h soapH.h soapC.cpp *.nsmap *~
 $(SOAP_CPP_CORE):	env.h
 			$(SOAP) -I$(top_srcdir)/gsoap/import:$(top_srcdir)/gsoap $(SOAP_FLAGS) $<
 
-gdm_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+gdm_CFLAGS = $(WSDL2H_EXTRA_FLAGS)
 gdm_SOURCES = gdm.cpp $(SOAPHEADER) gdmC.cpp $(SOAP_CPP_CORE)
 gdm_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 
-gdx_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+gdx_CFLAGS = $(WSDL2H_EXTRA_FLAGS)
 gdx_SOURCES = gdx.cpp $(SOAPHEADER) gdmC.cpp $(SOAP_CPP_CORE)
 gdx_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)

@@ -63,20 +63,21 @@ int main()
   SOAP_SOCKET m;
   THREAD_TYPE tid;
   struct soap soap, *tsoap;
+  /* init gsoap context */
+  soap_init(&soap);
+#if defined(WITH_OPENSSL)
   /* Uncomment to call this first before all else if SSL is initialized elsewhere, e.g. in application code */
   /* soap_ssl_noinit(); */
   /* Init SSL before any threads are started (do this just once) */
   soap_ssl_init();
   /* Need SIGPIPE handler on Unix/Linux systems to catch broken pipes: */
   signal(SIGPIPE, sigpipe_handle);
-  /* set up lSSL ocks */
+  /* set up SSL locks when using older versions of OpenSSL */
   if (CRYPTO_thread_setup())
   {
     fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
     exit(EXIT_FAILURE);
   }
-  /* init gsoap context and SSL */
-  soap_init(&soap);
   /* The supplied server certificate "server.pem" assumes that the server is
     running on 'localhost', so clients can only connect from the same host when
     verifying the server's certificate.
@@ -114,6 +115,7 @@ int main()
     exit(EXIT_FAILURE);
   }
   */
+#endif
   soap.accept_timeout = 60;	/* server times out after 1 minute inactivity */
   soap.send_timeout = soap.recv_timeout = 5;	/* max I/O idle time is 5 seconds */
   m = soap_bind(&soap, NULL, 18081, 100);
@@ -154,6 +156,7 @@ int main()
 void *process_request(struct soap *soap)
 {
   THREAD_DETACH(THREAD_ID);
+#if defined(WITH_OPENSSL)
   if (soap_ssl_accept(soap) != SOAP_OK)
   {
     /* when soap_ssl_accept() fails, socket is closed and SSL data reset */
@@ -161,6 +164,7 @@ void *process_request(struct soap *soap)
     fprintf(stderr, "SSL request failed, continue with next...\n");
   }
   else
+#endif
   {
     soap_serve(soap);
     fprintf(stderr, "SSL request served, continue with next...\n");

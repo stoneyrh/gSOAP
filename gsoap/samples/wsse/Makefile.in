@@ -108,7 +108,8 @@ am__objects_4 = $(am__objects_3) wssedemo-soapServer.$(OBJEXT) \
 am_wssedemo_OBJECTS = wssedemo-wssedemo.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_4) wssedemo-stdsoap2.$(OBJEXT) \
 	wssedemo-dom.$(OBJEXT) wssedemo-wsseapi.$(OBJEXT) \
-	wssedemo-smdevp.$(OBJEXT) wssedemo-mecevp.$(OBJEXT)
+	wssedemo-smdevp.$(OBJEXT) wssedemo-mecevp.$(OBJEXT) \
+	wssedemo-struct_timeval.$(OBJEXT)
 wssedemo_OBJECTS = $(am_wssedemo_OBJECTS)
 am__DEPENDENCIES_1 =
 wssedemo_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -119,7 +120,8 @@ am__objects_6 = soapClient.$(OBJEXT) $(am__objects_5)
 am__objects_7 = $(am__objects_6) soapServer.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_1)
 am_wsselite_OBJECTS = wsselite.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_7) stdsoap2.$(OBJEXT) wsseapi-lite.$(OBJEXT)
+	$(am__objects_7) stdsoap2.$(OBJEXT) wsseapi-lite.$(OBJEXT) \
+	struct_timeval.$(OBJEXT)
 wsselite_OBJECTS = $(am_wsselite_OBJECTS)
 wsselite_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -139,12 +141,13 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/soapC.Po ./$(DEPDIR)/soapClient.Po \
 	./$(DEPDIR)/soapServer.Po ./$(DEPDIR)/stdsoap2.Po \
-	./$(DEPDIR)/wsseapi-lite.Po ./$(DEPDIR)/wssedemo-dom.Po \
-	./$(DEPDIR)/wssedemo-mecevp.Po ./$(DEPDIR)/wssedemo-smdevp.Po \
-	./$(DEPDIR)/wssedemo-soapC.Po \
+	./$(DEPDIR)/struct_timeval.Po ./$(DEPDIR)/wsseapi-lite.Po \
+	./$(DEPDIR)/wssedemo-dom.Po ./$(DEPDIR)/wssedemo-mecevp.Po \
+	./$(DEPDIR)/wssedemo-smdevp.Po ./$(DEPDIR)/wssedemo-soapC.Po \
 	./$(DEPDIR)/wssedemo-soapClient.Po \
 	./$(DEPDIR)/wssedemo-soapServer.Po \
 	./$(DEPDIR)/wssedemo-stdsoap2.Po \
+	./$(DEPDIR)/wssedemo-struct_timeval.Po \
 	./$(DEPDIR)/wssedemo-wsseapi.Po \
 	./$(DEPDIR)/wssedemo-wssedemo.Po ./$(DEPDIR)/wsselite.Po
 am__mv = mv -f
@@ -349,10 +352,10 @@ LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
 BUILT_SOURCES = $(SOAP_C_SRC) 
 CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
 SOAP_NS = wssedemo.nsmap
-wssedemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP
-wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c
-wssedemo_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
-wsselite_SOURCES = wsselite.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../plugin/wsseapi-lite.c
+wssedemo_CFLAGS = -DWITH_DOM $(WSDL2H_EXTRA_FLAGS)
+wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c ../../custom/struct_timeval.c
+wssedemo_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS)
+wsselite_SOURCES = wsselite.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../plugin/wsseapi-lite.c ../../custom/struct_timeval.c
 wsselite_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -411,6 +414,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapClient.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapServer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stdsoap2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/struct_timeval.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsseapi-lite.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-dom.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-mecevp.Po@am__quote@ # am--include-marker
@@ -419,6 +423,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-soapClient.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-soapServer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-stdsoap2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-struct_timeval.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-wsseapi.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-wssedemo.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsselite.Po@am__quote@ # am--include-marker
@@ -569,6 +574,20 @@ wssedemo-mecevp.obj: ../../plugin/mecevp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -c -o wssedemo-mecevp.obj `if test -f '../../plugin/mecevp.c'; then $(CYGPATH_W) '../../plugin/mecevp.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/mecevp.c'; fi`
 
+wssedemo-struct_timeval.o: ../../custom/struct_timeval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -MT wssedemo-struct_timeval.o -MD -MP -MF $(DEPDIR)/wssedemo-struct_timeval.Tpo -c -o wssedemo-struct_timeval.o `test -f '../../custom/struct_timeval.c' || echo '$(srcdir)/'`../../custom/struct_timeval.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wssedemo-struct_timeval.Tpo $(DEPDIR)/wssedemo-struct_timeval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../custom/struct_timeval.c' object='wssedemo-struct_timeval.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -c -o wssedemo-struct_timeval.o `test -f '../../custom/struct_timeval.c' || echo '$(srcdir)/'`../../custom/struct_timeval.c
+
+wssedemo-struct_timeval.obj: ../../custom/struct_timeval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -MT wssedemo-struct_timeval.obj -MD -MP -MF $(DEPDIR)/wssedemo-struct_timeval.Tpo -c -o wssedemo-struct_timeval.obj `if test -f '../../custom/struct_timeval.c'; then $(CYGPATH_W) '../../custom/struct_timeval.c'; else $(CYGPATH_W) '$(srcdir)/../../custom/struct_timeval.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wssedemo-struct_timeval.Tpo $(DEPDIR)/wssedemo-struct_timeval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../custom/struct_timeval.c' object='wssedemo-struct_timeval.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -c -o wssedemo-struct_timeval.obj `if test -f '../../custom/struct_timeval.c'; then $(CYGPATH_W) '../../custom/struct_timeval.c'; else $(CYGPATH_W) '$(srcdir)/../../custom/struct_timeval.c'; fi`
+
 stdsoap2.o: ../../stdsoap2.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stdsoap2.o -MD -MP -MF $(DEPDIR)/stdsoap2.Tpo -c -o stdsoap2.o `test -f '../../stdsoap2.c' || echo '$(srcdir)/'`../../stdsoap2.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stdsoap2.Tpo $(DEPDIR)/stdsoap2.Po
@@ -596,6 +615,20 @@ wsseapi-lite.obj: ../../plugin/wsseapi-lite.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/wsseapi-lite.c' object='wsseapi-lite.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o wsseapi-lite.obj `if test -f '../../plugin/wsseapi-lite.c'; then $(CYGPATH_W) '../../plugin/wsseapi-lite.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/wsseapi-lite.c'; fi`
+
+struct_timeval.o: ../../custom/struct_timeval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT struct_timeval.o -MD -MP -MF $(DEPDIR)/struct_timeval.Tpo -c -o struct_timeval.o `test -f '../../custom/struct_timeval.c' || echo '$(srcdir)/'`../../custom/struct_timeval.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/struct_timeval.Tpo $(DEPDIR)/struct_timeval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../custom/struct_timeval.c' object='struct_timeval.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o struct_timeval.o `test -f '../../custom/struct_timeval.c' || echo '$(srcdir)/'`../../custom/struct_timeval.c
+
+struct_timeval.obj: ../../custom/struct_timeval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT struct_timeval.obj -MD -MP -MF $(DEPDIR)/struct_timeval.Tpo -c -o struct_timeval.obj `if test -f '../../custom/struct_timeval.c'; then $(CYGPATH_W) '../../custom/struct_timeval.c'; else $(CYGPATH_W) '$(srcdir)/../../custom/struct_timeval.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/struct_timeval.Tpo $(DEPDIR)/struct_timeval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../custom/struct_timeval.c' object='struct_timeval.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o struct_timeval.obj `if test -f '../../custom/struct_timeval.c'; then $(CYGPATH_W) '../../custom/struct_timeval.c'; else $(CYGPATH_W) '$(srcdir)/../../custom/struct_timeval.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -729,6 +762,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/soapClient.Po
 	-rm -f ./$(DEPDIR)/soapServer.Po
 	-rm -f ./$(DEPDIR)/stdsoap2.Po
+	-rm -f ./$(DEPDIR)/struct_timeval.Po
 	-rm -f ./$(DEPDIR)/wsseapi-lite.Po
 	-rm -f ./$(DEPDIR)/wssedemo-dom.Po
 	-rm -f ./$(DEPDIR)/wssedemo-mecevp.Po
@@ -737,6 +771,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/wssedemo-soapClient.Po
 	-rm -f ./$(DEPDIR)/wssedemo-soapServer.Po
 	-rm -f ./$(DEPDIR)/wssedemo-stdsoap2.Po
+	-rm -f ./$(DEPDIR)/wssedemo-struct_timeval.Po
 	-rm -f ./$(DEPDIR)/wssedemo-wsseapi.Po
 	-rm -f ./$(DEPDIR)/wssedemo-wssedemo.Po
 	-rm -f ./$(DEPDIR)/wsselite.Po
@@ -789,6 +824,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/soapClient.Po
 	-rm -f ./$(DEPDIR)/soapServer.Po
 	-rm -f ./$(DEPDIR)/stdsoap2.Po
+	-rm -f ./$(DEPDIR)/struct_timeval.Po
 	-rm -f ./$(DEPDIR)/wsseapi-lite.Po
 	-rm -f ./$(DEPDIR)/wssedemo-dom.Po
 	-rm -f ./$(DEPDIR)/wssedemo-mecevp.Po
@@ -797,6 +833,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/wssedemo-soapClient.Po
 	-rm -f ./$(DEPDIR)/wssedemo-soapServer.Po
 	-rm -f ./$(DEPDIR)/wssedemo-stdsoap2.Po
+	-rm -f ./$(DEPDIR)/wssedemo-struct_timeval.Po
 	-rm -f ./$(DEPDIR)/wssedemo-wsseapi.Po
 	-rm -f ./$(DEPDIR)/wssedemo-wssedemo.Po
 	-rm -f ./$(DEPDIR)/wsselite.Po

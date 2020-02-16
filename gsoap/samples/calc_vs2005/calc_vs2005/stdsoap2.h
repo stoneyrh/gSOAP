@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.97
+        stdsoap2.h 2.8.98
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20897
+#define GSOAP_VERSION 20898
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -336,7 +336,17 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_XLOCALE_H
 #  define HAVE_RANDOM
 #  define HAVE_SOCKLEN_T
-# elif defined(_AIX43)
+# elif defined(_AIX41)
+#  define HAVE_SNPRINTF
+#  define HAVE_STRRCHR
+#  define HAVE_STRTOD
+#  define HAVE_SSCANF
+#  define HAVE_STRTOL
+#  define HAVE_STRTOUL
+#  define HAVE_WCTOMB
+#  define HAVE_MBTOWC
+#  define HAVE_LOCALE_H
+# elif defined(_AIX)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
@@ -354,16 +364,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 #  define HAVE_LOCALE_H
 #  define HAVE_SOCKLEN_T
-# elif defined(_AIX41)
-#  define HAVE_SNPRINTF
-#  define HAVE_STRRCHR
-#  define HAVE_STRTOD
-#  define HAVE_SSCANF
-#  define HAVE_STRTOL
-#  define HAVE_STRTOUL
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
-#  define HAVE_LOCALE_H
 # elif defined(HP_UX)
 #  include <sys/_inttypes.h>
 #  if 0 /* enable if __strtoll and __strtoull are available */

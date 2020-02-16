@@ -82,6 +82,7 @@ The wsse lite API is located in:
 
 You will also need:
 
+- `gsoap/custom/struct_timeval.c` compile and link this file (C and C++).
 - compile all sources with `-DWITH_OPENSSL` to enable HTTPS.
 - if you have zlib installed, compile all sources also with `-DWITH_GZIP`.
 - link with `-lssl -lcrypto -lz -gsoapssl++` (or `-lgsoapssl` for C, or compile `stdsoap2.cpp` for C++ and `stdsoap2.c` for C).

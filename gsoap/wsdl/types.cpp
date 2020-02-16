@@ -3252,6 +3252,7 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minO
     fprintf(stream, "    struct %s\n    {\n", t); // do not use a class, may clash with member name
     SetOfString members1;
     gen(URI, sequence.__contents, members1);
+    modify(t);
   }
   else
   {
@@ -4359,7 +4360,7 @@ void Types::modify(const char *name)
     while (*s)
     {
       if (*s++ == '$')
-        fprintf(stream, "/// Member declared in %s\n   ", mapfile);
+        fprintf(stream, "/// Additional member declared in %s\n   ", mapfile);
       s = format(s);
     }
   }

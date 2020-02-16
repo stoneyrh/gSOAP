@@ -6,7 +6,8 @@
 	Generated with:
 	wsdl2h -cgye -o wsa5.h -t WS/WS-typemap.dat WS/WS-Addressing05.xsd
 
-	Modified by Robert van Engelen:
+        Requires:
+        - plugin/wsaapi.h and plugin/wsaapi.c
 
 	- Removed //gsoapopt
 	- Removed xsd__boolean declaration

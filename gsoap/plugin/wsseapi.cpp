@@ -135,6 +135,7 @@ The wsse API code is implemented in:
 
 You will also need:
 
+- `gsoap/custom/struct_timeval.c` compile and link this file (C and C++).
 - `gsoap/plugin/smdevp.c` compile and link this file (C and C++).
 - `gsoap/plugin/mecevp.c` compile and link this file (C and C++).
 - compile all sources with `-DWITH_OPENSSL -DWITH_DOM`.
@@ -517,11 +518,10 @@ The above assumes that a WS-Security message was received that was signed and
 decrypted (when applicable).
 
 @note The resolution of the dateTime values of `NotBefore` and `NotOnOrAfter`
-is determined by the clock resolution of `time_t`, which is usually seconds.
-To increase the resolution, edit `gsoap/import/saml2.h` and add
-`#import "custom/struct_timeval.h"`.  Then replace `time_t` in
-`gsoap/import/saml2.h` with `xsd__dateTime` to use `struct timeval`, which
-includes the time in seconds `tv_sec` and a microsecond offset `tv_usec`.
+is determined by the clock resolution of a time representation.  The `time_t`
+resolution is seconds.  Therefore, the `struct timeval` serializer is used to
+increase the resolution to microseconds (by using
+`#import "custom/struct_timeval.h"` in `gsoap/import/saml2.h`.
 
 To add a SAML token to the WS-Security headers, use
 `soap_wsse_add_saml1(struct soap*, const char *id)` or

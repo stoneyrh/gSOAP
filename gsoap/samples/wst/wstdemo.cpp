@@ -303,9 +303,9 @@ int main(int argc, char **argv)
           if (saml2->saml2__Conditions)
           {
             if (saml2->saml2__Conditions->NotBefore)
-              fprintf(stderr, "Not before %s\n", soap_dateTime2s(soap, *saml2->saml2__Conditions->NotBefore));
+              fprintf(stderr, "Not before %s\n", soap_xsd__dateTime2s(soap, *saml2->saml2__Conditions->NotBefore));
             if (saml2->saml2__Conditions->NotOnOrAfter)
-              fprintf(stderr, "Not on or after %s\n", soap_dateTime2s(soap, *saml2->saml2__Conditions->NotOnOrAfter));
+              fprintf(stderr, "Not on or after %s\n", soap_xsd__dateTime2s(soap, *saml2->saml2__Conditions->NotOnOrAfter));
           }
           fprintf(stderr, "\nAssertion data:\n\n");
           soap_set_omode(soap, SOAP_XML_INDENT);
@@ -401,7 +401,8 @@ wstService::RequestSecurityToken(struct wst__RequestSecurityTokenType *request, 
       return soap->error = SOAP_EOM;
     soap_default_saml2__AssertionType(soap, assertion);
     assertion->Version = (char*)"2.0";
-    assertion->IssueInstant = now;
+    assertion->IssueInstant.tv_sec = now;
+    assertion->IssueInstant.tv_usec = 0;
     /* Issuer = certificate issuer */
     assertion->saml2__Issuer = (struct saml2__NameIDType*)soap_malloc(soap, sizeof(struct saml2__NameIDType));
     if (!assertion->saml2__Issuer)
@@ -414,14 +415,16 @@ wstService::RequestSecurityToken(struct wst__RequestSecurityTokenType *request, 
     if (!assertion->saml2__Conditions)
       return soap->error = SOAP_EOM;
     soap_default_saml2__ConditionsType(soap, assertion->saml2__Conditions);
-    assertion->saml2__Conditions->NotBefore = (time_t*)soap_malloc(soap, sizeof(time_t));
+    assertion->saml2__Conditions->NotBefore = (xsd__dateTime*)soap_malloc(soap, sizeof(xsd__dateTime));
     if (!assertion->saml2__Conditions->NotBefore)
       return soap->error = SOAP_EOM;
-    *assertion->saml2__Conditions->NotBefore = now;
-    assertion->saml2__Conditions->NotOnOrAfter = (time_t*)soap_malloc(soap, sizeof(time_t));
+    assertion->saml2__Conditions->NotBefore->tv_sec = now;
+    assertion->saml2__Conditions->NotBefore->tv_usec = 0;
+    assertion->saml2__Conditions->NotOnOrAfter = (xsd__dateTime*)soap_malloc(soap, sizeof(xsd__dateTime));
     if (!assertion->saml2__Conditions->NotOnOrAfter)
       return soap->error = SOAP_EOM;
-    *assertion->saml2__Conditions->NotOnOrAfter = expires;
+    assertion->saml2__Conditions->NotOnOrAfter->tv_sec = expires;
+    assertion->saml2__Conditions->NotOnOrAfter->tv_usec = 0;
     /* Conditions/AudienceRestriction = wsp:AppliesTo */
     assertion->saml2__Conditions->__size_ConditionsType = 1;
     assertion->saml2__Conditions->__union_ConditionsType = (struct __saml2__union_ConditionsType*)soap_malloc(soap, sizeof(struct __saml2__union_ConditionsType));
@@ -445,7 +448,8 @@ wstService::RequestSecurityToken(struct wst__RequestSecurityTokenType *request, 
     if (!assertion->__union_AssertionType[0].saml2__AuthnStatement)
       return soap->error = SOAP_EOM;
     soap_default_saml2__AuthnStatementType(soap, assertion->__union_AssertionType[0].saml2__AuthnStatement);
-    assertion->__union_AssertionType[0].saml2__AuthnStatement->AuthnInstant = now;
+    assertion->__union_AssertionType[0].saml2__AuthnStatement->AuthnInstant.tv_sec = now;
+    assertion->__union_AssertionType[0].saml2__AuthnStatement->AuthnInstant.tv_usec = 0;
     assertion->__union_AssertionType[0].saml2__AuthnStatement->saml2__AuthnContext = (struct saml2__AuthnContextType*)soap_malloc(soap, sizeof(struct saml2__AuthnContextType));
     if (!assertion->__union_AssertionType[0].saml2__AuthnStatement->saml2__AuthnContext)
       return soap->error = SOAP_EOM;

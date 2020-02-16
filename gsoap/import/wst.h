@@ -5,6 +5,27 @@
 	Generated with:
 	wsdl2h -cguxy -o wst.h -t WS/WS-typemap.dat WS/WS-Trust.xsd
 
+        Requires:
+        - plugin/wsseapi.h and plugin/wsseapi.c
+        - plugin/mecevp.c
+        - plugin/smdevp.c
+        - plugin/wsaapi.h and plugin/wsaapi.c
+        - plugin/wstapi.h and plugin/wstapi.c
+        - custom/struct_timeval.c
+
+        This file imports:
+        - wsse.h
+        - saml1.h
+        - saml2.h
+        - custom/struct_timeval.h
+        - wsu.h
+        - xenc.h
+        - ds.h
+        - c14n.h
+        - wsa5.h
+        - wsp_appliesto.h
+        - wstx.h
+
 	- Removed //gsoapopt
         - Added #import "wsse11.h" to choose between WS-Security 1.1 and 1.0
 	- Changed http://docs.oasis-open.org/ws-sx/ws-trust/200512 to remove trailing /

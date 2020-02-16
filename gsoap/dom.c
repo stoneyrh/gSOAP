@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.97
+        DOM API v5 gSOAP 2.8.98
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20897
+#define GSOAP_LIB_VERSION 20898
 
 #include "stdsoap2.h"
 
@@ -603,7 +603,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     const char *s;
     if (soap->error != SOAP_NO_TAG)
       return NULL;
-    s = soap_strtrim(soap, soap_string_in(soap, 3, -1, -1, NULL));
+    s = soap_string_in(soap, 3, -1, -1, NULL);
     if (!s || !*s)
     {
       soap->mode = m;
@@ -696,7 +696,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     {
       if (soap->error != SOAP_NO_TAG)
         return NULL;
-      node->text = soap_strtrim(soap, soap_string_in(soap, 3, -1, -1, NULL));
+      node->text = soap_string_in(soap, 3, -1, -1, NULL);
       if (!node->text)
         return NULL;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' has cdata\n", node->name));

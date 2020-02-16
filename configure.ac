@@ -286,7 +286,7 @@ AC_ARG_WITH([openssl],
 # the disable-ssl option removes the dependence on OpenSSL
 AC_ARG_ENABLE(ssl,
               [AC_HELP_STRING([--disable-ssl],
-                              [build without SSL/TLS])],
+                              [build without SSL/TLS -- note: the wsse and wst examples will fail to build])],
               [with_openssl="$enable_ssl"],
               [with_openssl="yes"])
 
