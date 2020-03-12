@@ -5471,8 +5471,6 @@ following class and macro:
 ~~~{.cpp}
     class alloc_check {
      public:
-      alloc_check()
-      { }
       template<typename T>
       T operator=(T ptr)
       {

@@ -49,8 +49,9 @@ const char *xsiURI = "http://www.w3.org/2001/XMLSchema-instance";
 const char *xsdURI = "http://www.w3.org/2001/XMLSchema";
 const char *tmpURI = "http://tempuri.org";
 
-static  Symbol *symlist = (Symbol*) 0;  /* pointer to linked list of symbols */
-static  Symbol *nslist = (Symbol*) 0;   /* pointer to linked list of namespace prefix symbols */
+static  Symbol *symroot = NULL;  /* pointer to binary tree of symbols to speed up lookup */
+static  Symbol *symlist = NULL;  /* pointer to linked list of symbols */
+static  Symbol *nslist = NULL;   /* pointer to linked list of namespace prefix symbols */
 
 static Tnode *Tptr[TYPES];
 
@@ -383,13 +384,23 @@ install - add new symbol
 Symbol *
 install(const char *name, Token token)
 {
-  Symbol *p;
-  p = (Symbol*)emalloc(sizeof(Symbol));
-  p->name = (char*)emalloc(strlen(name)+1);
+  Symbol **q = &symroot;
+  Symbol *p = (Symbol*)emalloc(sizeof(Symbol)+strlen(name));
   strcpy(p->name, name);
   p->token = token;
   p->next = symlist;
+  p->left = NULL;
+  p->right = NULL;
   symlist = p;
+  while (*q)
+  {
+    int cmp = strcmp((*q)->name, name);
+    if (cmp < 0)
+      q = &(*q)->right;
+    else
+      q = &(*q)->left;
+  }
+  *q = p;
   return p;
 }
 
@@ -399,10 +410,17 @@ lookup - search for an identifier's name. If found, return pointer to symbol tab
 Symbol *
 lookup(const char *name)
 {
-  Symbol *p;
-  for (p = symlist; p; p = p->next)
-    if (!strcmp(p->name, name))
+  Symbol *p = symroot;
+  while (p)
+  {
+    int cmp = strcmp(p->name, name);
+    if (cmp == 0)
       return p;
+    if (cmp < 0)
+      p = p->right;
+    else
+      p = p->left;
+  }
   return NULL;
 }
 
@@ -1033,13 +1051,22 @@ compile(Table *table)
         execerror("Cannot write to file");
       copyrightnote(flib, soapClientLib);
       fprintf(fmsg, "Saving %s client stubs with serializers (use only for libs)\n", pathsoapClientLib);
-      fprintf(flib, "\n\n/** Use this file in your project build instead of the two files %s and %s. This hides the serializer functions and avoids linking problems when linking multiple clients and servers. */\n", soapC, soapClient);
-      /* fprintf(flib, "\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif"); deprecated behavior */
+      fprintf(flib, "\n\n/** Use this file in your project build instead of the two files %s and %s. This hides the serializer functions by making them static, avoiding linking problems when linking multiple clients and servers. */\n", soapC, soapClient);
+      fprintf(flib, "\n/* disable warnings for unused static functions defined in %s */", soapC);
+      fprintf(flib, "\n#if defined(WIN32)");
+      fprintf(flib, "\n#pragma warning(disable:4505)");
+      fprintf(flib, "\n#elif defined(__GNUC__)");
+      fprintf(flib, "\n#pragma GCC diagnostic ignored \"-Wunused-function\"");
+      fprintf(flib, "\n#elif defined(__clang__)");
+      fprintf(flib, "\n#pragma clang diagnostic ignored \"-Wunused-function\"");
+      fprintf(flib, "\n#endif");
+      fprintf(flib, "\n#define WITH_STATIC");
       fprintf(flib, "\n#define SOAP_FMAC3 static");
       fprintf(flib, "\n#include \"%s\"", soapC);
       fprintf(flib, "\n#include \"%s\"", soapClient);
       fprintf(flib, "\n\n/* End of %s */\n", soapClientLib);
-      fclose(flib);
+      if (fclose(flib))
+        execerror("Cannot write to file");
     }
   }
   if (!Cflag && !iflag && !jflag)
@@ -1065,13 +1092,22 @@ compile(Table *table)
         execerror("Cannot write to file");
       copyrightnote(flib, soapServerLib);
       fprintf(fmsg, "Saving %s server request dispatcher with serializers (use only for libs)\n", pathsoapServerLib);
-      fprintf(flib, "\n\n/** Use this file in your project build instead of the two files %s and %s. This hides the serializer functions and avoids linking problems when linking multiple clients and servers. */\n", soapC, soapServer);
-      /* fprintf(flib, "\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif"); deprecated behavior */
+      fprintf(flib, "\n\n/** Use this file in your project build instead of the two files %s and %s. This hides the serializer functions by making them static, avoiding linking problems when linking multiple clients and servers. */\n", soapC, soapServer);
+      fprintf(flib, "\n/* disable warnings for unused static functions defined in %s */", soapC);
+      fprintf(flib, "\n#if defined(WIN32)");
+      fprintf(flib, "\n#pragma warning(disable:4505)");
+      fprintf(flib, "\n#elif defined(__GNUC__)");
+      fprintf(flib, "\n#pragma GCC diagnostic ignored \"-Wunused-function\"");
+      fprintf(flib, "\n#elif defined(__clang__)");
+      fprintf(flib, "\n#pragma clang diagnostic ignored \"-Wunused-function\"");
+      fprintf(flib, "\n#endif");
+      fprintf(flib, "\n#define WITH_STATIC");
       fprintf(flib, "\n#define SOAP_FMAC3 static");
       fprintf(flib, "\n#include \"%s\"", soapC);
       fprintf(flib, "\n#include \"%s\"", soapServer);
       fprintf(flib, "\n\n/* End of %s */\n", soapServerLib);
-      fclose(flib);
+      if (fclose(flib))
+        execerror("Cannot write to file");
     }
   }
 
@@ -1538,28 +1574,31 @@ compile(Table *table)
     fprintf(fout, "\n#pragma option pop");
     fprintf(fout, "\n#endif");
     fprintf(fout, "\n\n/* End of %s */\n", soapC);
-    fclose(fout);
+    if (fclose(fout))
+      execerror("Cannot write to file");
   }
 
   if (namespaceid)
     fprintf(fhead, "\n\n} // namespace %s\n", namespaceid);
   fprintf(fhead, "\n\n#endif");
   fprintf(fhead, "\n\n/* End of %s */\n", soapH);
-  fclose(fhead);
+  if (fclose(fhead))
+    execerror("Cannot write to file");
 
   if (namespaceid)
     fprintf(fheader, "\n\n} // namespace %s\n", namespaceid);
   fprintf(fheader, "\n\n#endif");
   fprintf(fheader, "\n\n/* End of %s */\n", soapStub);
-  fclose(fheader);
+  if (fclose(fheader))
+    execerror("Cannot write to file");
 
   if (mflag)
   {
     DBGLOG(fprintf(stderr, "\n Calling matlab_def_table( )."));
     matlab_def_table(table);
     DBGLOG(fprintf(stderr, "\n Completed matlab_def_table( )."));
-    fclose(fmatlab);
-    fclose(fmheader);
+    if (fclose(fmatlab) || fclose(fmheader))
+      execerror("Cannot write to file");
   }
 
   if (!Sflag && !iflag && !jflag)
@@ -1571,7 +1610,8 @@ compile(Table *table)
     fprintf(fclient, "\n#pragma option pop");
     fprintf(fclient, "\n#endif");
     fprintf(fclient, "\n\n/* End of %s */\n", soapClient);
-    fclose(fclient);
+    if (fclose(fclient))
+      execerror("Cannot write to file");
   }
 
   if (!Cflag && !iflag && !jflag)
@@ -1583,7 +1623,8 @@ compile(Table *table)
     fprintf(fserver, "\n#pragma option pop");
     fprintf(fserver, "\n#endif");
     fprintf(fserver, "\n\n/* End of %s */\n", soapServer);
-    fclose(fserver);
+    if (fclose(fserver))
+      execerror("Cannot write to file");
   }
 
   if (rflag)
@@ -1593,7 +1634,8 @@ compile(Table *table)
     strftime(tmp, 256, "%a %b %d %Y %H:%M:%S UTC", gmtime(&T));
     fprintf(freport, "\n  [1]: https://www.genivia.com/images/go-up.png\n\n");
     fprintf(freport, "--------------------------------------------------------------------------------\n\n_Generated on %s by soapcpp2 v" VERSION " for %s._\n_The gSOAP XML Web services tools are Copyright (C) Robert van Engelen, Genivia Inc. All Rights Reserved._\n", tmp, filename);
-    fclose(freport);
+    if (fclose(freport))
+      execerror("Cannot write to file");
   }
 }
 
@@ -3155,10 +3197,8 @@ get_namespace_prefixes(void)
                 for (v = ((Table*)e->info.typ->ref)->list; v; v = v->next)
                   if (p == v->sym)
                     goto nsnext;
-        q = (Symbol*)emalloc(sizeof(Symbol));
-        q->name = (char*)emalloc(i+1);
+        q = (Symbol*)emalloc(sizeof(Symbol)+i);
         strcpy(q->name, buf);
-        q->name[i] = '\0';
         q->next = nslist;
         nslist = q;
         break;
@@ -3167,23 +3207,19 @@ get_namespace_prefixes(void)
 nsnext:
     ;
   }
-  q = (Symbol*)emalloc(sizeof(Symbol));
-  q->name = (char*)emalloc(4);
+  q = (Symbol*)emalloc(sizeof(Symbol)+4);
   strcpy(q->name, "xsd");
   q->next = nslist;
   nslist = q;
-  q = (Symbol*)emalloc(sizeof(Symbol));
-  q->name = (char*)emalloc(4);
+  q = (Symbol*)emalloc(sizeof(Symbol)+4);
   strcpy(q->name, "xsi");
   q->next = nslist;
   nslist = q;
-  q = (Symbol*)emalloc(sizeof(Symbol));
-  q->name = (char*)emalloc(9);
+  q = (Symbol*)emalloc(sizeof(Symbol)+9);
   strcpy(q->name, "SOAP-ENC");
   q->next = nslist;
   nslist = q;
-  q = (Symbol*)emalloc(sizeof(Symbol));
-  q->name = (char*)emalloc(9);
+  q = (Symbol*)emalloc(sizeof(Symbol)+9);
   strcpy(q->name, "SOAP-ENV");
   q->next = nslist;
   nslist = q;
@@ -3288,7 +3324,8 @@ generate_schema(Table *t)
             if (!fd)
               execerror("Cannot write WSDL file");
             gen_wsdl(fd, t, ns->name, name, URL ? URL : "http://localhost:80", executable, URI, style, encoding, protocol);
-            fclose(fd);
+            if (fclose(fd))
+              execerror("Cannot write to file");
           }
           if (!cflag)
           {
@@ -3314,14 +3351,16 @@ generate_schema(Table *t)
                 if (rflag)
                   gen_proxy_header(freport, t, ns, name1);
                 gen_proxy_header(fd, t, ns, name1);
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
                 fprintf(fmsg, "Saving %s client proxy class\n", pathsoapProxyC);
                 fd = fopen(pathsoapProxyC, "w");
                 if (!fd)
                   execerror("Cannot write proxy class file");
                 copyrightnote(fd, soapProxyC);
                 gen_proxy_code(fd, t, ns, name1);
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
               }
               if (!Cflag)
               {
@@ -3338,14 +3377,16 @@ generate_schema(Table *t)
                 if (rflag)
                   gen_object_header(freport, t, ns, name1);
                 gen_object_header(fd, t, ns, name1);
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
                 fprintf(fmsg, "Saving %s service class\n", pathsoapServiceC);
                 fd = fopen(pathsoapServiceC, "w");
                 if (!fd)
                   execerror("Cannot write service class file");
                 copyrightnote(fd, soapServiceC);
                 gen_object_code(fd, t, ns, name1);
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
               }
             }
             else if (zflag == 1)
@@ -3360,7 +3401,8 @@ generate_schema(Table *t)
                 sprintf(buf, "%s%s.h", prefix, ns_cname(name, "Proxy"));
                 copyrightnote(fd, buf);
                 gen_proxy(fd, t, ns, name, URL ? URL : "http://localhost:80");
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
               }
               else if (!Sflag)
               {
@@ -3372,7 +3414,8 @@ generate_schema(Table *t)
                 sprintf(buf, "%s.h", ns_cname(prefix, "Proxy"));
                 copyrightnote(fd, buf);
                 gen_proxy(fd, t, ns, "Service", URL ? URL : "http://localhost:80");
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
               }
               if (!Cflag && sp && sp->name)
               {
@@ -3384,7 +3427,8 @@ generate_schema(Table *t)
                 sprintf(buf, "%s%s.h", prefix, ns_cname(name, "Object"));
                 copyrightnote(fd, buf);
                 gen_object(fd, t, name);
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
               }
               else if (!Cflag)
               {
@@ -3396,7 +3440,8 @@ generate_schema(Table *t)
                 sprintf(buf, "%s.h", ns_cname(prefix, "Object"));
                 copyrightnote(fd, buf);
                 gen_object(fd, t, "Service");
-                fclose(fd);
+                if (fclose(fd))
+                  execerror("Cannot write to file");
               }
             }
           }
@@ -3431,7 +3476,8 @@ generate_schema(Table *t)
         else
           fprintf(fd, "\nSOAP_NMAC struct Namespace namespaces[] = ");
         gen_nsmap(fd);
-        fclose(fd);
+        if (fclose(fd))
+          execerror("Cannot write to file");
         if (rflag)
         {
           Symbol *ns1;
@@ -3574,7 +3620,8 @@ generate_schema(Table *t)
           }
           if (namespaceid)
             fprintf(fd, "\n} // namespace %s\n", namespaceid);
-          fclose(fd);
+          if (fclose(fd))
+            execerror("Cannot write to file");
         }
       }
     }
@@ -3587,7 +3634,8 @@ generate_schema(Table *t)
         execerror("Cannot write schema file");
       fprintf(fd, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
       gen_schema(fd, t, ns->name, ns->name, 1, style, encoding);
-      fclose(fd);
+      if (fclose(fd))
+        execerror("Cannot write to file");
     }
   }
   if (Tflag)
@@ -3599,7 +3647,7 @@ generate_schema(Table *t)
         break;
     if (nflag)
       sprintf(buf, "%s%s.nsmap", dirpath, prefix);
-    else if (ns && ns->name)
+    else if (ns)
       sprintf(buf, "%s%s.nsmap", dirpath, ns_cname(ns->name, NULL));
     else
       sprintf(buf, "%ssoap.nsmap", dirpath);
@@ -3614,7 +3662,8 @@ generate_schema(Table *t)
     else
       fprintf(fd, "\nSOAP_NMAC struct Namespace namespaces[] = ");
     gen_nsmap(fd);
-    fclose(fd);
+    if (fclose(fd))
+      execerror("Cannot write to file");
     if (rflag)
     {
       Symbol *ns1;
@@ -6228,7 +6277,7 @@ gen_report_member(Entry *type, Entry *member)
 {
   Service *sp;
   const char *t;
-  if (!type->sym || !member->sym->name)
+  if (!type->sym || !member->sym)
     return;
   t = ns_remove(type->sym->name);
   for (sp = services; sp; sp = sp->next)
@@ -8720,7 +8769,8 @@ gen_data(const char *buf, Table *t, const char *ns, const char *encoding)
             gen_element_end(fd, 2, ns_convert(p->sym->name));
           if (soap && soap_version >= 0)
             fprintf(fd, " </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>\n");
-          fclose(fd);
+          if (fclose(fd))
+            execerror("Cannot write to file");
         }
         /* response */
         q = (Entry*)p->info.typ->ref;
@@ -8770,7 +8820,8 @@ gen_data(const char *buf, Table *t, const char *ns, const char *encoding)
           fflush(fd);
           if (soap && soap_version >= 0)
             fprintf(fd, " </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>\n");
-          fclose(fd);
+          if (fclose(fd))
+            execerror("Cannot write to file");
         }
       }
     }
@@ -11575,7 +11626,9 @@ needs_lang(Entry *e)
 int
 is_eq_nons(const char *s, const char *t)
 {
+#ifdef SOAP_OLD_DIRECTIVE_NAME_MATCHING
   size_t n, m;
+#endif
   const char *r;
   while (*s == '_' || *s == ':')
     s++;
@@ -11586,17 +11639,19 @@ is_eq_nons(const char *s, const char *t)
   r = strstr(t, "__");
   if (r)
     t = r + 2;
+#ifdef SOAP_OLD_DIRECTIVE_NAME_MATCHING
   n = strlen(s) - 1;
   m = strlen(t) - 1;
-#ifdef SOAP_OLD_DIRECTIVE_NAME_MATCHING
   while (n > 0 && s[n] == '_')
     n--;
   while (m > 0 && t[m] == '_')
     m--;
-#endif
   if (n != m)
     return 0;
   return !strncmp(s, t, n + 1);
+#else
+  return !strcmp(s, t);
+#endif
 }
 
 int
@@ -16998,12 +17053,12 @@ is_hexBinary(Tnode *typ)
   Table *t;
   if (!is_binary(typ))
     return 0;
-  if ((typ->synonym && typ->synonym->name && strstr(typ->synonym->name, "hex"))
-   || (typ->sym && typ->sym->name && strstr(typ->sym->name, "hex"))
-   || (typ->id && typ->id->name && strstr(typ->id->name, "hex")))
+  if ((typ->synonym && strstr(typ->synonym->name, "hex"))
+   || (typ->sym && strstr(typ->sym->name, "hex"))
+   || (typ->id && strstr(typ->id->name, "hex")))
     return 1;
   for (t = (Table*)typ->ref; t; t = t->prev)
-    if (t->sym && t->sym->name && strstr(t->sym->name, "hex"))
+    if (t->sym && strstr(t->sym->name, "hex"))
       return 1;
   return 0;
 }
@@ -17152,28 +17207,31 @@ is_soapref(Tnode *typ)
 const char *
 union_member(Tnode *typ)
 {
-  Table *t;
-  Entry *p, *q;
-  for (p = classtable->list; p; p = p->next)
+  if (Tptr[Tunion] != NULL)
   {
-    if (p->info.typ->type == Tunion)
+    Table *t;
+    Entry *p, *q;
+    for (p = classtable->list; p; p = p->next)
     {
-      for (t = (Table*)p->info.typ->ref; t; t = t->prev)
-        for (q = t->list; q; q = q->next)
-          if (typ == q->info.typ)
-            return p->info.typ->id->name;
-    }
-    else
-    {
-      for (t = (Table*)p->info.typ->ref; t; t = t->prev)
+      if (p->info.typ->type == Tunion)
       {
-        for (q = t->list; q; q = q->next)
+        for (t = (Table*)p->info.typ->ref; t; t = t->prev)
+          for (q = t->list; q; q = q->next)
+            if (typ == q->info.typ)
+              return p->info.typ->id->name;
+      }
+      else
+      {
+        for (t = (Table*)p->info.typ->ref; t; t = t->prev)
         {
-          if (typ == q->info.typ)
+          for (q = t->list; q; q = q->next)
           {
-            const char *s = union_member(p->info.typ);
-            if (s)
-              return s;
+            if (typ == q->info.typ)
+            {
+              const char *s = union_member(p->info.typ);
+              if (s)
+                return s;
+            }
           }
         }
       }

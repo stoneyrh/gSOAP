@@ -495,6 +495,8 @@ Use the following functions to set and get HTTP cookie values:
 - `::soap_getenv_cookies`
 - `::soap_free_cookies`
 
+Client-side HTTP cookie handling is automatic.  The `#WITH_COOKIES` flag is useless without server-side session management and control.  Cookies may require a fair amount of processing overhead and are not needed to implement stateful services, which is typically performed with session IDs in XML/JSON messages or via the URL.
+
 @par Examples:
 
     c++ -D WITH_COOKIES -o client stdsoap2.cpp soapC.cpp soapClient.cpp client.cpp
@@ -3945,7 +3947,7 @@ struct soap {
   }
   ~~~
 
-  @see `::soap::ip6`, `::soap_bind`, `::soap_accept`, `::soap_ssl_accept`, `::soap_serve`.
+  @see `::soap::host`, `::soap::port`, `::soap::ip6`, `::soap_bind`, `::soap_accept`, `::soap_ssl_accept`, `::soap_serve`.
   */
   unsigned int ip;
   /// The IPv6 address in numeric form (upper ip6[0] to lower ip6[3]) of the client as received on the server side by `::soap_accept` (or the C++ service class `accept` method), requires `#WITH_IPV6`
@@ -3992,7 +3994,7 @@ struct soap {
 
   @note Requires compilation with `#WITH_IPV6` or `#WITH_IPV6_V6ONLY`.
 
-  @see `::soap::host`, `::soap::port`, `::soap::ip6`, `::soap_bind`, `::soap_accept`, `::soap_ssl_accept`, `::soap_serve`.
+  @see `::soap::host`, `::soap::port`, `::soap::ip`, `::soap_bind`, `::soap_accept`, `::soap_ssl_accept`, `::soap_serve`.
   */
   unsigned int ip6[4];
   /// The client port connected to as received on the server side by `::soap_accept` (or the C++ service class `accept` method)

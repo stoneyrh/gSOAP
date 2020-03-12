@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">gSOAP user guide</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Feb 16 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Mar 12 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -4482,8 +4482,9 @@ Client-side cookie support</h2>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="servercookie"></a>
 Server-side cookie support</h2>
+<p>This feature is not recommended to implement state in stand-alone servers. Cookies may require a fair amount of processing overhead and are not in fact needed to implement stateful services, which is typically performed with session IDs in XML/JSON messages or by passing the session IDs via the URL.</p>
 <p>Server-side cookie support is optional. To enable cookie support, compile all sources with compile-time flag <code><a class="el" href="group__group__with.html#ga77f061a12d88eb8b7dae8b07cf90e29d" title="When this macro is defined at compile time (undefined by default), HTTP cookie support is enabled in ...">WITH_COOKIES</a></code>: </p><pre class="fragment"> c++ -DWITH_COOKIES -o myserver ...
-</pre><p>See API documentation Module <a class="el" href="group__group__cookies.html">HTTP cookie functions</a> for the cookie API functions. See the <a href="../../sessions/html/index.html">HTTP sessions plugin</a> for HTTP session management with cookies.</p>
+</pre><p>See API documentation Module <a class="el" href="group__group__cookies.html">HTTP cookie functions</a> for the cookie API functions. See the <a href="../../sessions/html/index.html">HTTP sessions plugin</a> for HTTP session management with cookies that is required for server-side session control. The <code><a class="el" href="group__group__with.html#ga77f061a12d88eb8b7dae8b07cf90e29d" title="When this macro is defined at compile time (undefined by default), HTTP cookie support is enabled in ...">WITH_COOKIES</a></code> flag is useless without server-side session management and control.</p>
 <p>Here is an overview of the cookie API functions:</p>
 <ul>
 <li><code>struct <a class="el" href="structsoap__cookie.html" title="Cookie structure. ">soap_cookie</a> *soap_set_cookie(struct soap *soap, const char *name, const char *value, const char *domain, const char *path);</code> This function adds a cookie to the cookie store at the server side, if not already there, with the specified <code>name</code> and <code>value</code>. The <code>domain</code> and <code>path</code> parameters can be specified or can be NULL to use the current domain and path given by <code><a class="el" href="structsoap.html#af2ecfbae740da7839a0c5c96eb65db2a" title="User-definable string that specifies the HTTP cookie domain of the running server. ">soap::cookie_domain</a></code> and <code><a class="el" href="structsoap.html#afdd91ce1189fedd32ebfa51dd6ed33eb" title="User-definable string that specifies the HTTP cookie path of the running server. ">soap::cookie_path</a></code>. Returns pointer to the cookie structure in the database or NULL when an error occurred.</li>
@@ -4815,7 +4816,7 @@ All rights reserved.</em> </p>
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Feb 16 2020 16:05:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Mar 12 2020 14:12:01 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

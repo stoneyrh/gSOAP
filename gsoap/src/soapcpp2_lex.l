@@ -209,7 +209,7 @@ import          #{ws}*import{ws}+.*\n
         install_id - lookup identifier in symbol table. If found, return token
         and symbol table entry. If not found, create entry in symbol table and
         return ID token.
-*/ 
+*/
 static Token
 install_id()
 {       Symbol *p = lookup(yytext);
@@ -235,9 +235,9 @@ install_id()
 }
 
 /*
-        install_tag - 
+        install_tag -
         return TAG token.
-*/ 
+*/
 static Token
 install_tag()
 {       yylval.s = (char*)emalloc(yyleng);    /* yyleng = length(yytext) */

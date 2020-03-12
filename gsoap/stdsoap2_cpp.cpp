@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.98
+        stdsoap2.c[pp] 2.8.99
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20898
+#define GSOAP_LIB_VERSION 20899
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.98 2020-02-16 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.99 2020-03-12 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.98 2020-02-16 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.99 2020-03-12 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -5837,10 +5837,12 @@ again:
     {
       soap_mode m = soap->mode; /* preserve settings */
       soap_mode om = soap->omode; /* make sure we only parse HTTP */
-      ULONG64 n = soap->count; /* save the content length */
-      const char *userid, *passwd;
+      ULONG64 count = soap->count; /* save the content length */
+      const char *http_content = soap->http_content; /* save http_content when set */
+      const char *http_extra_header = soap->http_extra_header; /* save http_extra_header when set */
       int status = soap->status; /* save the current status/command */
       int keep_alive = soap->keep_alive; /* save the KA status */
+      const char *userid, *passwd;
       soap->omode &= ~SOAP_ENC; /* mask IO and ENC */
       soap->omode |= SOAP_IO_BUFFER;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connecting to %s proxy server %s for destination endpoint %s\n", soap->proxy_http_version, soap->proxy_host, endpoint));
@@ -5860,15 +5862,14 @@ again:
       if (!soap->keep_alive)
         soap->keep_alive = -1; /* must keep alive */
       soap->error = soap->fpost(soap, endpoint, host, port, NULL, NULL, 0);
-      if (soap->error
-       || soap_end_send_flush(soap))
+      if (soap->error || soap_end_send_flush(soap))
       {
         soap->fclosesocket(soap, sk);
         return soap->socket = SOAP_INVALID_SOCKET;
       }
       soap->keep_alive = keep_alive;
       soap->omode = om;
-      om = soap->imode;
+      om = soap->imode; /* preserve */
       soap->imode &= ~SOAP_ENC; /* mask IO and ENC */
       userid = soap->userid; /* preserve */
       passwd = soap->passwd; /* preserve */
@@ -5882,7 +5883,9 @@ again:
       soap->userid = userid; /* restore */
       soap->passwd = passwd; /* restore */
       soap->imode = om; /* restore */
-      soap->count = n; /* restore */
+      soap->count = count; /* restore */
+      soap->http_content = http_content; /* restore */
+      soap->http_extra_header = http_extra_header; /* restore */
       if (soap_init_send(soap))
       {
         soap->fclosesocket(soap, sk);
@@ -7068,7 +7071,7 @@ soap_accept(struct soap *soap)
       if (getaddrinfo(soap->host, NULL, &hints, &res) == 0 && res)
       {
         struct sockaddr_storage result;
-        (void)soap_memcpy(&result, sizeof(result), res->ai_addr, res->ai_addrlen);
+        (void)soap_memcpy(&result, sizeof(result), res->ai_addr, sizeof(result));
         freeaddrinfo(res);
         if (result.ss_family == AF_INET6)
         {
@@ -7275,6 +7278,13 @@ soap_done(struct soap *soap)
     return;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Done with context%s\n", soap->state == SOAP_COPY ? " copy" : ""));
   soap_free_temp(soap);
+#ifdef SOAP_DEBUG
+  if (soap->clist)
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Warning: managed C++ data was not deallocated with soap_destroy() from the heap managed by context %p\n", soap));
+  if (soap->alist)
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Warning: managed C data was not deallocated with soap_end() from the heap managed by context %p\n", soap));
+#endif
+  soap->alist = NULL;
   while (soap->clist)
   {
     struct soap_clist *p = soap->clist->next;
@@ -8641,7 +8651,8 @@ soap_set_cookie(struct soap *soap, const char *name, const char *value, const ch
       }
       else
       {
-        SOAP_FREE(soap, q->name);
+        if (q->name)
+          SOAP_FREE(soap, q->name);
         SOAP_FREE(soap, q);
         q = NULL;
       }
@@ -8746,7 +8757,9 @@ soap_clr_cookie(struct soap *soap, const char *name, const char *domain, const c
       SOAP_FREE(soap, q);
     }
     else
+    {
       p = &q->next;
+    }
   }
 }
 
@@ -9002,7 +9015,9 @@ soap_putcookies(struct soap *soap, const char *domain, const char *path, int sec
       char *t = q->domain;
       size_t n = 0;
       if (!t)
+      {
         flag = 1;
+      }
       else
       {
         const char *r = strchr(t, ':');
@@ -9108,7 +9123,7 @@ void
 SOAP_FMAC2
 soap_getcookies(struct soap *soap, const char *val)
 {
-  struct soap_cookie *p = NULL, *q;
+  struct soap_cookie *p = NULL, *q = NULL;
   const char *s;
   char *t, tmp[4096]; /* cookie size is up to 4096 bytes [RFC2109] */
   char *domain = NULL;
@@ -9135,18 +9150,14 @@ soap_getcookies(struct soap *soap, const char *val)
     else if (!soap_tag_cmp(tmp, "$Path"))
     {
       s = soap_decode_val(tmp, sizeof(tmp), s);
+      t = NULL;
       if (*tmp)
       {
         size_t l = strlen(tmp) + 1;
-        t = NULL;
         if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
           t = (char*)SOAP_MALLOC(soap, l);
         if (t)
           (void)soap_memcpy((void*)t, l, (const void*)tmp, l);
-      }
-      else
-      {
-        t = NULL;
       }
       if (p)
       {
@@ -9164,18 +9175,14 @@ soap_getcookies(struct soap *soap, const char *val)
     else if (!soap_tag_cmp(tmp, "$Domain"))
     {
       s = soap_decode_val(tmp, sizeof(tmp), s);
+      t = NULL;
       if (*tmp)
       {
         size_t l = strlen(tmp) + 1;
-        t = NULL;
         if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
           t = (char*)SOAP_MALLOC(soap, l);
         if (t)
           (void)soap_memcpy((void*)t, l, (const void*)tmp, l);
-      }
-      else
-      {
-        t = NULL;
       }
       if (p)
       {
@@ -9194,38 +9201,30 @@ soap_getcookies(struct soap *soap, const char *val)
     {
       if (p->path)
         SOAP_FREE(soap, p->path);
+      p->path = NULL;
       s = soap_decode_val(tmp, sizeof(tmp), s);
       if (*tmp)
       {
         size_t l = strlen(tmp) + 1;
-        p->path = NULL;
         if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
           p->path = (char*)SOAP_MALLOC(soap, l);
         if (p->path)
           (void)soap_memcpy((void*)p->path, l, (const void*)tmp, l);
-      }
-      else
-      {
-        p->path = NULL;
       }
     }
     else if (p && !soap_tag_cmp(tmp, "Domain"))
     {
       if (p->domain)
         SOAP_FREE(soap, p->domain);
+      p->domain = NULL;
       s = soap_decode_val(tmp, sizeof(tmp), s);
       if (*tmp)
       {
         size_t l = strlen(tmp) + 1;
-        p->domain = NULL;
         if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
           p->domain = (char*)SOAP_MALLOC(soap, l);
         if (p->domain)
           (void)soap_memcpy((void*)p->domain, l, (const void*)tmp, l);
-      }
-      else
-      {
-        p->domain = NULL;
       }
     }
     else if (p && !soap_tag_cmp(tmp, "Version"))
@@ -9345,22 +9344,19 @@ soap_getcookies(struct soap *soap, const char *val)
         if (p->name)
           (void)soap_memcpy(p->name, l, tmp, l);
         s = soap_decode_val(tmp, sizeof(tmp), s);
+        p->value = NULL;
         if (*tmp)
         {
           l = strlen(tmp) + 1;
-          p->value = NULL;
           if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
             p->value = (char*)SOAP_MALLOC(soap, l);
           if (p->value)
             (void)soap_memcpy((void*)p->value, l, (const void*)tmp, l);
         }
-        else
-        {
-          p->value = NULL;
-        }
         if (domain)
         {
           p->domain = domain;
+          domain = NULL;
         }
         else
         {
@@ -9369,6 +9365,7 @@ soap_getcookies(struct soap *soap, const char *val)
         if (path)
         {
           p->path = path;
+          path = NULL;
         }
         else if (*soap->path)
         {
@@ -9535,7 +9532,7 @@ soap_hash(const char *s)
 {
   size_t h = 0;
   while (*s)
-    h = 65599*h + *s++;
+    h = *s++ + (h << 6) + (h << 16) - h; /* Red Dragon book h = 65599*h + c */
   return h % SOAP_IDHASH;
 }
 
@@ -9633,8 +9630,7 @@ soap_embed(struct soap *soap, const void *p, const void *a, int n, int t)
     id = soap_pointer_lookup(soap, p, t, &pp);
   if (id)
   {
-    if (soap_is_embedded(soap, pp)
-     || soap_is_single(soap, pp))
+    if (soap_is_embedded(soap, pp) || soap_is_single(soap, pp))
       return 0;
     soap_set_embedded(soap, pp);
   }
@@ -21485,13 +21481,16 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
     tSmbNtlmAuthRequest req;  
     tSmbNtlmAuthResponse res;
     tSmbNtlmAuthChallenge ch;
-    int k = soap->keep_alive;
-    ULONG64 l = soap->length;
-    ULONG64 c = soap->count;
-    soap_mode m = soap->mode, o = soap->omode;
-    int s = soap->status;
-    char *a = soap->action;
-    short v = soap->version;
+    int keep_alive = soap->keep_alive;
+    ULONG64 length = soap->length;
+    ULONG64 count = soap->count;
+    soap_mode m = soap->mode;
+    soap_mode om = soap->omode;
+    int status = soap->status;
+    char *action = soap->action;
+    short version = soap->version;
+    const char *http_content = soap->http_content;
+    const char *http_extra_header = soap->http_extra_header;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "NTLM '%s'\n", soap->ntlm_challenge));
     if (!*soap->ntlm_challenge)
     {
@@ -21515,7 +21514,7 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
        || soap_end_send_flush(soap))
         return soap->error;
       soap->mode = m;
-      soap->keep_alive = k;
+      soap->keep_alive = keep_alive;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "NTLM S->C Type 2: waiting on server NTLM response\n"));
       oldheader = soap->header;
       if (soap_begin_recv(soap))
@@ -21523,7 +21522,7 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
           return soap->error;
       (void)soap_end_recv(soap);
       soap->header = oldheader;
-      soap->length = l;
+      soap->length = length;
       if (soap->status != 401 && soap->status != 407)
         return soap->error = SOAP_NTLM_ERROR;
       soap->error = SOAP_OK;
@@ -21542,14 +21541,16 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
     soap->passwd = NULL;
     soap->proxy_userid = NULL;
     soap->proxy_passwd = NULL;
-    soap->keep_alive = k;
-    soap->length = l;
-    soap->count = c;
+    soap->keep_alive = keep_alive;
+    soap->length = length;
+    soap->count = count;
     soap->mode = m;
-    soap->omode = o;
-    soap->status = s;
-    soap->action = a;
-    soap->version = v;
+    soap->omode = om;
+    soap->status = status;
+    soap->action = action;
+    soap->version = version;
+    soap->http_content = http_content;
+    soap->http_extra_header = http_extra_header;
   }
   return SOAP_OK;
 }

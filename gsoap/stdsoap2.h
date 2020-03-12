@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.98
+        stdsoap2.h 2.8.99
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20898
+#define GSOAP_VERSION 20899
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1225,9 +1225,9 @@ extern "C" {
 #endif
 #ifndef SOAP_IDHASH
 # ifndef WITH_LEAN
-#  define SOAP_IDHASH  (1999) /* prime size of hash table for parsed id/ref */
+#  define SOAP_IDHASH  (1999) /* 1999, 8191: prime size of hash table for parsed id/ref */
 # else
-#  define SOAP_IDHASH    (19) /* 19, 199 */
+#  define SOAP_IDHASH    (19) /* 19, 199: small prime */
 # endif
 #endif
 #ifndef SOAP_BLKLEN
@@ -3648,6 +3648,8 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_putcookies(struct soap *soap, const char *domain,
 } /* extern "C" */
 #endif
 
+/* declare global SOAP header and fault processing functions, unless WITH_STATIC is defined (generated in soapXYXLib code) */
+#ifndef WITH_STATIC
 SOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap*);
 SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultcode(struct soap*);
@@ -3663,6 +3665,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_putheader(struct soap*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_getfault(struct soap*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_putfault(struct soap*);
+#endif
 
 #ifdef __cplusplus
 

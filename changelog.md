@@ -1577,9 +1577,9 @@ Version 2.8.97 (1/7/2020)
 
 - Fixed wsdl2h processing of schemas with a cyclic schema `<xs:include>` that may cause wsdl2h to hang when schemas have no `targetNamespace` attribute.
 - Improved wsdl2h code generation of unqualified types and names defined in imported schemas (with `<xs:import>`) when these schemas have no `targetNamespace`.  Use wsdl2h option `-z10` or lesser to revert to the code generation behavior of versions prior to 2.8.97.
-- Other minor improvements.
+- Other improvements.
 
-Version 2.8.98 (2/16/2020) {#latest}
+Version 2.8.98 (2/16/2020)
 ---
 
 - Updated the WS-Security and WS-Trust APIs that use SAML with higher precision timestamps in microseconds, using the `custom/struct_timeval.h` serializer for `xsd__dateTime`.  The WS-Security and WS-Trust updates require compiling and linking with `custom/struct_timeval.c`.
@@ -1588,7 +1588,15 @@ Version 2.8.98 (2/16/2020) {#latest}
 - Updated DOM API, whitespace at both edges of text elements in the DOM is no longer trimmed.
 - Fixed an issue with soapcpp2 code generation of `wchar_t*` serializers when combined with a custom serializer with base type `wchar_t*`, i.e. when `extern typedef wchar_t* name` is declared.
 - Fixed an issue with soapcpp2 code generation when an element tag names starts with an underscore and the element is namespace qualified.
-- Other minor improvements.
+- Other improvements.
+
+Version 2.8.99 (3/12/2020) {#latest}
+---
+
+- Improved performance of the soapcpp2 tool.
+- Improved proxy connectivity on the client side with `soap::proxy_host`, `soap::proxy_port`, and NTLM, to maintain HTTP headers, e.g. `soap::http_content` and `soap::http_extra_header`.
+- Fixed a bug in HTTP cookie handling when the optional `-DWITH_COOKIES` flag is used.  Note that cookie support is disabled by default or has no effect when deploying robust services with the gSOAP Apache modules and ISAPI extensions that handle cookies differently.
+- Other improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

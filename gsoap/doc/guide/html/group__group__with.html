@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">WITH_MACRO compile-time flags</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Feb 16 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Mar 12 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -326,6 +326,7 @@ c++ -D WITH_CDATA -o client stdsoap2.cpp soapC.cpp soapClient.cpp client.cpp
 <li><code><a class="el" href="group__group__cookies.html#ga7e55b641c3a3d6f9710b523e41917fe8" title="Get cookies from the HTTP_COOKIE environment variable. ">soap_getenv_cookies</a></code></li>
 <li><code><a class="el" href="group__group__cookies.html#gacf59ec191a3c7012dd6171f7db3d2c6b" title="Free cookies. ">soap_free_cookies</a></code></li>
 </ul>
+<p>Client-side HTTP cookie handling is automatic. The <code><a class="el" href="group__group__with.html#ga77f061a12d88eb8b7dae8b07cf90e29d" title="When this macro is defined at compile time (undefined by default), HTTP cookie support is enabled in ...">WITH_COOKIES</a></code> flag is useless without server-side session management and control. Cookies may require a fair amount of processing overhead and are not needed to implement stateful services, which is typically performed with session IDs in XML/JSON messages or via the URL.</p>
 <dl class="section user"><dt>Examples:</dt><dd><pre class="fragment">c++ -D WITH_COOKIES -o client stdsoap2.cpp soapC.cpp soapClient.cpp client.cpp
 c++ -D WITH_COOKIES -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp
 </pre></dd></dl>
@@ -918,7 +919,7 @@ c++ -D WITH_ZLIB -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lz
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Feb 16 2020 16:05:20 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Mar 12 2020 14:12:00 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

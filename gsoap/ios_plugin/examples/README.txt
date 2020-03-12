@@ -3,7 +3,7 @@ INSTRUCIONS
 ===========
 
 To compile the examples, first copy the following files to the source code
-files folders of each example (Air, app2, calc, Weather):
+files folders of each example (Air, app2, calc):
 
 - gsoapios.h		(located under gsoap/ios_plugin/)
 - gsoapios.mm		(located under gsoap/ios_plugin/)
@@ -21,9 +21,6 @@ Then generate updated files with soapcpp2 for each example:
 
     cd calc
     soapcpp2 -CL -I../../../import calc.h
-
-    cd Weather
-    soapcpp2 -j -CL -I../../../import weather.h
 
 
 DOCUMENTATION

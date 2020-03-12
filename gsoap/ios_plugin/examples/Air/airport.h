@@ -106,6 +106,7 @@ template <class T> class std::vector;
  *                                                                            *
 \******************************************************************************/
 
+#import "dom.h"
 #import "stl.h"	// enable STL containers when used (option -s removes STL dependency)
 
 /******************************************************************************\

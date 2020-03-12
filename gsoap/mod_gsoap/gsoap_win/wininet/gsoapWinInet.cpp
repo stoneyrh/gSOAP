@@ -26,13 +26,14 @@ See the README.md for details.
 #define INVALID_BUFFER_LENGTH  ((DWORD)-1)
 
 /** plugin id */
-static const char wininet_id[] = "wininet-2.2";
+static const char wininet_id[] = "wininet-2.3";
 
 /** plugin private data */
 struct wininet_data
 {
     HINTERNET           hInternet;          /**< internet session handle */
     HINTERNET           hConnection;        /**< current connection handle */
+    HINTERNET           hHttpRequest;       /**< current open HTTP request */
     BOOL                bDisconnect;        /**< connection is disconnected */
     DWORD               dwRequestFlags;     /**< extra request flags from user */
     char *              pBuffer;            /**< send buffer */
@@ -184,7 +185,17 @@ wininet_init(
         NULL,
         0 );
 
-    if (!a_pData->hInternet)
+    /* enable HTTP2 when available */
+#ifdef INTERNET_OPTION_ENABLE_HTTP_PROTOCOL
+    DWORD httpProtocol = HTTP_PROTOCOL_FLAG_HTTP2;
+    InternetSetOption(
+        a_pData->hInternet,
+        INTERNET_OPTION_ENABLE_HTTP_PROTOCOL,
+        &httpProtocol,
+        sizeof(httpProtocol) );
+#endif
+
+    if ( !a_pData->hInternet )
     {
       soap->error = SOAP_EOF;
       soap->errnum = GetLastError();
@@ -195,20 +206,11 @@ wininet_init(
       return FALSE;
     }
 
+    /* set the proxy credentials */
     if (soap->proxy_host && soap->proxy_userid)
       InternetSetOption(a_pData->hInternet, INTERNET_OPTION_PROXY_USERNAME, (LPVOID)soap->proxy_userid, (DWORD)strlen(soap->proxy_userid));
     if (soap->proxy_host && soap->proxy_passwd)
       InternetSetOption(a_pData->hInternet, INTERNET_OPTION_PROXY_PASSWORD, (LPVOID)soap->proxy_passwd, (DWORD)strlen(soap->proxy_passwd));
-
-    /* enable HTTP2 when available */
-#ifdef INTERNET_OPTION_ENABLE_HTTP_PROTOCOL
-    DWORD httpProtocol = HTTP_PROTOCOL_FLAG_HTTP2;
-    InternetSetOption(
-        a_pData->hInternet,
-        INTERNET_OPTION_ENABLE_HTTP_PROTOCOL,
-        &httpProtocol,
-        sizeof(httpProtocol));
-#endif
 
     /* set the timeouts, if any of these fail the error isn't fatal */
     if ( soap->connect_timeout > 0 )
@@ -319,6 +321,14 @@ wininet_delete(
         InternetCloseHandle( pData->hInternet );
         pData->hInternet = NULL;
     }
+    if ( pData->hConnection )
+    {
+        InternetCloseHandle( pData->hConnection );
+    }
+    if ( pData->hHttpRequest )
+    {   
+        InternetCloseHandle( pData->hHttpRequest );
+    }
 
     /* free our data */
     wininet_free_error_message( pData );
@@ -409,12 +419,6 @@ wininet_connect(
         dwFlags |= INTERNET_FLAG_SECURE;
     }
 
-    /* proxy requires full endpoint URL */
-    if ( soap->proxy_host )
-    {
-        soap_strcpy(szUrlPath, MAX_PATH, a_pszEndpoint);
-    }
-
     /* status determines the HTTP verb */
     switch ( soap->status )
     {
@@ -448,6 +452,7 @@ wininet_connect(
 
     /* save the connection handle in our data structure */
     pData->hConnection = hConnection;
+    pData->hHttpRequest = hHttpRequest;
 
     /* return the http request handle as our file descriptor. */
     _ASSERTE( sizeof(soap->socket) >= sizeof(HINTERNET) );
@@ -826,7 +831,7 @@ wininet_frecv(
     BOOL        bResult;
 
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
-        "wininet %p: frecv, available buffer len = %zu\n", 
+        "wininet %p: frecv, available buffer len = %zu\n",
         soap, a_uiBufferLen ));
 
     /* 

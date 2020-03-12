@@ -16657,11 +16657,13 @@ Since the cookie store is linked to the current `::soap` context, and each threa
 
 ## Server-side cookie support        {#servercookie}
 
+This feature is not recommended to implement state in stand-alone servers.  Cookies may require a fair amount of processing overhead and are not in fact needed to implement stateful services, which is typically performed with session IDs in XML/JSON messages or by passing the session IDs via the URL.
+
 Server-side cookie support is optional. To enable cookie support, compile all sources with compile-time flag `#WITH_COOKIES`:
 
      c++ -DWITH_COOKIES -o myserver ...
 
-See API documentation Module \ref group_cookies for the cookie API functions.  See the [HTTP sessions plugin](../../sessions/html/index.html) for HTTP session management with cookies.
+See API documentation Module \ref group_cookies for the cookie API functions.  See the [HTTP sessions plugin](../../sessions/html/index.html) for HTTP session management with cookies that is required for server-side session control.  The `#WITH_COOKIES` flag is useless without server-side session management and control.
 
 Here is an overview of the cookie API functions:
 

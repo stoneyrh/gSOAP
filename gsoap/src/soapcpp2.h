@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.98" /* Current version */
-# define GSOAP_VERSION 20898
+# define VERSION "2.8.99" /* Current version */
+# define GSOAP_VERSION 20899
 #endif
 
 #ifdef _WIN32
@@ -235,9 +235,11 @@ typedef enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
 
 typedef struct Symbol
 {
-  char            *name;
   Token           token;
   struct Symbol   *next;
+  struct Symbol   *left;
+  struct Symbol   *right;
+  char            name[1]; /* the actual string value flows into the allocated region id[0...] below this struct */
 } Symbol;
 
 Symbol  *install(const char*, Token), *lookup(const char*), *gensym(const char*), *gensymidx(const char*, int);
