@@ -1590,13 +1590,21 @@ Version 2.8.98 (2/16/2020)
 - Fixed an issue with soapcpp2 code generation when an element tag names starts with an underscore and the element is namespace qualified.
 - Other improvements.
 
-Version 2.8.99 (3/12/2020) {#latest}
+Version 2.8.99 (3/12/2020)
 ---
 
 - Improved performance of the soapcpp2 tool.
 - Improved proxy connectivity on the client side with `soap::proxy_host`, `soap::proxy_port`, and NTLM, to maintain HTTP headers, e.g. `soap::http_content` and `soap::http_extra_header`.
-- Fixed a bug in HTTP cookie handling when the optional `-DWITH_COOKIES` flag is used.  Note that cookie support is disabled by default or has no effect when deploying robust services with the gSOAP Apache modules and ISAPI extensions that handle cookies differently.
+- Fixed a bug in HTTP cookie handling when the optional `-DWITH_COOKIES` flag is used (the optional `libgsoapck`/`libgsoapck++` libraries are compiled with `-DWITH_COOKIES`).  Note that cookie support is disabled by default or has no effect when deploying robust services with the gSOAP Apache modules and ISAPI extensions that handle cookies differently.
 - Other improvements.
+
+Version 2.8.100 (3/24/2020) {#latest}
+---
+
+- Improved proxy connectivity on the client side to handle bearer authentication.
+- Improved soapcpp2 handling of the `#module` directive.
+- Improved AIX 7.2 portability.
+- Fixed an MTOM flag clearing issue hampering MTOM usability.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

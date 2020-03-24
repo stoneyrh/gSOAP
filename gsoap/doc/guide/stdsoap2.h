@@ -4002,18 +4002,18 @@ struct soap {
   @see `::soap::ip`, `::soap::ip6`.
   */
   int port;
-  /// The endpoint string as received on the server side
+  /// The endpoint URL as received on the server side
   /**
-  The URL endpoint string is extracted from the HTTP header by `::soap::fparse` called by `::soap_begin_recv` and consists of `::soap::host`, `::soap::port`, and `::soap::path` concatenated.
+  On the server side, the URL endpoint string is extracted from the HTTP header by `::soap::fparse` called by `::soap_begin_recv` and consists of the concatenated string of `::soap::host`, `::soap::port`, and `::soap::path` to form a valid URL.
 
-  @see `::soap::ip`, `::soap::ip6`, `::soap::host`, `::soap::port`, `::soap::path`.
+  @see `::soap::ip`, `::soap::ip6`, `::soap::host`, `::soap::port`, `::soap::path`, `::soap_query`.
   */
   char endpoint[SOAP_TAGLEN];
-  /// The client host name or IP address as received on the server side
+  /// The host IP address of the client, as received on the server side
   /**
-  The URL host string is extracted from the HTTP header by `::soap::fparse` called by `::soap_begin_recv`.
+  On the server side, the host string is the IPv4 or IPv6 address, depending on `#WITH_IPV6`.  On the client side, the host string is extracted from `::soap::endpoint`, i.e. the endpoint URL of the server.
 
-  @see `::soap::ip`, `::soap::ip6`, `::soap::endpoint`, `::soap::port`, `::soap::path`.
+  @see `::soap::ip`, `::soap::ip6`, `::soap::endpoint`, `::soap::port`, `::soap::path`, `::soap_query`.
   */
   char host[SOAP_TAGLEN];
   /// The client request path as received on the server side

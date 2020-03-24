@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.99
+        stdsoap2.c[pp] 2.8.100
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20899
+#define GSOAP_LIB_VERSION 208100
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.99 2020-03-12 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.100 2020-03-24 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.99 2020-03-12 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.100 2020-03-24 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -5150,9 +5150,11 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
 #else
     if (soap_memcpy((void*)inaddr, sizeof(struct in_addr), (const void*)hostent->h_addr, (size_t)hostent->h_length))
     {
+#if (!defined(_AIX43) && !defined(TRU64) && !defined(HP_UX)) || !defined(HAVE_GETHOSTBYNAME_R)
 #if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
       if (tmpbuf && tmpbuf != soap->tmpbuf)
         SOAP_FREE(soap, tmpbuf);
+#endif
 #endif
       return soap->error = SOAP_EOM;
     }
@@ -5840,6 +5842,7 @@ again:
       ULONG64 count = soap->count; /* save the content length */
       const char *http_content = soap->http_content; /* save http_content when set */
       const char *http_extra_header = soap->http_extra_header; /* save http_extra_header when set */
+      const char *bearer = soap->bearer; /* save bearer when set */
       int status = soap->status; /* save the current status/command */
       int keep_alive = soap->keep_alive; /* save the KA status */
       const char *userid, *passwd;
@@ -5886,6 +5889,7 @@ again:
       soap->count = count; /* restore */
       soap->http_content = http_content; /* restore */
       soap->http_extra_header = http_extra_header; /* restore */
+      soap->bearer = bearer; /* restore */
       if (soap_init_send(soap))
       {
         soap->fclosesocket(soap, sk);
@@ -7280,9 +7284,9 @@ soap_done(struct soap *soap)
   soap_free_temp(soap);
 #ifdef SOAP_DEBUG
   if (soap->clist)
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Warning: managed C++ data was not deallocated with soap_destroy() from the heap managed by context %p\n", soap));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Warning: managed C++ data was not deallocated with soap_destroy() from the heap managed by context %p\n", (void*)soap));
   if (soap->alist)
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Warning: managed C data was not deallocated with soap_end() from the heap managed by context %p\n", soap));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Warning: managed C data was not deallocated with soap_end() from the heap managed by context %p\n", (void*)soap));
 #endif
   soap->alist = NULL;
   while (soap->clist)
@@ -15060,7 +15064,7 @@ soap_string_out(struct soap *soap, const char *s, int flag)
       }
       break;
     case 0x0A:
-      if (flag || !(soap->mode & SOAP_XML_CANONICAL))
+      if (flag)
       {
         if (soap_send_raw(soap, s, t - s - 1) || soap_send_raw(soap, "&#xA;", 5))
           return soap->error;
@@ -15809,13 +15813,10 @@ soap_wstring_out(struct soap *soap, const wchar_t *s, int flag)
         t = "\t";
       break;
     case 0x0A:
-      if (flag || !(soap->mode & SOAP_XML_CANONICAL))
+      if (flag)
         t = "&#xA;";
       else
         t = "\n";
-      break;
-    case 0x0D:
-      t = "&#xD;";
       break;
     case '&':
       t = "&amp;";
@@ -20445,7 +20446,7 @@ soap_begin_recv(struct soap *soap)
     soap->imode &= ~SOAP_IO;
     soap->omode = (soap->omode & ~SOAP_IO) | SOAP_IO_CHUNK;
   }
-  soap->imode &= ~(SOAP_ENC_DIME | SOAP_ENC_MIME | SOAP_ENC_MTOM | SOAP_ENC_ZLIB);
+  soap->imode &= ~(SOAP_ENC_DIME | SOAP_ENC_MIME | SOAP_ENC_ZLIB);
   soap->mode = soap->imode;
   if (!(soap->mode & SOAP_IO_KEEPALIVE))
     soap->keep_alive = 0;
@@ -21491,6 +21492,7 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
     short version = soap->version;
     const char *http_content = soap->http_content;
     const char *http_extra_header = soap->http_extra_header;
+    const char *bearer = soap->bearer;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "NTLM '%s'\n", soap->ntlm_challenge));
     if (!*soap->ntlm_challenge)
     {
@@ -21551,6 +21553,7 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
     soap->version = version;
     soap->http_content = http_content;
     soap->http_extra_header = http_extra_header;
+    soap->bearer = bearer;
   }
   return SOAP_OK;
 }

@@ -724,9 +724,11 @@ mktype(Type type, void *ref, int width)
   p->num = typeNO++;
   Tptr[type] = p;
   DBGLOG(fprintf(stderr, "New type %s %s\n", c_type(p), p->imported));
+  /* deprecated change, to revert back to 2.7 behavior that is preferable with #module
   if (type == Tpointer && ((Tnode*)ref)->imported && (((Tnode*)ref)->type == Tenum || ((Tnode*)ref)->type == Tenumsc || ((Tnode*)ref)->type == Tstruct || ((Tnode*)ref)->type == Tclass))
     p->imported = ((Tnode*)ref)->imported;
-  else if (lflag && !is_transient(p) && (type == Tenum || type == Tenumsc || type == Tstruct || type == Tclass))
+  else */
+  if (lflag && !is_transient(p) && (type == Tenum || type == Tenumsc || type == Tstruct || type == Tclass))
     mkpointer(p);
   return p;
 }
@@ -14458,7 +14460,10 @@ soap_instantiate(Tnode *typ)
 
   fprintf(fhead, "\nSOAP_FMAC1 %s * SOAP_FMAC2 %s_instantiate_%s(struct soap*, int, const char*, const char*, size_t*);", c_type(typ), fprefix, c_ident(typ));
 
-  fprintf(fhead, "\n\ninline %s * soap_new_%s(struct soap *soap, int n = -1)\n{\n\treturn %s_instantiate_%s(soap, n, NULL, NULL, NULL);\n}", c_type(typ), c_ident(typ), fprefix, c_ident(typ));
+  if (namespaceid && !is_external(typ))
+    fprintf(fhead, "\n\ninline %s * soap_new_%s(struct soap *soap, int n = -1)\n{\n\treturn %s::%s_instantiate_%s(soap, n, NULL, NULL, NULL);\n}", c_type(typ), c_ident(typ), namespaceid, fprefix, c_ident(typ));
+  else
+    fprintf(fhead, "\n\ninline %s * soap_new_%s(struct soap *soap, int n = -1)\n{\n\treturn %s_instantiate_%s(soap, n, NULL, NULL, NULL);\n}", c_type(typ), c_ident(typ), fprefix, c_ident(typ));
 
   /* NO LONGER CONSIDERED: soap_new_copy_Name1 may clash with soap_new_Name2
   if (is_stdstring(typ))
