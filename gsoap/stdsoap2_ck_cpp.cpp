@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.100
+        stdsoap2.c[pp] 2.8.101
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208100
+#define GSOAP_LIB_VERSION 208101
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.100 2020-03-24 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.101 2020-04-08 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.100 2020-03-24 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.101 2020-04-08 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -2103,10 +2103,10 @@ soap_getpi(struct soap *soap)
     s = strstr(buf, " encoding=");
     if (s && s[10])
     {
-      if (!soap_tag_cmp(s + 11, "iso-8859-1*")
-       || !soap_tag_cmp(s + 11, "latin1*"))
+      if (!soap_tag_cmp(s + 11, "iso-8859-*")
+       || !soap_tag_cmp(s + 11, "latin*"))
       {
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Switching to latin1 encoding\n"));
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Switching to latin encoding\n"));
         soap->mode |= SOAP_ENC_LATIN;
       }
       else if (!soap_tag_cmp(s + 11, "utf-8*"))
@@ -7075,7 +7075,8 @@ soap_accept(struct soap *soap)
       if (getaddrinfo(soap->host, NULL, &hints, &res) == 0 && res)
       {
         struct sockaddr_storage result;
-        (void)soap_memcpy(&result, sizeof(result), res->ai_addr, sizeof(result));
+        memset((void*)&result, 0, sizeof(result));
+        (void)soap_memcpy(&result, sizeof(result), res->ai_addr, res->ai_addrlen);
         freeaddrinfo(res);
         if (result.ss_family == AF_INET6)
         {
@@ -15233,7 +15234,7 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char
         c = soap_getchar(soap);
         if ((int)c == EOF)
           goto end;
-        if ((c >= 0x80 || c < SOAP_AP) && state != 1 && !(soap->mode & SOAP_ENC_LATIN))
+        if ((c >= 0x80 || c < SOAP_AP) && state != 1)
         {
           if ((c & 0x7FFFFFFF) >= 0x80)
           {
@@ -22279,14 +22280,14 @@ soap_send_fault(struct soap *soap)
         if ((soap->mode & SOAP_IO_LENGTH))
           if (soap_element_begin_out(soap, "fault", 0, NULL)
            || soap_outstring(soap, "reason", 0, (char*const*)&s, NULL, 0)
-           || soap_outliteral(soap, "detail", (char*const*)d, NULL)
+           || (d && *d && soap_outliteral(soap, "detail", (char*const*)d, NULL))
            || soap_element_end_out(soap, "fault"))
             return soap_closesock(soap);
         (void)soap_end_count(soap);
         if (soap_response(soap, status)
          || soap_element_begin_out(soap, "fault", 0, NULL)
          || soap_outstring(soap, "reason", 0, (char*const*)&s, NULL, 0)
-         || soap_outliteral(soap, "detail", (char*const*)d, NULL)
+         || (d && *d && soap_outliteral(soap, "detail", (char*const*)d, NULL))
          || soap_element_end_out(soap, "fault")
          || soap_end_send(soap))
           return soap_closesock(soap);
@@ -22322,7 +22323,8 @@ soap_recv_fault(struct soap *soap, int check)
           if (!soap_element_end_in(soap, "fault") && !soap_end_recv(soap))
           {
             *soap_faultstring(soap) = s;
-            *soap_faultdetail(soap) = d;
+            if (d && *d)
+              *soap_faultdetail(soap) = d;
             if (status)
               soap->error = status;
             else

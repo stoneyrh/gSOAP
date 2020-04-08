@@ -745,6 +745,13 @@ This generates the weather.h service definition header file with service
 operation definitions and types for the operation's data.  By default, gSOAP
 assumes you will use C++ with STL.
 
+Because we will be using the gSOAP DOM parser in this example, which is created
+in our program with `xsd__anyType dom(ctx)` to extract plain XML content
+received in string `xmlmessage` with `xmlmessage >> dom`, an additional step is
+necessary.  Add the following line to the wsdl2h-generated airport.h file:
+
+    #import "dom.h"
+
 To generate the stubs for the C++ proxy classes, run the soapcpp2 tool:
 
     soapcpp2 -j -CL -I$GSOAP_HOME/import weather.h
@@ -1094,7 +1101,14 @@ This generates the airport.h service definition header file with service
 operation definitions and types for the operation's data.  By default, gSOAP
 assumes you will use C++ with STL.
 
-To generate the stubs for the C++ proxy classes, run the soapcpp2.  compiler:
+Because we will be using the gSOAP DOM parser in this example, which is created
+in our program with `xsd__anyType dom(ctx)` to extract plain XML content
+received in string `xmlmessage` with `xmlmessage >> dom`, an additional step is
+necessary.  Add the following line to the wsdl2h-generated airport.h file:
+
+    #import "dom.h"
+
+To generate the stubs for the C++ proxy classes, run the soapcpp2:
 
     soapcpp2 -j -CL -I$GSOAP_HOME/import airport.h
 

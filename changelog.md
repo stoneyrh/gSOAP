@@ -1598,13 +1598,19 @@ Version 2.8.99 (3/12/2020)
 - Fixed a bug in HTTP cookie handling when the optional `-DWITH_COOKIES` flag is used (the optional `libgsoapck`/`libgsoapck++` libraries are compiled with `-DWITH_COOKIES`).  Note that cookie support is disabled by default or has no effect when deploying robust services with the gSOAP Apache modules and ISAPI extensions that handle cookies differently.
 - Other improvements.
 
-Version 2.8.100 (3/24/2020) {#latest}
+Version 2.8.100 (3/24/2020)
 ---
 
 - Improved proxy connectivity on the client side to handle bearer authentication.
 - Improved soapcpp2 handling of the `#module` directive.
 - Improved AIX 7.2 portability.
 - Fixed an MTOM flag clearing issue hampering MTOM usability.
+
+Version 2.8.101 (4/8/2020) {#latest}
+---
+
+- Updated IPV6 support to fix a serious issue that affects versions 2.8.99 and 2.8.100 when using `WITH_IPV6`.
+- Other improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
