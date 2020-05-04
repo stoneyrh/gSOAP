@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.101
+        stdsoap2.h 2.8.102
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208101
+#define GSOAP_VERSION 208102
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */

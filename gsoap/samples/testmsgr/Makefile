@@ -90,6 +90,7 @@ build_triplet = x86_64-apple-darwin16.7.0
 host_triplet = x86_64-apple-darwin16.7.0
 noinst_PROGRAMS = testmsgr$(EXEEXT)
 am__append_1 = $(top_srcdir)/gsoap/plugin/httpda.c $(top_srcdir)/gsoap/plugin/smdevp.c
+am__append_2 = -lpthread
 subdir = gsoap/samples/testmsgr
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -114,7 +115,7 @@ am_testmsgr_OBJECTS = testmsgr.$(OBJEXT) $(am__objects_1) \
 testmsgr_OBJECTS = $(am_testmsgr_OBJECTS)
 am__DEPENDENCIES_1 =
 testmsgr_DEPENDENCIES = $(SOAP_CPP_LIB_SSL) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -263,7 +264,6 @@ SOAPCPP2_NONAMESPACES =
 SOAPCPP2_NO_C_LOCALE = 
 STRIP = 
 VERSION = 2.8
-WITH_OPENSSL = 
 WSDL2H_EXTRA_FLAGS = -I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP
 WSDL2H_EXTRA_LIBS = -L/usr/local/opt/openssl/lib  -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL2H_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
@@ -352,7 +352,8 @@ SOAP_NS = $(SOAP_NS_DEF)
 testmsgr_CFLAGS = $(WSDL2H_EXTRA_FLAGS)
 testmsgr_SOURCES = testmsgr.cpp $(SOAPHEADER) $(SOAP_CPP_CORE) \
 	$(am__append_1)
-testmsgr_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+testmsgr_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) \
+	$(SAMPLE_SSL_LIBS) $(am__append_2)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

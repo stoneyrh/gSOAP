@@ -82,6 +82,10 @@ SOAP_FMAC1 void * SOAP_FMAC2 http_da_sha512_256_sess();
 
 SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_post(struct soap *soap, const char *passwd);
 SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_get(struct soap *soap, const char *passwd);
+SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_put(struct soap *soap, const char *passwd);
+SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_patch(struct soap *soap, const char *passwd);
+SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_del(struct soap *soap, const char *passwd);
+SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_method(struct soap *soap, const char *method, const char *passwd);
 
 /** HTTP digest authentication session times out after ten minutes */
 #define HTTP_DA_SESSION_TIMEOUT (600) 

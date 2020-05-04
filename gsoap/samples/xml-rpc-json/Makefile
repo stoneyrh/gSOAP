@@ -299,7 +299,6 @@ SOAPCPP2_NONAMESPACES =
 SOAPCPP2_NO_C_LOCALE = 
 STRIP = 
 VERSION = 2.8
-WITH_OPENSSL = 
 WSDL2H_EXTRA_FLAGS = -I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP
 WSDL2H_EXTRA_LIBS = -L/usr/local/opt/openssl/lib  -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL2H_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""

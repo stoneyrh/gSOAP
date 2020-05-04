@@ -123,7 +123,7 @@ extern "C" {
         void (*soap_markelement) (struct soap *, const void *, int);
         int (*soap_putelement) (struct soap *, const void *, const char *, int,
                                 int);
-        void *(*soap_getelement) (struct soap *, int *);
+        void *(*soap_getelement) (struct soap *, const char *, int *);
     };
 
     typedef void (*apache_init_soap_interface_fn) (struct apache_soap_interface

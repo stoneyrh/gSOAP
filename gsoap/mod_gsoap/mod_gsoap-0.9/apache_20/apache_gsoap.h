@@ -87,7 +87,7 @@ struct apache_soap_interface
     const char **(*soap_faultdetail) (struct soap *soap);
     void (*soap_markelement) (struct soap *soap, const void *, int);
     int (*soap_putelement) (struct soap *soap, const void *, const char *, int, int);
-    void *(*soap_getelement) (struct soap *soap, int *);
+    void *(*soap_getelement) (struct soap *soap, const char *, int *);
 };
 
 typedef void (*apache_init_soap_interface_fn) (struct apache_soap_interface*, request_rec*);

@@ -336,8 +336,7 @@ else
   SAMPLE_INCLUDES=
   WSDL2H_SOAP_CPP_LIB="libgsoap++.a"
 fi
-AM_CONDITIONAL(WITH_OPENSSL, test "x$with_openssl" = "xyes" -a "x$with_gnutls" != "xyes")
-AC_SUBST(WITH_OPENSSL)
+AM_CONDITIONAL([WITH_OPENSSL], [test "x$with_openssl" = "xyes" -a "x$with_gnutls" != "xyes"])
 AC_SUBST(WSDL2H_EXTRA_FLAGS)
 AC_SUBST(WSDL2H_EXTRA_LIBS)
 AC_SUBST(SAMPLE_INCLUDES)

@@ -1606,11 +1606,16 @@ Version 2.8.100 (3/24/2020)
 - Improved AIX 7.2 portability.
 - Fixed an MTOM flag clearing issue hampering MTOM usability.
 
-Version 2.8.101 (4/8/2020) {#latest}
+Version 2.8.101 (4/8/2020)
 ---
 
-- Updated IPV6 support to fix a serious issue that affects versions 2.8.99 and 2.8.100 when using `WITH_IPV6`.
+- Updated IPV6 support to fix a serious issue that affects versions 2.8.99 and 2.8.100 when the library is compiled with the optional `WITH_IPV6` flag.
 - Other improvements.
+
+Version 2.8.102 (5/4/2020) {#latest}
+---
+
+- Improved HTTP digest authentication plugin to cover additional HTTP methods.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
