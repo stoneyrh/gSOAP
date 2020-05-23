@@ -332,8 +332,8 @@ int main(int argc, char **argv)
     SOAP_SSL_DEFAULT,
     "server.pem",       /* keyfile: see SSL docs on how to obtain this file */
     "password",         /* password to read the key file */
-    NULL,               /* cacert CA certificate, or ... */
-    NULL,               /* capath CA certificate path */
+    NULL,               /* cacert CA certificate to authenticate clients, or ... */
+    NULL,               /* capath CA certificate path to authenticate clients */
     NULL,               /* DH file (e.g. "dh2048.pem") or numeric DH param key len bits in string (e.g. "2048"), if NULL then use RSA */
     NULL,               /* if randfile!=NULL: use a file with random data to seed randomness */ 
     "webserver"         /* server identification for SSL session cache (must be a unique name) */

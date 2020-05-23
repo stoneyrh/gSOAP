@@ -2127,7 +2127,7 @@ This example requires the soapC.cpp source code generated with soapcpp2 from <i>
 */
 #define SOAP_DOM_TREE 0x00100000
 
-/// `::soap_mode` C-related input flag value to ignore array items that are out of bounds when deserializing fixed-size arrays, instead of producing `#SOAP_IOB` errors
+/// `::soap_mode` input flag value to ignore array items that are out of bounds when deserializing fixed-size arrays, instead of producing `#SOAP_IOB` errors
 /**
 @par Example:
 
@@ -2151,7 +2151,7 @@ if (soap_call_ns__webmethod(soap, 3, &result))
 */
 #define SOAP_C_NOIOB 0x01000000
 
-/// `::soap_mode` C-related input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 encoded wide characters
+/// `::soap_mode` input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 encoded wide characters
 /**
 @par Example:
 
@@ -2163,10 +2163,10 @@ struct soap *soap = soap_new1(SOAP_C_UTFSTRING);
 */
 #define SOAP_C_UTFSTRING 0x02000000
 
-/// `::soap_mode` C-related input/output flag value to serialize and deserialize 8-bit multibyte C/C++ strings using `mbtowc` and `wctomb`
+/// `::soap_mode` input/output flag value to enable multibyte character support for 8-bit character strings with `wctomb` and `mbtowc` using the current locale
 #define SOAP_C_MBSTRING 0x04000000
 
-/// `::soap_mode` C-related input/output flag value to serialize empty strings as elements with attribute <i>`xsi:nil="true"`</i>
+/// `::soap_mode` input/output flag value to serialize empty strings as elements with attribute <i>`xsi:nil="true"`</i>
 /**
 @par Example:
 

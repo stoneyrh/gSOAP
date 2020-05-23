@@ -237,6 +237,9 @@ The gSOAP engine limits the size of requests to 2GB max, which can be changed
 by setting the value of `soap->recv_maxlength` to the max number of bytes allowed
 to receive.  For other gSOAP settings, please see the gSOAP documentation.
 
+Do not set gSOAP timeouts (`send_timeout` and `recv_timeout`), which may cause
+failures.  IIS enforces timeouts internally.
+
 
 Troubleshooting                                                         {#debug}
 ===============

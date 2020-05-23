@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The ISAPI extension</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Nov 5 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue May 12 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -134,6 +134,7 @@ IIS Settings                                                         </h1>
     &lt;/system.webServer&gt;
 &lt;/configuration&gt;
 </pre><p>The gSOAP engine limits the size of requests to 2GB max, which can be changed by setting the value of <code>soap-&gt;recv_maxlength</code> to the max number of bytes allowed to receive. For other gSOAP settings, please see the gSOAP documentation.</p>
+<p>Do not set gSOAP timeouts (<code>send_timeout</code> and <code>recv_timeout</code>), which may cause failures. IIS enforces timeouts internally.</p>
 <h1><a class="anchor" id="debug"></a>
 Troubleshooting                                                         </h1>
 <p>If the client receives an error from the ISAPI service, such as for example: </p><pre class="fragment">SOAP FAULT: SOAP-ENV:Client
@@ -175,10 +176,10 @@ Further reading                                                    </h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Nov 5 2019 08:30:05 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue May 12 2020 10:41:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

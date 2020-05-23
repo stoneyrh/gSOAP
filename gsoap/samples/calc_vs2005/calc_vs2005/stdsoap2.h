@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.102
+        stdsoap2.h 2.8.103
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208102
+#define GSOAP_VERSION 208103
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1184,21 +1184,21 @@ extern "C" {
 #ifdef WIN32
 # ifdef UNDER_CE
 #  define soap_errno GetLastError()
-#  define soap_socket_errno(s) GetLastError()
+#  define soap_socket_errno GetLastError()
 #  define soap_reset_errno SetLastError(0)
 # else
-#  define soap_errno GetLastError()
-#  define soap_socket_errno(s) WSAGetLastError()
-#  define soap_reset_errno SetLastError(0)
+#  define soap_errno errno
+#  define soap_socket_errno WSAGetLastError()
+#  define soap_reset_errno _set_errno(0)
 # endif
 #else
 # ifndef WITH_NOIO
 #  define soap_errno errno
-#  define soap_socket_errno(s) errno
-#  define soap_reset_errno (errno = 0)
+#  define soap_socket_errno errno
+#  define soap_reset_errno (errno = ENOENT)
 # else
 #  define soap_errno 0
-#  define soap_socket_errno(s) 0
+#  define soap_socket_errno 0
 #  define soap_reset_errno
 # endif
 #endif

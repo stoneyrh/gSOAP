@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.102
+        DOM API v5 gSOAP 2.8.103
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208102
+#define GSOAP_LIB_VERSION 208103
 
 #include "stdsoap2.h"
 
@@ -457,7 +457,9 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
               return soap->error;
           }
           else if (soap_attribute(soap, att->name, att->text))
+          {
             return soap->error;
+          }
         }
       }
       if (!node->text && !node->code && !node->tail && !node->elts && !(soap->mode & SOAP_XML_CANONICAL))
@@ -579,8 +581,10 @@ soap_out_xsd__anyAttribute(struct soap *soap, const char *tag, int id, const str
         if (out_attribute(soap, p, att->name, att->text, 1))
           return soap->error;
       }
-      else if (soap_attribute(soap, att->name, att->text))
+      else if (out_attribute(soap, NULL, att->name, att->text, 1))
+      {
         return soap->error;
+      }
     }
   }
   return SOAP_OK;

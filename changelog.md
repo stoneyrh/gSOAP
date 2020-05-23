@@ -1612,10 +1612,15 @@ Version 2.8.101 (4/8/2020)
 - Updated IPV6 support to fix a serious issue that affects versions 2.8.99 and 2.8.100 when the library is compiled with the optional `WITH_IPV6` flag.
 - Other improvements.
 
-Version 2.8.102 (5/4/2020) {#latest}
+Version 2.8.102 (5/4/2020)
 ---
 
 - Improved HTTP digest authentication plugin to cover additional HTTP methods.
+
+Version 2.8.103 (5/23/2020) {#latest}
+---
+
+- Minor changes for enhanced platform portability.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

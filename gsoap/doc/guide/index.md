@@ -13749,7 +13749,7 @@ mode flag             | in/out | result
 `#SOAP_XML_NOTYPE`    | out    | disable <i>`xsi:type`</i> attributes 
 `#SOAP_C_NOIOB`       | in     | do not fault with `#SOAP_IOB` 
 `#SOAP_C_UTFSTRING`   | in+out | serialize 8-bit character strings "as is", meaning 8-bit strings have UTF-8 content
-`#SOAP_C_MBSTRING`    | in+out | enable multibyte character support for 8-bit character strings
+`#SOAP_C_MBSTRING`    | in+out | enable multibyte character support for 8-bit character strings with `wctomb` and `mbtowc` using the current locale
 `#SOAP_C_NILSTRING`   | out    | serialize empty strings as xsi:nil attributed elements 
 
 All flags are independent and can be combined using a bitwise or (`|`), except for
@@ -14263,7 +14263,7 @@ Alternatively, 8-bit strings can hold UTF-8 formatted wide characters when the
 The application is responsible for filling
 regular strings with UTF-8 content.
 
-Also the `#SOAP_C_MBSTRING` flag can be used to activate multibyte character support. Multibyte support depends on the locale settings for dealing with extended natural language encodings.
+Also the `#SOAP_C_MBSTRING` flag can be used to activate multibyte character support using the current locale. Multibyte support depends on the locale settings for dealing with extended natural language encodings.
 
 Both 8-bit strings and wide-character strings can be used together within an application.
 For example, the following header file declaration introduces two string schema types:

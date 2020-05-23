@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">soap Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon May 4 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat May 23 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -1671,7 +1671,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>User-definable maximum string length parsed from XML and JSON, initially set to <code><a class="el" href="group__group__soap.html#gabd0dd334a752d8c145fa720deb905508" title="User-definable maximum string content length for strings not already constrained by XML schema valida...">SOAP_MAXLENGTH</a></code>, zero or negative means unlimited (0 by default) </p>
-<p>The length of a string is the number of characters it contains. Multi-byte strings with UTF-8 content (enabled with <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode C-related input/output flag value to serialize and deserialize 8-bit C/C++ strings containi...">SOAP_C_UTFSTRING</a></code>) contain up to the specified number of multi-byte characters. The byte length depends on the UTF-8 encoding. The specified limit applies to strings that are not subject to string length schema validation constraints, to ensure that schema validation is not affected.</p>
+<p>The length of a string is the number of characters it contains. Multi-byte strings with UTF-8 content (enabled with <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 e...">SOAP_C_UTFSTRING</a></code>) contain up to the specified number of multi-byte characters. The byte length depends on the UTF-8 encoding. The specified limit applies to strings that are not subject to string length schema validation constraints, to ensure that schema validation is not affected.</p>
 <dl class="section user"><dt>Example:</dt><dd></dd></dl>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>();</div><div class="line">soap-&gt;<a class="code" href="structsoap.html#aa5d564f947cbd74c29124972823fe775">maxlength</a> = 256; <span class="comment">// limit string lengths to 256 characters (unlimited by default)</span></div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a345900c2db67e915ceb02bfa21ecbcbd" title="User-definable maximum message length that is permitted to be received, zero means unlimited (the val...">soap::recv_maxlength</a></code>, <code><a class="el" href="structsoap.html#a80dbe084f7efe713ac93e6e6a2d30d7f" title="User-definable maximum XML and JSON nesting level permitted, initially set to SOAP_MAXLEVEL (the valu...">soap::maxlevel</a></code>, <code><a class="el" href="structsoap.html#a00bc20ad1100f580a173ba651e05bcb9" title="User-definable maximum array and container size (maximum item occurrence constraint) as parsed from X...">soap::maxoccurs</a></code>. </dd></dl>
 
@@ -2347,7 +2347,7 @@ Public Attributes</h2></td></tr>
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon May 4 2020 10:11:27 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat May 23 2020 10:21:15 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

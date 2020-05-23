@@ -325,11 +325,13 @@ AUTOMAKE_OPTIONS = foreign 1.4
 #LIBS=
 AM_YFLAGS = -d -v
 AM_LFLAGS = $(LEX_FLAGS)
+BUILT_SOURCES = soapcpp2_yacc.h
 soapcpp2_CFLAGS = $(BISON_DEFINE) $(LEX_DEFINE) $(C_DEBUG_FLAGS) $(SOAPCPP2_IMPORTPATH) -D$(platform)
 soapcpp2_LDADD = $(YACC_LIB) $(LEXLIB)
-soapcpp2_SOURCES = soapcpp2_yacc.y soapcpp2_yacc.h soapcpp2_lex.l symbol2.c error2.c init2.c soapcpp2.c
+soapcpp2_SOURCES = soapcpp2_SOURCES= soapcpp2_yacc.y soapcpp2_lex.l symbol2.c error2.c init2.c soapcpp2.c
 CLEANFILES = *~ soapcpp2_lex.c soapcpp2_yacc.c soapcpp2_yacc.h soapcpp2_yacc.output
-all: all-am
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .l .o .obj .y
@@ -621,13 +623,15 @@ distdir-am: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -661,6 +665,7 @@ maintainer-clean-generic:
 	-rm -f soapcpp2_lex.c
 	-rm -f soapcpp2_yacc.c
 	-rm -f soapcpp2_yacc.h
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
@@ -740,7 +745,7 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: install-am install-strip
+.MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
 	clean-binPROGRAMS clean-generic cscopelist-am ctags ctags-am \
