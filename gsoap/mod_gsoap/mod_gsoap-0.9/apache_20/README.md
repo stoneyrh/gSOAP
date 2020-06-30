@@ -451,7 +451,8 @@ License                                                               {#license}
 =======
 
 The Apache modules for gSOAP are released under the gSOAP open source public
-license (compatible with commercial licensing) and GPLv2.
+license and GPLv2.  The open source licensing is replaced by Genivia's license
+for commercial use when a commercial-use license is purchased by customer.
 
 
 Further reading                                                    {#references}

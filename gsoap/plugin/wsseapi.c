@@ -6,7 +6,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
-GPL, the gSOAP public license, or Genivia's license for commercial use.
+GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
 gSOAP public license.
 
@@ -63,7 +63,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 [TOC]
 
-@section Standards compliance
+@section wsse_0 Standards compliance
 
 The WS-Security plugin conforms to:
 
@@ -1374,7 +1374,8 @@ To summarize the signature verification process:
 -# Use `soap_wsse_verify_auto` to verify inbound messages.
 -# Set the cafile (or capath) to verify certificates of the peers and crlfile
    (optional)
--# After receiving a message, the DOM in soap->dom can be traversed for further    analysis.
+-# After receiving a message, the DOM in soap->dom can be traversed for further
+   analysis.
 -# Always check the function return values for errors. You don't want to accept
    a request or response message with an invalid Security header.
 -# Use `soap_wsse_verify_done` to terminate verification, e.g. to consume

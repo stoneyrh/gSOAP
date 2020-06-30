@@ -1033,7 +1033,7 @@ Version 2.8.31 (05/1/2016)
 ---
 
 - Added engine context `sndbuf` and `rcvbuf` attributes to (re)set `setsockopt` values for `SO_SNDBUF` and `SO_RCVBUF`, respectively.  Default value is `SOAP_BUFLEN`, same as engine's internal message buffer size.  Setting to zero forces the engine to omit the `setsockopt` `SO_SNDBUF` and `SOAP_RCVBUF` calls, which for example can be used to enable TCP buffer autotuning with Linux (Linux 2.4 and up).
-- Added "http://userid:passwd@domain/path" userinfo syntax for HTTP Basic and NTLM authentication, i.e. this automatically sets `soap::userid` and `soap::passwd` from the userinfo and also sets `soap::authrealm` to the domain if not already set. HTTP Basic authentication is not recommended without secure https. For NTLM authentication, set `soap::ntlm_challenge = ""` to proceed immediately with NTLM instead of Basic authentication.
+- Added userinfo syntax for HTTP Basic and NTLM authentication, i.e. this automatically sets `soap::userid` and `soap::passwd` from the userinfo and also sets `soap::authrealm` to the domain if not already set. HTTP Basic authentication is not recommended without secure https. For NTLM authentication, set `soap::ntlm_challenge = ""` to proceed immediately with NTLM instead of Basic authentication.
 - Improved strengthening of `SOAP_XML_STRICT` and the soapcpp2 `-s` flag to reject all extra (non-deserializable) XML and character data by the parser and deserializers.
 - Improved client-side certificate checking (DNS or IP, and wildcards).
 - Improved soapcpp2 option `-t` and `//gsoap ns schema typed: y` directive that force the addition of *`xsi:type`* attributes to XML content except for types whose type names are prefixed with an underscore (i.e. root elements w/o type as per wsdl2h data bindings rules).
@@ -1617,10 +1617,15 @@ Version 2.8.102 (5/4/2020)
 
 - Improved HTTP digest authentication plugin to cover additional HTTP methods.
 
-Version 2.8.103 (5/23/2020) {#latest}
+Version 2.8.103 (5/23/2020)
 ---
 
 - Minor changes for enhanced platform portability.
+
+Version 2.8.104 (6/30/2020) {#latest}
+---
+
+- Minor improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

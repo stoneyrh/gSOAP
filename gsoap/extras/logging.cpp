@@ -4,7 +4,7 @@
 //	Requires soapdefs.h (compile stdsoap2.cpp with -DWITH_SOAPDEFS_H
 //	and -DDEBUG_CALLBACKS)
 //
-//	Runtime/Customer logging by Mike Helmick
+//	Runtime/Custom logging by Mike Helmick
 //	Copyright (c) 2002 - Mike Helmick. Convergys IMG. All Rights Reserved.
 //	This contributed code is covered under the MPL 1.1 license
 

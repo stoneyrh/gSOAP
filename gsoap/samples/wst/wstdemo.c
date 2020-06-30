@@ -6,7 +6,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
-GPL or Genivia's license for commercial use.
+GPL.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -309,8 +309,9 @@ int main(int argc, char **argv)
               fprintf(stderr, "Not on or after %s\n", soap_xsd__dateTime2s(soap, *saml2->saml2__Conditions->NotOnOrAfter));
           }
           fprintf(stderr, "\nAssertion data:\n\n");
+          /* add SOAP_XML_CANONICAL flag to apply canonicalization, otherwise plain XML */
           soap_set_omode(soap, SOAP_XML_INDENT);
-	  soap->sendfd = 2;
+	  soap->sendfd = 2; /* send to fd=2 (stdout) */
           soap_write_saml2__AssertionType(soap, saml2);
           fprintf(stderr, "\n\nOK\n\n");
         }

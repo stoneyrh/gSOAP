@@ -7,7 +7,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
-GPL, the gSOAP public license, or Genivia's license for commercial use.
+GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
 gSOAP public license.
 
@@ -440,7 +440,7 @@ where `<option>` is one of:
 
 When non-MD5 option is selected, the server will present that digest algorithm
 together with the MD5 authentication algorithm as challenge to the client.  If
-the client is upgraded to RFC7616 it selects the newer protcol.  If the client
+the client is upgraded to RFC7616 it selects the newer protocol.  If the client
 is not upgraded it will select the older MD5-based protocol.
 
 To revert to RFC2617 use `http_da_md5()`.

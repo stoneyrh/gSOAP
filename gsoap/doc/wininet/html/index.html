@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WinInet plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Jan 15 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Jun 4 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -59,7 +59,6 @@
 Overview                                                             </h1>
 <p>The WinInet plugin for gSOAP enables client applications (not servers) to communicate through Microsoft's WinInet API on Windows. This offers all of the advantages of WinInet-managed internet access through the <code>Internet Options</code> control panel of Windows, such as HTTP (proxy) authentication, TLS/SSL, and HTTP compression. Therefore, "if IE works, gSOAP works." since these options are shared by IE.</p>
 <p>The WinInet project home is at <a href="http://code.google.com/p/gsoapwininet">http://code.google.com/p/gsoapwininet</a>.</p>
-<p>This plugin is licensed differently than the other plugins for gSOAP. It is licensed under the <a href="#license">MIT license</a> and can be used with GPLv2 and the commercial license for gSOAP.</p>
 <h1><a class="anchor" id="features"></a>
 Features                                                             </h1>
 <ul>
@@ -104,6 +103,8 @@ WinInet plugin options                                                </h1>
 <p>If there are errors in sending the HTTP request which would cause a dialog box to be displayed in IE (for instance, invalid certificates on an HTTPS connection), then a dialog will also be displayed by this library. At the moment is is not possible to disable the UI. If you wish to remove the UI then you will need to hack the source to remove the dialog box and resolve the errors programmatically, or supply the appropriate flags to <code>soap_register_plugin_arg()</code> to disable the unwanted warnings.</p>
 <h1><a class="anchor" id="license"></a>
 License                                                               </h1>
+<p>MIT open source license.</p>
+<p>This open source license is replaced by Genivia's license for commercial use when a commercial-use license is purchased by customer.</p>
 <p>The licence text below is the boilerplate "MIT Licence" used from: <a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a></p>
 <p>Copyright (c) 2009, Jack Kustanowitz, Brodie Thiesfield, Robert van Engelen</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
@@ -122,10 +123,10 @@ Contributors                                                     </h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Jan 15 2019 08:33:04 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Jun 4 2020 12:14:19 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

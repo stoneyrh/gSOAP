@@ -16,7 +16,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2001-2008, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
-GPL or Genivia's license for commercial use.
+GPL.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -66,7 +66,7 @@ int main()
   /* soap_ssl_noinit(); */
   /* Init SSL before any threads are started (do this just once) */
   soap_ssl_init();
-  /* set up SSL locks */
+  /* set up SSL locks (not needed for OpenSSL 1.1.0 and greater) */
   if (CRYPTO_thread_setup())
   {
     fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
@@ -150,7 +150,7 @@ int main()
  *
 \******************************************************************************/
 
-#if defined(WITH_OPENSSL)
+#if defined(WITH_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x10100000L
 
 struct CRYPTO_dynlock_value
 {
@@ -232,6 +232,8 @@ void CRYPTO_thread_cleanup()
 }
 
 #else
+
+/* OpenSSL not used or OpenSSL prior to 1.1.0 */
 
 int CRYPTO_thread_setup()
 {

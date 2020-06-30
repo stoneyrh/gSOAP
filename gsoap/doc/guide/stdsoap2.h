@@ -2164,6 +2164,13 @@ struct soap *soap = soap_new1(SOAP_C_UTFSTRING);
 #define SOAP_C_UTFSTRING 0x02000000
 
 /// `::soap_mode` input/output flag value to enable multibyte character support for 8-bit character strings with `wctomb` and `mbtowc` using the current locale
+/**
+This flag requires macros `HAVE_WCTOMB` and `HAVE_MBTOWC` to be defined.  Otherwise, this flag has no effect.
+
+@warning the `wctomb` and `mbtowc` functions are not thread safe.  It is recommended to use `#SOAP_C_UTFSTRING` instead of `SOAP_C_MBSTRING`.  `#SOAP_C_UTFSTRING` idoes not depend on the current locale.
+
+@see `#SOAP_C_UTFSTRING`.
+*/
 #define SOAP_C_MBSTRING 0x04000000
 
 /// `::soap_mode` input/output flag value to serialize empty strings as elements with attribute <i>`xsi:nil="true"`</i>

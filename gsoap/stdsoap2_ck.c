@@ -1,12 +1,12 @@
 /*
-        stdsoap2.c[pp] 2.8.103
+        stdsoap2.c[pp] 2.8.104
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
-GPL, or the gSOAP public license, or Genivia's license for commercial use.
+GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
 Contributors:
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208103
+#define GSOAP_LIB_VERSION 208104
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.103 2020-05-23 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.104 2020-06-30 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.103 2020-05-23 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.104 2020-06-30 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4130,10 +4130,12 @@ soap_ssl_init()
   {
     soap_ssl_init_done = 1;
 #ifdef WITH_OPENSSL
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     SSL_library_init();
     OpenSSL_add_all_algorithms(); /* we keep ciphers and digests for the program's lifetime */
 #ifndef WITH_LEAN
     SSL_load_error_strings();
+#endif
 #endif
 #if !defined(WIN32) && !defined(CYGWIN) && !defined(__MINGW32__) && !defined(__MINGW64__)
     if (!RAND_load_file("/dev/urandom", 1024))

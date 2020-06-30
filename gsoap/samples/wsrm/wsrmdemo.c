@@ -9,20 +9,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
-GPL, the gSOAP public license, or Genivia's license for commercial use.
---------------------------------------------------------------------------------
-gSOAP public license.
-
-The contents of this file are subject to the gSOAP Public License Version 1.3
-(the "License"); you may not use this file except in compliance with the
-License. You may obtain a copy of the License at
-http://www.cs.fsu.edu/~engelen/soaplicense.html
-Software distributed under the License is distributed on an "AS IS" basis,
-WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-for the specific language governing rights and limitations under the License.
-
-The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+GPL.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -159,6 +146,7 @@ int main(int argc, char **argv)
     /* set UDP server, pure XML w/o HTTP headers */
     soap_set_mode(soap, SOAP_IO_UDP);
 #elif defined(WITH_OPENSSL)
+    /* set up SSL locks (not needed for OpenSSL 1.1.0 and greater) */
     if (CRYPTO_thread_setup())
     { fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
       exit(1);
@@ -260,6 +248,7 @@ int main(int argc, char **argv)
     /* When the endpoint is an IP with a UDP destination, it is important to set UDP: */
     soap_set_mode(soap, SOAP_IO_UDP);
 #elif defined(WITH_OPENSSL)
+    /* set up SSL locks (not needed for OpenSSL 1.1.0 and greater) */
     CRYPTO_thread_setup();
     if (soap_ssl_client_context(soap,
       SOAP_SSL_DEFAULT | SOAP_SSL_SKIP_HOST_CHECK,
@@ -860,7 +849,7 @@ int SOAP_ENV__Fault(struct soap *soap,
  *
 \******************************************************************************/
 
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) && OPENSSL_VERSION_NUMBER < 0x10100000L
 
 struct CRYPTO_dynlock_value
 { MUTEX_TYPE mutex;
@@ -931,7 +920,7 @@ void CRYPTO_thread_cleanup()
 
 #else
 
-/* OpenSSL not used */
+/* OpenSSL not used or OpenSSL prior to 1.1.0 */
 
 int CRYPTO_thread_setup()
 { return SOAP_OK;

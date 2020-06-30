@@ -20,7 +20,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2001-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
-GPL or Genivia's license for commercial use.
+GPL.
 --------------------------------------------------------------------------------
 GPL license.
 

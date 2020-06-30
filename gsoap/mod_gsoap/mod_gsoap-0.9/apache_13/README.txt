@@ -1,7 +1,8 @@
 Apache 1.3 modules for gSOAP
 
-The modules are released under the gSOAP open source public license, see
-license.pdf in the gSOAP root dir of the package.
+The Apache modules for gSOAP are released under the gSOAP open source public
+license and GPLv2.  The open source licensing is replaced by Genivia's license
+for commercial use when a commercial-use license is purchased by customer.
 
 This directory contains the sources for building the mod_gsoap Apache module
 for Apache 1.3.

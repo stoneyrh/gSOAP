@@ -1,12 +1,12 @@
 /*
-        stdsoap2.h 2.8.103
+        stdsoap2.h 2.8.104
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
-GPL, or the gSOAP public license, or Genivia's license for commercial use.
+GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
 Contributors:
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208103
+#define GSOAP_VERSION 208104
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -251,8 +251,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
 #  define HAVE_SOCKLEN_T
@@ -267,8 +265,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #    define HAVE_SYS_TIMEB_H
 #    define HAVE_FTIME
 #    define HAVE_GMTIME
-#    define HAVE_WCTOMB
-#    define HAVE_MBTOWC
 #    define SOAP_LONG_FORMAT "%lld"
 #    define SOAP_ULONG_FORMAT "%llu"
 #   else
@@ -280,8 +276,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #    define HAVE_SYS_TIMEB_H
 #    define HAVE_FTIME
 #    define HAVE_GMTIME
-#    define HAVE_WCTOMB
-#    define HAVE_MBTOWC
 #    define SOAP_LONG_FORMAT "%I64d"
 #    define SOAP_ULONG_FORMAT "%I64u"
 #   endif
@@ -302,8 +296,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #   define HAVE_SYS_TIMEB_H
 #   define HAVE_FTIME
 #   define HAVE_GMTIME
-#   define HAVE_WCTOMB
-#   define HAVE_MBTOWC
 #   define SOAP_LONG_FORMAT "%I64d"
 #   define SOAP_ULONG_FORMAT "%I64u"
 #   define HAVE_LOCALE_H
@@ -329,8 +321,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_TIMEGM
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
 #  define HAVE_XLOCALE_H
@@ -343,8 +333,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_SSCANF
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_LOCALE_H
 # elif defined(_AIX)
 #  define HAVE_SNPRINTF
@@ -360,8 +348,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_GMTIME_R
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_LOCALE_H
 #  define HAVE_SOCKLEN_T
 # elif defined(HP_UX)
@@ -386,8 +372,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_GMTIME_R
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_ISNAN
 #  define HAVE_LOCALE_H
 # elif defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD)
@@ -409,8 +393,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define SOAP_LONG_FORMAT "%qd"
 #  define SOAP_ULONG_FORMAT "%qu"
 #  define HAVE_ISNAN
@@ -433,8 +415,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_GMTIME_R
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -448,8 +428,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define __USE_STD_IOSTREAM
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define SOAP_LONG_FORMAT "%ld"
 #  define SOAP_ULONG_FORMAT "%lu"
 #  define HAVE_LOCALE_H
@@ -469,8 +447,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 # elif defined(SYMBIAN)
 #  define WITH_LEAN
 #  define WITH_NONAMESPACES
@@ -502,8 +478,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_GMTIME_R
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_SOCKLEN_T
 # elif defined(AS400)
 #  define HAVE_SNPRINTF
@@ -518,8 +492,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_GMTIME_R
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 # elif defined(__QNX__) || defined(QNX)
 /* QNX does not have a working version of strtof */
 #  undef HAVE_STRTOF
@@ -540,8 +512,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_SOCKLEN_T
 # elif defined(SUN_OS)
 #  define HAVE_SNPRINTF
@@ -575,8 +545,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_TIMEGM
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 #  define HAVE_ISNAN
 #  define HAVE_ISINF
 #  if !defined(__GNUC__) || __GNUC__ >= 4 /* gcc 3 and earlier often refuse to compile _l functions */
@@ -607,10 +575,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_LOCALE_H
-#  ifdef MB_LEN_MAX
-#   define HAVE_WCTOMB
-#   define HAVE_MBTOWC
-#  endif
 # endif
 #endif
 
@@ -747,8 +711,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 # define LONG64 long long
 # define ULONG64 unsigned long long
 # define DBL_PINFTY (1.1579208923716189e77)
-# undef HAVE_WCTOMB
-# undef HAVE_MBTOWC
 # undef HAVE_GMTIME_R
 # undef HAVE_ASCTIME_R
 # undef HAVE_LOCALTIME_R

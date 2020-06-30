@@ -4,7 +4,7 @@
    2007-12-31 01:37:25 GMT
    Copyright (C) 2001-2007 Robert van Engelen, Genivia Inc. All Rights Reserved.
    This part of the software is released under one of the following licenses:
-   GPL or Genivia's license for commercial use.
+   GPL.
 */
 
 /* NOTE:

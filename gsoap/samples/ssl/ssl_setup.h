@@ -12,7 +12,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
-GPL, the gSOAP public license, or Genivia's license for commercial use.
+GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
 gSOAP public license.
 
@@ -54,6 +54,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifndef SSL_SETUP_H
 #define SSL_SETUP_H
+
+const char *search_ssl_cacert_default_file();
+const char *search_ssl_cacert_default_path();
 
 int soap_ssl_client_setup(
     struct soap *soap,    /* the context */

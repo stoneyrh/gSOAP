@@ -6,7 +6,7 @@
 gSOAP XML Web services tools
 Copyright (C) 2000-2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
-GPL, the gSOAP public license, or Genivia's license for commercial use.
+GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
 gSOAP public license.
 
@@ -120,10 +120,11 @@ static const char *list_candidate_cacert[] =
   "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem",
   "/usr/share/ssl/certs/ca-bundle.crt",
   "/usr/local/share/certs/ca-root-nss.crt",
+  "/usr/local/etc/openssl/cert.pem",
   NULL
 };
 
-static const char *search_cacert_default_file()
+const char *search_ssl_cacert_default_file()
 {
   int i = 0;
   for (;;)
@@ -137,13 +138,18 @@ static const char *search_cacert_default_file()
   return NULL;
 }
 
-static const char *list_candidate_capath[] =
+const char *list_candidate_capath[] =
 {
-  "/etc/ssl/certs",
+  "/etc/ssl/certs",               // SLES10/SLES11
+  "/system/etc/security/cacerts", // Android
+  "/usr/local/share/certs",       // FreeBSD
+  "/etc/pki/tls/certs",           // Fedora/RHEL
+  "/etc/openssl/certs",           // NetBSD
+  "/var/ssl/certs",               // AIX
   NULL
 };
 
-static const char *search_cacert_default_path()
+const char *search_ssl_cacert_default_path()
 {
   int i = 0;
   for (;;)
@@ -160,12 +166,12 @@ static const char *search_cacert_default_path()
 
 #else
 
-static const char *search_cacert_default_file()
+const char *search_ssl_cacert_default_file()
 {
   return NULL;
 }
 
-static const char *search_cacert_default_path()
+const char *search_ssl_cacert_default_path()
 {
   return NULL;
 }
@@ -232,9 +238,9 @@ int soap_ssl_client_setup(
 
   if ((flags & SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION) && !cacert && !capath)
   {
-    cacert = search_cacert_default_file();
+    cacert = search_ssl_cacert_default_file();
     if (!cacert)
-      capath = search_cacert_default_path();
+      capath = search_ssl_cacert_default_path();
   }
 
   if (soap_ssl_client_context(soap,

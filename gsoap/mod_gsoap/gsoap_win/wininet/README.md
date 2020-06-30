@@ -19,11 +19,6 @@ are shared by IE.
 
 The WinInet project home is at <http://code.google.com/p/gsoapwininet>.
 
-This plugin is licensed differently than the other plugins for gSOAP. It is
-licensed under the [MIT license](#license) and can be used with GPLv2 and the
-commercial license for gSOAP.
-
-
 Features                                                             {#features}
 ========
 
@@ -149,6 +144,11 @@ errors programmatically, or supply the appropriate flags to
 
 License                                                               {#license}
 =======
+
+MIT open source license.
+
+This open source license is replaced by Genivia's license for commercial use
+when a commercial-use license is purchased by customer.
 
 The licence text below is the boilerplate "MIT Licence" used from:
 http://www.opensource.org/licenses/mit-license.php

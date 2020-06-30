@@ -70,9 +70,6 @@
 /* Define to 1 if you have the <math.h> header file. */
 #undef HAVE_MATH_H
 
-/* Define to 1 if you have the `mbtowc' function. */
-#undef HAVE_MBTOWC
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -222,9 +219,6 @@
 
 /* Define to 1 if you have the `uselocale' function. */
 #undef HAVE_USELOCALE
-
-/* Define to 1 if you have the `wctomb' function. */
-#undef HAVE_WCTOMB
 
 /* Define to 1 if you have the <xlocale.h> header file. */
 #undef HAVE_XLOCALE_H

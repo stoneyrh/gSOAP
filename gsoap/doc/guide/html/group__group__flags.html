@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">SOAP_MACRO run-time flags</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat May 23 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Jun 30 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -239,6 +239,9 @@ Typedefs</h2></td></tr>
 </div><div class="memdoc">
 
 <p><code><a class="el" href="group__group__flags.html#ga72b0491c9cbf2071f0c96c7d29b719bb" title="The soap_mode flags to initialize the soap context, flags can be combined with | (bit-wise or) ...">soap_mode</a></code> input/output flag value to enable multibyte character support for 8-bit character strings with <code>wctomb</code> and <code>mbtowc</code> using the current locale </p>
+<p>This flag requires macros <code>HAVE_WCTOMB</code> and <code>HAVE_MBTOWC</code> to be defined. Otherwise, this flag has no effect.</p>
+<dl class="section warning"><dt>Warning</dt><dd>the <code>wctomb</code> and <code>mbtowc</code> functions are not thread safe. It is recommended to use <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 e...">SOAP_C_UTFSTRING</a></code> instead of <code>SOAP_C_MBSTRING</code>. <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 e...">SOAP_C_UTFSTRING</a></code> idoes not depend on the current locale.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 e...">SOAP_C_UTFSTRING</a></code>. </dd></dl>
 
 </div>
 </div>
@@ -881,7 +884,7 @@ Typedefs</h2></td></tr>
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat May 23 2020 10:21:15 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Jun 30 2020 13:54:00 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>
