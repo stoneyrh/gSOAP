@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.104
+        stdsoap2.c[pp] 2.8.105
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208104
+#define GSOAP_LIB_VERSION 208105
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.104 2020-06-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.105 2020-07-22 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.104 2020-06-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.105 2020-07-22 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -3581,7 +3581,7 @@ soap_push_namespace(struct soap *soap, const char *id, const char *ns)
   np->level = soap->level;
   np->index = i;
   soap_strcpy((char*)np->id, n + 1, id);
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Push namespace binding (level=%u) '%s'='%s'\n", soap->level, id, ns));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Push namespace binding (level=%u,index=%hd) '%s'='%s'\n", soap->level, i, id, ns));
   if (i < 0)
   {
     np->ns = np->id + n + 1;
@@ -12676,6 +12676,14 @@ soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized, 
         return NULL;
     }
   }
+  else if (!*id)
+  {
+    for (np = soap->nlist; np; np = np->next)
+    {
+      if (!*np->id && np->level == level && np->index != 1)
+        return NULL;
+    }
+  }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Adding namespace binding (level=%u) '%s' '%s' utilized=%d\n", level, id, ns ? ns : "(null)", utilized));
   n = strlen(id);
   if (ns)
@@ -12729,7 +12737,7 @@ soap_utilize_ns(struct soap *soap, const char *tag, short isearly)
   np = soap_lookup_ns(soap, tag, n);
   if (np)
   {
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing namespace of '%s' at level %u utilized=%d at level=%u\n", tag, soap->level + isearly, np->index, np->level));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing namespace '%s' of '%s' at level %u utilized=%d at level=%u\n", np->ns ? np->ns : "", tag, soap->level + isearly, np->index, np->level));
     if (np->index <= 0)
     {
       if (np->level == soap->level + isearly)
@@ -13844,9 +13852,11 @@ soap_attribute(struct soap *soap, const char *name, const char *value)
     /* push namespace */
     if (!strncmp(name, "xmlns", 5) && ((name[5] == ':') || name[5] == '\0'))
     {
-      if (name[5] == ':' && soap->c14ninclude && ((*soap->c14ninclude == '*' || soap_tagsearch(soap->c14ninclude, name + 6))))
-        soap_utilize_ns(soap, name, 0);
       (void)soap_push_ns(soap, name + 5 + (name[5] == ':'), value, 0, 0);
+      if (name[5] == '\0')
+        soap_utilize_ns(soap, SOAP_STR_EOS, 0);
+      else if (soap->c14ninclude && ((*soap->c14ninclude == '*' || soap_tagsearch(soap->c14ninclude, name + 6))))
+        soap_utilize_ns(soap, name, 0);
     }
     else
     {

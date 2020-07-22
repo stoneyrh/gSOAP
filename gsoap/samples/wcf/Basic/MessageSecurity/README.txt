@@ -178,6 +178,10 @@ Compile the project with:
 
 This compiles the client/server that uses WS-Security signature and encryption.
 
+Important: the MSVC++ compilers require .cpp files instead of .c files.
+Otherwise compilation and link errors are likely.  Please rename the .c files
+to .cpp files listed above for your project.
+
 Enable certificate verification in the gSOAP client/server example
 ------------------------------------------------------------------
 

@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 @mainpage
 
-- @ref wsse documents the wsse lite API for WS-Security 1.0 support.
+- @ref wsse documents the wsse lite API for WS-Security 1.0/1.1 support.
 
 */
 

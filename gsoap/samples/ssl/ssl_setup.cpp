@@ -226,6 +226,7 @@ static bool Add_InStore_from_Windows_Store(X509_STORE *store, LPCWSTR szSubsyste
  
 #endif
 
+#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS)) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
 int soap_ssl_client_setup(
     struct soap *soap,    /* the context */
     unsigned short flags, /* SOAP_SSL_DEFAULT, SOAP_SSL_NO_AUTHENTICATION etc */
@@ -234,7 +235,6 @@ int soap_ssl_client_setup(
     const char *cacert,   /* optionally assign file name of certificates PEM file, NULL to search certificate stores */
     const char *capath)   /* optionally assign path to certificates PEM files, NULL to search certificate stores */
 {
-#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS)) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
 
   if ((flags & SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION) && !cacert && !capath)
   {
@@ -266,7 +266,18 @@ int soap_ssl_client_setup(
     /* Add_InStore_from_Windows_Store(store, L"MY"); */
   }
 #endif
-#endif
 
   return SOAP_OK;
 }
+#else
+int soap_ssl_client_setup(
+    struct soap *,
+    unsigned short,
+    const char *,
+    const char *,
+    const char *,
+    const char *)
+{
+  return SOAP_OK;
+}
+#endif

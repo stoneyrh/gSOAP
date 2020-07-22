@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.104
+        stdsoap2.h 2.8.105
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208104
+#define GSOAP_VERSION 208105
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2576,10 +2576,10 @@ struct SOAP_CMAC soap_dom_element
   soap_dom_element *elt_get(const char *ns, const wchar_t *tag) const   { return soap_elt_get_w(this, ns, tag); }
   soap_dom_element *get_next() const                                    { return soap_elt_get_next(this); }
   soap_dom_element *get_nth(size_t n)                                   { return soap_elt_get_nth(this, n); }
-  bool match(const char *patt) const                                    { return soap_elt_match(this, NULL, patt) != 0; }
-  bool match(const wchar_t *patt) const                                 { return soap_elt_match_w(this, NULL, patt) != 0; }
-  bool match(const char *ns, const char *patt) const                    { return soap_elt_match(this, ns, patt) != 0; }
-  bool match(const char *ns, const wchar_t *patt) const                 { return soap_elt_match_w(this, ns, patt) != 0; }
+  bool match(const char *pat) const                                     { return soap_elt_match(this, NULL, pat) != 0; }
+  bool match(const wchar_t *pat) const                                  { return soap_elt_match_w(this, NULL, pat) != 0; }
+  bool match(const char *ns, const char *pat) const                     { return soap_elt_match(this, ns, pat) != 0; }
+  bool match(const char *ns, const wchar_t *pat) const                  { return soap_elt_match_w(this, ns, pat) != 0; }
   const char *ns() const                                                { return this->nstr; }
   const char *tag() const                                               { return this->name; }
   soap_dom_element *parent()                                            { return this->prnt; }
@@ -2588,16 +2588,16 @@ struct SOAP_CMAC soap_dom_element
   size_t len() const                                                    { return soap_elt_len(this); }
   size_t nth() const                                                    { return soap_elt_nth(this); }
   size_t elt_size()                                                     { return soap_elt_size(this, NULL, NULL); }
-  size_t elt_size(const char *patt, int type = 0)                       { return elt_size(NULL, patt, type); }
-  size_t elt_size(const char *ns, const char *patt, int type = 0)       { return soap_elt_size_type(this, ns, patt, type); }
+  size_t elt_size(const char *pat, int typ = 0)                         { return elt_size(NULL, pat, typ); }
+  size_t elt_size(const char *ns, const char *pat, int typ = 0)         { return soap_elt_size_type(this, ns, pat, typ); }
   size_t att_size()                                                     { return soap_att_size(this, NULL, NULL); }
-  size_t att_size(const char *patt)                                     { return att_size(NULL, patt); }
+  size_t att_size(const char *pat)                                      { return att_size(NULL, pat); }
 #ifndef WITH_COMPAT
-  size_t att_size(const std::string& patt)                              { return att_size(NULL, patt); }
+  size_t att_size(const std::string& pat)                               { return att_size(NULL, pat); }
 #endif
-  size_t att_size(const char *ns, const char *patt)                     { return soap_att_size(this, ns, patt); }
+  size_t att_size(const char *ns, const char *pat)                      { return soap_att_size(this, ns, pat); }
 #ifndef WITH_COMPAT
-  size_t att_size(const char *ns, const std::string& patt)              { return soap_att_size(this, ns, patt.c_str()); }
+  size_t att_size(const char *ns, const std::string& pat)               { return soap_att_size(this, ns, pat.c_str()); }
 #endif
   bool is_true() const                                                  { return soap_elt_is_true(this) != 0; }
   bool is_false() const                                                 { return soap_elt_is_false(this) != 0; }
@@ -2617,20 +2617,20 @@ struct SOAP_CMAC soap_dom_element
   soap_dom_element_iterator elt_end()                                   { return soap_dom_element_iterator(NULL); }
   soap_dom_attribute_iterator att_begin()                               { return soap_dom_attribute_iterator(this->atts); }
   soap_dom_attribute_iterator att_end()                                 { return soap_dom_attribute_iterator(NULL); }
-  soap_dom_element_iterator find(const char *patt, int type = 0)        { return find(NULL, patt, type); }
-  soap_dom_element_iterator find(const wchar_t *patt, int type = 0)     { return find(NULL, patt, type); }
-  soap_dom_element_iterator find(const char *ns, const char *patt, int type = 0);
-  soap_dom_element_iterator find(const char *ns, const wchar_t *patt, int type = 0);
-  soap_dom_element_iterator find(int type);
-  soap_dom_element_iterator elt_find(const char *patt, int type = 0)    { return elt_find(NULL, patt, type); }
-  soap_dom_element_iterator elt_find(const wchar_t *patt, int type = 0) { return elt_find(NULL, patt, type); }
-  soap_dom_element_iterator elt_find(const char *ns, const char *patt, int type = 0);
-  soap_dom_element_iterator elt_find(const char *ns, const wchar_t *patt, int type = 0);
-  soap_dom_element_iterator elt_find(int type);
-  soap_dom_attribute_iterator att_find(const char *patt)                { return att_find(NULL, patt); }
-  soap_dom_attribute_iterator att_find(const wchar_t *patt)             { return att_find(NULL, patt); }
-  soap_dom_attribute_iterator att_find(const char *ns, const char *patt);
-  soap_dom_attribute_iterator att_find(const char *ns, const wchar_t *patt);
+  soap_dom_element_iterator find(const char *pat, int typ = 0)          { return find(NULL, pat, typ); }
+  soap_dom_element_iterator find(const wchar_t *pat, int typ = 0)       { return find(NULL, pat, typ); }
+  soap_dom_element_iterator find(const char *ns, const char *pat, int typ = 0);
+  soap_dom_element_iterator find(const char *ns, const wchar_t *pat, int typ = 0);
+  soap_dom_element_iterator find(int typ);
+  soap_dom_element_iterator elt_find(const char *pat, int typ = 0)      { return elt_find(NULL, pat, typ); }
+  soap_dom_element_iterator elt_find(const wchar_t *pat, int typ = 0)   { return elt_find(NULL, pat, typ); }
+  soap_dom_element_iterator elt_find(const char *ns, const char *pat, int typ = 0);
+  soap_dom_element_iterator elt_find(const char *ns, const wchar_t *pat, int typ = 0);
+  soap_dom_element_iterator elt_find(int typ);
+  soap_dom_attribute_iterator att_find(const char *pat)                 { return att_find(NULL, pat); }
+  soap_dom_attribute_iterator att_find(const wchar_t *pat)              { return att_find(NULL, pat); }
+  soap_dom_attribute_iterator att_find(const char *ns, const char *pat);
+  soap_dom_attribute_iterator att_find(const char *ns, const wchar_t *pat);
   void unlink();
 #endif
 };

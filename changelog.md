@@ -1622,10 +1622,15 @@ Version 2.8.103 (5/23/2020)
 
 - Minor changes for enhanced platform portability.
 
-Version 2.8.104 (6/30/2020) {#latest}
+Version 2.8.104 (6/30/2020)
 ---
 
 - Minor improvements.
+
+Version 2.8.105 (7/22/2020) {#latest}
+---
+
+- Improved WSSE plugin to correct a digest verification issue when the signed XML parts use default `xmlns` bindings in elements that are not qualified.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

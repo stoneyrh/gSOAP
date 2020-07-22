@@ -3956,9 +3956,12 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
             if (!strcmp(att->name, "xmlns"))
             {
               soap_attribute(soap, att->name, att->text);
+              prt = NULL;
               break;
             }
           }
+          if (!prt)
+            break;
         }
       }
       else
@@ -4247,9 +4250,12 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
           if (!strcmp(att->name, "xmlns"))
           {
             soap_attribute(soap, att->name, att->text);
+            prt = NULL;
             break;
           }
         }
+        if (!prt)
+          break;
       }
     }
     else
@@ -4984,7 +4990,7 @@ soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *
     if (soap_tagsearch(data->encid, "ds:Signature"))
     {
       /* support ds:Signature encryption only with HTTP chunking, otherwise content length is incorrect */
-      if ((soap->omode & SOAP_IO) == SOAP_IO_BUFFER)
+      if ((soap->omode & SOAP_IO) == SOAP_IO_BUFFER || (soap->omode & SOAP_IO) == SOAP_IO_FLUSH)
         soap->omode = (soap->omode & ~SOAP_IO) | SOAP_IO_CHUNK;
     }
   }
@@ -7573,6 +7579,8 @@ soap_wsse_preparefinalsend(struct soap *soap)
           soap->c14ninclude = NULL; /* but do not render inclusive namespaces */
           if ((soap->mode & SOAP_XML_INDENT))
             soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
+          if ((soap->mode & SOAP_XML_DEFAULTNS))
+            soap->count -= 2*(9 + strlen(ds_URI)); /* correct for xmlns="http://www.w3.org/2000/09/xmldsig#" added to SignedInfo and ds:SignatureValue */
         }
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
         soap_out__ds__SignatureValue(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL);

@@ -79,7 +79,7 @@ HTTPS is generally recommended with WS-Security.  To enable HTTPS add
 soap_ssl_client_context() and soap_ssl_server_context() function calls to set
 up TLS, see the WSSE plugin documentation and the SSL examples in samples/ssl.
 
-Usage: wssedemo abcdefghiklmnopqstxyz [port]
+Usage: wssedemo abcdefghiklmnopqrstxyz [port]
 
 with options:
 
@@ -99,6 +99,7 @@ n canonicalize XML (exclusive C14N, recommended!)
 o use rsa-oaep-mgf1p with AES256 CBC
 p add prefixlist for c14n:InclusiveNamespaces/PrefixList for canonical XML interop
 q add prefixlist for c14n:InclusiveNamespaces/PrefixList with all namespace prefixes to thwart attacks on prefix bindings
+r send XML with default xmlns bindings
 s server (stand-alone)
 t use plain-text passwords (password digest by default)
 u use MTOM format with one MIME attachment
@@ -304,6 +305,8 @@ int main(int argc, char **argv)
       soap_wsse_set_InclusiveNamespaces(soap, "ns1");
     if (strchr(argv[1], 'q'))
       soap_wsse_set_InclusiveNamespaces(soap, "+");
+    if (strchr(argv[1], 'r'))
+      soap_set_omode(soap, SOAP_XML_DEFAULTNS);
     if (strchr(argv[1], 'l'))
       soap_wsse_set_InclusiveNamespaces(soap, "*");
     if (strchr(argv[1], 'a'))

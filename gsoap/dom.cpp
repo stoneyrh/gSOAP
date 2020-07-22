@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.104
+        DOM API v5 gSOAP 2.8.105
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208104
+#define GSOAP_LIB_VERSION 208105
 
 #include "stdsoap2.h"
 
@@ -306,7 +306,7 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
   {
     soap_mode m = soap->mode;
     if ((soap->mode & SOAP_DOM_ASIS))
-      soap->mode &= ~SOAP_XML_INDENT;
+      soap->mode &= ~(SOAP_XML_INDENT | SOAP_XML_DEFAULTNS);
     (void)soap_element(soap, name, 0, NULL);
     soap->mode = m;
   }
@@ -429,36 +429,39 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
       {
         if (att->name)
         {
-          if (!(soap->mode & SOAP_DOM_ASIS))
+          if (!(soap->mode & SOAP_XML_CANONICAL) || strcmp(att->name, "xmlns") || (!prefix && !strchr(tag, ':')))
           {
-            const char *p = NULL;
-            if (strncmp(att->name, "xml", 3))
+            if (!(soap->mode & SOAP_DOM_ASIS))
             {
-              if (att->nstr)
-                p = soap_prefix_of(soap, att->nstr);
-              if (!p)
+              const char *p = NULL;
+              if (strncmp(att->name, "xml", 3))
               {
-                const struct soap_nlist *np;
-                size_t n = 0;
-                p = strchr(att->name, ':');
-                if (p)
-                  n = p - att->name;
-                p = NULL;
-                np = soap_lookup_ns(soap, att->name, n);
-                if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
+                if (att->nstr)
+                  p = soap_prefix_of(soap, att->nstr);
+                if (!p)
                 {
-                  p = soap_push_prefix(soap, att->name, n, att->nstr, 0, 0);
-                  if (!p)
-                    return soap->error;
+                  const struct soap_nlist *np;
+                  size_t n = 0;
+                  p = strchr(att->name, ':');
+                  if (p)
+                    n = p - att->name;
+                  p = NULL;
+                  np = soap_lookup_ns(soap, att->name, n);
+                  if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
+                  {
+                    p = soap_push_prefix(soap, att->name, n, att->nstr, 0, 0);
+                    if (!p)
+                      return soap->error;
+                  }
                 }
               }
+              if (out_attribute(soap, p, att->name, att->text, 0))
+                return soap->error;
             }
-            if (out_attribute(soap, p, att->name, att->text, 0))
+            else if (soap_attribute(soap, att->name, att->text))
+            {
               return soap->error;
-          }
-          else if (soap_attribute(soap, att->name, att->text))
-          {
-            return soap->error;
+            }
           }
         }
       }
@@ -4698,23 +4701,23 @@ soap_dom_element_iterator soap_dom_element::begin()
 
 /******************************************************************************/
 
-soap_dom_element_iterator soap_dom_element::find(const char *ns, const char *patt, int type)
+soap_dom_element_iterator soap_dom_element::find(const char *ns, const char *pat, int typ)
 {
-  soap_dom_element_iterator iter(soap_dom_find(this, this, ns, patt, type));
+  soap_dom_element_iterator iter(soap_dom_find(this, this, ns, pat, typ));
   iter.stop = this;
   iter.nstr = ns;
-  iter.name = patt;
-  iter.type = type;
+  iter.name = pat;
+  iter.type = typ;
   iter.deep = true;
   return iter;
 }
 
 /******************************************************************************/
 
-soap_dom_element_iterator soap_dom_element::find(const char *ns, const wchar_t *tag, int type)
+soap_dom_element_iterator soap_dom_element::find(const char *ns, const wchar_t *tag, int typ)
 {
   const char *s = soap_wchar2s(NULL, tag);
-  soap_dom_element_iterator iter = this->find(ns, s, type);
+  soap_dom_element_iterator iter = this->find(ns, s, typ);
   if (s)
     free((void*)s);
   return iter;
@@ -4722,28 +4725,28 @@ soap_dom_element_iterator soap_dom_element::find(const char *ns, const wchar_t *
 
 /******************************************************************************/
 
-soap_dom_element_iterator soap_dom_element::find(int type)
+soap_dom_element_iterator soap_dom_element::find(int typ)
 {
-  return this->find((const char*)NULL, (const char*)NULL, type);
+  return this->find((const char*)NULL, (const char*)NULL, typ);
 }
 
 /******************************************************************************/
 
-soap_dom_element_iterator soap_dom_element::elt_find(const char *ns, const char *patt, int type)
+soap_dom_element_iterator soap_dom_element::elt_find(const char *ns, const char *pat, int typ)
 {
-  soap_dom_element_iterator iter(soap_elt_find_type(this, ns, patt, type));
+  soap_dom_element_iterator iter(soap_elt_find_type(this, ns, pat, typ));
   iter.nstr = ns;
-  iter.name = patt;
-  iter.type = type;
+  iter.name = pat;
+  iter.type = typ;
   return iter;
 }
 
 /******************************************************************************/
 
-soap_dom_element_iterator soap_dom_element::elt_find(const char *ns, const wchar_t *patt, int type)
+soap_dom_element_iterator soap_dom_element::elt_find(const char *ns, const wchar_t *pat, int typ)
 {
-  const char *s = soap_wchar2s(NULL, patt);
-  soap_dom_element_iterator iter = this->elt_find(ns, s, type);
+  const char *s = soap_wchar2s(NULL, pat);
+  soap_dom_element_iterator iter = this->elt_find(ns, s, typ);
   if (s)
     free((void*)s);
   return iter;
@@ -4751,26 +4754,26 @@ soap_dom_element_iterator soap_dom_element::elt_find(const char *ns, const wchar
 
 /******************************************************************************/
 
-soap_dom_element_iterator soap_dom_element::elt_find(int type)
+soap_dom_element_iterator soap_dom_element::elt_find(int typ)
 {
-  return this->elt_find((const char*)NULL, (const char*)NULL, type);
+  return this->elt_find((const char*)NULL, (const char*)NULL, typ);
 }
 
 /******************************************************************************/
 
-soap_dom_attribute_iterator soap_dom_element::att_find(const char *ns, const char *patt)
+soap_dom_attribute_iterator soap_dom_element::att_find(const char *ns, const char *pat)
 {
-  soap_dom_attribute_iterator iter(soap_att_find(this, ns, patt));
+  soap_dom_attribute_iterator iter(soap_att_find(this, ns, pat));
   iter.nstr = ns;
-  iter.name = patt;
+  iter.name = pat;
   return iter;
 }
 
 /******************************************************************************/
 
-soap_dom_attribute_iterator soap_dom_element::att_find(const char *ns, const wchar_t *patt)
+soap_dom_attribute_iterator soap_dom_element::att_find(const char *ns, const wchar_t *pat)
 {
-  const char *s = soap_wchar2s(NULL, patt);
+  const char *s = soap_wchar2s(NULL, pat);
   soap_dom_attribute_iterator iter = this->att_find(ns, s);
   if (s)
     free((void*)s);
@@ -4909,14 +4912,14 @@ soap_dom_attribute::~soap_dom_attribute()
 
 /******************************************************************************/
 
-soap_dom_attribute_iterator soap_dom_attribute::att_find(const char *ns, const char *patt)
+soap_dom_attribute_iterator soap_dom_attribute::att_find(const char *ns, const char *pat)
 {
   soap_dom_attribute_iterator iter(this);
   iter.nstr = ns;
-  iter.name = patt;
-  if (patt)
+  iter.name = pat;
+  if (pat)
   {
-    if (!soap_patt_match(this->name, patt))
+    if (!soap_patt_match(this->name, pat))
       return ++iter;
     if (ns && (!this->nstr || strcmp(this->nstr, ns)))
       return ++iter;
@@ -4928,9 +4931,9 @@ soap_dom_attribute_iterator soap_dom_attribute::att_find(const char *ns, const c
 
 /******************************************************************************/
 
-soap_dom_attribute_iterator soap_dom_attribute::att_find(const char *ns, const wchar_t *patt)
+soap_dom_attribute_iterator soap_dom_attribute::att_find(const char *ns, const wchar_t *pat)
 {
-  const char *s = soap_wchar2s(NULL, patt);
+  const char *s = soap_wchar2s(NULL, pat);
   soap_dom_attribute_iterator iter = this->att_find(ns, s);
   if (s)
     free((void*)s);
