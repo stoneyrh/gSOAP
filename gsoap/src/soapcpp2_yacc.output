@@ -1,20 +1,20 @@
 Terminals unused in grammar
 
-   BREAK
-   ELSE
-   SWITCH
-   CASE
-   CONTINUE
-   FOR
-   DEFAULT
-   GOTO
-   DO
-   IF
-   WHILE
-   USING
-   RESTRICT
-   NONE
-   LAB
+    BREAK
+    ELSE
+    SWITCH
+    CASE
+    CONTINUE
+    FOR
+    DEFAULT
+    GOTO
+    DO
+    IF
+    WHILE
+    USING
+    RESTRICT
+    NONE
+    LAB
 
 
 State 68 conflicts: 1 shift/reduce
@@ -405,305 +405,367 @@ Grammar
 
 Terminals, with rules where they appear
 
-$end (0) 0
-'!' (33) 41 285
-'$' (36) 201
-'%' (37) 71 283
-'&' (38) 58 214 270 290
-'(' (40) 76 80 93 291 293
-')' (41) 35 76 80 93 291 293
-'*' (42) 69 134 158 159 213 281 289
-'+' (43) 67 243 279 288
-',' (44) 32 33 85 87 184 257
-'-' (45) 68 244 280 287
-'/' (47) 70 282
-':' (58) 15 16 17 125 162 163 164 165 166 167 168 169 229 230 231 246
-    247 249 250 251 252 254 255 259
-';' (59) 7 11 14 19 20
-'<' (60) 61 122 142 247 248 250 251 252 253 255 256 273
-'=' (61) 43 209 223
-'>' (62) 63 122 142 144 145 275
-'?' (63) 259
-'@' (64) 200
-'[' (91) 21 75 217 218
-']' (93) 22 75 217 218
-'^' (94) 57 269
-'{' (123) 3 123 124 125 127 128 130 131 133 134 135 136 137 138 221
-'|' (124) 56 268
-'}' (125) 3 123 124 125 127 128 130 131 133 134 135 136 137 138 146
-    147 148 149 221
-'~' (126) 42 79 286
-error (256) 11 20 34 35 86 87 143 144 145 146 147 148 149
-PRAGMA <s> (258) 12
-AUTO <sym> (259) 186
-DOUBLE <sym> (260) 114
-INT <sym> (261) 108 165
-STRUCT <sym> (262) 127 129 147 151 160 172 178
-BREAK <sym> (263)
-ELSE <sym> (264)
-LONG <sym> (265) 109 166
-SWITCH <sym> (266)
-CASE <sym> (267)
-ENUM <sym> (268) 133 134 139 140 149 156 157 158 159
-REGISTER <sym> (269) 187
-TYPEDEF <sym> (270) 191
-CHAR <sym> (271) 105 162
-EXTERN <sym> (272) 190
-RETURN <sym> (273) 199
-UNION <sym> (274) 130 132 148 155
-CONST <sym> (275) 193 205
-FLOAT <sym> (276) 113
-SHORT <sym> (277) 107 164
-UNSIGNED <sym> (278) 116
-CONTINUE <sym> (279)
-FOR <sym> (280)
-SIGNED <sym> (281) 115
-VOID <sym> (282) 103
-DEFAULT <sym> (283)
-GOTO <sym> (284)
-SIZEOF <sym> (285) 291
-VOLATILE <sym> (286) 202
-DO <sym> (287)
-IF <sym> (288)
-STATIC <sym> (289) 188
-WHILE <sym> (290)
-CLASS <sym> (291) 122 123 146 153 161 171 179
-PRIVATE <sym> (292) 15 175
-PROTECTED <sym> (293) 16 174
-PUBLIC <sym> (294) 17 176
-VIRTUAL <sym> (295) 192 211
-INLINE <sym> (296) 197
-OPERATOR <sym> (297) 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56
-    57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77
-LLONG <sym> (298) 110 167
-BOOL <sym> (299) 104
-CFALSE <sym> (300) 299
-CTRUE <sym> (301) 300
-WCHAR <sym> (302) 106 163
-TIME <sym> (303) 121
-USING <sym> (304)
-NAMESPACE <sym> (305) 3
-ULLONG <sym> (306) 111
-MUSTUNDERSTAND <sym> (307) 198
-SIZE <sym> (308) 112
-FRIEND <sym> (309) 196
-TEMPLATE <sym> (310) 122
-EXPLICIT <sym> (311) 189
-TYPENAME <sym> (312) 173
-MUTABLE <sym> (313) 203
-null <sym> (314) 237
-RESTRICT <sym> (315)
-FINAL <sym> (316) 194 206
-OVERRIDE <sym> (317) 195 207
-UCHAR <sym> (318) 117
-USHORT <sym> (319) 118
-UINT <sym> (320) 119
-ULONG <sym> (321) 120
-NONE (322)
-ID <sym> (323) 3 34 36 38 86 90 91 95 143 144 294
-LAB <sym> (324)
-TYPE <sym> (325) 39 141 142 168 177
-LNG <i> (326) 209 228 229 230 231 241 295
-DBL <r> (327) 240 296
-CHR <c> (328) 242 297
-TAG <s> (329) 226
-STR <s> (330) 239 298
-PA (331) 44
-NA (332) 45
-TA (333) 46
-DA (334) 47
-MA (335) 48
-AA (336) 49
-XA (337) 50
-OA (338) 51
-LA (339) 52
-RA (340) 53
-OR (341) 54 262
-AN (342) 55 215 265
-EQ (343) 59 224 271
-NE (344) 60 272
-LE (345) 62 274
-GE (346) 64 276
-LS (347) 65 277
-RS (348) 66 278
-AR (349) 74
-PP (350) 72
-NN (351) 73
+    $end (0) 0
+    '!' (33) 41 285
+    '$' (36) 201
+    '%' (37) 71 283
+    '&' (38) 58 214 270 290
+    '(' (40) 76 80 93 291 293
+    ')' (41) 35 76 80 93 291 293
+    '*' (42) 69 134 158 159 213 281 289
+    '+' (43) 67 243 279 288
+    ',' (44) 32 33 85 87 184 257
+    '-' (45) 68 244 280 287
+    '/' (47) 70 282
+    ':' (58) 15 16 17 125 162 163 164 165 166 167 168 169 229 230 231 246 247 249 250 251 252 254 255 259
+    ';' (59) 7 11 14 19 20
+    '<' (60) 61 122 142 247 248 250 251 252 253 255 256 273
+    '=' (61) 43 209 223
+    '>' (62) 63 122 142 144 145 275
+    '?' (63) 259
+    '@' (64) 200
+    '[' (91) 21 75 217 218
+    ']' (93) 22 75 217 218
+    '^' (94) 57 269
+    '{' (123) 3 123 124 125 127 128 130 131 133 134 135 136 137 138 221
+    '|' (124) 56 268
+    '}' (125) 3 123 124 125 127 128 130 131 133 134 135 136 137 138 146 147 148 149 221
+    '~' (126) 42 79 286
+    error (256) 11 20 34 35 86 87 143 144 145 146 147 148 149
+    PRAGMA <s> (258) 12
+    AUTO <sym> (259) 186
+    DOUBLE <sym> (260) 114
+    INT <sym> (261) 108 165
+    STRUCT <sym> (262) 127 129 147 151 160 172 178
+    BREAK <sym> (263)
+    ELSE <sym> (264)
+    LONG <sym> (265) 109 166
+    SWITCH <sym> (266)
+    CASE <sym> (267)
+    ENUM <sym> (268) 133 134 139 140 149 156 157 158 159
+    REGISTER <sym> (269) 187
+    TYPEDEF <sym> (270) 191
+    CHAR <sym> (271) 105 162
+    EXTERN <sym> (272) 190
+    RETURN <sym> (273) 199
+    UNION <sym> (274) 130 132 148 155
+    CONST <sym> (275) 193 205
+    FLOAT <sym> (276) 113
+    SHORT <sym> (277) 107 164
+    UNSIGNED <sym> (278) 116
+    CONTINUE <sym> (279)
+    FOR <sym> (280)
+    SIGNED <sym> (281) 115
+    VOID <sym> (282) 103
+    DEFAULT <sym> (283)
+    GOTO <sym> (284)
+    SIZEOF <sym> (285) 291
+    VOLATILE <sym> (286) 202
+    DO <sym> (287)
+    IF <sym> (288)
+    STATIC <sym> (289) 188
+    WHILE <sym> (290)
+    CLASS <sym> (291) 122 123 146 153 161 171 179
+    PRIVATE <sym> (292) 15 175
+    PROTECTED <sym> (293) 16 174
+    PUBLIC <sym> (294) 17 176
+    VIRTUAL <sym> (295) 192 211
+    INLINE <sym> (296) 197
+    OPERATOR <sym> (297) 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77
+    LLONG <sym> (298) 110 167
+    BOOL <sym> (299) 104
+    CFALSE <sym> (300) 299
+    CTRUE <sym> (301) 300
+    WCHAR <sym> (302) 106 163
+    TIME <sym> (303) 121
+    USING <sym> (304)
+    NAMESPACE <sym> (305) 3
+    ULLONG <sym> (306) 111
+    MUSTUNDERSTAND <sym> (307) 198
+    SIZE <sym> (308) 112
+    FRIEND <sym> (309) 196
+    TEMPLATE <sym> (310) 122
+    EXPLICIT <sym> (311) 189
+    TYPENAME <sym> (312) 173
+    MUTABLE <sym> (313) 203
+    null <sym> (314) 237
+    RESTRICT <sym> (315)
+    FINAL <sym> (316) 194 206
+    OVERRIDE <sym> (317) 195 207
+    UCHAR <sym> (318) 117
+    USHORT <sym> (319) 118
+    UINT <sym> (320) 119
+    ULONG <sym> (321) 120
+    NONE (322)
+    ID <sym> (323) 3 34 36 38 86 90 91 95 143 144 294
+    LAB <sym> (324)
+    TYPE <sym> (325) 39 141 142 168 177
+    LNG <i> (326) 209 228 229 230 231 241 295
+    DBL <r> (327) 240 296
+    CHR <c> (328) 242 297
+    TAG <s> (329) 226
+    STR <s> (330) 239 298
+    PA (331) 44
+    NA (332) 45
+    TA (333) 46
+    DA (334) 47
+    MA (335) 48
+    AA (336) 49
+    XA (337) 50
+    OA (338) 51
+    LA (339) 52
+    RA (340) 53
+    OR (341) 54 262
+    AN (342) 55 215 265
+    EQ (343) 59 224 271
+    NE (344) 60 272
+    LE (345) 62 274
+    GE (346) 64 276
+    LS (347) 65 277
+    RS (348) 66 278
+    AR (349) 74
+    PP (350) 72
+    NN (351) 73
 
 
 Nonterminals, with rules where they appear
 
-$accept (122)
-    on left: 0
-prog (123)
-    on left: 1, on right: 0
-s1 (124)
-    on left: 2, on right: 1
-exts (125)
-    on left: 3 4, on right: 1
-exts1 (126)
-    on left: 5 6, on right: 3 4 6
-ext (127)
-    on left: 7 8 9 10 11, on right: 6
-pragma (128)
-    on left: 12, on right: 8
-decls (129)
-    on left: 13 14 15 16 17 18 19 20, on right: 14 15 16 17 18 19 123
-    124 125 127 128 130 131
-t1 (130)
-    on left: 21, on right: 9 18
-t2 (131)
-    on left: 22, on right: 10 18
-t3 (132)
-    on left: 23, on right: 15
-t4 (133)
-    on left: 24, on right: 16
-t5 (134)
-    on left: 25, on right: 17
-dclrs (135)
-    on left: 26 27 28 29 30 31 32 33 34 35, on right: 7 14 32 33 133
-    134 135 136 137 138
-dclr (136)
-    on left: 36, on right: 27 32
-fdclr (137)
-    on left: 37, on right: 28 33
-id <sym> (138)
-    on left: 38 39, on right: 40 79 122 129 132 139 151 153 155 156
-    158 160 161 178 179
-name <sym> (139)
-    on left: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57
-    58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77, on right:
-    37 78
-ctor (140)
-    on left: 78, on right: 29
-dtor (141)
-    on left: 79, on right: 30
-func (142)
-    on left: 80, on right: 28 29 30 33
-fname <e> (143)
-    on left: 81, on right: 80
-fargso (144)
-    on left: 82 83, on right: 80 93
-fargs (145)
-    on left: 84 85 86 87, on right: 83 85
-farg (146)
-    on left: 88, on right: 84 85
-arg (147)
-    on left: 89 90, on right: 88
-sym (148)
-    on left: 91, on right: 31
-texpf <rec> (149)
-    on left: 92 93, on right: 142
-texp <rec> (150)
-    on left: 94 95, on right: 77 92 291
-spec <rec> (151)
-    on left: 96 97 98, on right: 26 27 28 97 98
-tspec <rec> (152)
-    on left: 99 100 101 102, on right: 88 93 94 95 101 102
-type <typ> (153)
-    on left: 103 104 105 106 107 108 109 110 111 112 113 114 115 116
-    117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132
-    133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148
-    149, on right: 96 98 100 102
-structid <e> (154)
-    on left: 150, on right: 128
-struct <e> (155)
-    on left: 151, on right: 150
-classid <e> (156)
-    on left: 152, on right: 124 125
-class <e> (157)
-    on left: 153, on right: 126 152
-unionid <e> (158)
-    on left: 154, on right: 131
-union <e> (159)
-    on left: 155, on right: 154
-enum <e> (160)
-    on left: 156, on right: 135
-enumsc <e> (161)
-    on left: 157, on right: 136
-mask <e> (162)
-    on left: 158, on right: 137
-masksc <e> (163)
-    on left: 159, on right: 138
-sc <sym> (164)
-    on left: 160 161, on right: 140 157 159
-utype <i> (165)
-    on left: 162 163 164 165 166 167 168 169 170, on right: 156 157
-    158 159
-tname (166)
-    on left: 171 172 173, on right: 122
-base <e> (167)
-    on left: 174 175 176 177 178 179, on right: 125 174 175 176
-s2 (168)
-    on left: 180, on right: 123 127 133 135 136 150 152
-s3 (169)
-    on left: 181, on right: 130 154
-s4 (170)
-    on left: 182, on right: 134 137 138
-s5 (171)
-    on left: 183 184, on right: 133 134 135 136 137 138
-s6 (172)
-    on left: 185, on right: 80 93
-store <sto> (173)
-    on left: 186 187 188 189 190 191 192 193 194 195 196 197 198 199
-    200 201 202 203, on right: 97 99 101
-const <sto> (174)
-    on left: 204 205 206 207, on right: 80 205 206 207
-abstract <sto> (175)
-    on left: 208 209, on right: 80
-virtual <sto> (176)
-    on left: 210 211, on right: 79
-ptrs <rec> (177)
-    on left: 212 213 214 215, on right: 36 37 88 93 94 95 213 214 215
-array <rec> (178)
-    on left: 216 217 218, on right: 94 95 217 218 219
-arrayck <rec> (179)
-    on left: 219, on right: 36 89 90
-brinit <rec> (180)
-    on left: 220 221, on right: 36
-init <rec> (181)
-    on left: 222 223 224, on right: 89 90 91 220
-tag <s> (182)
-    on left: 225 226, on right: 36 90 91
-occurs <rec> (183)
-    on left: 227 228 229 230 231, on right: 90
-bounds <rec> (184)
-    on left: 232 233 234 235, on right: 36
-nullptr <i> (185)
-    on left: 236 237, on right: 227 228 229 230 231 232 233 234 235
-patt <s> (186)
-    on left: 238 239, on right: 232 233 234 235
-value <ir> (187)
-    on left: 240 241 242 243 244, on right: 233 234 235 243 244
-min <rec> (188)
-    on left: 245 246 247 248, on right: 233
-minmax <rec> (189)
-    on left: 249 250 251 252 253, on right: 234
-max <rec> (190)
-    on left: 254 255 256, on right: 235
-expr <rec> (191)
-    on left: 257 258, on right: 257 261 293
-cexp <rec> (192)
-    on left: 259 260, on right: 217 221 223 224 258 259
-qexp <rec> (193)
-    on left: 261, on right: 259
-oexp <rec> (194)
-    on left: 262 263, on right: 260 264
-obex <rec> (195)
-    on left: 264, on right: 259 262
-aexp <rec> (196)
-    on left: 265 266, on right: 262 263 267
-abex <rec> (197)
-    on left: 267, on right: 265
-rexp <rec> (198)
-    on left: 268 269 270 271 272 273 274 275 276 277 278 279 280 281
-    282 283 284, on right: 265 266 268 269 270 271 272 273 274 275
-    276 277 278 279 280 281 282 283
-lexp <rec> (199)
-    on left: 285 286 287 288 289 290 291 292, on right: 284 285 286
-    287 288 289 290
-pexp <rec> (200)
-    on left: 293 294 295 296 297 298 299 300, on right: 292
+    $accept (122)
+        on left: 0
+    prog (123)
+        on left: 1
+        on right: 0
+    s1 (124)
+        on left: 2
+        on right: 1
+    exts (125)
+        on left: 3 4
+        on right: 1
+    exts1 (126)
+        on left: 5 6
+        on right: 3 4 6
+    ext (127)
+        on left: 7 8 9 10 11
+        on right: 6
+    pragma (128)
+        on left: 12
+        on right: 8
+    decls (129)
+        on left: 13 14 15 16 17 18 19 20
+        on right: 14 15 16 17 18 19 123 124 125 127 128 130 131
+    t1 (130)
+        on left: 21
+        on right: 9 18
+    t2 (131)
+        on left: 22
+        on right: 10 18
+    t3 (132)
+        on left: 23
+        on right: 15
+    t4 (133)
+        on left: 24
+        on right: 16
+    t5 (134)
+        on left: 25
+        on right: 17
+    dclrs (135)
+        on left: 26 27 28 29 30 31 32 33 34 35
+        on right: 7 14 32 33 133 134 135 136 137 138
+    dclr (136)
+        on left: 36
+        on right: 27 32
+    fdclr (137)
+        on left: 37
+        on right: 28 33
+    id <sym> (138)
+        on left: 38 39
+        on right: 40 79 122 129 132 139 151 153 155 156 158 160 161 178 179
+    name <sym> (139)
+        on left: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77
+        on right: 37 78
+    ctor (140)
+        on left: 78
+        on right: 29
+    dtor (141)
+        on left: 79
+        on right: 30
+    func (142)
+        on left: 80
+        on right: 28 29 30 33
+    fname <e> (143)
+        on left: 81
+        on right: 80
+    fargso (144)
+        on left: 82 83
+        on right: 80 93
+    fargs (145)
+        on left: 84 85 86 87
+        on right: 83 85
+    farg (146)
+        on left: 88
+        on right: 84 85
+    arg (147)
+        on left: 89 90
+        on right: 88
+    sym (148)
+        on left: 91
+        on right: 31
+    texpf <rec> (149)
+        on left: 92 93
+        on right: 142
+    texp <rec> (150)
+        on left: 94 95
+        on right: 77 92 291
+    spec <rec> (151)
+        on left: 96 97 98
+        on right: 26 27 28 97 98
+    tspec <rec> (152)
+        on left: 99 100 101 102
+        on right: 88 93 94 95 101 102
+    type <typ> (153)
+        on left: 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149
+        on right: 96 98 100 102
+    structid <e> (154)
+        on left: 150
+        on right: 128
+    struct <e> (155)
+        on left: 151
+        on right: 150
+    classid <e> (156)
+        on left: 152
+        on right: 124 125
+    class <e> (157)
+        on left: 153
+        on right: 126 152
+    unionid <e> (158)
+        on left: 154
+        on right: 131
+    union <e> (159)
+        on left: 155
+        on right: 154
+    enum <e> (160)
+        on left: 156
+        on right: 135
+    enumsc <e> (161)
+        on left: 157
+        on right: 136
+    mask <e> (162)
+        on left: 158
+        on right: 137
+    masksc <e> (163)
+        on left: 159
+        on right: 138
+    sc <sym> (164)
+        on left: 160 161
+        on right: 140 157 159
+    utype <i> (165)
+        on left: 162 163 164 165 166 167 168 169 170
+        on right: 156 157 158 159
+    tname (166)
+        on left: 171 172 173
+        on right: 122
+    base <e> (167)
+        on left: 174 175 176 177 178 179
+        on right: 125 174 175 176
+    s2 (168)
+        on left: 180
+        on right: 123 127 133 135 136 150 152
+    s3 (169)
+        on left: 181
+        on right: 130 154
+    s4 (170)
+        on left: 182
+        on right: 134 137 138
+    s5 (171)
+        on left: 183 184
+        on right: 133 134 135 136 137 138
+    s6 (172)
+        on left: 185
+        on right: 80 93
+    store <sto> (173)
+        on left: 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203
+        on right: 97 99 101
+    const <sto> (174)
+        on left: 204 205 206 207
+        on right: 80 205 206 207
+    abstract <sto> (175)
+        on left: 208 209
+        on right: 80
+    virtual <sto> (176)
+        on left: 210 211
+        on right: 79
+    ptrs <rec> (177)
+        on left: 212 213 214 215
+        on right: 36 37 88 93 94 95 213 214 215
+    array <rec> (178)
+        on left: 216 217 218
+        on right: 94 95 217 218 219
+    arrayck <rec> (179)
+        on left: 219
+        on right: 36 89 90
+    brinit <rec> (180)
+        on left: 220 221
+        on right: 36
+    init <rec> (181)
+        on left: 222 223 224
+        on right: 89 90 91 220
+    tag <s> (182)
+        on left: 225 226
+        on right: 36 90 91
+    occurs <rec> (183)
+        on left: 227 228 229 230 231
+        on right: 90
+    bounds <rec> (184)
+        on left: 232 233 234 235
+        on right: 36
+    nullptr <i> (185)
+        on left: 236 237
+        on right: 227 228 229 230 231 232 233 234 235
+    patt <s> (186)
+        on left: 238 239
+        on right: 232 233 234 235
+    value <ir> (187)
+        on left: 240 241 242 243 244
+        on right: 233 234 235 243 244
+    min <rec> (188)
+        on left: 245 246 247 248
+        on right: 233
+    minmax <rec> (189)
+        on left: 249 250 251 252 253
+        on right: 234
+    max <rec> (190)
+        on left: 254 255 256
+        on right: 235
+    expr <rec> (191)
+        on left: 257 258
+        on right: 257 261 293
+    cexp <rec> (192)
+        on left: 259 260
+        on right: 217 221 223 224 258 259
+    qexp <rec> (193)
+        on left: 261
+        on right: 259
+    oexp <rec> (194)
+        on left: 262 263
+        on right: 260 264
+    obex <rec> (195)
+        on left: 264
+        on right: 259 262
+    aexp <rec> (196)
+        on left: 265 266
+        on right: 262 263 267
+    abex <rec> (197)
+        on left: 267
+        on right: 265
+    rexp <rec> (198)
+        on left: 268 269 270 271 272 273 274 275 276 277 278 279 280 281 282 283 284
+        on right: 265 266 268 269 270 271 272 273 274 275 276 277 278 279 280 281 282 283
+    lexp <rec> (199)
+        on left: 285 286 287 288 289 290 291 292
+        on right: 284 285 286 287 288 289 290
+    pexp <rec> (200)
+        on left: 293 294 295 296 297 298 299 300
+        on right: 292
 
 
 State 0

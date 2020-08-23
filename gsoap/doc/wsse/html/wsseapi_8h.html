@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wsseapi.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Fri Jun 12 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Aug 11 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -273,12 +273,15 @@ Functions</h2></td></tr>
 <tr class="memitem:abb37bd1642b6028f96f99ef7e9525c12"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#abb37bd1642b6028f96f99ef7e9525c12">soap_wsse_rand_nonce</a> (char *nonce, size_t noncelen)</td></tr>
 <tr class="memdesc:abb37bd1642b6028f96f99ef7e9525c12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates randomized nonce.  <a href="#abb37bd1642b6028f96f99ef7e9525c12">More...</a><br /></td></tr>
 <tr class="separator:abb37bd1642b6028f96f99ef7e9525c12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae95b7215b798e73af6dc867c12392c83"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ae95b7215b798e73af6dc867c12392c83">soap_pmd5</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *pmd5, size_t pmd5len)</td></tr>
-<tr class="separator:ae95b7215b798e73af6dc867c12392c83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee50650d9e56ddcb3cc647aea887e950"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#aee50650d9e56ddcb3cc647aea887e950">soap_psha1</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha1, size_t psha1len)</td></tr>
-<tr class="separator:aee50650d9e56ddcb3cc647aea887e950"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af56856f125fe7b2d6354bab596c3d4e4"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#af56856f125fe7b2d6354bab596c3d4e4">soap_psha256</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha256, size_t psha256len)</td></tr>
-<tr class="separator:af56856f125fe7b2d6354bab596c3d4e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e8a5373312b996b931fd521cd42fdaf"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a0e8a5373312b996b931fd521cd42fdaf">soap_pmd5</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *pmd5, size_t pmd5len)</td></tr>
+<tr class="memdesc:a0e8a5373312b996b931fd521cd42fdaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes PMD5(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], pmd5[0..pmd5len-1]).  <a href="#a0e8a5373312b996b931fd521cd42fdaf">More...</a><br /></td></tr>
+<tr class="separator:a0e8a5373312b996b931fd521cd42fdaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1992e3ad46bc687b95f0917e86c5b9a5"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a1992e3ad46bc687b95f0917e86c5b9a5">soap_psha1</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha1, size_t psha1len)</td></tr>
+<tr class="memdesc:a1992e3ad46bc687b95f0917e86c5b9a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes PSHA1(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha1[0..psha1len-1]).  <a href="#a1992e3ad46bc687b95f0917e86c5b9a5">More...</a><br /></td></tr>
+<tr class="separator:a1992e3ad46bc687b95f0917e86c5b9a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac80f6d496557fff8dbd1dd906030c85a"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ac80f6d496557fff8dbd1dd906030c85a">soap_psha256</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha256, size_t psha256len)</td></tr>
+<tr class="memdesc:ac80f6d496557fff8dbd1dd906030c85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]).  <a href="#ac80f6d496557fff8dbd1dd906030c85a">More...</a><br /></td></tr>
+<tr class="separator:ac80f6d496557fff8dbd1dd906030c85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3ac2afb86a25ec1e1d8e4515133e9ad"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#aa3ac2afb86a25ec1e1d8e4515133e9ad">soap_wsse_sign</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
 <tr class="memdesc:aa3ac2afb86a25ec1e1d8e4515133e9ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses the wsse plugin to sign all wsu:Id attributed elements.  <a href="#aa3ac2afb86a25ec1e1d8e4515133e9ad">More...</a><br /></td></tr>
 <tr class="separator:aa3ac2afb86a25ec1e1d8e4515133e9ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -359,12 +362,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a1862170fdd18b54ab832347308d23019"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a1862170fdd18b54ab832347308d23019">soap_wsse_decrypt_end</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a1862170fdd18b54ab832347308d23019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for XML encryption ending tags and stop decryption of the XML element content.  <a href="#a1862170fdd18b54ab832347308d23019">More...</a><br /></td></tr>
 <tr class="separator:a1862170fdd18b54ab832347308d23019"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac92bae52f1a5a467f3a857ec9f078723"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ac92bae52f1a5a467f3a857ec9f078723">soap_default_xsd__anyType</a> (struct soap *, struct soap_dom_element *node)</td></tr>
-<tr class="separator:ac92bae52f1a5a467f3a857ec9f078723"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fe8a0ccbd31b383d426bb0b6f4c3fd3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a1fe8a0ccbd31b383d426bb0b6f4c3fd3">soap_out_xsd__anyType</a> (struct soap *soap, const char *tag, int id, const struct soap_dom_element *node, const char *type)</td></tr>
-<tr class="separator:a1fe8a0ccbd31b383d426bb0b6f4c3fd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f7f70afbcec7c25775b4c84e71c02f0"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct soap_dom_element *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a0f7f70afbcec7c25775b4c84e71c02f0">soap_in_xsd__anyType</a> (struct soap *soap, const char *tag, struct soap_dom_element *node, const char *type)</td></tr>
-<tr class="separator:a0f7f70afbcec7c25775b4c84e71c02f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac36817d5b0e072bc93d52a06afb3a07e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ac36817d5b0e072bc93d52a06afb3a07e">soap_default_xsd__anyType</a> (struct soap *, struct soap_dom_element *node)</td></tr>
+<tr class="memdesc:ac36817d5b0e072bc93d52a06afb3a07e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a DOM element node.  <a href="#ac36817d5b0e072bc93d52a06afb3a07e">More...</a><br /></td></tr>
+<tr class="separator:ac36817d5b0e072bc93d52a06afb3a07e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac61d4b687c900aebf6a07de2f6d2165e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ac61d4b687c900aebf6a07de2f6d2165e">soap_out_xsd__anyType</a> (struct soap *soap, const char *tag, int id, const struct soap_dom_element *node, const char *type)</td></tr>
+<tr class="memdesc:ac61d4b687c900aebf6a07de2f6d2165e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output a DOM element node.  <a href="#ac61d4b687c900aebf6a07de2f6d2165e">More...</a><br /></td></tr>
+<tr class="separator:ac61d4b687c900aebf6a07de2f6d2165e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00a1f5fb25fb6c993383517cbeee82fd"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct soap_dom_element *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a00a1f5fb25fb6c993383517cbeee82fd">soap_in_xsd__anyType</a> (struct soap *soap, const char *tag, struct soap_dom_element *node, const char *type)</td></tr>
+<tr class="memdesc:a00a1f5fb25fb6c993383517cbeee82fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Input a DOM element node.  <a href="#a00a1f5fb25fb6c993383517cbeee82fd">More...</a><br /></td></tr>
+<tr class="separator:a00a1f5fb25fb6c993383517cbeee82fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -461,15 +467,15 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="ac92bae52f1a5a467f3a857ec9f078723"></a>
+<a class="anchor" id="ac36817d5b0e072bc93d52a06afb3a07e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyType </td>
+          <td class="memname">void soap_default_xsd__anyType </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
+          <td class="paramname"><em>soap</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -485,14 +491,23 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Initializes a DOM element node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramname">node</td><td>pointer to DOM element node. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a class="anchor" id="a0f7f70afbcec7c25775b4c84e71c02f0"></a>
+<a class="anchor" id="a00a1f5fb25fb6c993383517cbeee82fd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SOAP_FMAC1 struct soap_dom_element* SOAP_FMAC2 soap_in_xsd__anyType </td>
+          <td class="memname">struct soap_dom_element * soap_in_xsd__anyType </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -523,14 +538,25 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Input a DOM element node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">tag</td><td>XML element tag name to verify or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node</td><td>pointer to DOM element node to parse </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">type</td><td>xsi:type to verify or NULL </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a class="anchor" id="a1fe8a0ccbd31b383d426bb0b6f4c3fd3"></a>
+<a class="anchor" id="ac61d4b687c900aebf6a07de2f6d2165e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyType </td>
+          <td class="memname">int soap_out_xsd__anyType </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -567,14 +593,26 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Output a DOM element node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">tag</td><td>XML element tag name </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">id</td><td>integer ref id value or zero if none </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">node</td><td>pointer to DOM element node to send </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">type</td><td>xsi:type or NULL </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a class="anchor" id="ae95b7215b798e73af6dc867c12392c83"></a>
+<a class="anchor" id="a0e8a5373312b996b931fd521cd42fdaf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_pmd5 </td>
+          <td class="memname">int soap_pmd5 </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -623,14 +661,29 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Computes PMD5(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], pmd5[0..pmd5len-1]). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key</td><td>HMAC key (client secret) in raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key_len</td><td>HMAC key length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secret</td><td>seed (server secret) raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secretlen</td><td>number of bytes </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">pmd5</td><td>points to pmd5 raw bytes to fill with result </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pmd5len</td><td>number of bytes to fill pmd5 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_EOM</dd></dl>
+<p>To compute PMD5 with base64 input and output a base64 encoded pmd5[0..pmd5len-1]: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;int pmd5len = 32; // or greater</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;int n, m;</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;char pmd5[pmd5len];</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;char *pmd5_base64;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;if (soap_pmd5(soap, client_secret, n, server_secret, m, pmd5, pmd5len))</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  .. error // insufficient memory</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;pmd5_base64 = soap_s2base64(soap, (unsigned char*)pmd5, NULL, pmd5len);</div></div><!-- fragment --> 
 </div>
 </div>
-<a class="anchor" id="aee50650d9e56ddcb3cc647aea887e950"></a>
+<a class="anchor" id="a1992e3ad46bc687b95f0917e86c5b9a5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_psha1 </td>
+          <td class="memname">int soap_psha1 </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -679,14 +732,29 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Computes PSHA1(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha1[0..psha1len-1]). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key</td><td>HMAC key (client secret) in raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key_len</td><td>HMAC key length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secret</td><td>seed (server secret) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secretlen</td><td>number of bytes </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">psha1</td><td>points to psha1 raw bytes to fill with result </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">psha1len</td><td>number of bytes to fill psha1 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_EOM</dd></dl>
+<p>To compute PSHA1 with base64 input and output a base64 encoded psha1[0..psha1len-1]: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;int psha1len = 32; // or greater</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;int n, m;</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;char psha1[psha1len];</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;char *psha1_base64;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;if (soap_psha1(soap, client_secret, n, server_secret, m, psha1, psha1len))</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  .. error // insufficient memory</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;psha1_base64 = soap_s2base64(soap, (unsigned char*)psha1, NULL, psha1len);</div></div><!-- fragment --> 
 </div>
 </div>
-<a class="anchor" id="af56856f125fe7b2d6354bab596c3d4e4"></a>
+<a class="anchor" id="ac80f6d496557fff8dbd1dd906030c85a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_psha256 </td>
+          <td class="memname">int soap_psha256 </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -735,6 +803,21 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key</td><td>HMAC key (client secret) in raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key_len</td><td>HMAC key length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secret</td><td>seed (server secret) raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secretlen</td><td>number of bytes </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">psha256</td><td>points to psha256 raw bytes to fill with result </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">psha256len</td><td>number of bytes to fill psha256 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_EOM</dd></dl>
+<p>To compute PSHA256 with base64 input and output a base64 encoded psha256[0..psha256len-1]: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;int psha256len = 32; // or greater</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;int n, m;</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;char psha256[psha256len];</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;char *psha256_base64;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;if (soap_psha256(soap, client_secret, n, server_secret, m, psha256, psha256len))</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  .. error // insufficient memory</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;psha256_base64 = soap_s2base64(soap, (unsigned char*)psha256, NULL, psha256len);</div></div><!-- fragment --> 
 </div>
 </div>
 <a class="anchor" id="af15bedb61bffb589683354bc37d20c3a"></a>
@@ -4433,7 +4516,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Fri Jun 12 2020 12:27:00 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Aug 11 2020 15:14:28 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

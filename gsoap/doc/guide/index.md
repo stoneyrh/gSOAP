@@ -6840,6 +6840,7 @@ option                     | result
 [`-z1`](#soapcpp2-z)       | compatibility: generate old-style C++ service proxies and objects
 [`-z2`](#soapcpp2-z)       | compatibility with 2.7.x: omit XML output for NULL pointers
 [`-z3`](#soapcpp2-z)       | compatibility up to 2.8.30: `_param_N` indexing and nillable pointers
+[`-z4`](#soapcpp2-z)       | compatibility up to 2.8.105: `char*` member defaults, even when the XML element is omitted
 
 For example
 
@@ -7674,6 +7675,7 @@ These options are for backward compatiility with older gSOAP releases:
 - <b>`-z1`</b> compatibility: generate old-style C++ service proxies and objects
 - <b>`-z2`</b> compatibility with 2.7.x: omit XML output for NULL pointers
 - <b>`-z3`</b> compatibility up to 2.8.30: `_param_N` indexing; nillable pointers
+- <b>`-z4`</b> compatibility up to 2.8.105: `char*` member defaults, even when the XML element is omitted
 
 🔝 [Back to table of contents](#)
 
@@ -14846,7 +14848,7 @@ To reset the callback functions to the internal functions of the engine, use `::
 
 `int (soap::fpost)(struct soap *soap, const char *endpoint, const char *host, int port, const char *path, const char *action, ULONG64 count)` 
 
-This callback is called at the server side by the engine to send the HTTP headers to the connected client.  The parameter `status` should be an HTTP status error code or `#SOAP_OK` (200 OK) or `#SOAP_HTML` or `#SOAP_FILE`.  Using `#SOAP_HTML` sets the content-type header to `text/html; charset=utf-8`.  Using `#SOAP_FILE` sets the content-type header to the value of `::soap::http_content`.  Extra HTTP headers are added when `::soap::http_extra_header` is set to one or more header lines separated by CRLF.  When redefining this callback, use function `::soap_send` to write the header contents.  Returns `#SOAP_OK` or a `::soap_status` error code.  The built-in function assigned to `::soap::fresponse` is `http_response`.
+This callback is called at the client side by the engine to send HTTP headers to the connected server.  The parameters `host`, `port`, and `path` were micro-parsed from the `endpoint` prior to passing them to this callback.  Parameter `action` is the SOAP Action header.  Parameter `count` is the length of the HTTP body with the message or 0 when HTTP chunking is used.  This callback sends the headers with POST by default, or when `::soap::status` == `#SOAP_POST` or `::soap::status` == `#SOAP_POST_FILE`. Alternatively, sends the HTTP headers with GET when `::soap::status` == `#SOAP_GET`, PATCH when `::soap::status` == `#SOAP_PATCH`, PUT when `::soap::status` == `#SOAP_PUT`, DELETE when `::soap::status` == `#SOAP_DEL`, CONNECT when `::soap::status` == `#SOAP_CONNECT`, HEAD when `::soap::status` == `#SOAP_HEAD` or OPTIONS when `::soap::status` == `#SOAP_OPTIONS`.  Extra HTTP headers are added when `::soap::http_extra_header` is set to one or more header lines separated by CRLF.  When redefining this callback, use function `::soap_send` to write the header contents.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  The built-in function assigned to `::soap:fpost` is `http_post`.
 
 ### fresponse
 

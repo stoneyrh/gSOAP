@@ -140,6 +140,7 @@ COMMAND LINE OPTIONS
 -z1	generate deprecated old-style C++ service proxies and objects
 -z2	compatibility with 2.7.x: omit XML output for NULL pointers
 -z3     compatibility up to 2.8.30: _param_N indexing and nillable pointers
+-z4     compatibility up to 2.8.105: char* member defaults, even when omitted
 infile	header file to parse (or stdin)
 
 DOCUMENTATION

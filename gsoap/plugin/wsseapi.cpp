@@ -4744,7 +4744,7 @@ soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded(struct soap *soap, const ch
   /* populate Embedded element */
   keyInfo->wsse__SecurityTokenReference->Embedded->wsu__Id = soap_strdup(soap, id);
   keyInfo->wsse__SecurityTokenReference->Embedded->ValueType = soap_strdup(soap, valueType);
-  /* TODO: Add embedded tokens and assertions. Could use DOM here?
+  /* TODO: Semi-automatically add embedded tokens and assertions. Could use DOM here?
   keyInfo->wsse__SecurityTokenReference->Embedded->xyz = ...;
   */
   return SOAP_OK;
@@ -5988,10 +5988,11 @@ soap_wsse_rand_nonce(char *nonce, size_t noncelen)
 \******************************************************************************/
 
 /**
-@fn int soap_pmd5(struct soap *soap, const char *hmac_key, size_t hmac_key_len, char *secret, size_t secretlen, char *pmd5, size_t pmd5len)
+@fn int soap_pmd5(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *pmd5, size_t pmd5len)
 @brief Computes PMD5(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], pmd5[0..pmd5len-1]).
 @param soap context
-@param[in] hmac_key HMAC key (client secret) 16 raw bytes
+@param[in] hmac_key HMAC key (client secret) in raw bytes
+@param[in] hmac_key_len HMAC key length
 @param[in] secret seed (server secret) raw bytes
 @param[in] secretlen number of bytes
 @param[out] pmd5 points to pmd5 raw bytes to fill with result
@@ -6022,12 +6023,12 @@ soap_pmd5(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const ch
 }
 
 /**
-@fn int soap_psha1(struct soap *soap, const char *hmac_key, size_t hmac_key_len, char *secret, size_t secretlen, char *psha1, size_t psha1len)
+@fn int soap_psha1(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha1, size_t psha1len)
 @brief Computes PSHA1(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha1[0..psha1len-1]).
 @param soap context
-@param[in] hmac_key HMAC key (client secret) raw bytes
+@param[in] hmac_key HMAC key (client secret) in raw bytes
 @param[in] hmac_key_len HMAC key length
-@param[in] secret seed (server secret) raw bytes
+@param[in] secret seed (server secret)
 @param[in] secretlen number of bytes
 @param[out] psha1 points to psha1 raw bytes to fill with result
 @param[in] psha1len number of bytes to fill psha1
@@ -6046,6 +6047,7 @@ To compute PSHA1 with base64 input and output a base64 encoded psha1[0..psha1len
     psha1_base64 = soap_s2base64(soap, (unsigned char*)psha1, NULL, psha1len);
 @endcode
 */
+
 SOAP_FMAC1
 int
 SOAP_FMAC2
@@ -6057,10 +6059,10 @@ soap_psha1(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const c
 }
 
 /**
-@fn int soap_psha256(struct soap *soap, const char *hmac_key, size_t hmac_key_len, char *secret, size_t secretlen, char *psha256, size_t psha256len)
+@fn int soap_psha256(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha256, size_t psha256len)
 @brief Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]).
 @param soap context
-@param[in] hmac_key HMAC key (client secret) raw bytes
+@param[in] hmac_key HMAC key (client secret) in raw bytes
 @param[in] hmac_key_len HMAC key length
 @param[in] secret seed (server secret) raw bytes
 @param[in] secretlen number of bytes
@@ -6093,7 +6095,7 @@ soap_psha256(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const
 
 /**
 @fn static int soap_p_hash(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, int alg, char HA[], size_t HA_len, char temp[], char *phash, size_t phashlen)
-@brief Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]).
+@brief Computes hash(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], HA[0..HA_len-1]) given algorithm alg.
 @param soap context
 @param[in] hmac_key HMAC key (client secret) raw bytes
 @param[in] hmac_key_len HMAC key length
@@ -6103,8 +6105,8 @@ soap_psha256(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const
 @param HA buffer to contain hash (internally used)
 @param HA_len buffer length to contain hash (internally used)
 @param temp buffer to contain hash (internally used)
-@param[out] psha256 points to psha256 raw bytes to fill with result
-@param[in] psha256len number of bytes to fill psha256
+@param[out] phash points to phash raw bytes to fill with result
+@param[in] phashlen number of bytes to fill phash
 @return SOAP_OK or SOAP_EOM
 */
 static int soap_p_hash(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, int alg, char HA[], size_t HA_len, char temp[], char *phash, size_t phashlen)

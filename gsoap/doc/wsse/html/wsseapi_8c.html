@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wsseapi.c File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Fri Jun 12 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Aug 11 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -141,7 +141,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:add4f5148c87d213a69f86c9fc72a8001"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts signed matching elements from the dom node and down.  <a href="#add4f5148c87d213a69f86c9fc72a8001">More...</a><br /></td></tr>
 <tr class="separator:add4f5148c87d213a69f86c9fc72a8001"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82a529d1b8150a95ac79da211098446a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a82a529d1b8150a95ac79da211098446a">soap_p_hash</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, int alg, char HA[], size_t HA_len, char temp[], char *phash, size_t phashlen)</td></tr>
-<tr class="memdesc:a82a529d1b8150a95ac79da211098446a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]).  <a href="#a82a529d1b8150a95ac79da211098446a">More...</a><br /></td></tr>
+<tr class="memdesc:a82a529d1b8150a95ac79da211098446a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes hash(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], HA[0..HA_len-1]) given algorithm alg.  <a href="#a82a529d1b8150a95ac79da211098446a">More...</a><br /></td></tr>
 <tr class="separator:a82a529d1b8150a95ac79da211098446a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab978172dc658125b45d8f1dc849fae0c"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct__wsse_____security.html">_wsse__Security</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ab978172dc658125b45d8f1dc849fae0c">soap_wsse_add_Security</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:ab978172dc658125b45d8f1dc849fae0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds Security header element.  <a href="#ab978172dc658125b45d8f1dc849fae0c">More...</a><br /></td></tr>
@@ -336,10 +336,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:a70616b4e30d997b4fe73d84c4d8e85bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates randomized nonce.  <a href="#a70616b4e30d997b4fe73d84c4d8e85bb">More...</a><br /></td></tr>
 <tr class="separator:a70616b4e30d997b4fe73d84c4d8e85bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae95b7215b798e73af6dc867c12392c83"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae95b7215b798e73af6dc867c12392c83">soap_pmd5</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *pmd5, size_t pmd5len)</td></tr>
+<tr class="memdesc:ae95b7215b798e73af6dc867c12392c83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes PMD5(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], pmd5[0..pmd5len-1]).  <a href="#ae95b7215b798e73af6dc867c12392c83">More...</a><br /></td></tr>
 <tr class="separator:ae95b7215b798e73af6dc867c12392c83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee50650d9e56ddcb3cc647aea887e950"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#aee50650d9e56ddcb3cc647aea887e950">soap_psha1</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha1, size_t psha1len)</td></tr>
+<tr class="memdesc:aee50650d9e56ddcb3cc647aea887e950"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes PSHA1(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha1[0..psha1len-1]).  <a href="#aee50650d9e56ddcb3cc647aea887e950">More...</a><br /></td></tr>
 <tr class="separator:aee50650d9e56ddcb3cc647aea887e950"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af56856f125fe7b2d6354bab596c3d4e4"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#af56856f125fe7b2d6354bab596c3d4e4">soap_psha256</a> (struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, char *psha256, size_t psha256len)</td></tr>
+<tr class="memdesc:af56856f125fe7b2d6354bab596c3d4e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]).  <a href="#af56856f125fe7b2d6354bab596c3d4e4">More...</a><br /></td></tr>
 <tr class="separator:af56856f125fe7b2d6354bab596c3d4e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61060d965eb8b4892863dfb8c8d85057"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a61060d965eb8b4892863dfb8c8d85057">soap_wsse</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
 <tr class="memdesc:a61060d965eb8b4892863dfb8c8d85057"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plugin registry function, used with soap_register_plugin.  <a href="#a61060d965eb8b4892863dfb8c8d85057">More...</a><br /></td></tr>
@@ -730,7 +733,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]). </p>
+<p>Computes hash(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], HA[0..HA_len-1]) given algorithm alg. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -742,8 +745,8 @@ Variables</h2></td></tr>
     <tr><td class="paramdir"></td><td class="paramname">HA</td><td>buffer to contain hash (internally used) </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">HA_len</td><td>buffer length to contain hash (internally used) </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">temp</td><td>buffer to contain hash (internally used) </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">psha256</td><td>points to psha256 raw bytes to fill with result </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">psha256len</td><td>number of bytes to fill psha256 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">phash</td><td>points to phash raw bytes to fill with result </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">phashlen</td><td>number of bytes to fill phash </td></tr>
   </table>
   </dd>
 </dl>
@@ -805,6 +808,21 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Computes PMD5(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], pmd5[0..pmd5len-1]). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key</td><td>HMAC key (client secret) in raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key_len</td><td>HMAC key length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secret</td><td>seed (server secret) raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secretlen</td><td>number of bytes </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">pmd5</td><td>points to pmd5 raw bytes to fill with result </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pmd5len</td><td>number of bytes to fill pmd5 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_EOM</dd></dl>
+<p>To compute PMD5 with base64 input and output a base64 encoded pmd5[0..pmd5len-1]: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;int pmd5len = 32; // or greater</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;int n, m;</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;char pmd5[pmd5len];</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;char *pmd5_base64;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;if (soap_pmd5(soap, client_secret, n, server_secret, m, pmd5, pmd5len))</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  .. error // insufficient memory</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;pmd5_base64 = soap_s2base64(soap, (unsigned char*)pmd5, NULL, pmd5len);</div></div><!-- fragment --> 
 </div>
 </div>
 <a class="anchor" id="aee50650d9e56ddcb3cc647aea887e950"></a>
@@ -861,6 +879,21 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Computes PSHA1(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha1[0..psha1len-1]). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key</td><td>HMAC key (client secret) in raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key_len</td><td>HMAC key length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secret</td><td>seed (server secret) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secretlen</td><td>number of bytes </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">psha1</td><td>points to psha1 raw bytes to fill with result </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">psha1len</td><td>number of bytes to fill psha1 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_EOM</dd></dl>
+<p>To compute PSHA1 with base64 input and output a base64 encoded psha1[0..psha1len-1]: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;int psha1len = 32; // or greater</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;int n, m;</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;char psha1[psha1len];</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;char *psha1_base64;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;if (soap_psha1(soap, client_secret, n, server_secret, m, psha1, psha1len))</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  .. error // insufficient memory</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;psha1_base64 = soap_s2base64(soap, (unsigned char*)psha1, NULL, psha1len);</div></div><!-- fragment --> 
 </div>
 </div>
 <a class="anchor" id="af56856f125fe7b2d6354bab596c3d4e4"></a>
@@ -917,6 +950,21 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Computes PSHA256(hmac_key[0..hmac_key_len-1], secret[0..secretlen-1], psha256[0..psha256len-1]). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key</td><td>HMAC key (client secret) in raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hmac_key_len</td><td>HMAC key length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secret</td><td>seed (server secret) raw bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">secretlen</td><td>number of bytes </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">psha256</td><td>points to psha256 raw bytes to fill with result </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">psha256len</td><td>number of bytes to fill psha256 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_EOM</dd></dl>
+<p>To compute PSHA256 with base64 input and output a base64 encoded psha256[0..psha256len-1]: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;int psha256len = 32; // or greater</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;int n, m;</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;char psha256[psha256len];</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;char *psha256_base64;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;if (soap_psha256(soap, client_secret, n, server_secret, m, psha256, psha256len))</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  .. error // insufficient memory</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;psha256_base64 = soap_s2base64(soap, (unsigned char*)psha256, NULL, psha256len);</div></div><!-- fragment --> 
 </div>
 </div>
 <a class="anchor" id="a61060d965eb8b4892863dfb8c8d85057"></a>
@@ -5644,7 +5692,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Fri Jun 12 2020 12:27:00 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Aug 11 2020 15:14:28 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

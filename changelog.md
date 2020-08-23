@@ -1627,10 +1627,15 @@ Version 2.8.104 (6/30/2020)
 
 - Minor improvements.
 
-Version 2.8.105 (7/22/2020) {#latest}
+Version 2.8.105
 ---
 
 - Improved WSSE plugin to correct a digest verification issue when the signed XML parts use default `xmlns` bindings in elements that are not qualified.
+
+Version 2.8.106 (8/22/2020) {#latest}
+---
+
+- Minor update for struct/class `char*` and `wchar_t*` members declared with explicit default/fixed values: if the corresponding XML element value is absent in the XML payload then their deserialized value will be NULL (instead of the default value as in prior versions).  Note that empty XML element values in the XML payload always produce default values.  See [databinding: default and fixed values](https://www.genivia.com/doc/databinding/html/index.html#toxsd9-4).  New soapcpp2 option `-z4` to revert to the old behavior.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

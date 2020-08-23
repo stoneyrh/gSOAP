@@ -241,6 +241,7 @@ main(int argc, char **argv)
 -z1     compatibility: generate old-style C++ service proxies and objects\n\
 -z2     compatibility with 2.7.x: omit XML output for NULL pointers\n\
 -z3     compatibility up to 2.8.30: _param_N indexing and nillable pointers\n\
+-z4     compatibility up to 2.8.105: char* member defaults, even when omitted\n\
 infile  header file to parse (if none reads stdin)\n\
 \n");
             exit(0);
