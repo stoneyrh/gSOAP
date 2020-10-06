@@ -6,6 +6,7 @@ var group__group__with =
     [ "WITH_CDATA", "group__group__with.html#ga2e3f4fd002ffd6b7f0b675a2dd78ca17", null ],
     [ "WITH_COMPAT", "group__group__with.html#ga447e0fdc3b39acab817a73181b16cc14", null ],
     [ "WITH_COOKIES", "group__group__with.html#ga77f061a12d88eb8b7dae8b07cf90e29d", null ],
+    [ "WITH_CRTOLF", "group__group__with.html#ga3bb3800c453e42fa5549c413b0c917e9", null ],
     [ "WITH_DEFAULT_VIRTUAL", "group__group__with.html#gad994e1b9a0209a5da210eab3a69c52e1", null ],
     [ "WITH_DOM", "group__group__with.html#gac446a18bcd54c58c0b62362f2e6113e2", null ],
     [ "WITH_FAST", "group__group__with.html#gaf82a624c2531f5e26bf234bc39ae07bd", null ],

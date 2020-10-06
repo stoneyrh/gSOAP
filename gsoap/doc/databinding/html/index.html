@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">C and C++ XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Aug 22 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Sep 1 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -985,8 +985,9 @@ Mutable classes and structs</h3>
 <h3><a class="anchor" id="toxsd9-4"></a>
 Default and fixed member values</h3>
 <p>Class and struct data members in C and C++ may be declared with an optional default initialization value that is provided "inline" with the declaration of the member:</p>
-<div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div><div class="line">{</div><div class="line"> <span class="keyword">public</span>:</div><div class="line">    std::string name = <span class="stringliteral">&quot;Joe&quot;</span>;</div><div class="line">    ...</div><div class="line">};</div></div><!-- fragment --><p>Alternatively, use C++11 default initialization syntax:</p>
-<div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div><div class="line">{</div><div class="line"> <span class="keyword">public</span>:</div><div class="line">    std::string name { <span class="stringliteral">&quot;Joe&quot;</span> };</div><div class="line">    ...</div><div class="line">};</div></div><!-- fragment --><p>These initializations are made by the default constructor that is added by soapcpp2 to each class and struct (in C++ only). A constructor is only added when a default constructor is not already defined with the class declaration.</p>
+<div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div><div class="line">{</div><div class="line"> <span class="keyword">public</span>:</div><div class="line">    std::string name = <span class="stringliteral">&quot;Joe&quot;</span>;</div><div class="line">    ...</div><div class="line">};</div></div><!-- fragment --><p>Alternatively, you can use C++11 default initialization syntax:</p>
+<div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div><div class="line">{</div><div class="line"> <span class="keyword">public</span>:</div><div class="line">    std::string name { <span class="stringliteral">&quot;Joe&quot;</span> };</div><div class="line">    ...</div><div class="line">};</div></div><!-- fragment --><p>Any member with a primitive type can be initialized in this way.</p>
+<p>These initializations are performed by the default constructor that is added by soapcpp2 to each class and struct (in C++ only). A constructor is only added when a default constructor is not already defined with the class declaration.</p>
 <p>You can explicitly (re)initialize an object with these initial values by using the soapcpp2 auto-generated functions:</p>
 <ul>
 <li><code>void T::soap_default(struct soap*)</code> for <code>class T</code> (C++ only)</li>
@@ -1794,7 +1795,7 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Aug 22 2020 13:51:30 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Sep 1 2020 10:43:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

@@ -617,7 +617,11 @@ soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
     ivlen = EVP_CIPHER_iv_length(data->type);
     if (ivlen)
     {
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+      RAND_bytes(iv, ivlen);
+#else
       RAND_pseudo_bytes(iv, ivlen);
+#endif
       soap_mec_put_base64(soap, data, (unsigned char*)iv, ivlen);
     }
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "IV = "));

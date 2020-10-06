@@ -158,6 +158,8 @@ var group__group__context =
       [ "z_ratio_in", "structsoap.html#a6cc15a11a897cde81f4303866df747ac", null ],
       [ "z_ratio_out", "structsoap.html#ab9d0aab0f89e2109ba02ca460c219541", null ]
     ] ],
+    [ "_QName", "group__group__context.html#gaa178a46d0cf703ff226a5c148483286d", null ],
+    [ "_XML", "group__group__context.html#ga5c62d26b4823b76c5b4ef29e7865d3f0", null ],
     [ "soap_clr_imode", "group__group__context.html#ga0e789bd6c2f76609aec0c9f93d121e4c", null ],
     [ "soap_clr_mode", "group__group__context.html#ga06f769f80bcea7beb2ebffd0a40fc521", null ],
     [ "soap_clr_omode", "group__group__context.html#ga8c28d2943bee7aa5c3ffaf32803b31bd", null ],

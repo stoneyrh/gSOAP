@@ -158,8 +158,8 @@ A Target Service may invoke the following WS-Discovery operations:
 
 - `soap_wsdd_Hello`
 - `soap_wsdd_Bye`
-- `soap_wsdd_ProbeMatches` (automatic via `soap_wsdd_listen`)
-- `soap_wsdd_ResolveMatches` (automatic via `soap_wsdd_listen`)
+- `soap_wsdd_ProbeMatches` (e.g. via `soap_wsdd_listen`)
+- `soap_wsdd_ResolveMatches` (e.g. via `soap_wsdd_listen`)
 
 A Discovery Proxy can perform all operations listed above, and should use
 "wsdd:DiscoveryProxy" as the Type with the Hello, Bye, and ProbeMatches.
@@ -296,19 +296,62 @@ In managed mode, the ProbeMatches and ResolveMatches are automatically sent via
 returned.
 
 In ad-hoc mode, ProbeMatches or ResolveMatches responses are NOT sent
-automatically. In ad-hoc mode the responses can be returned by adding code to
+automatically.  In ad-hoc mode the responses can be returned by adding code to
 the event handler or from anywhere in the main program, for example after @ref
-soap_wsdd_listen. When responses are to be returned from the event handler or
-from the main program, you should invoke @ref soap_wsdd_ProbeMatches and @ref
-soap_wsdd_ResolveMatches to explicitly send unicast messages with the match(es)
-back to the clients. The WS-Addressing ReplyTo address can be used as the
-return address (when not anonymous), or by using the peer's host information
-that is accessible in the soap->peer and soap->peerlen members. For example:
+soap_wsdd_listen.  When responses are to be returned from the event handler or
+from the main program, you should invoke @ref soap_wsdd_ProbeMatches and
+@ref soap_wsdd_ResolveMatches to explicitly send unicast messages with the
+match(es) back to the clients.  The WS-Addressing ReplyTo address can be used as
+the return address (when not anonymous), or by using the peer's host
+information that is accessible in the soap->peer and soap->peerlen members. For
+example:
 
 @code
     char host[1024], port[16];
     getnameinfo((struct sockaddr*)&soap->peer, soap->peerlen, host, sizeof(host), port, 16, NI_DGRAM | NI_NAMEREQD | NI_NUMERICSERV);
 @endcode
+
+The @ref soap_wsdd_ProbeMatches function takes an array of
+@ref wsdd__ProbeMatchesType matches to transmit.  This array is created by
+calling functions @ref soap_wsdd_init_ProbeMatches and then @ref
+soap_wsdd_add_ProbeMatch multiple times.  Each call adds an element to the
+matches:
+
+@code
+    const char *endpoint, *types, *scopes, *matchby, *xaddrs;
+    unsigned int version;
+    const char *relatesto, *to;
+    struct wsdd__ProbeMatchesType matches;
+    soap_wsdd_init_ProbeMatches(soap, &matches);
+    ...
+    // repeat this to add multiple matches:
+    if (soap_wsdd_add_ProbeMatch(soap, &matches, endpoint, types, scopes, matchby, xaddrs, version))
+      ... // out of memory
+    ...
+    // send the ProbeMatches message
+    if (soap_wsdd_ProbeMatches(soap, endpoint, soap_wsa_rand_uuid(soap), relatesto, to, &matches))
+      ... // an error occurred
+@endcode
+
+After calling @ref soap_wsdd_add_ProbeMatch it is possible to add additional
+WS-Addressing header values to this matches array element.  For example the
+WS-Addressing reference parameters channel instance:
+
+@code
+    if (soap_wsdd_add_ProbeMatch(soap, &matches, endpoint, types, scopes, matchby, xaddrs, version))
+      ... // out of memory
+    // now allocate and add the WS-Addresssing reference parameters
+    struct wsa5__EndpointReference *ref = &matches.ProbeMatch[matches.__sizeProbeMatch - 1].wsa5__EndpointReference;
+    ref->ReferenceParameters = (struct wsa5__ReferenceParametersType*)soap_malloc(soap, sizeof(struct wsa5__ReferenceParametersType));
+    if (ref == NULL)
+      ... // out of memory
+    soap_default_wsa5__ReferenceParametersType(soap, ref->ReferenceParameters);
+    ref->ReferenceParameters->chan__ChannelInstance = ...
+@endcode
+
+See also the [Data binding](../../databinding/html/index.html) documentation on
+allocating and initializing C/C++ data in managed memory, managed by the `soap`
+context.
 
 @section wsdd_5 Generating C++ Server Objects
 
@@ -838,7 +881,7 @@ soap_wsdd_init_ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *ma
 @param[in] MetadataVersion incremented by a positive value (>= 1) whenever there is a change in the metadata of the Target Service
 @return SOAP_OK or error code
 
-To populate a Prove matches container, first initialize with @ref
+To populate a Probe matches container, first initialize with @ref
 soap_wsdd_init_ProbeMatches, then use this function to add each match. The
 container is deallocated with soap_end(soap) and can be initialized again
 (without leaks).

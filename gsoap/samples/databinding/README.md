@@ -2582,7 +2582,7 @@ the member:
     };
 ~~~
 
-Alternatively, use C++11 default initialization syntax:
+Alternatively, you can use C++11 default initialization syntax:
 
 ~~~{.cpp}
     class ns__record
@@ -2593,7 +2593,9 @@ Alternatively, use C++11 default initialization syntax:
     };
 ~~~
 
-These initializations are made by the default constructor that is added by
+Any member with a primitive type can be initialized in this way.
+
+These initializations are performed by the default constructor that is added by
 soapcpp2 to each class and struct (in C++ only).  A constructor is only added
 when a default constructor is not already defined with the class declaration.
 

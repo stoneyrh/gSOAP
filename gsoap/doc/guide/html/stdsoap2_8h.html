@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">stdsoap2.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Aug 22 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Oct 6 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -242,6 +242,9 @@ Macros</h2></td></tr>
 <tr class="memitem:ga0f1f2dd7a7d88f5acdaaab010d8e99ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#ga0f1f2dd7a7d88f5acdaaab010d8e99ff">WITH_SELF_PIPE</a></td></tr>
 <tr class="memdesc:ga0f1f2dd7a7d88f5acdaaab010d8e99ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), the engine is configured to enable <code><a class="el" href="group__group__io.html#ga139afbf916c84724fef3f82aca4857d3" title="Close the connection of the specified context using a self-pipe. ">soap_close_connection</a></code> using a "self-pipe".  <a href="group__group__with.html#ga0f1f2dd7a7d88f5acdaaab010d8e99ff">More...</a><br /></td></tr>
 <tr class="separator:ga0f1f2dd7a7d88f5acdaaab010d8e99ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3bb3800c453e42fa5549c413b0c917e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#ga3bb3800c453e42fa5549c413b0c917e9">WITH_CRTOLF</a></td></tr>
+<tr class="memdesc:ga3bb3800c453e42fa5549c413b0c917e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), the engine is configured to replace CRLF (carriage return <code>#xD</code> followed by line feed <code>#xA</code>) by LF and replace single CR by LF.  <a href="group__group__with.html#ga3bb3800c453e42fa5549c413b0c917e9">More...</a><br /></td></tr>
+<tr class="separator:ga3bb3800c453e42fa5549c413b0c917e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga71b70dabc89650ed7197fd6d97bb4543"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga71b70dabc89650ed7197fd6d97bb4543">SOAP_NOTHROW</a>&#160;&#160;&#160;(std::nothrow)</td></tr>
 <tr class="memdesc:ga71b70dabc89650ed7197fd6d97bb4543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro expands to <code>(std::nothrow)</code> to prevent the deserializer's memory allocator from throwing an exception but return <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code> instead, this macro is empty when <code><a class="el" href="group__group__with.html#ga447e0fdc3b39acab817a73181b16cc14" title="When this macro is defined at compile time (undefined by default), removes dependency on C++ std::str...">WITH_COMPAT</a></code> is enabled or when <code><a class="el" href="group__group__with.html#gaae03aa5dd66b0251c11ba8fc2fe29ecf" title="When this macro is defined at compile time (undefined by default), memory footprint is significantly ...">WITH_LEAN</a></code> or <code><a class="el" href="group__group__with.html#ga6c72f5017edb6930c54a8f70d9fb40b9" title="When this macro is defined at compile time (undefined by default), memory footprint is further reduce...">WITH_LEANER</a></code> are enabled which means that exceptions may be thrown.  <a href="group__group__soap.html#ga71b70dabc89650ed7197fd6d97bb4543">More...</a><br /></td></tr>
 <tr class="separator:ga71b70dabc89650ed7197fd6d97bb4543"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -866,6 +869,12 @@ Typedefs</h2></td></tr>
 <tr class="memitem:gac0eadf8f72bacb5b41b750beaeca0444"><td class="memItemLeft" align="right" valign="top">typedef int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444">soap_status</a></td></tr>
 <tr class="memdesc:gac0eadf8f72bacb5b41b750beaeca0444"><td class="mdescLeft">&#160;</td><td class="mdescRight">Status and error codes are int values, a zero value or <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> (0) means no error, nonzero means error.  <a href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444">More...</a><br /></td></tr>
 <tr class="separator:gac0eadf8f72bacb5b41b750beaeca0444"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5c62d26b4823b76c5b4ef29e7865d3f0"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__context.html#ga5c62d26b4823b76c5b4ef29e7865d3f0">_XML</a></td></tr>
+<tr class="memdesc:ga5c62d26b4823b76c5b4ef29e7865d3f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">A built-in string type containing literal XML content in UTF-8 format.  <a href="group__group__context.html#ga5c62d26b4823b76c5b4ef29e7865d3f0">More...</a><br /></td></tr>
+<tr class="separator:ga5c62d26b4823b76c5b4ef29e7865d3f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa178a46d0cf703ff226a5c148483286d"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__context.html#gaa178a46d0cf703ff226a5c148483286d">_QName</a></td></tr>
+<tr class="memdesc:gaa178a46d0cf703ff226a5c148483286d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A built-in string type containing normalized QName contents.  <a href="group__group__context.html#gaa178a46d0cf703ff226a5c148483286d">More...</a><br /></td></tr>
+<tr class="separator:gaa178a46d0cf703ff226a5c148483286d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0cd7f0c3eda00033f2a3b6da331f39ed"><td class="memItemLeft" align="right" valign="top">typedef unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__ssl.html#ga0cd7f0c3eda00033f2a3b6da331f39ed">soap_ssl_flags</a></td></tr>
 <tr class="memdesc:ga0cd7f0c3eda00033f2a3b6da331f39ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">SSL/TLS (HTTPS) client and server context flags for <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code> and <code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code>, respectively, flags can be combined with <code>|</code> (bit-wise or)  <a href="group__group__ssl.html#ga0cd7f0c3eda00033f2a3b6da331f39ed">More...</a><br /></td></tr>
 <tr class="separator:ga0cd7f0c3eda00033f2a3b6da331f39ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -875,12 +884,6 @@ Typedefs</h2></td></tr>
 <tr class="memitem:ga0c7ca927c25cf2e5f03d0add91b3eb6d"><td class="memItemLeft" align="right" valign="top">typedef int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__io.html#ga0c7ca927c25cf2e5f03d0add91b3eb6d">soap_wchar</a></td></tr>
 <tr class="memdesc:ga0c7ca927c25cf2e5f03d0add91b3eb6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wide char type.  <a href="group__group__io.html#ga0c7ca927c25cf2e5f03d0add91b3eb6d">More...</a><br /></td></tr>
 <tr class="separator:ga0c7ca927c25cf2e5f03d0add91b3eb6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5c62d26b4823b76c5b4ef29e7865d3f0"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__fault.html#ga5c62d26b4823b76c5b4ef29e7865d3f0">_XML</a></td></tr>
-<tr class="memdesc:ga5c62d26b4823b76c5b4ef29e7865d3f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">A built-in string type containing literal XML content in UTF-8 format.  <a href="group__group__fault.html#ga5c62d26b4823b76c5b4ef29e7865d3f0">More...</a><br /></td></tr>
-<tr class="separator:ga5c62d26b4823b76c5b4ef29e7865d3f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa178a46d0cf703ff226a5c148483286d"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__fault.html#gaa178a46d0cf703ff226a5c148483286d">_QName</a></td></tr>
-<tr class="memdesc:gaa178a46d0cf703ff226a5c148483286d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A built-in string type containing normalized QName contents.  <a href="group__group__fault.html#gaa178a46d0cf703ff226a5c148483286d">More...</a><br /></td></tr>
-<tr class="separator:gaa178a46d0cf703ff226a5c148483286d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -1480,7 +1483,7 @@ Variables</h2></td></tr>
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Aug 22 2020 13:14:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Oct 6 2020 11:10:15 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

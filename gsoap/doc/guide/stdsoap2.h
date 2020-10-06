@@ -376,6 +376,7 @@ This module defines the following compile-time flags to configure the engine bui
 - `#WITH_SOCKET_CLOSE_ON_EXIT`
 - `#WITH_TCPFIN`
 - `#WITH_SELF_PIPE`
+- `#WITH_CRTOLF`
 
 @{
 */
@@ -864,7 +865,7 @@ This example defines SOAP 1.1 namespaces (`SOAP-ENV` and `SOAP-ENC`) to be used 
 
 /// When this macro is defined at compile time (undefined by default), retains the parsed CDATA sections in literal XML strings
 /**
-Literal XML strings are built-in `_XML` types (a typedef of `char*`) in the .h file for soapcpp2, or a user-defined `typedef std::string XML` to define a `XML` literal string.  Literal XML strings contain XML, but CDATA sections are stripped by the XML parser unless this macro is enabled.
+Literal XML strings are built-in <tt>\ref _XML</tt> types (a typedef of `char*`) in the .h file for soapcpp2, or a user-defined `typedef std::string XML` to define a `XML` literal string.  Literal XML strings contain XML, but CDATA sections are stripped by the XML parser unless this macro is enabled.
 
 @par Example:
 
@@ -1051,11 +1052,36 @@ To use `::soap_close_connection` from another thread to terminate a thread that 
 
 @par Example:
 
-    c++ -D WITH_SELF_PIPE -o server stdsoap2.cpp soapC.cpp soapMyService.cpp server.cpp
+    c++ -D WITH_SELF_PIPE -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp
 
 @see `::soap_close_connection`.
 */
 #define WITH_SELF_PIPE
+
+/// When this macro is defined at compile time (undefined by default), the engine is configured to replace CRLF (carriage return `#xD` followed by line feed `#xA`) by LF and replace single CR by LF
+/**
+This macro affects C/C++ string serialization to XML.  If `char*`, `wchar_t*`, `std::string`, or `std::wstring` values assigned by an application contain CR, then this macro effectively removes all CR in the normalized XML output by replacing CRLF with LF and each plain CR with a LF.  This macro does not affect parsed and deserialized strings and does not affect <tt>\ref _XML</tt> literal string serialization to XML i.e. strings containing raw XML.
+
+The XML 1.1. standard recommends replacing CRLF by LF and each single CR by LF in XML character data.  This flag is useful when C/C++ string values to serialize to XML may contain CR characters.
+
+@par Example:
+
+    c++ -D WITH_CRTOLF -o client stdsoap2.cpp soapC.cpp soapClient.cpp client.cpp
+~~~{.cpp}
+// compiled with compile-time flag -D WITH_CRTOLF
+#include "soapH.h"
+
+struct soap *soap = soap_new();
+struct ns__webmethodResponse result;
+... //
+if (soap_call_ns__webmethod(soap, endpoint, NULL, "Message\r\n", &result))
+  soap_print_fault(soap, stderr);
+else
+  ... // success
+~~~
+In the example shown above, the message `Message\n` will be sent.
+*/
+#define WITH_CRTOLF
 
 /** @} */
 
@@ -2145,8 +2171,10 @@ int ns__webmethod(float x, struct ns__webmethodResponse *out);
 struct soap *soap = soap_new1(SOAP_C_NOIOB);
 struct ns__webmethodResponse result;
 ... //
-if (soap_call_ns__webmethod(soap, 3, &result))
+if (soap_call_ns__webmethod(soap, endpoint, NULL, 3, &result))
   ... // deserializing more than 3 array items does not produce a SOAP_IOB error here
+else
+  ... // success
 ~~~
 */
 #define SOAP_C_NOIOB 0x01000000
@@ -3637,7 +3665,7 @@ struct soap {
   soap_free(soap);
   ~~~
 
-  @note: cannot be used on Windows platforms.
+  @note Cannot be used on Windows platforms.
 
   @see `::soap::client_addr_ipv6`, `::soap::client_port`, `::soap::client_interface`.
   */
@@ -3692,7 +3720,7 @@ struct soap {
   /**
   When non-NULL, sets the client address before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.  Does not bind the address, unlike `::soap::client_addr` and `::soap::client_addr_ipv6`.
 
-  @note: cannot be used on Windows platforms.
+  @note Cannot be used on Windows platforms.
 
   @see `::soap::client_addr`, `::soap::client_addr_ipv6`, `::soap::client_addr_ipv6`.
   */
@@ -5060,6 +5088,12 @@ struct soap {
   */
   int (*fsslverify)(int ok, X509_STORE_CTX *store);
 };
+
+/// A built-in string type containing literal XML content in UTF-8 format
+typedef char *_XML;
+
+/// A built-in string type containing normalized QName contents
+typedef char *_QName;
 
 /// Allocate and initialize a new `::soap` context
 /**
@@ -9496,12 +9530,6 @@ struct SOAP_ENV__Reason {
   /// Optional element <i>`SOAP-ENV:Text`</i> of XSD type <i>`xsd:string`</i>
   char *SOAP_ENV__Text;
 };
-
-/// A built-in string type containing literal XML content in UTF-8 format
-typedef char *_XML;
-
-/// A built-in string type containing normalized QName contents
-typedef char *_QName;
 
 /// If `::soap::fault` is NULL then allocate `::SOAP_ENV__Fault` header and set `::soap::fault` to point to it
 /**

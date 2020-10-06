@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">soap Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Aug 22 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Oct 6 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -937,7 +937,7 @@ Public Attributes</h2></td></tr>
 <p>User-definable client address to bind to before connecting to a server, when non-NULL (Windows: n/a) </p>
 <p>When non-NULL, sets the client address specified as IPv4 or IPv6 or as a host address to bind to before connecting to a server. The value is reset to NULL after connecting successfully or unsuccessfully to the server.</p>
 <dl class="section user"><dt>Example:</dt><dd></dd></dl>
-<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>();</div><div class="line">soap-&gt;<a class="code" href="structsoap.html#a9ac2ec757d32a005faa90f43145ad942">client_addr</a> = <span class="stringliteral">&quot;12.34.56.78&quot;</span>; <span class="comment">// client binds to 12.34.56.78 when connecting to endpoint</span></div><div class="line">soap-&gt;<a class="code" href="structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c">client_port</a> = 8080; <span class="comment">// optional, to also specify a port to bind to</span></div><div class="line"><span class="keywordflow">if</span> (soap_call_ns__webmethod(soap, <a class="code" href="structsoap.html#aed1b86b8a34aea86103751a932c9dce9">endpoint</a>, NULL, ...))</div><div class="line">  <a class="code" href="group__group__fault.html#ga931a4ab6df2553b48a0c270f8a0a88af">soap_print_fault</a>(soap, stderr);</div><div class="line"><span class="keywordflow">else</span></div><div class="line">  ... <span class="comment">// success</span></div><div class="line"><a class="code" href="group__group__context.html#gaf7d0176161e9def36981e24faa1913d9">soap_destroy</a>(soap);</div><div class="line"><a class="code" href="group__group__context.html#ga81a009ae1ea825a05e5241e2b7a8ece9">soap_end</a>(soap);</div><div class="line"><a class="code" href="group__group__context.html#ga57108ca4681186e58b5b189c3528f10a">soap_free</a>(soap);</div></div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>: cannot be used on Windows platforms.</dd></dl>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>();</div><div class="line">soap-&gt;<a class="code" href="structsoap.html#a9ac2ec757d32a005faa90f43145ad942">client_addr</a> = <span class="stringliteral">&quot;12.34.56.78&quot;</span>; <span class="comment">// client binds to 12.34.56.78 when connecting to endpoint</span></div><div class="line">soap-&gt;<a class="code" href="structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c">client_port</a> = 8080; <span class="comment">// optional, to also specify a port to bind to</span></div><div class="line"><span class="keywordflow">if</span> (soap_call_ns__webmethod(soap, <a class="code" href="structsoap.html#aed1b86b8a34aea86103751a932c9dce9">endpoint</a>, NULL, ...))</div><div class="line">  <a class="code" href="group__group__fault.html#ga931a4ab6df2553b48a0c270f8a0a88af">soap_print_fault</a>(soap, stderr);</div><div class="line"><span class="keywordflow">else</span></div><div class="line">  ... <span class="comment">// success</span></div><div class="line"><a class="code" href="group__group__context.html#gaf7d0176161e9def36981e24faa1913d9">soap_destroy</a>(soap);</div><div class="line"><a class="code" href="group__group__context.html#ga81a009ae1ea825a05e5241e2b7a8ece9">soap_end</a>(soap);</div><div class="line"><a class="code" href="group__group__context.html#ga57108ca4681186e58b5b189c3528f10a">soap_free</a>(soap);</div></div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Cannot be used on Windows platforms.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a86e0866c444ed3cdae24f70aa3bac67c" title="User-definable client address to bind to before connecting to a server, when non-NULL, requires WITH_IPV6 ">soap::client_addr_ipv6</a></code>, <code><a class="el" href="structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c" title="User-definable client port to bind to before connecting to a server, when non-negative. ">soap::client_port</a></code>, <code><a class="el" href="structsoap.html#aa66026bcd099d88d44c985b49928a05d" title="User-definable client interface address to override when connecting to a server, when non-NULL (Windo...">soap::client_interface</a></code>. </dd></dl>
 
 </div>
@@ -972,7 +972,7 @@ Public Attributes</h2></td></tr>
 
 <p>User-definable client interface address to override when connecting to a server, when non-NULL (Windows: n/a) </p>
 <p>When non-NULL, sets the client address before connecting to a server. The value is reset to NULL after connecting successfully or unsuccessfully to the server. Does not bind the address, unlike <code><a class="el" href="structsoap.html#a9ac2ec757d32a005faa90f43145ad942" title="User-definable client address to bind to before connecting to a server, when non-NULL (Windows: n/a) ...">soap::client_addr</a></code> and <code><a class="el" href="structsoap.html#a86e0866c444ed3cdae24f70aa3bac67c" title="User-definable client address to bind to before connecting to a server, when non-NULL, requires WITH_IPV6 ">soap::client_addr_ipv6</a></code>.</p>
-<dl class="section note"><dt>Note</dt><dd>: cannot be used on Windows platforms.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Cannot be used on Windows platforms.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a9ac2ec757d32a005faa90f43145ad942" title="User-definable client address to bind to before connecting to a server, when non-NULL (Windows: n/a) ...">soap::client_addr</a></code>, <code><a class="el" href="structsoap.html#a86e0866c444ed3cdae24f70aa3bac67c" title="User-definable client address to bind to before connecting to a server, when non-NULL, requires WITH_IPV6 ">soap::client_addr_ipv6</a></code>, <code><a class="el" href="structsoap.html#a86e0866c444ed3cdae24f70aa3bac67c" title="User-definable client address to bind to before connecting to a server, when non-NULL, requires WITH_IPV6 ">soap::client_addr_ipv6</a></code>. </dd></dl>
 
 </div>
@@ -2347,7 +2347,7 @@ Public Attributes</h2></td></tr>
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Aug 22 2020 13:14:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Oct 6 2020 11:10:16 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

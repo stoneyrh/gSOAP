@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.106
+        stdsoap2.c[pp] 2.8.107
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208106
+#define GSOAP_LIB_VERSION 208107
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.106 2020-08-22 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.107 2020-10-06 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.106 2020-08-22 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.107 2020-10-06 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1737,24 +1737,6 @@ soap_recv(struct soap *soap)
 /******************************************************************************/
 
 SOAP_FMAC1
-soap_wchar
-SOAP_FMAC2
-soap_getchar(struct soap *soap)
-{
-  soap_wchar c;
-  c = soap->ahead;
-  if (c)
-  {
-    if ((int)c != EOF)
-      soap->ahead = 0;
-    return c;
-  }
-  return soap_get1(soap);
-}
-
-/******************************************************************************/
-
-SOAP_FMAC1
 const struct soap_code_map*
 SOAP_FMAC2
 soap_code(const struct soap_code_map *code_map, const char *str)
@@ -1933,9 +1915,7 @@ soap_char(struct soap *soap)
 soap_wchar
 soap_get0(struct soap *soap)
 {
-  if (soap->bufidx >= soap->buflen && soap_recv(soap))
-    return EOF;
-  return (unsigned char)soap->buf[soap->bufidx];
+  return (soap->bufidx >= soap->buflen && soap_recv(soap)) ?  EOF : (unsigned char)soap->buf[soap->bufidx];
 }
 #endif
 
@@ -1945,9 +1925,38 @@ soap_get0(struct soap *soap)
 soap_wchar
 soap_get1(struct soap *soap)
 {
-  if (soap->bufidx >= soap->buflen && soap_recv(soap))
-    return EOF;
-  return (unsigned char)soap->buf[soap->bufidx++];
+  return (soap->bufidx >= soap->buflen && soap_recv(soap)) ?  EOF : (unsigned char)soap->buf[soap->bufidx++];
+}
+#endif
+
+/******************************************************************************/
+
+#ifdef WITH_LEAN
+SOAP_FMAC1
+soap_wchar
+SOAP_FMAC2
+soap_getchar(struct soap *soap)
+{
+  soap_wchar c;
+  c = soap->ahead;
+  if (c)
+  {
+    if ((int)c != EOF)
+      soap->ahead = 0;
+    return c;
+  }
+  return soap_get1(soap);
+}
+#else
+SOAP_FMAC1
+soap_wchar
+SOAP_FMAC2
+soap_getahead(struct soap *soap)
+{
+  soap_wchar c = soap->ahead;
+  if ((int)c != EOF)
+    soap->ahead = 0;
+  return c;
 }
 #endif
 
@@ -13586,6 +13595,7 @@ soap_element_href(struct soap *soap, const char *tag, int id, const char *ref, c
   return SOAP_OK;
 }
 
+
 /******************************************************************************/
 
 SOAP_FMAC1
@@ -13619,9 +13629,15 @@ soap_element_null(struct soap *soap, const char *tag, int id, const char *type)
 SOAP_FMAC1
 int
 SOAP_FMAC2
-soap_element_empty(struct soap *soap, const char *tag)
+soap_element_empty(struct soap *soap, const char *tag, int id, const char *type)
 {
-  if (soap_element(soap, tag, -1, NULL))
+  if (!tag || *tag == '-')
+    return SOAP_OK;
+#ifdef WITH_DOM
+  if (soap->feltbegout)
+    return soap->error = soap->feltbegout(soap, tag, id, type);
+#endif
+  if (soap_element(soap, tag, id, type))
     return soap->error;
   return soap_element_start_end_out(soap, tag);
 }
@@ -14501,9 +14517,14 @@ soap_peek_element(struct soap *soap)
       s = soap->labbuf + soap->labidx;
       i = soap->lablen - soap->labidx;
       soap->labidx = soap->lablen;
-      while (soap_coblank(c) && i-- > 0)
+      while (soap_coblank(c))
       {
-        *s++ = c;
+        if (c != '\r')
+        {
+          if (i-- <= 0)
+            break;
+          *s++ = c;
+        }
         c = soap_get(soap);
       }
     } while (soap_coblank(c) || i == 0);
@@ -15088,6 +15109,28 @@ soap_string_out(struct soap *soap, const char *s, int flag)
         s = t;
       }
       break;
+#ifdef WITH_CRTOLF
+    case 0x0D:
+      if (*t == 0x0A)
+      {
+        if (soap_send_raw(soap, s, t - s - 1))
+          return soap->error;
+        s = t;
+      }
+      else if (flag)
+      {
+        if (soap_send_raw(soap, s, t - s - 1) || soap_send_raw(soap, "&#xA;", 5))
+          return soap->error;
+        s = t;
+      }
+      else
+      {
+        if (soap_send_raw(soap, s, t - s - 1) || soap_send_raw(soap, "\n", 1))
+          return soap->error;
+        s = t;
+      }
+      break;
+#endif
     case '&':
       if (soap_send_raw(soap, s, t - s - 1) || soap_send_raw(soap, "&amp;", 5))
         return soap->error;
@@ -15835,6 +15878,16 @@ soap_wstring_out(struct soap *soap, const wchar_t *s, int flag)
       else
         t = "\n";
       break;
+#ifdef WITH_CR_TO_LF
+    case 0x0D:
+      if (*s == 0x0A)
+        continue;
+      if (flag)
+        t = "&#xA;";
+      else
+        t = "\n";
+      break;
+#endif
     case '&':
       t = "&amp;";
       break;
@@ -18283,8 +18336,12 @@ soap_outstring(struct soap *soap, const char *tag, int id, char *const*p, const 
   id = soap_element_id(soap, tag, id, *p, NULL, 0, type, n, NULL);
   if (id < 0)
     return soap->error;
-  if (!**p && (soap->mode & SOAP_C_NILSTRING))
-    return soap_element_null(soap, tag, id, type);
+  if (!**p)
+  {
+    if ((soap->mode & SOAP_C_NILSTRING))
+      return soap_element_null(soap, tag, id, type);
+    return soap_element_empty(soap, tag, id, type);
+  }
   if (soap_element_begin_out(soap, tag, id, type)
    || soap_string_out(soap, *p, 0)
    || soap_element_end_out(soap, tag))
@@ -18361,8 +18418,12 @@ soap_outwstring(struct soap *soap, const char *tag, int id, wchar_t *const*p, co
   id = soap_element_id(soap, tag, id, *p, NULL, 0, type, n, NULL);
   if (id < 0)
     return soap->error;
-  if (!**p && (soap->mode & SOAP_C_NILSTRING))
-    return soap_element_null(soap, tag, id, type);
+  if (!**p)
+  {
+    if ((soap->mode & SOAP_C_NILSTRING))
+      return soap_element_null(soap, tag, id, type);
+    return soap_element_empty(soap, tag, id, type);
+  }
   if (soap_element_begin_out(soap, tag, id, type)
    || soap_wstring_out(soap, *p, 0)
    || soap_element_end_out(soap, tag))
@@ -20943,15 +21004,23 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
     s = t = (char*)soap_malloc(soap, (size_t)k + n + 1);
     if (s)
     {
-      size_t i;
+      size_t i = 0;
       soap_strcpy(t, n + 1, prefix);
       t += n;
-      for (i = 0; i < k; i++)
+      while (i < k)
       {
-        soap_wchar c = soap_get1(soap);
-        if ((int)c == EOF)
-          break;
-        *t++ = (char)(c & 0xFF);
+        size_t m;
+        if (soap->bufidx >= soap->buflen)
+          if (soap_recv(soap))
+            break;
+        if (soap->buflen - soap->bufidx > k - i)
+          m = k - i;
+        else
+          m = soap->buflen - soap->bufidx;
+        soap_memcpy(t, (size_t)k + n + 1 - i, soap->buf + soap->bufidx, m);
+        soap->bufidx += m;
+        t += m;
+        i += m;
       }
       *t = '\0';
       if (len)
@@ -20982,25 +21051,33 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
       s = (char*)soap_push_block(soap, NULL, k);
       if (!s)
         return NULL;
-      for (i = 0; i < k; i++)
+      i = 0;
+      while (i < k)
       {
-        soap_wchar c;
-        l++;
-        if (l == 0)
+        size_t m;
+        if (soap->bufidx >= soap->buflen)
+          if (soap_recv(soap))
+            goto end;
+        if (soap->buflen - soap->bufidx > k - i)
+          m = k - i;
+        else
+          m = soap->buflen - soap->bufidx;
+        soap_memcpy(s, k - i, soap->buf + soap->bufidx, m);
+        soap->bufidx += m;
+        s += m;
+        i += m;
+        if (l + m < l)
         {
           soap->error = SOAP_EOM;
           return NULL;
         }
-        c = soap_get1(soap);
-        if ((int)c == EOF)
-          goto end;
-        *s++ = (char)(c & 0xFF);
+        l += m;
       }
     }
 end:
     *s = '\0';
     if (len)
-      *len = l - 1;
+      *len = l;
     soap_size_block(soap, NULL, i + 1);
     s = soap_save_block(soap, NULL, NULL, 0);
   }

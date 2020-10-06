@@ -23,8 +23,6 @@ var group__group__fault =
     [ "SOAP_ENV__Reason", "struct_s_o_a_p___e_n_v_____reason.html", [
       [ "SOAP_ENV__Text", "struct_s_o_a_p___e_n_v_____reason.html#a4e7a5850ce6987bf6d15bf9fea780ecd", null ]
     ] ],
-    [ "_QName", "group__group__fault.html#gaa178a46d0cf703ff226a5c148483286d", null ],
-    [ "_XML", "group__group__fault.html#ga5c62d26b4823b76c5b4ef29e7865d3f0", null ],
     [ "soap_fault", "group__group__fault.html#ga0fe8da8d6501355a199d59204ef1e330", null ],
     [ "soap_fault_detail", "group__group__fault.html#gaa713e4a2ad1af8304db9d048d96bcd10", null ],
     [ "soap_fault_string", "group__group__fault.html#gabba65cbc38ea589f5cb28463c1657107", null ],

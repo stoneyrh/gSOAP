@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">SOAP_MACRO run-time flags</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Aug 22 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Oct 6 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -272,7 +272,7 @@ Typedefs</h2></td></tr>
 
 <p><code><a class="el" href="group__group__flags.html#ga72b0491c9cbf2071f0c96c7d29b719bb" title="The soap_mode flags to initialize the soap context, flags can be combined with | (bit-wise or) ...">soap_mode</a></code> input flag value to ignore array items that are out of bounds when deserializing fixed-size arrays, instead of producing <code><a class="el" href="group__group__errors.html#ga4bf925c17a1c81e99de6bfdb7d85c19a" title="A soap_status error code: SOAP array index out of bounds. ">SOAP_IOB</a></code> errors </p>
 <dl class="section user"><dt>Example:</dt><dd></dd></dl>
-<div class="fragment"><div class="line"><span class="keyword">struct </span>ns__webmethodResponse</div><div class="line">{</div><div class="line">  <span class="keywordtype">float</span> coordinates[3];</div><div class="line">};</div><div class="line"><span class="keywordtype">int</span> ns__webmethod(<span class="keywordtype">float</span> x, <span class="keyword">struct</span> ns__webmethodResponse *out);</div></div><!-- fragment --><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div><div class="line"></div><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga51cde138234ed7ec8c4e25bdf6418658">soap_new1</a>(<a class="code" href="group__group__flags.html#gac613f90d420290bb8ef9207deaa3525e">SOAP_C_NOIOB</a>);</div><div class="line"><span class="keyword">struct </span>ns__webmethodResponse result;</div><div class="line">... <span class="comment">//</span></div><div class="line"><span class="keywordflow">if</span> (soap_call_ns__webmethod(soap, 3, &amp;result))</div><div class="line">  ... <span class="comment">// deserializing more than 3 array items does not produce a SOAP_IOB error here</span></div></div><!-- fragment --> 
+<div class="fragment"><div class="line"><span class="keyword">struct </span>ns__webmethodResponse</div><div class="line">{</div><div class="line">  <span class="keywordtype">float</span> coordinates[3];</div><div class="line">};</div><div class="line"><span class="keywordtype">int</span> ns__webmethod(<span class="keywordtype">float</span> x, <span class="keyword">struct</span> ns__webmethodResponse *out);</div></div><!-- fragment --><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div><div class="line"></div><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga51cde138234ed7ec8c4e25bdf6418658">soap_new1</a>(<a class="code" href="group__group__flags.html#gac613f90d420290bb8ef9207deaa3525e">SOAP_C_NOIOB</a>);</div><div class="line"><span class="keyword">struct </span>ns__webmethodResponse result;</div><div class="line">... <span class="comment">//</span></div><div class="line"><span class="keywordflow">if</span> (soap_call_ns__webmethod(soap, endpoint, NULL, 3, &amp;result))</div><div class="line">  ... <span class="comment">// deserializing more than 3 array items does not produce a SOAP_IOB error here</span></div><div class="line"><span class="keywordflow">else</span></div><div class="line">  ... <span class="comment">// success</span></div></div><!-- fragment --> 
 </div>
 </div>
 <a class="anchor" id="ga9006d22d0abc39831dfe3ce1e491ce6f"></a>
@@ -884,7 +884,7 @@ Typedefs</h2></td></tr>
 Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Aug 22 2020 13:14:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Oct 6 2020 11:10:15 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

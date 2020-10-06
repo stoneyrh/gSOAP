@@ -1283,7 +1283,7 @@ compile(Table *table)
         fflush(fout);
         out_defs();
         fprintf(fout, "\n\tcase 0:\n\t\treturn SOAP_OK;\n\t}\n\tDBGLOG(TEST, SOAP_MESSAGE(fdebug, \"soap_putelement '%%s' failed for type %%d in %s\\n\", tag ? tag : \"\", type));", cstring(pathsoapC, 0));
-        fprintf(fout, "\n\treturn soap_element_empty(soap, tag); /* unknown type to serialize */\n}");
+        fprintf(fout, "\n\treturn soap_element_empty(soap, tag, 0, NULL); /* unknown type to serialize */\n}");
         if (!cflag && !namespaceid)
           fprintf(fout, "\n#ifdef __cplusplus\n}\n#endif");
 
@@ -18014,7 +18014,7 @@ soap_out(Tnode *typ)
                 if (p->info.nillable)
                   fprintf(fout, "\n\tif (!a->%s)\n\t{\tif (soap_element_nil(soap, %s))\n\t\t\treturn soap->error;\n\t}\n\telse ", ident(p->sym->name), field(p, nse));
                 else
-                  fprintf(fout, "\n\tif (!a->%s)\n\t{\tif (soap_element_empty(soap, %s))\n\t\t\treturn soap->error;\n\t}\n\telse ", ident(p->sym->name), field(p, nse));
+                  fprintf(fout, "\n\tif (!a->%s)\n\t{\tif (soap_element_empty(soap, %s, 0, NULL))\n\t\t\treturn soap->error;\n\t}\n\telse ", ident(p->sym->name), field(p, nse));
               }
               else
               {
@@ -18288,7 +18288,7 @@ soap_out(Tnode *typ)
                 if (p->info.nillable)
                   fprintf(fout, "\n\tif (!a->%s::%s)\n\t{\tif (soap_element_nil(soap, %s))\n\t\t\treturn soap->error;\n\t}\n\telse ", ident(t->sym->name), ident(p->sym->name), field_overridden(t, p, nse1));
                 else
-                  fprintf(fout, "\n\tif (!a->%s::%s)\n\t{\tif (soap_element_empty(soap, %s))\n\t\t\treturn soap->error;\n\t}\n\telse ", ident(t->sym->name), ident(p->sym->name), field_overridden(t, p, nse1));
+                  fprintf(fout, "\n\tif (!a->%s::%s)\n\t{\tif (soap_element_empty(soap, %s, 0, NULL))\n\t\t\treturn soap->error;\n\t}\n\telse ", ident(t->sym->name), ident(p->sym->name), field_overridden(t, p, nse1));
               }
               else
               {
@@ -18357,7 +18357,7 @@ soap_out(Tnode *typ)
                 if (p->info.nillable)
                   fprintf(fout, "\n\tif(a->%s::%s)\n\t{\tif (soap_element_nil(soap, %s))\n\t\t\treturn soap->error;\n\t}\n\telse", ident(t->sym->name), ident(p->sym->name), field_overridden(t, p, nse1));
                 else
-                  fprintf(fout, "\n\tif(a->%s::%s)\n\t{\tif (soap_element_empty(soap, %s))\n\t\t\treturn soap->error;\n\t}\n\telse", ident(t->sym->name), ident(p->sym->name), field_overridden(t, p, nse1));
+                  fprintf(fout, "\n\tif(a->%s::%s)\n\t{\tif (soap_element_empty(soap, %s, 0, NULL))\n\t\t\treturn soap->error;\n\t}\n\telse", ident(t->sym->name), ident(p->sym->name), field_overridden(t, p, nse1));
               }
               else
               {

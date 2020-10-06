@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Discovery plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Aug 27 2019 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Sep 16 2020 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -94,8 +94,8 @@ Invoking WS-Discovery Operations</h1>
 <ul>
 <li><code>soap_wsdd_Hello</code></li>
 <li><code>soap_wsdd_Bye</code></li>
-<li><code>soap_wsdd_ProbeMatches</code> (automatic via <code>soap_wsdd_listen</code>)</li>
-<li><code>soap_wsdd_ResolveMatches</code> (automatic via <code>soap_wsdd_listen</code>)</li>
+<li><code>soap_wsdd_ProbeMatches</code> (e.g. via <code>soap_wsdd_listen</code>)</li>
+<li><code>soap_wsdd_ResolveMatches</code> (e.g. via <code>soap_wsdd_listen</code>)</li>
 </ul>
 <p>A Discovery Proxy can perform all operations listed above, and should use "wsdd:DiscoveryProxy" as the Type with the Hello, Bye, and ProbeMatches.</p>
 <p>To send a Hello message to join a network:</p>
@@ -112,7 +112,10 @@ Invoking WS-Discovery Operations</h1>
 <p>In managed mode with unicast messages (request-response messages), the <code>soap_wsdd_Probe</code> and <code>soap_wsdd_Resolve</code> are sufficient to invoke without setting up a listener. The event handlers are invoked when the unicast response message arrives.</p>
 <p>In managed mode, the ProbeMatches and ResolveMatches are automatically sent via <code>soap_wsdd_listen</code> and the event <code>wsdd_event_Probe</code> and <code>wsdd_event_Resolve</code> handlers. These event handlers should set the matches to be returned.</p>
 <p>In ad-hoc mode, ProbeMatches or ResolveMatches responses are NOT sent automatically. In ad-hoc mode the responses can be returned by adding code to the event handler or from anywhere in the main program, for example after <a class="el" href="wsddapi_8c.html#aa4adce86fc059bac2ec6fc44697edd04">soap_wsdd_listen</a>. When responses are to be returned from the event handler or from the main program, you should invoke <a class="el" href="wsddapi_8c.html#af00e0661c0105c3ba658598d5131f185">soap_wsdd_ProbeMatches</a> and <a class="el" href="wsddapi_8c.html#a923096ca493b6b2163a4b08139ed7237">soap_wsdd_ResolveMatches</a> to explicitly send unicast messages with the match(es) back to the clients. The WS-Addressing ReplyTo address can be used as the return address (when not anonymous), or by using the peer's host information that is accessible in the soap-&gt;peer and soap-&gt;peerlen members. For example:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">char</span> host[1024], port[16];</div><div class="line">getnameinfo((<span class="keyword">struct</span> sockaddr*)&amp;soap-&gt;peer, soap-&gt;peerlen, host, <span class="keyword">sizeof</span>(host), port, 16, NI_DGRAM | NI_NAMEREQD | NI_NUMERICSERV);</div></div><!-- fragment --><h1><a class="anchor" id="wsdd_5"></a>
+<div class="fragment"><div class="line"><span class="keywordtype">char</span> host[1024], port[16];</div><div class="line">getnameinfo((<span class="keyword">struct</span> sockaddr*)&amp;soap-&gt;peer, soap-&gt;peerlen, host, <span class="keyword">sizeof</span>(host), port, 16, NI_DGRAM | NI_NAMEREQD | NI_NUMERICSERV);</div></div><!-- fragment --><p>The <a class="el" href="wsddapi_8c.html#af00e0661c0105c3ba658598d5131f185">soap_wsdd_ProbeMatches</a> function takes an array of <a class="el" href="structwsdd_____probe_matches_type.html">wsdd__ProbeMatchesType</a> matches to transmit. This array is created by calling functions <a class="el" href="wsddapi_8c.html#ab76b80149b6368e770386db944416670">soap_wsdd_init_ProbeMatches</a> and then <a class="el" href="wsddapi_8c.html#a76d323b0c51a45d6a1ce8ec8e45ae642">soap_wsdd_add_ProbeMatch</a> multiple times. Each call adds an element to the matches:</p>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *endpoint, *types, *scopes, *matchby, *xaddrs;</div><div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> version;</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *relatesto, *to;</div><div class="line"><span class="keyword">struct </span><a class="code" href="structwsdd_____probe_matches_type.html">wsdd__ProbeMatchesType</a> matches;</div><div class="line"><a class="code" href="wsddapi_8h.html#ad3a76f8ee99b6a2d5a6e30d2d1d3badd">soap_wsdd_init_ProbeMatches</a>(soap, &amp;matches);</div><div class="line">...</div><div class="line"><span class="comment">// repeat this to add multiple matches:</span></div><div class="line">if (<a class="code" href="wsddapi_8h.html#a4f4515c5b9e25069b3a6051ffa73d288">soap_wsdd_add_ProbeMatch</a>(soap, &amp;matches, endpoint, types, scopes, matchby, xaddrs, version))</div><div class="line">  ... <span class="comment">// out of memory</span></div><div class="line">...</div><div class="line"><span class="comment">// send the ProbeMatches message</span></div><div class="line">if (<a class="code" href="wsddapi_8h.html#ac1fd8fdfb24767d214f68659bfbe4187">soap_wsdd_ProbeMatches</a>(soap, endpoint, <a class="code" href="wsaapi_8h.html#ac2b81c42093fc9fcadcf86e7d801e03b">soap_wsa_rand_uuid</a>(soap), relatesto, to, &amp;matches))</div><div class="line">  ... <span class="comment">// an error occurred</span></div></div><!-- fragment --><p>After calling <a class="el" href="wsddapi_8c.html#a76d323b0c51a45d6a1ce8ec8e45ae642">soap_wsdd_add_ProbeMatch</a> it is possible to add additional WS-Addressing header values to this matches array element. For example the WS-Addressing reference parameters channel instance:</p>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsddapi_8h.html#a4f4515c5b9e25069b3a6051ffa73d288">soap_wsdd_add_ProbeMatch</a>(soap, &amp;matches, endpoint, types, scopes, matchby, xaddrs, version))</div><div class="line">  ... <span class="comment">// out of memory</span></div><div class="line"><span class="comment">// now allocate and add the WS-Addresssing reference parameters</span></div><div class="line"><span class="keyword">struct </span>wsa5__EndpointReference *ref = &amp;matches.ProbeMatch[matches.__sizeProbeMatch - 1].wsa5__EndpointReference;</div><div class="line">ref-&gt;ReferenceParameters = (<span class="keyword">struct </span><a class="code" href="structwsa5_____reference_parameters_type.html">wsa5__ReferenceParametersType</a>*)soap_malloc(soap, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> <a class="code" href="structwsa5_____reference_parameters_type.html">wsa5__ReferenceParametersType</a>));</div><div class="line"><span class="keywordflow">if</span> (ref == NULL)</div><div class="line">  ... <span class="comment">// out of memory</span></div><div class="line">soap_default_wsa5__ReferenceParametersType(soap, ref-&gt;ReferenceParameters);</div><div class="line">ref-&gt;ReferenceParameters-&gt;chan__ChannelInstance = ...</div></div><!-- fragment --><p>See also the <a href="../../databinding/html/index.html">Data binding</a> documentation on allocating and initializing C/C++ data in managed memory, managed by the <code>soap</code> context.</p>
+<h1><a class="anchor" id="wsdd_5"></a>
 Generating C++ Server Objects</h1>
 <p>The WSDD plugin is developed to support C and C++. To support C++ server objects generated with soapcpp2 option <code>-j</code> (or <code>-i</code>), run soapcpp2 again: </p><pre class="fragment">soapcpp2 -a -j -Iimport import/wsdd.h
 </pre><p>You should define in your C++ code the following wrappers (use <code>this</code> instead of <code>this-&gt;soap</code> below with soapcpp2 option <code>-i</code>):</p>
@@ -135,10 +138,10 @@ Miscellaneous</h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2019, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Aug 27 2019 13:07:23 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Sep 16 2020 10:35:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

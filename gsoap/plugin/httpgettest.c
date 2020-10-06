@@ -60,6 +60,7 @@ cc -DWITH_NONAMESPACES -DWITH_OPENSSL -DWITH_GZIP -Iplugin -o httpgettest httpge
 
 int main(int argc, char **argv)
 { struct soap soap;
+  size_t len = 0;
   char *body;
   if (argc < 2)
   { fprintf(stderr, "Usage: httpgettest URL\n");
@@ -74,10 +75,10 @@ int main(int argc, char **argv)
   }
   if (soap.http_content)
     printf("HTTP Content Type: %s\n", soap.http_content);
-  body = soap_http_get_body(&soap, NULL);
+  body = soap_http_get_body(&soap, &len);
   soap_end_recv(&soap);
   if (body)
-    printf("HTTP Body:\n%s\n", body);
+    printf("HTTP Body (%zu bytes) :\n%s\n", len, body);
   soap_end(&soap);
   soap_done(&soap);
   return 0;
