@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.107
+        stdsoap2.c[pp] 2.8.108
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208107
+#define GSOAP_LIB_VERSION 208108
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.107 2020-10-06 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.108 2020-10-16 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.107 2020-10-06 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.108 2020-10-16 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -14692,6 +14692,11 @@ soap_peek_element(struct soap *soap)
         soap->attributes = tp;
       }
     }
+    else if (tp->visible)
+    {
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Duplicate attribute in %s\n", soap->tag));
+      return soap->error = SOAP_SYNTAX_ERROR; /* redefined (duplicate) attribute */
+    }
     while (soap_coblank(c))
       c = soap_get1(soap);
     if (c == '=')
@@ -14789,11 +14794,6 @@ soap_peek_element(struct soap *soap)
         tp->value = s;
         tp->size = k;
 #endif
-      }
-      if (tp->visible)
-      {
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Duplicate attribute in %s\n", soap->tag));
-        return soap->error = SOAP_SYNTAX_ERROR; /* redefined (duplicate) attribute */
       }
       tp->visible = 2; /* seen this attribute w/ value */
       do
@@ -20995,7 +20995,7 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
   {
     char *t;
     soap->length = 0;
-    /* http content length != 0 and uncompressed body */
+    /* http content length != 0 and uncompressed body and body length does not exceed size_t max size */
     if ((SOAP_MAXALLOCSIZE != 0 && n + k > SOAP_MAXALLOCSIZE) || n + k > (ULONG64)((size_t)-2))
     {
       soap->error = SOAP_EOM;
@@ -21005,7 +21005,7 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
     if (s)
     {
       size_t i = 0;
-      soap_strcpy(t, n + 1, prefix);
+      soap_memcpy(t, n, prefix, n);
       t += n;
       while (i < k)
       {
@@ -21014,7 +21014,7 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
           if (soap_recv(soap))
             break;
         if (soap->buflen - soap->bufidx > k - i)
-          m = k - i;
+          m = (size_t)k - i;
         else
           m = soap->buflen - soap->bufidx;
         soap_memcpy(t, (size_t)k + n + 1 - i, soap->buf + soap->bufidx, m);
@@ -21042,7 +21042,7 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
       s = (char*)soap_push_block(soap, NULL, n);
       if (!s)
         return NULL;
-      soap_strcpy(s, n + 1, prefix);
+      soap_memcpy(s, n, prefix, n);
       l += n;
     }
     for (;;)
@@ -22559,7 +22559,7 @@ soap_strerror(struct soap *soap)
   {
 #ifndef WIN32
 # ifdef HAVE_STRERROR_R
-#  if !defined(_GNU_SOURCE) || (!_GNU_SOURCE && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)) || defined(__ANDROID__) || !defined(__GLIBC__))
+#  if !defined(_GNU_SOURCE) || (!_GNU_SOURCE && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600))) /* || !defined(__GLIBC__)) */
     err = strerror_r(err, soap->msgbuf, sizeof(soap->msgbuf)); /* XSI-compliant */
     if (err != 0)
       soap_strcpy(soap->msgbuf, sizeof(soap->msgbuf), "unknown error");

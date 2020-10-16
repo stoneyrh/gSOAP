@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.107
+        stdsoap2.h 2.8.108
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208107
+#define GSOAP_VERSION 208108
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -655,6 +655,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 
 #ifndef WITH_NOSTDLIB
 # include <stdlib.h>
+# include <stddef.h>
 # include <stdio.h>
 # include <string.h>
 # if !defined(HAVE_CONFIG_H) || defined(HAVE_CTYPE_H)
@@ -2108,9 +2109,14 @@ struct soap_cookie
 SOAP_FMAC1 struct soap_multipart* SOAP_FMAC2 soap_next_multipart(struct soap_multipart*);
 
 #ifdef __cplusplus
-class soap_multipart_iterator : public std::iterator<std::forward_iterator_tag,soap_multipart>
+class soap_multipart_iterator
 {
  public:
+  typedef ptrdiff_t difference_type;
+  typedef soap_multipart value_type;
+  typedef soap_multipart& reference;
+  typedef soap_multipart* pointer;
+  typedef std::forward_iterator_tag iterator_category;
   struct soap_multipart *content;
   soap_multipart_iterator() : content(NULL)                      { }
   soap_multipart_iterator(struct soap_multipart *p) : content(p) { }
@@ -2140,10 +2146,10 @@ struct soap_dime
 #ifdef __cplusplus
   typedef soap_multipart_iterator iterator;
   typedef soap_multipart_iterator const_iterator;
-  const_iterator cbegin() { return begin(); }
-  const_iterator cend()   { return end(); }
-  iterator begin()        { soap_multipart_iterator iter(list); return iter; };
-  iterator end()          { soap_multipart_iterator iter(NULL); return iter; };
+  const_iterator cbegin() const { soap_multipart_iterator iter(list); return iter; }
+  const_iterator cend() const   { soap_multipart_iterator iter(NULL); return iter; }
+  iterator begin()              { soap_multipart_iterator iter(list); return iter; }
+  iterator end()                { soap_multipart_iterator iter(NULL); return iter; }
 #endif
 };
 #endif
@@ -2158,10 +2164,10 @@ struct soap_mime
 #ifdef __cplusplus
   typedef soap_multipart_iterator iterator;
   typedef soap_multipart_iterator const_iterator;
-  const_iterator cbegin() { return begin(); }
-  const_iterator cend()   { return end(); }
-  iterator begin()        { soap_multipart_iterator iter(list); return iter; };
-  iterator end()          { soap_multipart_iterator iter(NULL); return iter; };
+  const_iterator cbegin() const { soap_multipart_iterator iter(list); return iter; }
+  const_iterator cend() const   { soap_multipart_iterator iter(NULL); return iter; }
+  iterator begin()              { soap_multipart_iterator iter(list); return iter; }
+  iterator end()                { soap_multipart_iterator iter(NULL); return iter; }
 #endif
 };
 #endif
@@ -2353,9 +2359,14 @@ SOAP_FMAC1 struct soap_dom_element * SOAP_FMAC2 soap_dom_find_next(const struct 
 
 #ifndef WITH_LEANER
 #ifdef __cplusplus
-class SOAP_CMAC soap_dom_attribute_iterator : public std::iterator<std::forward_iterator_tag,soap_dom_attribute>
+class SOAP_CMAC soap_dom_attribute_iterator
 {
  public:
+  typedef ptrdiff_t difference_type;
+  typedef soap_dom_attribute value_type;
+  typedef soap_dom_attribute& reference;
+  typedef soap_dom_attribute* pointer;
+  typedef std::forward_iterator_tag iterator_category;
   struct soap_dom_attribute *iter;
   const char *nstr;
   const char *name;
@@ -2458,9 +2469,14 @@ struct SOAP_CMAC soap_dom_attribute
 
 #ifndef WITH_LEANER
 #ifdef __cplusplus
-class SOAP_CMAC soap_dom_element_iterator : public std::iterator<std::forward_iterator_tag,soap_dom_element>
+class SOAP_CMAC soap_dom_element_iterator
 {
  public:
+  typedef ptrdiff_t difference_type;
+  typedef soap_dom_element value_type;
+  typedef soap_dom_element& reference;
+  typedef soap_dom_element* pointer;
+  typedef std::forward_iterator_tag iterator_category;
   struct soap_dom_element *iter;
   struct soap_dom_element *stop;
   const char *nstr;

@@ -150,6 +150,7 @@ struct _struct
                         _struct(const struct _struct&);
                         _struct(struct soap*);
                         _struct(struct soap*, int);
+  struct _struct&       operator=(const struct _struct&);
   extern bool           empty() const;  ///< true if struct is empty
   int                   size() const;   ///< number of accessors in struct
   struct value&         operator[](int) const;///< struct index (negative to get from end)
@@ -187,6 +188,7 @@ struct _array
                         _array(const struct _array&);
                         _array(struct soap*);
                         _array(struct soap*, int);
+  struct _array&        operator=(const struct _array&);
   extern bool           empty() const;  ///< true if array is empty
   int                   size() const;   ///< number of array elements
   void                  size(int);      ///< (re)set number of array elements
@@ -271,6 +273,7 @@ struct value
   struct _struct&       operator=(const struct _struct&);
   struct _base64&       operator=(const struct _base64&);
   struct _rawdata&      operator=(const struct _rawdata&);
+  struct value&         operator=(const struct value&);
   extern void           size(int);              ///< set/allocate size of array
   extern int            size() const;           ///< returns array/struct size or 0
   extern bool           empty() const;          ///< true if empty array or struct

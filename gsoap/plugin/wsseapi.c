@@ -5881,7 +5881,7 @@ soap_wsse_session_verify(struct soap *soap, const char hash[SOAP_SMD_SHA1_SIZE],
       session->next = soap_wsse_session;
       session->expired = expired;
       (void)soap_memcpy((void*)session->hash, sizeof(session->hash), (const void*)hash, SOAP_SMD_SHA1_SIZE);
-      soap_strcpy(session->nonce, l + 1, nonce);
+      soap_strcpy(session->nonce, l + 1, nonce); /* nonce[0..l] allocated as nonce[1] + l bytes to fit the last \0 */
       soap_wsse_session = session;
     }
     session = NULL;

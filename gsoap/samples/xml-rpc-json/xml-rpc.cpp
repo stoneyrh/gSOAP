@@ -622,6 +622,15 @@ _rawdata& value::operator=(const _rawdata& b)
   return *(_rawdata*)ref;
 }
 
+value& value::operator=(const value& v)
+{
+  __type = v.__type;
+  ref = v.ref;
+  __any = v.__any;
+  soap = v.soap;
+  return *this;
+}
+
 void value::size(int n)
 {
   if (__type == SOAP_TYPE__array)
@@ -858,6 +867,14 @@ _struct::_struct(struct soap *soap, int size)
   }
 }
 
+_struct& _struct::operator=(const struct _struct& r)
+{
+  __size = r.__size;
+  member = r.member;
+  soap = r.soap;
+  return *this;
+}
+
 bool _struct::empty() const
 {
   return __size == 0;
@@ -996,6 +1013,13 @@ _array::_array(struct soap *soap, int size)
     for (int i = 0; i < data.__size; i++)
       soap_default_value(soap, &data.value[i]);
   }
+}
+
+_array& _array::operator=(const struct _array& a)
+{
+  data = a.data;
+  soap = a.soap;
+  return *this;
 }
 
 bool _array::empty() const

@@ -78,7 +78,7 @@ namespace json {
 #endif
 
 /// bidirectional const iterator over values (struct or array or one atomic value)
-class value_const_iterator : public std::iterator<std::bidirectional_iterator_tag,struct value>
+class value_const_iterator
 {
   friend class value_iterator;
  private:
@@ -86,6 +86,11 @@ class value_const_iterator : public std::iterator<std::bidirectional_iterator_ta
   struct member*                _member;
   int                           _index;
  public:
+  typedef ptrdiff_t difference_type;
+  typedef struct value value_type;
+  typedef struct value& reference;
+  typedef struct value* pointer;
+  typedef std::bidirectional_iterator_tag iterator_category;
                                 value_const_iterator() : _value(NULL), _member(NULL), _index(0) { }
                                 value_const_iterator(struct value* v) : _value(v),  _member(NULL), _index(0) { }
                                 value_const_iterator(struct value* v, struct member* m) : _value(v), _member(m), _index(0) { }
@@ -204,7 +209,7 @@ class value_const_iterator : public std::iterator<std::bidirectional_iterator_ta
 };
 
 /// bidirectional iterator over values (struct or array or one atomic value)
-class value_iterator : public std::iterator<std::bidirectional_iterator_tag,struct value>
+class value_iterator
 {
   friend class value_const_iterator;
  private:
@@ -212,6 +217,10 @@ class value_iterator : public std::iterator<std::bidirectional_iterator_tag,stru
   struct member*                _member;
   int                           _index;
  public:
+  typedef ptrdiff_t difference_type;
+  typedef struct value value_type;
+  typedef struct value& reference;
+  typedef struct value* pointer;
                                 value_iterator() : _value(NULL), _member(NULL), _index(0) { }
                                 value_iterator(struct value* v) : _value(v),  _member(NULL), _index(0) { }
                                 value_iterator(struct value* v, struct member* m) : _value(v), _member(m), _index(0) { }

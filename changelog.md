@@ -1637,12 +1637,17 @@ Version 2.8.106 (8/22/2020)
 
 - Minor update for struct/class `char*` and `wchar_t*` members declared with explicit default/fixed values: if the corresponding XML element value is absent in the XML payload then their deserialized value will be NULL (instead of the default value as in prior versions).  Note that empty XML element values in the XML payload always produce default values.  See [databinding: default and fixed values](https://www.genivia.com/doc/databinding/html/index.html#toxsd9-4).  New soapcpp2 option `-z4` to revert to the old behavior.
 
-Version 2.8.107 (10/6/2020) {#latest}
+Version 2.8.107 (10/6/2020)
 ---
 
 - Faster `soap_http_get_body()` to extract a HTTP message body to a string.
 - Added `WITH_CRTOLF` compile-time flag to force serialization of C/C++ strings containing CRLF to LF and plain CR to LF in XML.
 - Improved digital signature verification when XML is indented with white space containing CRLF between XML elements instead of plain LF.
+
+Version 2.8.108 (10/16/2020) {#latest}
+---
+
+- Minor update for compliance with C++17 and C++20 compilers and improved portability.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

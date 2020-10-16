@@ -789,7 +789,7 @@ SOAP_FMAC2
 soap_mec_size(int alg, SOAP_MEC_KEY_TYPE *pkey)
 {
   if (alg & SOAP_MEC_ENV)
-    return EVP_PKEY_size(pkey);
+    return (size_t)EVP_PKEY_size(pkey);
   switch (alg & SOAP_MEC_ALGO & ~SOAP_MEC_GCM)
   {
     case SOAP_MEC_DES_CBC:
@@ -879,7 +879,7 @@ soap_mec_upd_enc(struct soap *soap, struct soap_mec_data *data, const char **s, 
   if (m > (int)data->buflen)
   {
     char *t = data->buf;
-    data->buflen = m; /* + slack? */
+    data->buflen = (size_t)m; /* + slack? */
     data->buf = (char*)SOAP_MALLOC(soap, m);
     if (t)
     {
