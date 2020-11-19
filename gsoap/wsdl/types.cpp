@@ -3838,25 +3838,21 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
   }
   t = uname(URI);
   s = strstr(t, "__union");
-#if 0  // Alternative name for choice selector (old style):
-  r = aname(NULL, NULL, name);
-#else
   if (s)
-    r = s + 7;
-  if (!r || !*r)
   {
-    if (strncmp(t, "union", 5) == 0)
-    {
-      r = t + 5;
-      s = r;
-    }
-    else
-    {
-      r = t;
-      s = t;
-    }
+    r = s + 7;
   }
-#endif
+  else
+  {
+    size_t l = strlen(t) + 2;
+    char *q = (char*)emalloc(l + 1);
+    (SOAP_SNPRINTF(q, l + 1, l), "__%s", t);
+    s = q;
+    if (strncmp(t, "union", 5) == 0)
+      r = t + 5;
+    else
+      r = t;
+  }
   if (max && strcmp(max, "1"))
   {
     if (!cflag && !sflag && (!zflag || zflag > 7))
@@ -4272,7 +4268,21 @@ void Types::gen_substitutions(const char *URI, const xs__element& element, SetOf
       fprintf(stream, "\n");
       t = uname(URI);
       s = strstr(t, "__union");
-      r = aname(NULL, NULL, name);
+      if (s)
+      {
+        r = s + 7;
+      }
+      else
+      {
+        size_t l = strlen(t) + 2;
+        char *q = (char*)emalloc(l + 1);
+        (SOAP_SNPRINTF(q, l + 1, l), "__%s", t);
+        s = q;
+        if (strncmp(t, "union", 5) == 0)
+          r = t + 5;
+        else
+          r = t;
+      }
       if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
       {
         if (with_union)

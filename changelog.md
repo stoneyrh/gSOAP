@@ -1644,10 +1644,18 @@ Version 2.8.107 (10/6/2020)
 - Added `WITH_CRTOLF` compile-time flag to force serialization of C/C++ strings containing CRLF to LF and plain CR to LF in XML.
 - Improved digital signature verification when XML is indented with white space containing CRLF between XML elements instead of plain LF.
 
-Version 2.8.108 (10/16/2020) {#latest}
+Version 2.8.108 (10/16/2020)
 ---
 
 - Minor update for compliance with C++17 and C++20 compilers and improved portability.
+
+Version 2.8.109 (11/19/2020) {#latest}
+---
+
+- Fixed wsdl2h output for a special case when schemas have no namespaces.
+- Improved streaming MIME/MTOM attachment output.
+- Removed C/C++ compiler warnings.
+- Updated plugins to further harden code robustness to errors.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -1460,7 +1460,7 @@ http_da_session_update(const char *realm, const char *nonce, const char *opaque,
   MUTEX_LOCK(http_da_session_lock);
 
   for (session = http_da_session; session; session = session->next)
-    if (!strcmp(session->realm, realm) && !strcmp(session->nonce, nonce) && !strcmp(session->opaque, opaque))
+    if (session->realm && session->nonce && session->opaque && !strcmp(session->realm, realm) && !strcmp(session->nonce, nonce) && !strcmp(session->opaque, opaque))
       break;
 
   if (session)

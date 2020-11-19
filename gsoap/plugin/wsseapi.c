@@ -2957,7 +2957,7 @@ soap_wsse_verify_Password(struct soap *soap, const char *password)
     else
     {
       /* check password text */
-      if (!strcmp(token->Password->__item, password))
+      if (token->Password->__item && !strcmp(token->Password->__item, password))
         return SOAP_OK;
     }
   }
@@ -3119,6 +3119,7 @@ soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valu
 {
   _wsse__BinarySecurityToken *token = soap_wsse_BinarySecurityToken(soap, id);
   DBGFUN1("soap_wsse_get_BinarySecurityToken", "id=%s", id?id:"");
+  *data = NULL;
   if (token)
   {
     *valueType = token->ValueType;
@@ -3149,9 +3150,9 @@ soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id)
   X509 *cert = NULL;
   char *valueType = NULL;
 #if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
-  const unsigned char *data;
+  const unsigned char *data = NULL;
 #else
-  unsigned char *data;
+  unsigned char *data = NULL;
 #endif
   int size;
   DBGFUN1("soap_wsse_get_BinarySecurityTokenX509", "id=%s", id?id:"");
@@ -3271,7 +3272,7 @@ int
 SOAP_FMAC2
 soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier)
 {
-  char *URI;
+  char *URI = NULL;
   size_t l;
   _wsse__Security *security = soap_wsse_add_Security(soap);
   DBGFUN2("soap_wsse_add_SecurityContextToken", "id=%s", id, "identifier=%s", identifier?identifier:"");
@@ -3653,7 +3654,7 @@ soap_wsse_add_SignatureValue(struct soap *soap, int alg, const void *key, int ke
 {
   ds__SignatureType *signature = soap_wsse_add_Signature(soap);
   const char *method = NULL;
-  char *sig;
+  char *sig = NULL;
   int siglen;
   int err;
   const char *c14ninclude = soap->c14ninclude;
@@ -3884,10 +3885,10 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
    && signature->SignedInfo
    && signature->SignatureValue)
   {
-    char *sig;
-    const char *sigval;
+    char *sig = NULL;
+    const char *sigval = NULL;
     int method, bits, siglen, sigvallen;
-    struct soap_dom_element *elt;
+    struct soap_dom_element *elt = NULL;
     /* check that we are using the intended signature algorithm */
     if (soap_wsse_get_SignedInfo_SignatureMethod(soap, &method, &bits))
       return soap->error;
@@ -3944,8 +3945,8 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
           for (att = prt->atts; att; att = att->next)
           {
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM attribute = %s\n", att->name));
-            if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
-              soap_attribute(soap, att->name, att->text);
+            if (att->name && att->text && !strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
+              (void)soap_attribute(soap, att->name, att->text);
           }
         }
         /* push xmlns="..." */
@@ -3953,9 +3954,9 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
         {
           for (att = prt->atts; att; att = att->next)
           {
-            if (!strcmp(att->name, "xmlns"))
+            if (att->name && att->text && !strcmp(att->name, "xmlns"))
             {
-              soap_attribute(soap, att->name, att->text);
+              (void)soap_attribute(soap, att->name, att->text);
               prt = NULL;
               break;
             }
@@ -4239,17 +4240,17 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
         for (att = prt->atts; att; att = att->next)
         {
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM attribute = %s\n", att->name));
-          if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
-            soap_attribute(soap, att->name, att->text);
+          if (att->name && att->text && !strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
+            (void)soap_attribute(soap, att->name, att->text);
         }
       }
       for (prt = dom->prnt; prt; prt = prt->prnt)
       {
         for (att = prt->atts; att; att = att->next)
         {
-          if (!strcmp(att->name, "xmlns"))
+          if (att->name && att->text && !strcmp(att->name, "xmlns"))
           {
-            soap_attribute(soap, att->name, att->text);
+            (void)soap_attribute(soap, att->name, att->text);
             prt = NULL;
             break;
           }
@@ -5090,7 +5091,7 @@ soap_wsse_verify_EncryptedKey(struct soap *soap)
             if (elt)
             {
               att = soap_att_get(elt, NULL, "EncodingType");
-              if (att)
+              if (att && soap_att_get_text(att))
                 keybase = !strcmp(soap_att_get_text(att), wsse_Base64BinaryURI);
               att = soap_att_get(elt, NULL, "ValueType");
               keytype = soap_att_get_text(att);
@@ -5140,7 +5141,7 @@ soap_wsse_verify_EncryptedKey(struct soap *soap)
   {
     int keylen;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Verify EncryptedKey %s alg=%x\n", keyalgo, data->deco_alg));
-    if (keydata)
+    if (keytype && keydata)
     {
       if (!strcmp(keytype, wsse_X509v3URI))
       {
@@ -6111,9 +6112,8 @@ soap_psha256(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const
 */
 static int soap_p_hash(struct soap *soap, const char *hmac_key, size_t hmac_key_len, const char *secret, size_t secretlen, int alg, char HA[], size_t HA_len, char temp[], char *phash, size_t phashlen)
 {
-  char *buffer;
   size_t i;
-  buffer = (char*)SOAP_MALLOC(soap, HA_len + secretlen);
+  char *buffer = (char*)SOAP_MALLOC(soap, HA_len + secretlen);
   if (!buffer)
     return soap->error = SOAP_EOM;
   i = 0;
@@ -7351,7 +7351,7 @@ soap_wsse_element_begin_out(struct soap *soap, const char *tag, int id, const ch
       soap_strcpy(URI + 1, l + 1, Id);
     }
 #endif
-    if (!strcmp(tag, "SOAP-ENV:Body"))
+    if (tag && !strcmp(tag, "SOAP-ENV:Body"))
     {
       if (soap_element(soap, tag, id, type)
        || soap_element_start_end_out(soap, NULL))
@@ -7401,7 +7401,7 @@ soap_wsse_element_end_out(struct soap *soap, const char *tag)
   }
   if (data && (!data->encid || soap_tagsearch(data->encid, tag)))
   {
-    if (!strcmp(tag, "SOAP-ENV:Body"))
+    if (tag && !strcmp(tag, "SOAP-ENV:Body"))
     {
       if (soap_wsse_encrypt_end(soap))
         return soap->error;

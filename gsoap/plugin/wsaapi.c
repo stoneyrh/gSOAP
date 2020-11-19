@@ -1056,7 +1056,7 @@ soap_wsa_fault_subcode_action(struct soap *soap, int flag, const char *faultsubc
       oldheader->SOAP_WSA(FaultTo)->Address = oldheader->SOAP_WSA(ReplyTo)->Address;
   }
   /* use FaultTo */
-  if (oldheader && oldheader->SOAP_WSA(FaultTo) && !strcmp(oldheader->SOAP_WSA(FaultTo)->Address, soap_wsa_noneURI))
+  if (oldheader && oldheader->SOAP_WSA(FaultTo) && oldheader->SOAP_WSA(FaultTo)->Address && !strcmp(oldheader->SOAP_WSA(FaultTo)->Address, soap_wsa_noneURI))
     return soap_send_empty_response(soap, SOAP_OK);     /* HTTP ACCEPTED */
   soap->header = NULL;
   /* allocate a new header */

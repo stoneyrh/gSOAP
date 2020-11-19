@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.108
+        DOM API v5 gSOAP 2.8.109
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208108
+#define GSOAP_LIB_VERSION 208109
 
 #include "stdsoap2.h"
 
@@ -318,10 +318,10 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
 static int
 out_attribute(struct soap *soap, const char *prefix, const char *name, const char *text, int isearly)
 {
+  int err = SOAP_OK;
   char *s;
   const char *t;
   size_t l;
-  int err;
   if (!text)
     text = "";
   if (!prefix || !*prefix)
@@ -501,6 +501,7 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
         }
         else
         {
+          int err = SOAP_OK;
           char *s;
           size_t l = strlen(prefix) + strlen(tag);
           if (l + 2 < l || (SOAP_MAXALLOCSIZE > 0 && l + 2 > SOAP_MAXALLOCSIZE))
@@ -517,10 +518,11 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
           }
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' end\n", tag));
           (SOAP_SNPRINTF(s, l + 2, l + 1), "%s:%s", prefix, tag);
-          if (soap_element_end_out(soap, s))
-            return soap->error;
+          err = soap_element_end_out(soap, s);
           if (s != soap->msgbuf)
             SOAP_FREE(soap, s);
+          if (err)
+            return err;
         }
       }
     }

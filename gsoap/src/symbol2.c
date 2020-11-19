@@ -19042,9 +19042,30 @@ soap_in(Tnode *typ)
               fprintf(fout, "\n\t\tif (a->size() < %ld)\n\t\t\treturn soap->error = SOAP_LENGTH;", min);
           }
           else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+          {
             fprintf(fout, "\n\t\tif (*a %s %.17lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->rmin);
+          }
           else if (typ->imin > 0 || typ->type < Tuchar || typ->type > Tullong)
-            fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->imin);
+          {
+            int check = 1;
+            switch (typ->type)
+            {
+              case Tchar:
+                check = typ->incmin ? typ->imin > -128 : typ->imin >= -128;
+                break;
+              case Tshort:
+                check = typ->incmin ? typ->imin > -32768 : typ->imin >= -32768;
+                break;
+              case Tint:
+              case Tlong:
+                check = typ->incmin ? typ->imin > -2147483648LL : typ->imin >= -2147483648LL;
+                break;
+              default:
+                break;
+            }
+            if (check)
+              fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->imin);
+          }
         }
         if (typ->hasmax)
         {
@@ -19055,9 +19076,40 @@ soap_in(Tnode *typ)
               fprintf(fout, "\n\t\tif (a->size() > %ld)\n\t\t\treturn soap->error = SOAP_LENGTH;", max);
           }
           else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+          {
             fprintf(fout, "\n\t\tif (*a %s %.17lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->rmax);
+          }
           else if (typ->imax >= 0 || typ->type < Tuchar || typ->type > Tullong)
-            fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->imax);
+          {
+            int check = 1;
+            switch (typ->type)
+            {
+              case Tchar:
+                check = typ->incmax ? typ->imax < 127 : typ->imax <= 127;
+                break;
+              case Tshort:
+                check = typ->incmax ? typ->imax < 32767 : typ->imax <= 32767;
+                break;
+              case Tint:
+              case Tlong:
+                check = typ->incmax ? typ->imax < 2147483647 : typ->imax <= 2147483647;
+                break;
+              case Tuchar:
+                check = typ->incmax ? typ->imax < 255 : typ->imax <= 255;
+                break;
+              case Tushort:
+                check = typ->incmax ? typ->imax < 65535 : typ->imax <= 65535;
+                break;
+              case Tuint:
+              case Tulong:
+                check = typ->incmax ? typ->imax < 4294967295 : typ->imax <= 4294967295;
+                break;
+              default:
+                break;
+            }
+            if (check)
+              fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->imax);
+          }
         }
       }
       fprintf(fout, "\n\t}\n\treturn err;\n}");
@@ -19134,9 +19186,30 @@ soap_in(Tnode *typ)
             fprintf(fout, "\n\tif (a && a->size() < %ld)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", min);
         }
         else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+        {
           fprintf(fout, "\n\tif (a && *a %s %.17lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->rmin);
+        }
         else if (typ->imin > 0 || typ->type < Tuchar || typ->type > Tullong)
-          fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->imin);
+        {
+          int check = 1;
+          switch (typ->type)
+          {
+            case Tchar:
+              check = typ->incmin ? typ->imin > -128 : typ->imin >= -128;
+              break;
+            case Tshort:
+              check = typ->incmin ? typ->imin > -32768 : typ->imin >= -32768;
+              break;
+            case Tint:
+            case Tlong:
+              check = typ->incmin ? typ->imin > -2147483648LL : typ->imin >= -2147483648LL;
+              break;
+            default:
+              break;
+          }
+          if (check)
+            fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->imin);
+        }
       }
       if (typ->hasmax)
       {
@@ -19147,9 +19220,40 @@ soap_in(Tnode *typ)
             fprintf(fout, "\n\tif (a && a->size() > %ld)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", max);
         }
         else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+        {
           fprintf(fout, "\n\tif (a && *a %s %.17lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->rmax);
+        }
         else if (typ->imax >= 0 || typ->type < Tuchar || typ->type > Tullong)
-          fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->imax);
+        {
+          int check = 1;
+          switch (typ->type)
+          {
+            case Tchar:
+              check = typ->incmax ? typ->imax < 127 : typ->imax <= 127;
+              break;
+            case Tshort:
+              check = typ->incmax ? typ->imax < 32767 : typ->imax <= 32767;
+              break;
+            case Tint:
+            case Tlong:
+              check = typ->incmax ? typ->imax < 2147483647 : typ->imax <= 2147483647;
+              break;
+            case Tuchar:
+              check = typ->incmax ? typ->imax < 255 : typ->imax <= 255;
+              break;
+            case Tushort:
+              check = typ->incmax ? typ->imax < 65535 : typ->imax <= 65535;
+              break;
+            case Tuint:
+            case Tulong:
+              check = typ->incmax ? typ->imax < 4294967295 : typ->imax <= 4294967295;
+              break;
+            default:
+              break;
+          }
+          if (check)
+            fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->imax);
+        }
       }
     }
     fprintf(fout, "\n\treturn a;\n}");
