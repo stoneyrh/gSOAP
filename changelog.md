@@ -1649,13 +1649,18 @@ Version 2.8.108 (10/16/2020)
 
 - Minor update for compliance with C++17 and C++20 compilers and improved portability.
 
-Version 2.8.109 (11/19/2020) {#latest}
+Version 2.8.109 (11/19/2020)
 ---
 
 - Fixed wsdl2h output for a special case when schemas have no namespaces.
 - Improved streaming MIME/MTOM attachment output.
 - Removed C/C++ compiler warnings.
 - Updated plugins to further harden code robustness to errors.
+
+Version 2.8.110 (01/17/2021) {#latest}
+---
+
+- Updated wsdl2h to correct an XML parsing rejection problem for the special case when XML schemas have no targetNamespaces (i.e. empty namespace, no namespace prefixes) for elements defined in a `<sequence>` schema component, the wsdl2h-generated struct/class member names require two underscores instead of one, such as `__Name_sequence`.)
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

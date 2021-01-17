@@ -1,10 +1,10 @@
 /*
-        stdsoap2.h 2.8.109
+        stdsoap2.h 2.8.110
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208109
+#define GSOAP_VERSION 208110
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2822,6 +2822,52 @@ struct SOAP_CMAC soap
   FILE *sendfd;         /* WinCE FILE* to send */
   FILE *recvfd;         /* WinCE FILE* to receive */
 #endif
+#if defined(WITH_OPENSSL)       /* OpenSSL */
+  int (*fsslauth)(struct soap*);
+  int (*fsslverify)(int, X509_STORE_CTX*);
+  BIO *bio;
+  SSL *ssl;
+  SSL_CTX *ctx;
+  SSL_SESSION *session;
+  const char *dhfile;
+  const char *randfile;
+#elif defined(WITH_GNUTLS)      /* GNUTLS */
+  int (*fsslauth)(struct soap*);
+  void *fsslverify;
+  gnutls_certificate_credentials_t xcred;       /* cert pointer */
+  gnutls_anon_client_credentials_t acred;       /* anon pointer */
+  gnutls_priority_t cache;                      /* priority cache pointer */
+  gnutls_session_t session;                     /* session pointer */
+  gnutls_dh_params_t dh_params;
+  gnutls_rsa_params_t rsa_params;
+#elif defined(WITH_SYSTEMSSL)   /* SYSTEM SSL */
+  int (*fsslauth)(struct soap*);
+  void *fsslverify;             /* N/A */
+  void *bio;                    /* N/A */
+  gsk_handle ctx;               /* environment */
+  gsk_handle ssl;               /* ssl socket */
+  void *session;                /* N/A */
+  const char *dhfile;           /* N/A */
+  const char *randfile;         /* N/A */
+#else                           /* No SSL/TLS */
+  void *fsslauth;               /* dummy members, to preserve struct size */
+  void *fsslverify;
+  void *bio;
+  void *ssl;
+  void *ctx;
+  void *session;
+  void *dh_params;
+  void *rsa_params;
+#endif
+  unsigned short ssl_flags;
+  const char *keyfile;
+  const char *keyid;
+  const char *password;
+  const char *cafile;
+  const char *capath;
+  const char *crlfile;
+  char session_host[SOAP_TAGLEN];
+  int session_port;
   size_t bufidx;        /* index in soap.buf[] */
   size_t buflen;        /* length of soap.buf[] content */
   soap_wchar ahead;     /* parser lookahead */
@@ -2929,52 +2975,6 @@ struct SOAP_CMAC soap
   } peer; /* set by soap_connect/soap_accept and by UDP recv */
   size_t peerlen;
 #endif
-#if defined(WITH_OPENSSL)       /* OpenSSL */
-  int (*fsslauth)(struct soap*);
-  int (*fsslverify)(int, X509_STORE_CTX*);
-  BIO *bio;
-  SSL *ssl;
-  SSL_CTX *ctx;
-  SSL_SESSION *session;
-  const char *dhfile;
-  const char *randfile;
-#elif defined(WITH_GNUTLS)      /* GNUTLS */
-  int (*fsslauth)(struct soap*);
-  void *fsslverify;
-  gnutls_certificate_credentials_t xcred;       /* cert pointer */
-  gnutls_anon_client_credentials_t acred;       /* anon pointer */
-  gnutls_priority_t cache;                      /* priority cache pointer */
-  gnutls_session_t session;                     /* session pointer */
-  gnutls_dh_params_t dh_params;
-  gnutls_rsa_params_t rsa_params;
-#elif defined(WITH_SYSTEMSSL)   /* SYSTEM SSL */
-  int (*fsslauth)(struct soap*);
-  void *fsslverify;             /* N/A */
-  void *bio;                    /* N/A */
-  gsk_handle ctx;               /* environment */
-  gsk_handle ssl;               /* ssl socket */
-  void *session;                /* N/A */
-  const char *dhfile;           /* N/A */
-  const char *randfile;         /* N/A */
-#else                           /* No SSL/TLS */
-  void *fsslauth;               /* dummy members, to preserve struct size */
-  void *fsslverify;
-  void *bio;
-  void *ssl;
-  void *ctx;
-  void *session;
-  void *dh_params;
-  void *rsa_params;
-#endif
-  unsigned short ssl_flags;
-  const char *keyfile;
-  const char *keyid;
-  const char *password;
-  const char *cafile;
-  const char *capath;
-  const char *crlfile;
-  char session_host[SOAP_TAGLEN];
-  int session_port;
 #ifdef SOAP_LOCALE_T
   SOAP_LOCALE_T c_locale;       /* if this does not compile, use ./configure --enable-xlocale or compile with -DWITH_INCLUDE_XLOCALE_H, or use -DWITH_NO_C_LOCALE to disable locale support */
 #else

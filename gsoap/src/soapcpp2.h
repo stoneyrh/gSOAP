@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL.
 --------------------------------------------------------------------------------
@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.109" /* Current version */
-# define GSOAP_VERSION 208109
+# define VERSION "2.8.110" /* Current version */
+# define GSOAP_VERSION 208110
 #endif
 
 #ifdef _WIN32

@@ -1,10 +1,10 @@
 /*
-        stdsoap2.c[pp] 2.8.109
+        stdsoap2.c[pp] 2.8.110
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208109
+#define GSOAP_LIB_VERSION 208110
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.109 2020-11-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.110 2021-01-17 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.109 2020-11-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.110 2021-01-17 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -708,7 +708,7 @@ fsend(struct soap *soap, const char *s, size_t n)
             udp_delay <<= 1;
             if (udp_delay > 500) /* UDP_UPPER_DELAY */
               udp_delay = 500;
-          } while (nwritten < 0 && --udp_repeat > 0);
+          } while (nwritten < 0 && udp_repeat-- > 1);
         }
         if (nwritten < 0)
         {
@@ -1084,7 +1084,7 @@ soap_query_decode(char *buf, size_t len, const char *val)
   {
     t = buf;
     s++;
-    while (*s && *s != '"' && --len)
+    while (*s && *s != '"' && len-- > 1)
       *t++ = *s++;
     *t = '\0';
     do s++;
@@ -1093,7 +1093,7 @@ soap_query_decode(char *buf, size_t len, const char *val)
   else
   {
     t = buf;
-    while (*s && *s != '&' && *s != '=' && --len)
+    while (*s && *s != '&' && *s != '=' && len-- > 1)
     {
       switch (*s)
       {
@@ -3478,7 +3478,7 @@ soap_getsizes(const char *attr, int *size, int dim)
     size[--dim] = (int)k;
     if (n > SOAP_MAXARRAYSIZE)
       return 0;
-  } while (dim > 0 && --i > 0 && attr[i] != '[');
+  } while (dim > 0 && i-- > 1 && attr[i] != '[');
   return n;
 }
 
@@ -6883,7 +6883,9 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
     }
   }
   else
+  {
     soap->peer.in.sin_addr.s_addr = htonl(INADDR_ANY);
+  }
   soap->peer.in.sin_port = htons((short)port);
   soap->errmode = 0;
   if (bind(soap->master, &soap->peer.addr, (int)soap->peerlen))
@@ -7931,12 +7933,12 @@ soap_decode(char *buf, size_t len, const char *val, const char *sep)
     if (*s == '"')
     {
       s++;
-      while (*s && *s != '"' && --i)
+      while (*s && *s != '"' && i-- > 1)
         *t++ = *s++;
     }
     else
     {
-      while (*s && !strchr(sep, *s) && --i)
+      while (*s && !strchr(sep, *s) && i-- > 1)
       {
         if (*s == '%' && s[1] && s[2])
         {
@@ -8527,7 +8529,7 @@ soap_encode_url(const char *s, char *t, int len)
   int n = len;
   if (s && n > 0)
   {
-    while ((c = *s++) && --n > 0)
+    while ((c = *s++) && n-- > 1)
     {
       if (c == '-'
        || c == '.'
@@ -12673,7 +12675,7 @@ soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized, 
   {
     for (np = soap->nlist; np; np = np->next)
     {
-      if (!strcmp(np->id, id) && ((!np->ns && *id) || (np->ns && !strcmp(np->ns, ns))))
+      if (!strcmp(np->id, id) && ((!np->ns && *id) || (ns && np->ns && !strcmp(np->ns, ns))))
         break;
     }
     if (np)
@@ -12914,21 +12916,16 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
   if (!soap->ns)
   {
     struct Namespace *ns = soap->local_namespaces;
-    int k = -1;
-    if (ns)
+    for (; ns && ns->id; ns++)
     {
-      while (k-- && ns->id)
+      const char *t = ns->out;
+      if (!t)
+        t = ns->ns;
+      if (*ns->id && t && *t)
       {
-        const char *t = ns->out;
-        if (!t)
-          t = ns->ns;
-        if (*ns->id && t && *t)
-        {
-          (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(ns->id) + 6), "xmlns:%s", ns->id);
-          if (soap_attribute(soap, soap->tmpbuf, t))
-            return soap->error;
-        }
-        ns++;
+        (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(ns->id) + 6), "xmlns:%s", ns->id);
+        if (soap_attribute(soap, soap->tmpbuf, t))
+          return soap->error;
       }
     }
   }
@@ -13045,7 +13042,7 @@ soap_strcat(char *t, size_t n, const char *s)
   {
     t += k;
     n -= k;
-    while (--n > 0 && *s)
+    while (n-- > 1 && *s)
       *t++ = *s++;
     *t = '\0';
   }
@@ -13069,7 +13066,7 @@ soap_strncat(char *t, size_t n, const char *s, size_t m)
     return 1;
   t += k;
   n -= k;
-  while (--n > 0 && *s)
+  while (n-- > 1 && *s)
     *t++ = *s++;
   *t = '\0';
   return 0;

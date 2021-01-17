@@ -3225,9 +3225,17 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minO
     document(sequence.annotation);
     s = sname(URI, "sequence");
     size_t l = strlen(s);
-    t = (char*)emalloc(l + 2);
-    soap_strcpy(t, l + 2, "_");
-    soap_strcpy(t + 1, l + 1, s);
+    t = (char*)emalloc(l + 3);
+    soap_strcpy(t, l + 3, "_");
+    if (*s != '_')
+    {
+      soap_strcpy(t + 1, l + 2, "_");
+      soap_strcpy(t + 2, l + 1, s);
+    }
+    else
+    {
+      soap_strcpy(t + 1, l + 2, s);
+    }
     s = strstr(s, "__");
     if (!s)
       s = t;
