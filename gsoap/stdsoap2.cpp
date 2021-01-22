@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.110
+        stdsoap2.c[pp] 2.8.111
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208110
+#define GSOAP_LIB_VERSION 208111
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.110 2021-01-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.111 2021-01-22 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.110 2021-01-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.111 2021-01-22 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -7928,30 +7928,27 @@ soap_decode(char *buf, size_t len, const char *val, const char *sep)
   for (s = val; *s; s++)
     if (*s != ' ' && *s != '\t' && !strchr(sep, *s))
       break;
-  if (len > 0)
+  if (*s == '"')
   {
-    if (*s == '"')
+    s++;
+    while (*s && *s != '"' && i-- > 1)
+      *t++ = *s++;
+  }
+  else
+  {
+    while (*s && !strchr(sep, *s) && i-- > 1)
     {
-      s++;
-      while (*s && *s != '"' && i-- > 1)
+      if (*s == '%' && s[1] && s[2])
+      {
+        *t++ = ((s[1] >= 'A' ? (s[1] & 0x7) + 9 : s[1] - '0') << 4)
+          + (s[2] >= 'A' ? (s[2] & 0x7) + 9 : s[2] - '0');
+        s += 3;
+      }
+      else
         *t++ = *s++;
     }
-    else
-    {
-      while (*s && !strchr(sep, *s) && i-- > 1)
-      {
-        if (*s == '%' && s[1] && s[2])
-        {
-          *t++ = ((s[1] >= 'A' ? (s[1] & 0x7) + 9 : s[1] - '0') << 4)
-                + (s[2] >= 'A' ? (s[2] & 0x7) + 9 : s[2] - '0');
-          s += 3;
-        }
-        else
-          *t++ = *s++;
-      }
-    }
-    buf[len - 1] = '\0'; /* appease static checkers that get confused */
   }
+  buf[len - 1] = '\0'; /* appease static checkers that get confused */
   *t = '\0';
   while (*s && !strchr(sep, *s))
     s++;
@@ -21246,7 +21243,7 @@ soap_set_endpoint(struct soap *soap, const char *endpoint)
       if (*s == ':')
       {
         s++;
-        if (*s != '@')
+        if (*s != '@' && s < t)
         {
           l = t - s + 1;
           r = r + strlen(r) + 1;
