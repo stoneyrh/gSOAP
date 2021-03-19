@@ -1662,10 +1662,15 @@ Version 2.8.110 (01/17/2021)
 
 - Updated wsdl2h to correct an XML parsing rejection problem for the special case when XML schemas have no targetNamespaces (i.e. empty namespace, no namespace prefixes) for elements defined in a `<sequence>` schema component, the wsdl2h-generated struct/class member names require two underscores instead of one, such as `__Name_sequence`.)
 
-Version 2.8.111 (01/22/2021) {#latest}
+Version 2.8.111 (01/22/2021)
 ---
 
 - Updated WS-Addressing plugin to harden code robustness.
+
+Version 2.8.112 (03/19/2021) {#latest}
+---
+
+- Added support to wsdl2h for the outdated "wsaw" Web Services Addressing 1.0 W3C candidate recommendation 2006, to complement the built-in wsdl2h support for "wsam" Web Services Addressing 1.0 W3C recommendation 2007.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

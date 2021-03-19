@@ -509,6 +509,8 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                 op->input->action = input->wsa__Action;
               else if (input->wsam__Action)
                 op->input->action = input->wsam__Action;
+              else if (input->wsaw__Action)
+                op->input->action = input->wsaw__Action;
               else if (op->action)
                 op->input->action = op->action;
               else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
@@ -633,6 +635,8 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                     op->output->action = output->wsa__Action;
                   else if (output->wsam__Action)
                     op->output->action = output->wsam__Action;
+                  else if (output->wsaw__Action)
+                    op->output->action = output->wsaw__Action;
                   else if (http__operation_location)
                     op->output->action = NULL;
                   else if (op->action)
@@ -947,6 +951,8 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                 op->output->action = output->wsa__Action;
               else if (output->wsam__Action)
                 op->output->action = output->wsam__Action;
+              else if (output->wsaw__Action)
+                op->output->action = output->wsaw__Action;
               else if (op->action)
                 op->output->action = op->action;
               else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
@@ -1288,8 +1294,10 @@ Message *Definitions::analyze_fault(const wsdl__definitions& definitions, Servic
     f->action = NULL;
     if (fault->wsa__Action)
       f->action = fault->wsa__Action;
-    else
+    else if (fault->wsam__Action)
       f->action = fault->wsam__Action;
+    else if (fault->wsaw__Action)
+      f->action = fault->wsaw__Action;
     if (f->element && f->element->schemaPtr())
       f->URI = urienc(definitions.soap, f->element->schemaPtr()->targetNamespace);
     else if (ext_fault.soap__fault_ && ext_fault.soap__fault_->namespace_)

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.111
+        stdsoap2.c[pp] 2.8.112
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208111
+#define GSOAP_LIB_VERSION 208112
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.111 2021-01-22 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.112 2021-03-19 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.111 2021-01-22 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.112 2021-03-19 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -5079,7 +5079,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
 {
 #if (defined(_AIX43) || defined(TRU64) || defined(HP_UX)) && defined(HAVE_GETHOSTBYNAME_R)
   struct hostent_data ht_data;
-#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (~_GNU_SOURCE+1 && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   int r;
   char *tmpbuf = soap->tmpbuf;
   size_t tmplen = sizeof(soap->tmpbuf);
@@ -5112,7 +5112,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     hostent = NULL;
     soap->errnum = h_errno;
   }
-#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (~_GNU_SOURCE+1 && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   while ((r = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &hostent, &soap->errnum)) < 0)
   {
     if (tmpbuf != soap->tmpbuf)
@@ -5162,7 +5162,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     if (soap_memcpy((void*)inaddr, sizeof(struct in_addr), (const void*)hostent->h_addr, (size_t)hostent->h_length))
     {
 #if (!defined(_AIX43) && !defined(TRU64) && !defined(HP_UX)) || !defined(HAVE_GETHOSTBYNAME_R)
-#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (~_GNU_SOURCE+1 && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
       if (tmpbuf && tmpbuf != soap->tmpbuf)
         SOAP_FREE(soap, tmpbuf);
 #endif
@@ -5171,7 +5171,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     }
 #endif
   }
-#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (~_GNU_SOURCE+1 && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   if (tmpbuf && tmpbuf != soap->tmpbuf)
     SOAP_FREE(soap, tmpbuf);
 #endif
@@ -21331,7 +21331,8 @@ int
 SOAP_FMAC2
 soap_PUT(struct soap *soap, const char *endpoint, const char *action, const char *type)
 {
-  soap->http_content = type;
+  if (!soap->http_content)
+    soap->http_content = type;
   if ((soap->omode & SOAP_IO) != SOAP_IO_CHUNK)
   {
     soap->omode &= ~SOAP_IO;
@@ -21349,7 +21350,8 @@ int
 SOAP_FMAC2
 soap_POST(struct soap *soap, const char *endpoint, const char *action, const char *type)
 {
-  soap->http_content = type;
+  if (!soap->http_content)
+    soap->http_content = type;
   if ((soap->omode & SOAP_IO) != SOAP_IO_CHUNK)
   {
     soap->omode &= ~SOAP_IO;
@@ -21367,7 +21369,8 @@ int
 SOAP_FMAC2
 soap_PATCH(struct soap *soap, const char *endpoint, const char *action, const char *type)
 {
-  soap->http_content = type;
+  if (!soap->http_content)
+    soap->http_content = type;
   if ((soap->omode & SOAP_IO) != SOAP_IO_CHUNK)
   {
     soap->omode &= ~SOAP_IO;
@@ -22553,7 +22556,7 @@ soap_strerror(struct soap *soap)
   {
 #ifndef WIN32
 # ifdef HAVE_STRERROR_R
-#  if !defined(_GNU_SOURCE) || (!_GNU_SOURCE && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600))) /* || !defined(__GLIBC__)) */
+#  if !defined(_GNU_SOURCE) || (~_GNU_SOURCE+1 && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600))) /* || !defined(__GLIBC__)) */
     err = strerror_r(err, soap->msgbuf, sizeof(soap->msgbuf)); /* XSI-compliant */
     if (err != 0)
       soap_strcpy(soap->msgbuf, sizeof(soap->msgbuf), "unknown error");

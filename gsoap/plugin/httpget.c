@@ -189,7 +189,10 @@ static int http_get_parse(struct soap *soap)
 {
 #ifndef WITH_LEAN
   time_t t;
-  struct tm T, *pT;
+#ifdef HAVE_LOCALTIME_R
+  struct tm T;
+#endif
+  struct tm *pT;
 #endif
   struct http_get_data *data = (struct http_get_data*)soap_lookup_plugin(soap, http_get_id);
   if (!data)

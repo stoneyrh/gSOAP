@@ -135,6 +135,7 @@ class wsdl__ioput
         @xsd__QName                     element;                // WSDL 2.0
         @xsd__anyURI                    wsa__Action;
         @xsd__anyURI                    wsam__Action;
+        @xsd__anyURI                    wsaw__Action;
         xsd__string                     documentation;          // <wsdl:documentation>?
         wsp__Policy                     *wsp__Policy_;          // <wsp:Policy>?
         wsp__PolicyReference            *wsp__PolicyReference_; // <wsp:PolicyReference>?
@@ -160,6 +161,7 @@ class wsdl__fault
         @xsd__QName                     element;                // WSDL 2.0
         @xsd__anyURI                    wsa__Action;
         @xsd__anyURI                    wsam__Action;
+        @xsd__anyURI                    wsaw__Action;
         xsd__string                     documentation;          // <wsdl:documentation>?
         wsp__Policy                     *wsp__Policy_;          // <wsp:Policy>?
         wsp__PolicyReference            *wsp__PolicyReference_; // <wsp:PolicyReference>?

@@ -8,9 +8,12 @@ Using OpenSSL
 The SSL-enabled applications are compiled with -DWITH_OPENSSL -DWITH_GZIP and
 linked with -lgsoapssl++ (or -lgsoapssl) -lssl -lcrypto -lz
 
-OpenSSL multithreaded applications require mutex locks, see the
-CRYPTO_thread_setup() and CRYPTO_thread_cleanup() usage in the examples and
-thread_setup.h and thread_setup.c/.cpp for these functions.
+OpenSSL multithreaded applications require mutex locks for OpenSSL versions
+prior to 1.1.0, see the CRYPTO_thread_setup() and CRYPTO_thread_cleanup() usage
+in the examples and thread_setup.h and thread_setup.c/.cpp for these functions.
+
+For OpenSSL versions 1.1.0 and greater, locking is not necessary and using
+CRYPTO_thread_setup() and CRYPTO_thread_cleanup() has no effect.
 
 The certificates of trusted certificate authorities (CA) are stored in
 cacerts.pem and can be used to connect gSOAP clients to secure services. To do
@@ -18,8 +21,8 @@ so, use cacerts.pem instead of the demo cacert.pem with soap_ssl_client_context.
 
 As a better alternative to calling soap_ssl_client_context(), trusted
 certificate stores are automatically added with ssl_client_setup(), which works
-for Unix/Linux and Windows platforms.  See ssl_setup.h and ssl_setup.c/.cpp
-for an explanation.
+for Unix/Linux and Windows platforms.  See further below.
+
 
 Using GNUTLS
 ------------
@@ -35,6 +38,58 @@ files generated with OpenSSL and use them in a GNUTLS-enabled application.
 
 GNUTLS mutex locks are automatically enabled by the gSOAP engine stdsoap2.c[pp]
 when pthreads are detected.
+
+
+How to automatically load certificates from common locations on Unix/Linux
+--------------------------------------------------------------------------
+
+To automatically load certificates from common locations, you can use the
+soap_ssl_client_setup() function defined in ssl_setup.h and ssl_setup.c.
+To use soap_ssl_client_setup():
+
+   #include "ssl_setup.h"
+   #include "thread_setup.h"
+
+   int main()
+   {
+     // OpenSSL versions prior to 1.1.0 require mutex locks
+     if (CRYPTO_thread_setup())
+       exit(EXIT_FAILURE);
+
+     struct soap *soap = soap_new();
+
+     if (soap_ssl_client_setup(soap, SOAP_SSL_DEFAULT, NULL, NULL, NULL, NULL))
+     {
+       soap_print_fault(soap, stderr);
+       exit(EXIT_FAILURE);
+     }
+
+     ... // your code
+
+     // OpenSSL versions prior to 1.1.0 require mutex locks
+     CRYPTO_thread_cleanup();
+   }
+
+The arguments passed to soap_ssl_client_setup() are the same as
+soap_ssl_client_context(), except that soap_ssl_client_setup() sets the CA path
+parameter to common locations of certificates automatically.
+
+When the gSOAP CURL plugin is used when -DWITH_CURL is defined,
+soap_ssl_client_setup() uses the CURL certificate store.
+
+Compile the source code with -DWITH_OPENSSL or -DWITH_GNUTLS and link with
+OpenSSL or GNUTLS libraries.
+
+
+How to automatically load certificates on Windows machines
+----------------------------------------------------------
+
+See the section above. The code is the same, but soap_ssl_client_setup() loads
+certificates from the Windows system certificate store.
+
+This also works with WinInet using the gSOAP WinInet plugin when -DWITH_WININET
+is defined.
+
 
 How to create self-signed certificates with OpenSSL
 ---------------------------------------------------
@@ -186,6 +241,7 @@ Files bundled with the gSOAP software:
     cacerts.h       header file for cacerts.c: declares soap_ssl_client_cacerts()
     cacerts.c       trusted certificates of common CAs hardcoded, no cacerts.pem required
 
+
 How to convert certificates to CER format for MS Windows
 --------------------------------------------------------
 
@@ -196,6 +252,7 @@ To convert certificate cacert.pem to CER format:
 Install the certificate on MS Windows by opening it and then select "Install
 Certificate". Client applications running on MS Windows can now connect to the
 server. The server authenticates to the client by means of the certificate.
+
 
 How to create self-signed certificates with GNUTLS
 --------------------------------------------------

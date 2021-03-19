@@ -850,8 +850,18 @@ struct Namespace my_namespaces[] = {
   { "ns",       "http://tempuri.org/ns.xsd",                 NULL,                                    NULL },
   { NULL,       NULL,                                        NULL,                                    NULL }
 };
+
 struct soap *soap = soap_new();
-soap_set_namespaces(soap, my_namespaces);
+soap_set_namespaces(soap, my_namespaces); // use a specific XML namespace binding table for the next call
+if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
+{
+  soap_print_fault(soap, stderr);
+}
+else
+{
+  ...
+}
+soap_set_namespaces(soap, namespaces); // use the default XML namespace binding table, when defined, for the next call
 ~~~
 
 This example defines SOAP 1.1 namespaces (`SOAP-ENV` and `SOAP-ENC`) to be used by default, but also accepts SOAP 1.2 because of the second URI in the third column.  XML schema instance namespace `xsi` is used with <i>`xsi:type`</i> and <i>`xsi:nil`</i> and the XML schema namespace `xsd` is used with XSD types such as <i>`xsd:string`</i>, which may be used in XML messages.  URI patterns in the third column may contain wildcard strings `*` and wildcard characters `-`.
@@ -3001,7 +3011,7 @@ struct soap {
   int cookie_max;
   /// The cookie store is a linked list of cookies
   struct soap_cookie *cookies;
-  /// String with HTTP content type header value received, can also be assigned to specify a content type header when using `::soap_connect_command` with `#SOAP_POST_FILE`, `#SOAP_PUT` and `#SOAP_PATCH` or when using `::soap_response` with `#SOAP_FILE`.
+  /// String with HTTP content type header value received, can also be assigned to specify a content type header for `::soap_connect_command` with `#SOAP_POST_FILE`, `#SOAP_PUT` and `#SOAP_PATCH` or for `::soap_response` with `#SOAP_FILE` or for `::soap_PUT`, `::soap_PATCH`, `::soap_POST`.  The `::soap::http_content` string is reset to NULL after each HTTP invocation and has to be set again when required.
   /**
   @see `::soap_connect_command`, `::soap_PUT`, `::soap_PATCH`, `::soap_POST`, `::soap_response`.
   */
@@ -5084,7 +5094,7 @@ struct soap {
   @param ok when 1: the certificate passed, when 0: the certificate did not pass
   @returns 1 to pass and 0 to fail
 
-  @see '::soap_ssl_client_context`.
+  @see `::soap_ssl_client_context`.
   */
   int (*fsslverify)(int ok, X509_STORE_CTX *store);
 };
@@ -5963,7 +5973,7 @@ This function initializes the SSL/TLS library's global state and should be calle
 
 @warning If an application initializes the SSL/TLS library such as OpenSSL by loading algorithms, then `::soap_ssl_noinit` should be used instead before a `::soap` context is used to ensure that OpenSSL is not initialized twice.
 
-@see `::soap_ssl_init`, `::CRYPTO_thread_setup, `::CRYPTO_thread_cleanup`.
+@see `::soap_ssl_init`, `::CRYPTO_thread_setup`, `::CRYPTO_thread_cleanup`.
 */
 void soap_ssl_init(void)
   ;
@@ -6206,7 +6216,7 @@ if (soap_ssl_client_context(soap,
 
 @note Requires compilation with `#WITH_OPENSSL` or `#WITH_GNUTLS`.
 
-@see `#SOAP_SSL_RSA_BITS`, `::soap_ssl_server_context`, `::soap_ssl_crl`, ::soap::fsslverify`.
+@see `#SOAP_SSL_RSA_BITS`, `::soap_ssl_server_context`, `::soap_ssl_crl`, `::soap::fsslverify`.
 */
 int soap_ssl_client_context(
     struct soap *soap,    ///< `::soap` context
@@ -6558,6 +6568,8 @@ int soap_GET(struct soap *soap, ///< `::soap` context
 /**
 This function connects to the server specified by the `endpoint` URL string, using HTTP PUT and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function temporarily sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to the server and an empty response should be received by calling `::soap_recv_empty_response`.  Returns `#SOAP_OK` or a `::soap_status` error code.
 
+If the `::soap::http_content` string is non-NULL, this string is used as the HTTP content type to be included in the HTTP header.  Otherwise, the HTTP content header is `text/xml` by default.  The `::soap::http_content` string is automatically reset to NULL after the HTTP POST call and has to be set again for the next call.
+
 This function is used by the soapcpp2-generated `soap_PUT_T` functions for types `T` to HTTP PUT the XML serialized value of type `T` to a server.
 
 To implement server-side HTTP PUT handling use `::soap::fput`.
@@ -6576,7 +6588,7 @@ if (soap_PUT(soap, "http://www.example.com/API/PUT", NULL, "text/xml; charset=ut
 soap_closesock(soap);
 ~~~
 
-@see `::soap::connect_flags`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`, `::soap_GET`, `::soap_PATCH`, `::soap_POST`, `::soap_DELETE`.
+@see `::soap::connect_flags`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`, `::soap::http_content`, `::soap_GET`, `::soap_PATCH`, `::soap_POST`, `::soap_DELETE`.
 */
 int soap_PUT(
     struct soap *soap,    ///< `::soap` context
@@ -6589,6 +6601,8 @@ int soap_PUT(
 /// HTTP PATCH content to server
 /**
 This function connects to the server specified by the `endpoint` URL string, using HTTP PATCH and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function temporarily sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to the server and an empty response should be received by calling `::soap_recv_empty_response`.  Returns `#SOAP_OK` or a `::soap_status` error code.
+
+If the `::soap::http_content` string is non-NULL, this string is used as the HTTP content type to be included in the HTTP header.  Otherwise, the HTTP content header is `text/xml` by default.  The `::soap::http_content` string is automatically reset to NULL after the HTTP POST call and has to be set again for the next call.
 
 This function is used by the soapcpp2-generated `soap_PATCH_T` functions for types `T` to HTTP PATCH the XML serialized value of type `T` to a server.
 
@@ -6608,7 +6622,7 @@ if (soap_PATCH(soap, "http://www.example.com/API/PATCH", NULL, "application/json
 soap_closesock(soap);
 ~~~
 
-@see `::soap::connect_flags`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`, `::soap_GET`, `::soap_PUT`, `::soap_POST`, `::soap_DELETE`.
+@see `::soap::connect_flags`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`, `::soap::http_content`, `::soap_GET`, `::soap_PUT`, `::soap_POST`, `::soap_DELETE`.
 */
 int soap_PATCH(
     struct soap *soap,    ///< `::soap` context
@@ -6621,6 +6635,8 @@ int soap_PATCH(
 /// HTTP POST content to server
 /**
 This function connects to the server specified by the `endpoint` URL string, using HTTP POST and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function temporarily sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to and received from the server.  Returns `#SOAP_OK` or a `::soap_status` error code.
+
+If the `::soap::http_content` string is non-NULL, this string is used as the HTTP content type to be included in the HTTP header.  Otherwise, the HTTP content header is `text/xml` by default.  The `::soap::http_content` string is automatically reset to NULL after the HTTP POST call and has to be set again for the next call.
 
 This function is used by the soapcpp2-generated `soap_POST_send_T` functions for types `T` to HTTP POST the XML serialized value of type `T` to a server.  Use `soap_POST_recv_T` to receive a HTTP POST response deserialized into a value of (another) type `T`.
 
@@ -6644,7 +6660,7 @@ else
 soap_closesock(soap);
 ~~~
 
-@see `::soap::connect_flags`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`, `::soap_GET`, `::soap_PUT`, `::soap_PATCH`, `::soap_DELETE`.
+@see `::soap::connect_flags`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`, `::soap::http_content`, `::soap_GET`, `::soap_PUT`, `::soap_PATCH`, `::soap_DELETE`.
 */
 int soap_POST(
     struct soap *soap,    ///< `::soap` context
@@ -9297,6 +9313,34 @@ struct Namespace namespaces[];
 /// Activates an XML namespace table to generate and resolve xmlns namespace prefixes in XML messages
 /**
 This function sets the XML namespace table to be used by the engine to generate and resolve xmlns namespace prefixes in XML messages.  Different tables can be set at any time, depending on the XML messaging requirements.  However, XML generation and parsing may fail if prefix-URI bindings are missing in the table.  Tables are generated by soapcpp2 in .nsmap files, which defines a global table `::namespaces` that is used by default by the engines, but can be replaced by the XML namespace table specified with this function.  Returns `#SOAP_OK` or a `::soap_status` error code.
+
+@par Example:
+~~~{.cpp}
+#include "soapH.h"
+
+struct Namespace my_namespaces[] = {
+  { "SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*soap-envelope",      NULL },
+  { "SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*soap-encoding",      NULL },
+  { "xsi",      "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*XMLSchema-instance", NULL },
+  { "xsd",      "http://www.w3.org/2001/XMLSchema",          "http://www.w3.org/*XMLSchema",          NULL },
+  { "ns",       "http://tempuri.org/ns.xsd",                 NULL,                                    NULL },
+  { NULL,       NULL,                                        NULL,                                    NULL }
+};
+
+struct soap *soap = soap_new();
+soap_set_namespaces(soap, my_namespaces); // use a specific XML namespace binding table for the next call
+if (soap_call_ns__webmethod(soap, endpoint, NULL, ...))
+{
+  soap_print_fault(soap, stderr);
+}
+else
+{
+  ...
+}
+soap_set_namespaces(soap, namespaces); // use the default XML namespace binding table, when defined, for the next call
+~~~
+
+This example defines SOAP 1.1 namespaces (`SOAP-ENV` and `SOAP-ENC`) to be used by default, but also accepts SOAP 1.2 because of the second URI in the third column.  XML schema instance namespace `xsi` is used with <i>`xsi:type`</i> and <i>`xsi:nil`</i> and the XML schema namespace `xsd` is used with XSD types such as <i>`xsd:string`</i>, which may be used in XML messages.  URI patterns in the third column may contain wildcard strings `*` and wildcard characters `-`.
 */
 int soap_set_namespaces(
     struct soap *soap,                  ///< `::soap` context

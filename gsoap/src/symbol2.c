@@ -8129,9 +8129,9 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
     else
     {
       if (put)
-        fprintf(fd, "\n\tif (soap_PUT(soap, soap_extend_url(soap, soap_endpoint, soap_action), soap_action, \"text/xml\")");
+        fprintf(fd, "\n\tif (soap_PUT(soap, soap_extend_url(soap, soap_endpoint, soap_action), soap_action, soap->version == 2 ? \"application/soap+xml; charset=utf-8\" : \"text/xml; charset=utf-8\")");
       else
-        fprintf(fd, "\n\tif (soap_POST(soap, soap_extend_url(soap, soap_endpoint, soap_action), soap_action, \"text/xml\")");
+        fprintf(fd, "\n\tif (soap_POST(soap, soap_extend_url(soap, soap_endpoint, soap_action), soap_action, soap->version == 2 ? \"application/soap+xml; charset=utf-8\" : \"text/xml; charset=utf-8\")");
     }
     fprintf(fd, "\n\t || soap_envelope_begin_out(soap)");
     if (soap)
@@ -8209,6 +8209,11 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
       fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_recv_%s(struct soap *soap, ", ident(method->sym->name));
       fprintf(fd, "struct %s *%s)\n{", ident(method->sym->name), ident(result->sym->name));
     }
+    if (mimeout)
+    {
+      fprintf(fd, "\n\tchar *soap_tmp = NULL, *soap_tmp_key = NULL;");
+      gen_query_recv_form_init(fd, result);
+    }
     fprintf(fd, "\n\tsoap_default_%s(soap, %s);", ident(method->sym->name), ident(result->sym->name));
     fprintf(fd, "\n\tsoap_begin(soap);");
   }
@@ -8233,7 +8238,7 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
       fprintf(fd, "\n\tstruct %s *soap_tmp_%s;", c_ident(response->info.typ), c_ident(response->info.typ));
     if (mimeout)
     {
-      fprintf(fd, "\n\tchar *soap_tmp, *soap_tmp_key;");
+      fprintf(fd, "\n\tchar *soap_tmp = NULL, *soap_tmp_key = NULL;");
       gen_query_recv_form_init(fd, result);
     }
     if (result->info.typ->type == Tarray)
