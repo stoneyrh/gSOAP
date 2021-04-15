@@ -130,15 +130,19 @@ edit WS/WS-typemap.dat for the following two definition blocks:
         unsigned int*                        KeySize;
     wst__RequestSecurityTokenType = $\
         struct wst__BinaryExchangeType*      BinaryExchange;
+    wst__RequestSecurityTokenType = $\
+        struct wst__AuthenticatorType*       Authenticator;
 
-    wst__RequestSecurityTokenResponseType = $\
-        _wsp__AppliesTo_*                    wsp__AppliesTo;
     wst__RequestSecurityTokenResponseType = $\
         struct wst__RequestedSecurityTokenType* RequestedSecurityToken;
     wst__RequestSecurityTokenResponseType = $\
         struct wst__RequestedReferenceType*  RequestedAttachedReference;
     wst__RequestSecurityTokenResponseType = $\
         struct wst__RequestedReferenceType*  RequestedUnattachedReference;
+    wst__RequestSecurityTokenResponseType = $\
+        struct wst__RequestedProofTokenType* RequestedProofToken;
+    wst__RequestSecurityTokenResponseType = $\
+        struct wst__RequestedTokenCancelledType* RequestedTokenCancelled;
     wst__RequestSecurityTokenResponseType = $\
         char*                                KeyType;
     wst__RequestSecurityTokenResponseType = $\
@@ -149,6 +153,8 @@ edit WS/WS-typemap.dat for the following two definition blocks:
         wst__EntropyType*                    Entropy;
     wst__RequestSecurityTokenResponseType = $\
         struct wst__BinaryExchangeType*      BinaryExchange;
+    wst__RequestSecurityTokenResponseType = $\
+        struct wst__AuthenticatorType*       Authenticator;
 
 For example, to add the `wst:Lifetime` element to the
 RequestSecurityTokenResponse add the following two lines:

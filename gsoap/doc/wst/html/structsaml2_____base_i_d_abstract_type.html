@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">saml2__BaseIDAbstractType Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Jun 9 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Apr 15 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -63,22 +63,23 @@
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a9ae2dab34d401593d4bc54406e96758d"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____base_i_d_abstract_type.html#a9ae2dab34d401593d4bc54406e96758d">NameQualifier</a></td></tr>
-<tr class="memdesc:a9ae2dab34d401593d4bc54406e96758d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "NameQualifier" of XSD type xs:string.  <a href="#a9ae2dab34d401593d4bc54406e96758d">More...</a><br /></td></tr>
+<tr class="memdesc:a9ae2dab34d401593d4bc54406e96758d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "NameQualifier" of type xs:string.  <a href="#a9ae2dab34d401593d4bc54406e96758d">More...</a><br /></td></tr>
 <tr class="separator:a9ae2dab34d401593d4bc54406e96758d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08dd905ce2f73dd655aee9045be6e628"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____base_i_d_abstract_type.html#a08dd905ce2f73dd655aee9045be6e628">SPNameQualifier</a></td></tr>
-<tr class="memdesc:a08dd905ce2f73dd655aee9045be6e628"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "SPNameQualifier" of XSD type xs:string.  <a href="#a08dd905ce2f73dd655aee9045be6e628">More...</a><br /></td></tr>
+<tr class="memdesc:a08dd905ce2f73dd655aee9045be6e628"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "SPNameQualifier" of type xs:string.  <a href="#a08dd905ce2f73dd655aee9045be6e628">More...</a><br /></td></tr>
 <tr class="separator:a08dd905ce2f73dd655aee9045be6e628"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>"urn:oasis:names:tc:SAML:2.0:assertion":BaseIDAbstractType is an abstract complexType. </p>
-<p>struct <a class="el" href="structsaml2_____base_i_d_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:BaseIDAbstractType is an abstract complexType. ">saml2__BaseIDAbstractType</a> operations:</p><ul>
-<li>saml2__BaseIDAbstractType* soap_new_saml2__BaseIDAbstractType(struct soap*, int num) allocate and default initialize one or more values (array)</li>
+<dl class="section note"><dt>Note</dt><dd>struct <a class="el" href="structsaml2_____base_i_d_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:BaseIDAbstractType is an abstract complexType. ">saml2__BaseIDAbstractType</a> operations:<ul>
+<li>saml2__BaseIDAbstractType* soap_new_saml2__BaseIDAbstractType(struct soap*, int num) allocate and default initialize one or more values (an array)</li>
 <li>soap_default_saml2__BaseIDAbstractType(struct soap*, saml2__BaseIDAbstractType*) default initialize members</li>
 <li>int soap_read_saml2__BaseIDAbstractType(struct soap*, saml2__BaseIDAbstractType*) deserialize from a source</li>
 <li>int soap_write_saml2__BaseIDAbstractType(struct soap*, saml2__BaseIDAbstractType*) serialize to a sink</li>
 <li>saml2__BaseIDAbstractType* soap_dup_saml2__BaseIDAbstractType(struct soap*, saml2__BaseIDAbstractType* dst, saml2__BaseIDAbstractType &lt;em&gt;src) returns deep copy of <a class="el" href="structsaml2_____base_i_d_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:BaseIDAbstractType is an abstract complexType. ">saml2__BaseIDAbstractType</a> src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)</li>
 <li>soap_del_saml2__BaseIDAbstractType(<a class="el" href="structsaml2_____base_i_d_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:BaseIDAbstractType is an abstract complexType. ">saml2__BaseIDAbstractType</a>) deep deletes <a class="el" href="structsaml2_____base_i_d_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:BaseIDAbstractType is an abstract complexType. ">saml2__BaseIDAbstractType</a> data members, use only on dst after soap_dup_saml2__BaseIDAbstractType(NULL, saml2__BaseIDAbstractType *dst, saml2__BaseIDAbstractType *src) (use soapcpp2 -Ed) </li>
 </ul>
+</dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a9ae2dab34d401593d4bc54406e96758d"></a>
 <div class="memitem">
@@ -90,7 +91,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Attribute "NameQualifier" of XSD type xs:string. </p>
+<p>Attribute "NameQualifier" of type xs:string. </p>
 <p>Optional attribute. </p>
 
 </div>
@@ -105,7 +106,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Attribute "SPNameQualifier" of XSD type xs:string. </p>
+<p>Attribute "SPNameQualifier" of type xs:string. </p>
 <p>Optional attribute. </p>
 
 </div>
@@ -116,10 +117,10 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Jun 9 2018 10:03:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Apr 15 2021 09:52:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

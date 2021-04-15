@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">saml1__AudienceRestrictionConditionType Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Jun 9 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Apr 15 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -55,43 +55,44 @@
 </div><!--header-->
 <div class="contents">
 
-<p>"urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionConditionType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType.  
+<p>"urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionConditionType is a complexType with complexContent extension of type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType.  
  <a href="structsaml1_____audience_restriction_condition_type.html#details">More...</a></p>
 
 <p><code>#include &lt;saml1.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a8f9f4229d619a3e3b24b6a6d1f3b13cd"><td class="memItemLeft" align="right" valign="top">$int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml1_____audience_restriction_condition_type.html#a8f9f4229d619a3e3b24b6a6d1f3b13cd">__sizeAudience</a></td></tr>
-<tr class="memdesc:a8f9f4229d619a3e3b24b6a6d1f3b13cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">INHERITED FROM <a class="el" href="structsaml1_____condition_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:ConditionAbstractType is an abstract complexType. ">saml1__ConditionAbstractType</a>:  <a href="#a8f9f4229d619a3e3b24b6a6d1f3b13cd">More...</a><br /></td></tr>
-<tr class="separator:a8f9f4229d619a3e3b24b6a6d1f3b13cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8291d54306864d5b29c47db7b85ef87f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml1_____audience_restriction_condition_type.html#a8291d54306864d5b29c47db7b85ef87f">__sizeAudience</a></td></tr>
+<tr class="memdesc:a8291d54306864d5b29c47db7b85ef87f"><td class="mdescLeft">&#160;</td><td class="mdescRight">INHERITED FROM <a class="el" href="structsaml1_____condition_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:ConditionAbstractType is an abstract complexType. ">saml1__ConditionAbstractType</a>:  <a href="#a8291d54306864d5b29c47db7b85ef87f">More...</a><br /></td></tr>
+<tr class="separator:a8291d54306864d5b29c47db7b85ef87f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9733db1467fe1d68d4193947ecbdb5cb"><td class="memItemLeft" align="right" valign="top">char **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml1_____audience_restriction_condition_type.html#a9733db1467fe1d68d4193947ecbdb5cb">saml1__Audience</a></td></tr>
 <tr class="memdesc:a9733db1467fe1d68d4193947ecbdb5cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array char* * of size 1..unbounded.  <a href="#a9733db1467fe1d68d4193947ecbdb5cb">More...</a><br /></td></tr>
 <tr class="separator:a9733db1467fe1d68d4193947ecbdb5cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>"urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionConditionType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType. </p>
-<p>struct <a class="el" href="structsaml1_____audience_restriction_condition_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:AudienceRestrictionConditionType is a complexType with comple...">saml1__AudienceRestrictionConditionType</a> operations:</p><ul>
-<li>saml1__AudienceRestrictionConditionType* soap_new_saml1__AudienceRestrictionConditionType(struct soap*, int num) allocate and default initialize one or more values (array)</li>
+<div class="textblock"><p>"urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionConditionType is a complexType with complexContent extension of type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType. </p>
+<dl class="section note"><dt>Note</dt><dd>struct <a class="el" href="structsaml1_____audience_restriction_condition_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:AudienceRestrictionConditionType is a complexType with comple...">saml1__AudienceRestrictionConditionType</a> operations:<ul>
+<li>saml1__AudienceRestrictionConditionType* soap_new_saml1__AudienceRestrictionConditionType(struct soap*, int num) allocate and default initialize one or more values (an array)</li>
 <li>soap_default_saml1__AudienceRestrictionConditionType(struct soap*, saml1__AudienceRestrictionConditionType*) default initialize members</li>
 <li>int soap_read_saml1__AudienceRestrictionConditionType(struct soap*, saml1__AudienceRestrictionConditionType*) deserialize from a source</li>
 <li>int soap_write_saml1__AudienceRestrictionConditionType(struct soap*, saml1__AudienceRestrictionConditionType*) serialize to a sink</li>
 <li>saml1__AudienceRestrictionConditionType* soap_dup_saml1__AudienceRestrictionConditionType(struct soap*, saml1__AudienceRestrictionConditionType* dst, saml1__AudienceRestrictionConditionType &lt;em&gt;src) returns deep copy of <a class="el" href="structsaml1_____audience_restriction_condition_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:AudienceRestrictionConditionType is a complexType with comple...">saml1__AudienceRestrictionConditionType</a> src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)</li>
 <li>soap_del_saml1__AudienceRestrictionConditionType(<a class="el" href="structsaml1_____audience_restriction_condition_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:AudienceRestrictionConditionType is a complexType with comple...">saml1__AudienceRestrictionConditionType</a>) deep deletes <a class="el" href="structsaml1_____audience_restriction_condition_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:AudienceRestrictionConditionType is a complexType with comple...">saml1__AudienceRestrictionConditionType</a> data members, use only on dst after soap_dup_saml1__AudienceRestrictionConditionType(NULL, saml1__AudienceRestrictionConditionType *dst, saml1__AudienceRestrictionConditionType *src) (use soapcpp2 -Ed) </li>
 </ul>
+</dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a8f9f4229d619a3e3b24b6a6d1f3b13cd"></a>
+<a class="anchor" id="a8291d54306864d5b29c47db7b85ef87f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">$int saml1__AudienceRestrictionConditionType::__sizeAudience</td>
+          <td class="memname">int saml1__AudienceRestrictionConditionType::__sizeAudience</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>INHERITED FROM <a class="el" href="structsaml1_____condition_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:ConditionAbstractType is an abstract complexType. ">saml1__ConditionAbstractType</a>: </p>
-<p>Size of the dynamic array of char* * is 1..unbounded. </p>
+<p>Size of the dynamic array of values of type char* * is 1..unbounded. </p>
 
 </div>
 </div>
@@ -106,6 +107,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Array char* * of size 1..unbounded. </p>
+<p>Multiple elements. </p>
 
 </div>
 </div>
@@ -115,10 +117,10 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Jun 9 2018 10:03:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Apr 15 2021 09:52:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

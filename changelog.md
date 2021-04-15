@@ -1667,10 +1667,17 @@ Version 2.8.111 (01/22/2021)
 
 - Updated WS-Addressing plugin to harden code robustness.
 
-Version 2.8.112 (03/19/2021) {#latest}
+Version 2.8.112 (03/19/2021)
 ---
 
 - Added support to wsdl2h for the outdated "wsaw" Web Services Addressing 1.0 W3C candidate recommendation 2006, to complement the built-in wsdl2h support for "wsam" Web Services Addressing 1.0 W3C recommendation 2007.
+
+Version 2.8.113 (04/15/2021) {#latest}
+---
+
+- Updated self-signed SSL certificates, included with the example applications and demos.
+- Additional WS-Trust request and response member definitions included, e.g. RequestedTokenCancelled and CancelTarget.
+- Compression performance improvement.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

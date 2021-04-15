@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.112
+        stdsoap2.c[pp] 2.8.113
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208112
+#define GSOAP_LIB_VERSION 208113
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.112 2021-03-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.113 2021-04-15 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.112 2021-03-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.113 2021-04-15 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1383,7 +1383,7 @@ soap_recv_raw(struct soap *soap)
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Inflated %lu->%lu bytes\n", soap->d_stream->total_in, soap->d_stream->total_out));
           soap->d_stream->next_out = Z_NULL;
         }
-        if (ret)
+        if (ret || r == Z_STREAM_END)
         {
           if (soap->count + ret < soap->count)
             return soap->error = SOAP_EOF;
@@ -3346,7 +3346,7 @@ soap_end_block(struct soap *soap, struct soap_blist *b)
 /******************************************************************************/
 
 SOAP_FMAC1
-char*
+void*
 SOAP_FMAC2
 soap_save_block(struct soap *soap, struct soap_blist *b, char *p, int flag)
 {
@@ -3973,7 +3973,7 @@ soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *key
   (void)randfile; (void)sid;
   if (dhfile)
   {
-    char *s;
+    char *s = NULL;
     int n = (int)soap_strtoul(dhfile, &s, 10);
     if (!soap->dh_params)
       gnutls_dh_params_init(&soap->dh_params);
@@ -4425,7 +4425,7 @@ ssl_auth_init(struct soap *soap)
   else if (soap->dhfile)
   {
     DH *dh = NULL;
-    char *s;
+    char *s = NULL;
     int n = (int)soap_strtoul(soap->dhfile, &s, 10);
     /* if dhfile is numeric, treat it as a key length to generate DH params which can take a while */
     if (n >= 512 && s && *s == '\0')
@@ -11322,7 +11322,7 @@ soap_end_send_flush(struct soap *soap)
         if (b)
         {
           *b = '\0';
-          *soap->os = soap_save_block(soap, NULL, NULL, 0);
+          *soap->os = (char*)soap_save_block(soap, NULL, NULL, 0);
         }
       }
       else
@@ -14783,7 +14783,7 @@ soap_peek_element(struct soap *soap)
           (void)soap_memcpy((void*)s, k, (const void*)tp->value, tp->size);
           SOAP_FREE(soap, tp->value);
         }
-        soap_save_block(soap, NULL, s + tp->size, 0);
+        (void)soap_save_block(soap, NULL, s + tp->size, 0);
         tp->value = s;
         tp->size = k;
 #endif
@@ -15800,7 +15800,7 @@ end:
     return NULL;
 #else
   soap_size_block(soap, NULL, i + 1);
-  t = soap_save_block(soap, NULL, NULL, 0);
+  t = (char*)soap_save_block(soap, NULL, NULL, 0);
 #endif
   if (minlen > 0 && l < (size_t)minlen)
   {
@@ -17989,7 +17989,7 @@ soap_wstring(struct soap *soap, const char *s, int flag, long minlen, long maxle
       wchar_t *r;
       if (soap_append_lab(soap, NULL, sizeof(wchar_t) * (strlen(s) + 1)))
         return NULL;
-      r = (wchar_t*)soap->labbuf;
+      r = (wchar_t*)(void*)soap->labbuf;
       while (*s)
         *r++ = (wchar_t)*s++;
     }
@@ -18130,7 +18130,7 @@ soap_wstring(struct soap *soap, const char *s, int flag, long minlen, long maxle
       soap->error = SOAP_LENGTH;
       return NULL;
     }
-    t = (wchar_t*)soap->labbuf;
+    t = (wchar_t*)(void*)soap->labbuf;
 #ifndef WITH_LEAN
     if (flag >= 4 && t)
       t = soap_wcollapse(soap, t, flag, 1);
@@ -18742,9 +18742,9 @@ soap_s2dateTime(struct soap *soap, const char *s, time_t *p)
   *p = 0;
   if (s)
   {
-    char *t;
     unsigned long d;
     struct tm T;
+    char *t;
     if (!*s)
       return soap->error = SOAP_EMPTY;
     memset((void*)&T, 0, sizeof(T));
@@ -19602,7 +19602,7 @@ end:
       soap->dime.size = soap->blist->size;
       if (soap->dime.size + 1 > soap->dime.size)
         soap->blist->size++; /* allocate one more byte in blist for the terminating '\0' */
-      soap->dime.ptr = soap_save_block(soap, NULL, NULL, 0);
+      soap->dime.ptr = (char*)soap_save_block(soap, NULL, NULL, 0);
       if (!soap->dime.ptr)
         return soap->error;
       if (soap->dime.size + 1 > soap->dime.size)
@@ -19873,7 +19873,7 @@ end:
   {
     *s = '\0'; /* make 0-terminated, just in case even though this is binary data */
     content->size = soap_size_block(soap, NULL, i + 1) - 1; /* last block with '\0' */
-    content->ptr = soap_save_block(soap, NULL, NULL, 0);
+    content->ptr = (char*)soap_save_block(soap, NULL, NULL, 0);
   }
   soap_resolve_attachment(soap, content);
   if (c == '-' && soap_getchar(soap) == '-')
@@ -20921,7 +20921,7 @@ soap_http_skip_body(struct soap *soap)
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Skipping HTTP body (mode=0x%x)\n", soap->mode));
   if (k && !(soap->mode & SOAP_ENC_ZLIB))
   {
-    size_t i;
+    ULONG64 i;
     soap->length = 0;
     for (i = 0; i < k; i++)
     {
@@ -20988,6 +20988,7 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
   if (k && !(soap->mode & SOAP_ENC_ZLIB))
   {
     char *t;
+    size_t j;
     soap->length = 0;
     /* http content length != 0 and uncompressed body and body length does not exceed size_t max size */
     if ((SOAP_MAXALLOCSIZE != 0 && n + k > SOAP_MAXALLOCSIZE) || n + k > (ULONG64)((size_t)-2))
@@ -20995,23 +20996,24 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
       soap->error = SOAP_EOM;
       return NULL;
     }
-    s = t = (char*)soap_malloc(soap, (size_t)k + n + 1);
+    j = (size_t)k; /* safe cast: k is in size_t range as guarded above */
+    s = t = (char*)soap_malloc(soap, j + n + 1);
     if (s)
     {
       size_t i = 0;
       (void)soap_memcpy(t, n, prefix, n);
       t += n;
-      while (i < k)
+      while (i < j)
       {
         size_t m;
         if (soap->bufidx >= soap->buflen)
           if (soap_recv(soap))
             break;
-        if (soap->buflen - soap->bufidx > k - i)
-          m = (size_t)k - i;
+        if (soap->buflen - soap->bufidx > j - i)
+          m = j - i;
         else
           m = soap->buflen - soap->bufidx;
-        (void)soap_memcpy(t, (size_t)k + n + 1 - i, soap->buf + soap->bufidx, m);
+        (void)soap_memcpy(t, j + n + 1 - i, soap->buf + soap->bufidx, m);
         soap->bufidx += m;
         t += m;
         i += m;
@@ -21073,7 +21075,7 @@ end:
     if (len)
       *len = l;
     soap_size_block(soap, NULL, i + 1);
-    s = soap_save_block(soap, NULL, NULL, 0);
+    s = (char*)soap_save_block(soap, NULL, NULL, 0);
   }
   return s;
 }

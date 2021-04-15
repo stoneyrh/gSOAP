@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.112
+        stdsoap2.h 2.8.113
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208112
+#define GSOAP_VERSION 208113
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -3419,7 +3419,7 @@ SOAP_FMAC1 size_t SOAP_FMAC2 soap_size_block(struct soap*, struct soap_blist*, s
 SOAP_FMAC1 char* SOAP_FMAC2 soap_first_block(struct soap*, struct soap_blist*);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_next_block(struct soap*, struct soap_blist*);
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_block_size(struct soap*, struct soap_blist*);
-SOAP_FMAC1 char* SOAP_FMAC2 soap_save_block(struct soap*, struct soap_blist*, char*, int);
+SOAP_FMAC1 void* SOAP_FMAC2 soap_save_block(struct soap*, struct soap_blist*, char*, int);
 SOAP_FMAC1 void SOAP_FMAC2 soap_end_block(struct soap*, struct soap_blist*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_update_pointers(struct soap *soap, const char *dst, const char *src, size_t len);
 

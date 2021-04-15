@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">saml2__AuthnStatementType Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Jun 9 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Apr 15 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -55,7 +55,7 @@
 </div><!--header-->
 <div class="contents">
 
-<p>"urn:oasis:names:tc:SAML:2.0:assertion":AuthnStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType.  
+<p>"urn:oasis:names:tc:SAML:2.0:assertion":AuthnStatementType is a complexType with complexContent extension of type "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType.  
  <a href="structsaml2_____authn_statement_type.html#details">More...</a></p>
 
 <p><code>#include &lt;saml2.h&gt;</code></p>
@@ -75,40 +75,41 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a6ce948c1ffb0df6885187b28c8344cf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">INHERITED FROM <a class="el" href="structsaml2_____statement_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:StatementAbstractType is an abstract complexType. ">saml2__StatementAbstractType</a>:  <a href="#a6ce948c1ffb0df6885187b28c8344cf7">More...</a><br /></td></tr>
 <tr class="separator:a6ce948c1ffb0df6885187b28c8344cf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad79b28634e3f9ecc544bee4e58d125a2"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsaml2_____authn_context_type.html">saml2__AuthnContextType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____authn_statement_type.html#ad79b28634e3f9ecc544bee4e58d125a2">saml2__AuthnContext</a></td></tr>
-<tr class="memdesc:ad79b28634e3f9ecc544bee4e58d125a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Element reference "urn:oasis:names:tc:SAML:2.0:assertion:""urn:oasis:names:tc:SAML:2.0:assertion":AuthnContext.  <a href="#ad79b28634e3f9ecc544bee4e58d125a2">More...</a><br /></td></tr>
+<tr class="memdesc:ad79b28634e3f9ecc544bee4e58d125a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Element reference "urn:oasis:names:tc:SAML:2.0:assertion:"AuthnContext.  <a href="#ad79b28634e3f9ecc544bee4e58d125a2">More...</a><br /></td></tr>
 <tr class="separator:ad79b28634e3f9ecc544bee4e58d125a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62324d6eb455b123c200d122fb7c2261"><td class="memItemLeft" align="right" valign="top">time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____authn_statement_type.html#a62324d6eb455b123c200d122fb7c2261">AuthnInstant</a></td></tr>
-<tr class="memdesc:a62324d6eb455b123c200d122fb7c2261"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "AuthnInstant" of XSD type xs:dateTime.  <a href="#a62324d6eb455b123c200d122fb7c2261">More...</a><br /></td></tr>
-<tr class="separator:a62324d6eb455b123c200d122fb7c2261"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90fd2785198657fbeac17920e848613e"><td class="memItemLeft" align="right" valign="top">xsd__dateTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____authn_statement_type.html#a90fd2785198657fbeac17920e848613e">AuthnInstant</a></td></tr>
+<tr class="memdesc:a90fd2785198657fbeac17920e848613e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "AuthnInstant" of type xs:dateTime.  <a href="#a90fd2785198657fbeac17920e848613e">More...</a><br /></td></tr>
+<tr class="separator:a90fd2785198657fbeac17920e848613e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac70a6157be11d0007c6bde9d6a45bd92"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____authn_statement_type.html#ac70a6157be11d0007c6bde9d6a45bd92">SessionIndex</a></td></tr>
-<tr class="memdesc:ac70a6157be11d0007c6bde9d6a45bd92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "SessionIndex" of XSD type xs:string.  <a href="#ac70a6157be11d0007c6bde9d6a45bd92">More...</a><br /></td></tr>
+<tr class="memdesc:ac70a6157be11d0007c6bde9d6a45bd92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "SessionIndex" of type xs:string.  <a href="#ac70a6157be11d0007c6bde9d6a45bd92">More...</a><br /></td></tr>
 <tr class="separator:ac70a6157be11d0007c6bde9d6a45bd92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a832a796ced6d9d87d2bba140cce74132"><td class="memItemLeft" align="right" valign="top">time_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____authn_statement_type.html#a832a796ced6d9d87d2bba140cce74132">SessionNotOnOrAfter</a></td></tr>
-<tr class="memdesc:a832a796ced6d9d87d2bba140cce74132"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "SessionNotOnOrAfter" of XSD type xs:dateTime.  <a href="#a832a796ced6d9d87d2bba140cce74132">More...</a><br /></td></tr>
-<tr class="separator:a832a796ced6d9d87d2bba140cce74132"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97d8bf9ed8881cb2cb0ea1e9c1539143"><td class="memItemLeft" align="right" valign="top">xsd__dateTime *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaml2_____authn_statement_type.html#a97d8bf9ed8881cb2cb0ea1e9c1539143">SessionNotOnOrAfter</a></td></tr>
+<tr class="memdesc:a97d8bf9ed8881cb2cb0ea1e9c1539143"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute "SessionNotOnOrAfter" of type xs:dateTime.  <a href="#a97d8bf9ed8881cb2cb0ea1e9c1539143">More...</a><br /></td></tr>
+<tr class="separator:a97d8bf9ed8881cb2cb0ea1e9c1539143"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>"urn:oasis:names:tc:SAML:2.0:assertion":AuthnStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType. </p>
-<p>struct <a class="el" href="structsaml2_____authn_statement_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:AuthnStatementType is a complexType with complexContent exten...">saml2__AuthnStatementType</a> operations:</p><ul>
-<li>saml2__AuthnStatementType* soap_new_saml2__AuthnStatementType(struct soap*, int num) allocate and default initialize one or more values (array)</li>
+<div class="textblock"><p>"urn:oasis:names:tc:SAML:2.0:assertion":AuthnStatementType is a complexType with complexContent extension of type "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType. </p>
+<dl class="section note"><dt>Note</dt><dd>struct <a class="el" href="structsaml2_____authn_statement_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:AuthnStatementType is a complexType with complexContent exten...">saml2__AuthnStatementType</a> operations:<ul>
+<li>saml2__AuthnStatementType* soap_new_saml2__AuthnStatementType(struct soap*, int num) allocate and default initialize one or more values (an array)</li>
 <li>soap_default_saml2__AuthnStatementType(struct soap*, saml2__AuthnStatementType*) default initialize members</li>
 <li>int soap_read_saml2__AuthnStatementType(struct soap*, saml2__AuthnStatementType*) deserialize from a source</li>
 <li>int soap_write_saml2__AuthnStatementType(struct soap*, saml2__AuthnStatementType*) serialize to a sink</li>
 <li>saml2__AuthnStatementType* soap_dup_saml2__AuthnStatementType(struct soap*, saml2__AuthnStatementType* dst, saml2__AuthnStatementType &lt;em&gt;src) returns deep copy of <a class="el" href="structsaml2_____authn_statement_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:AuthnStatementType is a complexType with complexContent exten...">saml2__AuthnStatementType</a> src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)</li>
 <li>soap_del_saml2__AuthnStatementType(<a class="el" href="structsaml2_____authn_statement_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:AuthnStatementType is a complexType with complexContent exten...">saml2__AuthnStatementType</a>) deep deletes <a class="el" href="structsaml2_____authn_statement_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:AuthnStatementType is a complexType with complexContent exten...">saml2__AuthnStatementType</a> data members, use only on dst after soap_dup_saml2__AuthnStatementType(NULL, saml2__AuthnStatementType *dst, saml2__AuthnStatementType *src) (use soapcpp2 -Ed) </li>
 </ul>
+</dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a62324d6eb455b123c200d122fb7c2261"></a>
+<a class="anchor" id="a90fd2785198657fbeac17920e848613e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">time_t saml2__AuthnStatementType::AuthnInstant</td>
+          <td class="memname">xsd__dateTime saml2__AuthnStatementType::AuthnInstant</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Attribute "AuthnInstant" of XSD type xs:dateTime. </p>
+<p>Attribute "AuthnInstant" of type xs:dateTime. </p>
 <p>Required attribute. </p>
 
 </div>
@@ -123,7 +124,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Element reference "urn:oasis:names:tc:SAML:2.0:assertion:""urn:oasis:names:tc:SAML:2.0:assertion":AuthnContext. </p>
+<p>Element reference "urn:oasis:names:tc:SAML:2.0:assertion:"AuthnContext. </p>
 <p>Required element. </p>
 
 </div>
@@ -139,7 +140,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>INHERITED FROM <a class="el" href="structsaml2_____statement_abstract_type.html" title="&quot;urn:oasis:names:tc:SAML:2.0:assertion&quot;:StatementAbstractType is an abstract complexType. ">saml2__StatementAbstractType</a>: </p>
-<p>Element reference "urn:oasis:names:tc:SAML:2.0:assertion:""urn:oasis:names:tc:SAML:2.0:assertion":SubjectLocality. Optional element. </p>
+<p>Element reference "urn:oasis:names:tc:SAML:2.0:assertion:"SubjectLocality. Optional element. </p>
 
 </div>
 </div>
@@ -153,22 +154,22 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Attribute "SessionIndex" of XSD type xs:string. </p>
+<p>Attribute "SessionIndex" of type xs:string. </p>
 <p>Optional attribute. </p>
 
 </div>
 </div>
-<a class="anchor" id="a832a796ced6d9d87d2bba140cce74132"></a>
+<a class="anchor" id="a97d8bf9ed8881cb2cb0ea1e9c1539143"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">time_t* saml2__AuthnStatementType::SessionNotOnOrAfter</td>
+          <td class="memname">xsd__dateTime* saml2__AuthnStatementType::SessionNotOnOrAfter</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Attribute "SessionNotOnOrAfter" of XSD type xs:dateTime. </p>
+<p>Attribute "SessionNotOnOrAfter" of type xs:dateTime. </p>
 <p>Optional attribute. </p>
 
 </div>
@@ -179,10 +180,10 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Jun 9 2018 10:03:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Apr 15 2021 09:52:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

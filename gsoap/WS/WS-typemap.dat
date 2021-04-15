@@ -159,6 +159,8 @@ wst__RequestSecurityTokenType = $\
 wst__RequestSecurityTokenType = $\
     unsigned int*                        KeySize;
 wst__RequestSecurityTokenType = $\
+    struct wst__CancelTargetType*        CancelTarget;
+wst__RequestSecurityTokenType = $\
     struct wst__BinaryExchangeType*      BinaryExchange;
 wst__RequestSecurityTokenType = $\
     struct wst__AuthenticatorType*       Authenticator;
@@ -171,6 +173,8 @@ wst__RequestSecurityTokenResponseType = $\
     struct wst__RequestedReferenceType*  RequestedUnattachedReference;
 wst__RequestSecurityTokenResponseType = $\
     struct wst__RequestedProofTokenType* RequestedProofToken;
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__RequestedTokenCancelledType* RequestedTokenCancelled;
 wst__RequestSecurityTokenResponseType = $\
     char*                                KeyType;
 wst__RequestSecurityTokenResponseType = $\
@@ -190,6 +194,9 @@ wst__RequestSecurityTokenResponseType = $\
 
 wst__RequestedProofTokenType = $\
     struct xenc__EncryptedKeyType*       xenc__EncryptedKey;
+
+wst__CancelTargetType = $\
+    _wsse__SecurityTokenReference        wsse__SecurityTokenReference;
 
 # WS-Trust with SAML 1.0 and 2.0:
 wst__RequestedSecurityTokenType =\

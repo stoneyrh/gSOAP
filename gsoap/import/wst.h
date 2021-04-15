@@ -258,6 +258,8 @@ struct wst__RequestSecurityTokenType
 /// Member declared in WS/WS-typemap.dat
        unsigned int*                        KeySize;
 /// Member declared in WS/WS-typemap.dat
+       struct wst__CancelTargetType*        CancelTarget;
+/// Member declared in WS/WS-typemap.dat
        struct wst__BinaryExchangeType*      BinaryExchange;
 /// Member declared in WS/WS-typemap.dat
        struct wst__AuthenticatorType*       Authenticator;
@@ -330,6 +332,8 @@ struct wst__RequestSecurityTokenResponseType
        struct wst__RequestedReferenceType*  RequestedUnattachedReference;
 /// Member declared in WS/WS-typemap.dat
        struct wst__RequestedProofTokenType* RequestedProofToken;
+/// Member declared in WS/WS-typemap.dat
+       struct wst__RequestedTokenCancelledType* RequestedTokenCancelled;
 /// Member declared in WS/WS-typemap.dat
        char*                                KeyType;
 /// Member declared in WS/WS-typemap.dat
@@ -538,6 +542,8 @@ struct wst__CancelTargetType
 ///       Use wsdl2h option -x to remove this element.
 ///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
 ///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
+/// Member declared in WS/WS-typemap.dat
+    _wsse__SecurityTokenReference        wsse__SecurityTokenReference;
 };
 
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedTokenCancelledType is a complexType.
