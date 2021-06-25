@@ -41,8 +41,8 @@ install the httpd server in a new directory, say `apachegsoap`:
 
     mkdir apachegsoap
     cd apachegsoap
-    tar -xjf httpd-2.4.35.tar.bz2
-    cd httpd-2.4.35
+    tar -xjf httpd-2.4.48.tar.bz2
+    cd httpd-2.4.48
     ./configure --prefix=`pwd`/.. --with-mpm=worker --enable-mods-shared=most
     make -j4
     make install
@@ -71,7 +71,10 @@ To compile `mod_gsoap`, execute:
 
     cd /path/to/gsoap/installation/gsoap/mod_gsoap/mod_gsoap-0.9/apache_20
     ln -s ../../../stdsoap2.h .
-    sudo $HOME/apachegsoap/bin/apxs -a -i -c mod_gsoap.c
+    sudo $HOME/apachegsoap/bin/apxs -a -i -DWITH_GZIP -lz -c mod_gsoap.c
+
+Invoking `apxs` with `-DWITH_GZIP -lz` enables decompression in `mod_gsoap`
+with libz (`-lz`), which is not required, but useful and recommended.
 
 Root permissions are required, so we used `sudo apxs` here.
 
@@ -176,15 +179,18 @@ Then we build the client:
     soapcpp2 -c -CL -wx calc.h
     cc -o calcclient calcclient.c soapC.c soapClient.c stdsoap2.c
 
-and run it:
+and run it to send a request to perform a computation within the Apache server
+and to receive the response from the server, which is displayed:
 
     ./calcclient add 2 3
     result = 5
 
 To let clients access the WSDL of a service, you can use the query `?wsdl` as
 part of the URL such as `http://localhost:9080/soap?wsdl` to pull the file
-`calc.wsdl` from the current location of the service. To do so, copy the
-`calc.wsdl` file there to make it available to the Apache server.
+WSDL file from the current location of the service, e.g.
+`.libs/calcservice.wsdl` where our example `calcservice.so` lives.  Copy the
+`calc.wsdl` file to `.libs/calcservice.wsdl` to make it available to the Apache
+server.
 
 Deployment of multiple modules is possible since gSOAP 2.8.71, by specifying
 multiple `<Location>` entries in `<IfModule mod_gsoap.c>` in `httpd.conf`, one
@@ -222,15 +228,20 @@ include `apache_default_soap_init()` to initialize a newly constructed context.
 With gSOAP 2.8.54 and greater we can add our own initialization function to
 initialize the context.  By doing so we can set context flags and register
 plugins.  To define our own initialization function we use
-`IMPLEMENT_GSOAP_SERVER_INIT(init_func)` instead of `IMPLEMENT_GSOAP_SERVER()`:
+`IMPLEMENT_GSOAP_SERVER_INIT(init_func)` instead of `IMPLEMENT_GSOAP_SERVER()`.
+For example, to enable XML indentation, MTOM attachments and message logging
+with the logging plugin:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "plugin/logging.h"
     #include "apache_gsoap.h"
     void mod_gsoap_init(struct soap *soap, request_rec *r)
     {
-      FILE *fdi = fopen("/tmp/INBOUNDAUDIT.log", "a");
-      FILE *fdo = fopen("/tmp/OUTBOUNDAUDIT.log", "a");
+      static FILE *fdi = NULL, *fdo = NULL;
+      if (fdi == NULL)
+        fdi = fopen("/tmp/INBOUNDAUDIT.log", "a");
+      if (fdo == NULL)
+        fdo = fopen("/tmp/OUTBOUNDAUDIT.log", "a");
       soap_set_mode(soap, SOAP_XML_INDENT | SOAP_ENC_MTOM);
       soap_register_plugin(soap, logging);
       soap_set_logging_inbound(soap, fdi);
@@ -239,17 +250,290 @@ plugins.  To define our own initialization function we use
     IMPLEMENT_GSOAP_SERVER_INIT(mod_gsoap_init) /* replaces main() { ... } */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This enables XML indentation, MTOM attachments, and saves the audit logs of
-inbound and outbound messages (note that messages are not frequently flushed to
-the log files by the logging plugin, meaning the logs may appear incomplete
-until you stop httpd to close these files).  The gsoap/plugin/logging.h
-and logging.c files are located in the gSOAP source code tree.  Add logging.c
-to the apxs command to compile the source code files.
+The `request_rec` type is an Apache structure that contains information for the
+module to process HTTP requests and respond accordingly.  For details on this
+structure, please consult the Apache documentation.
 
-Your can include multiple registrations of plugins as needed.
+The `soap_set_mode(soap, SOAP_XML_INDENT | SOAP_ENC_MTOM)` sets XML indentation
+in outbound XML messages and enables MTOM attachments.
+
+The `soap_register_plugin(soap, logging)` and the following calls save the
+audit logs of inbound and outbound messages (note that messages are not
+continually flushed to the log files by the logging plugin, meaning the logs may
+appear incomplete until you stop httpd to close these files).  The
+gsoap/plugin/logging.h and logging.c files are located in the gSOAP source code
+tree.  Add logging.c to the apxs command to compile the logging plugin source
+code file.
+
+Multiple plugin registrations can be performed as needed.  The following plugins
+have been verified to work with the `mod_gsoap` Apache module:
+
+- logging plugin to log messages
+- httpget plugin to support HTTP GET
+- httppost plugin to support HTTP PUT, PATCH, and DELETE
+- wsaapi (WSA) plugin for WS-Addressing, requires plugin registry with `SOAP_WSA_NEW_TRANSFER`
+- wsseapi (WSSE) plugin for WS-Security
+- wstapi (WST) plugin for WS-Trust
+
+@note the wsaapi plugin should be registered with
+`soap_register_plugin_arg(soap, http_wsa, SOAP_WSA_NEW_TRANSFER)` to allow
+connection relays and data transfers to reply and error servers.
 
 @warning Do not use any of the `SOAP_IO` flags to initialize or set the
-context, such as `SOAP_IO_KEEPALIVE` and `SOAP_IO_CHUNK`.
+context, such as `SOAP_IO_KEEPALIVE` and `SOAP_IO_CHUNK`.  HTTP chunking
+is handled automatically and the Apache server manages its connections.
+
+
+REST services                                                           {#rest}
+=============
+
+An example use of the httpget and httppost plugins (see previous section) to
+support HTTP GET and POST of JSON REST requests:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "json.h"
+    #include "plugin/httpget.h"
+    #include "plugin/httppost.h"
+    #include "apache_gsoap.h"
+    void mod_gsoap_init(struct soap *soap, request_rec *r)
+    {
+      static struct http_post_handlers handlers[] = {
+        { "application/json", json_post_handler },
+        { NULL }
+      };
+      soap_register_plugin_arg(soap, http_get, http_get_handler);
+      soap_register_plugin_arg(soap, http_post, handlers);
+    }
+    IMPLEMENT_GSOAP_SERVER_INIT(mod_gsoap_init) /* replaces main() { ... } */
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+HTTP POST with Content-Type `application/json` is sent to the
+`http_post_handler`, for example a currentTime server (this is based on
+gsoap/samples/xml-rpc-json/json-currentTimeServer.c):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    int json_post_handler(struct soap *ctx)
+    {
+      /* receive JSON request */
+      struct value request;
+      if (soap_begin_recv(ctx)
+       || json_recv(ctx, &request)
+       || soap_end_recv(ctx))
+      {
+        json_send_fault(ctx);
+      }
+      else
+      {
+        if (is_string(&request) && !strcmp(*string_of(&request), "getCurrentTime"))
+        {
+          struct value *response = new_value(ctx);
+          *dateTime_of(response) = soap_dateTime2s(ctx, time(0));
+          ctx->http_content = "application/json; charset=utf-8";
+          if (soap_response(ctx, SOAP_FILE)
+           || json_send(ctx, response)
+           || soap_end_send(ctx))
+            return soap->error;
+        }
+        else
+        {
+          /* JSON error as per Google JSON Style Guide */
+          json_send_error(ctx, 400, "Wrong method", *string_of(&request));
+        }
+      }
+      return ctx->error;
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that `soap_response(soap, SOAP_FILE)` produces the HTTP 200 OK response
+header with the HTTP Content-Type specified by `soap->http_content`.  To
+return a specific HTTP status code, return the status code from the handler: a
+handler may return `SOAP_OK` or an HTTP status error code to indicate success
+or failure, respecively.  To decline a request return `DECLINED` without
+producing a response message.
+
+A `soap_closesock()` call is typically used with stand-alone servers, but is
+not needed to "close" the connection in the Apache module, but harmless when
+called, even when called more than once.
+
+If `soap_serve()` is not generated by soappcp2, for example when implementing
+non-SOAP REST services, then you must define the following `soap_serve()` dummy
+function in your REST service application's source code, see further below.
+The `soap_serve()` function is invoked by `mod_gsoap` for any HTTP POST request
+received, to handle SOAP/XML and REST HTTP POST service operations.
+
+To support HTTP PUT, PATCH, DELETE and any POST requests, add the corresponding
+entries to the table:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    static struct http_post_handlers handlers[] = {
+      { "POST",      generic_POST_handler }, // warning: overrides soap_serve()
+      { "PUT",       generic_PUT_handler },
+      { "PATCH",     generic_PATCH_handler },
+      { "DELETE",    generic_DELETE_handler },
+      { NULL }
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The httpget plugin sets the `soap::fget` callback function to serve HTTP GET
+requests (this disables the `?wsdl` feature, but which can be implemented by
+the handler).  The httppost plugin sets the `soap::fput`, `soap::fpatch` and
+`soap::fdel` callbacks to serve HTTP PUT, PATCH and DELETE requests,
+respectively.  The HTTP POST requests are handled differently, via
+`soap_serve()` (generated by soapcpp2 if one or more SOAP/XML service
+operations are defined) that invokes the `soap::fform` callback that points to
+the handler.  This callback is set by the httppost plugin upon receiving a HTTP
+POST request that matches the key in the table, i.e.  `"POST"` always matches
+and `"application/json"` only matches when the HTTP Content-Type is
+`application/json`.
+
+@warning a `generic_POST_handler`, when specified with a `"POST"` key entry in
+the table, takes priority over `soap_serve()`.  This means that SOAP/XML
+messages will not be processed by `soap_serve()`!  Instead, a SOAP/XML
+handler can be registered with the entries `"text/xml"` for SOAP 1.1 and
+`"application/soap+xml"` for SOAP 1.2 (for SOAP with attachments, also register
+a `"application/xop+xml"` handler for MTOM).  This handler should invoke
+`soap_serve_request()` but never invoke `soap_serve()`.
+
+For more details on plugins, see the logging, httpget and httppost plugin
+documentation in the gSOAP manual.
+
+The following `soap` context variables are populated from the HTTP request and
+are made available to be inspected by the plugin handlers:
+
+- `soap::action` the SOAPAction string or NULL
+- `soap::bearer` the Bearer token or NULL
+- `soap::endpoint` the URL string (http://hostname/path) of the request
+- `soap::host` the hostname string of this server
+- `soap::http_content` the Content-Type string or NULL (NULL if no Content-Type
+    header was present such as in HTTP GET requests)
+- `soap::ip` the IP4 address of the client is a 32 bit integer
+- `soap::ip6[]` the IP6 address of the client is an array of four integers
+- `soap::path` the path string of the URL
+
+The `path` and `http_content` strings are very useful to decide the proper
+response by a handler for to the type of request sent by the client.
+
+@warning never return the contents of a file pointed to by `soap::endpoint` or
+`soap::path`, unless the path of the URL is checked in the code to be valid and
+blocked if it is not.  You must prevent unauthorized access to directories and
+files by returning 404 (Not Found) if the path is not pointing to a
+publicly-accessible resource.  You must also check for `..` in the path to
+block requests from snooping around in higher dirs!
+
+We can register a HTTP GET handler to display this information in a browser:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "plugin/httpget.h"
+    #include "apache_gsoap.h"
+
+    int http_get_handler(struct soap *soap)
+    {
+      const char *content = soap->http_content;
+      soap->http_content = "text/html"; // the content-type as specified by ...
+      soap_response(soap, SOAP_FILE);   // .... SOAP_FILE
+      soap_send(soap, "<html>");
+      soap_send(soap, "<br>Client IP4 = ");
+      soap_send(soap, soap_unsignedInt2s(soap, soap->ip));
+      soap_send(soap, "<br>Client IP6 = ");
+      soap_send(soap, soap_unsignedInt2s(soap, soap->ip6[0]));
+      soap_send(soap, ".");
+      soap_send(soap, soap_unsignedInt2s(soap, soap->ip6[1]));
+      soap_send(soap, ".");
+      soap_send(soap, soap_unsignedInt2s(soap, soap->ip6[2]));
+      soap_send(soap, ".");
+      soap_send(soap, soap_unsignedInt2s(soap, soap->ip6[3]));
+      soap_send(soap, ".");
+      soap_send(soap, "<br>Endpoint = ");
+      soap_send(soap, soap->endpoint);
+      soap_send(soap, "<br>Host = ");
+      soap_send(soap, soap->host);
+      soap_send(soap, "<br>Path = ");
+      soap_send(soap, soap->path);
+      soap_send(soap, "<br>Content-Type = ");
+      soap_send(soap, content ? content : "N/A");
+      soap_send(soap, "<br>SOAPAction = ");
+      soap_send(soap, soap->action);
+      soap_send(soap, "<br>Bearer = ");
+      soap_send(soap, soap->bearer);
+      soap_send(soap, "</html>");
+      soap_end_send(soap); 
+      return SOAP_OK; 
+    }
+
+    void mod_gsoap_init(struct soap *soap, request_rec *r)
+    {
+      soap_register_plugin_arg(soap, http_get, http_get_handler);
+    }
+    IMPLEMENT_GSOAP_SERVER_INIT(mod_gsoap_init) /* replaces main() { ... } */
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Opening a browser with the server's URL (`http://localhost:9080/soap` for
+example, as specified in `httpd.conf`) shows the values associated with the
+HTTP GET request.
+
+If `soap_serve()` is not generated by soappcp2, for example when implementing
+non-SOAP REST services, then you must define the following `soap_serve()` dummy
+function in your REST service application's source code:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    int soap_serve(struct soap *soap)
+    {
+      if (soap_begin_serve(soap) == SOAP_OK)
+        soap->error = SOAP_NO_METHOD; // OK, but we have nothing to do
+      return soap->error
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `soap_serve()` function is invoked by `mod_gsoap` for any HTTP POST request
+received, to handle SOAP/XML and REST service operations.  In this case we
+only have REST service operations and there is no `soap_serve()` generated by
+soapcpp2 for a SOAP/XML interface header file (e.g. produced by wsdl2h).
+
+The httppost plugin's POST handlers are invoked when `soap_begin_serve()`
+executes, before any SOAP/XML request can be handled.  If a HTTP plugin is
+registered to handle POST requests and the POST request was handled
+successfully, then `soap_begin_serve()` returns `SOAP_STOP` indicating that the
+request was served.
+
+On the other hand, when a request is received that is a valid SOAP/XML POST
+request (or a POST request that is not handled by one of your registered
+(generic) POST handlers), then we return `SOAP_NO_METHOD` or we could return
+404 for "Not Found" for example.
+
+@warning when implementing SOAP/XML services in addition to REST services,
+never call `soap_serve()` in a plugin handler function.  The `soap_serve()`
+function is already called by the `mod_gsoap` module.  If you want to process a
+SOAP/XML request in a handler, then call `soap_serve_request()` to process the
+XML request message and produce an XML response message for "two-way" SOAP/XML
+messaging with POST or PATCH.  "Two-way" POST or PATCH and "one-way" SOAP/XML
+messaging with PUT and GET is possible and automatic when the interface header
+file for soapcpp2 declares protocols for XML REST for service operations
+`ns__Method`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap ns service method-protocol: Method1 POST
+    int ns__Method1(...);
+    //gsoap ns service method-protocol: Method2 PUT
+    int ns__Method2(...);
+    //gsoap ns service method-protocol: Method3 GET
+    int ns__Method3(...);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `POST` (or `HTTP` which is the same as `POST`) and `PATCH` methods are
+"two-way".  The `PUT` and `GET` methods are "one-way" REST operations.  SOAP
+protocols for messages with SOAP envelopes are declared similarly:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap ns service method-protocol: Method1 SOAP
+    int ns__Method1(...);
+    //gsoap ns service method-protocol: Method2 SOAP-PUT
+    int ns__Method2(...);
+    //gsoap ns service method-protocol: Method3 SOAP-GET
+    int ns__Method3(...);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `SOAP` method is "two-way" messaging with SOAP envelopes.  The `SOAP-PUT`
+and `SOAP-GET` methods are "one-way" SOAP operations.
 
 
 Dynamic libraries                                                   {#libraries}
@@ -268,18 +552,19 @@ at the end of the `gsoap_handler()` function in `mod_gsoap.c`.
 Building C++ services from service classes                            {#classes}
 ==========================================
 
-The Apache server is written in C. Building Apache modules in C++ is tricky and
-cannot be fully guaranteed due to compiler differences. Several online
-resources exist that can help to implement C++ modules for Apache 2.0. If this
-fails, the best alternative is to use FastCGI (see gSOAP user guide on "FastCGI
-Support").
+The Apache server is written in C. Building Apache modules in C++ can be tricky
+and may not be fully guaranteed due to compiler differences.  Several online
+resources exist that offer advice on how to implement C++ modules for Apache
+2.x.  If this fails, the best alternative is to use FastCGI (see gSOAP user
+guide on "FastCGI Support").
 
 When using C++ gSOAP service classes generated by `soapcpp2` options `-i` or
-`-j` we need to implement the C function `soap_serve()` that dispatches the
-services.
+`-j` we need to implement the C function `soap_serve()` that dispatches these
+C++ services.
 
-We will walk through the implementation of a service using the same calculator
-example demonstrated above.
+We will walk you through the implementation of a service using the same
+calculator example demonstrated above, but written in C++ using a service class
+`calcService`.
 
 First, run `soapcpp2` with option `-j` to generate a service class:
 
@@ -326,8 +611,8 @@ Create a new `calcerver.cpp` file with the following code:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here, `calcService` is the service class defined in the generated
-`soapcalcService.h` and `soapcalcService.cpp` files.
+Here, `calcService` is the service class declared and defined in the generated
+`soapcalcService.h` and `soapcalcService.cpp` files, respectively.
 
 The `apxs` command is used to compile as follows, with the `-S CC=c++` option:
 

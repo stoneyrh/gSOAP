@@ -2510,9 +2510,10 @@ install_str(void)
 */
 static Token
 install_pragma(void)
-{       yylval.s = (char*)emalloc(yyleng);      /* yyleng = length(yytext) */
-        strncpy(yylval.s, yytext, strlen(yytext)-1);
-        yylval.s[strlen(yytext)-1] = '\0';
+{       size_t len = yyleng > 0 ? yyleng - 1 : 0; /* yyleng = length(yytext), guaranteed > 0 so just to appease stupid static analyzers */
+        yylval.s = (char*)emalloc(len + 1);
+        strncpy(yylval.s, yytext, len);
+        yylval.s[len] = '\0';
         return PRAGMA;
 }
 

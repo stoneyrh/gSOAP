@@ -770,7 +770,7 @@ Nonterminals, with rules where they appear
 
 State 0
 
-    0 $accept: . prog $end
+    0 $accept: • prog $end
 
     $default  reduce using rule 2 (s1)
 
@@ -780,14 +780,14 @@ State 0
 
 State 1
 
-    0 $accept: prog . $end
+    0 $accept: prog • $end
 
     $end  shift, and go to state 3
 
 
 State 2
 
-    1 prog: s1 . exts
+    1 prog: s1 • exts
 
     NAMESPACE  shift, and go to state 4
 
@@ -799,29 +799,29 @@ State 2
 
 State 3
 
-    0 $accept: prog $end .
+    0 $accept: prog $end •
 
     $default  accept
 
 
 State 4
 
-    3 exts: NAMESPACE . ID '{' exts1 '}'
+    3 exts: NAMESPACE • ID '{' exts1 '}'
 
     ID  shift, and go to state 7
 
 
 State 5
 
-    1 prog: s1 exts .
+    1 prog: s1 exts •
 
     $default  reduce using rule 1 (prog)
 
 
 State 6
 
-    4 exts: exts1 .
-    6 exts1: exts1 . ext
+    4 exts: exts1 •
+    6 exts1: exts1 • ext
 
     error           shift, and go to state 8
     PRAGMA          shift, and go to state 9
@@ -904,19 +904,19 @@ State 6
 
 State 7
 
-    3 exts: NAMESPACE ID . '{' exts1 '}'
+    3 exts: NAMESPACE ID • '{' exts1 '}'
 
     '{'  shift, and go to state 81
 
 
 State 8
 
-   11 ext: error . ';'
-   34 dclrs: error . ID
-   35      | error . ')'
-  143 type: error . ID error
-  144     | error . ID '>'
-  145     | error . '>'
+   11 ext: error • ';'
+   34 dclrs: error • ID
+   35      | error • ')'
+  143 type: error • ID error
+  144     | error • ID '>'
+  145     | error • '>'
 
     ID   shift, and go to state 82
     '>'  shift, and go to state 83
@@ -926,38 +926,38 @@ State 8
 
 State 9
 
-   12 pragma: PRAGMA .
+   12 pragma: PRAGMA •
 
     $default  reduce using rule 12 (pragma)
 
 
 State 10
 
-  186 store: AUTO .
+  186 store: AUTO •
 
     $default  reduce using rule 186 (store)
 
 
 State 11
 
-  114 type: DOUBLE .
+  114 type: DOUBLE •
 
     $default  reduce using rule 114 (type)
 
 
 State 12
 
-  108 type: INT .
+  108 type: INT •
 
     $default  reduce using rule 108 (type)
 
 
 State 13
 
-  127 type: STRUCT . '{' s2 decls '}'
-  129     | STRUCT . id
-  147     | STRUCT . error '}'
-  151 struct: STRUCT . id
+  127 type: STRUCT • '{' s2 decls '}'
+  129     | STRUCT • id
+  147     | STRUCT • error '}'
+  151 struct: STRUCT • id
 
     error  shift, and go to state 86
     ID     shift, and go to state 87
@@ -969,22 +969,22 @@ State 13
 
 State 14
 
-  109 type: LONG .
+  109 type: LONG •
 
     $default  reduce using rule 109 (type)
 
 
 State 15
 
-  133 type: ENUM . '{' s2 dclrs s5 '}'
-  134     | ENUM . '*' '{' s4 dclrs s5 '}'
-  139     | ENUM . id
-  140     | ENUM . sc
-  149     | ENUM . error '}'
-  156 enum: ENUM . id utype
-  157 enumsc: ENUM . sc utype
-  158 mask: ENUM . '*' id utype
-  159 masksc: ENUM . '*' sc utype
+  133 type: ENUM • '{' s2 dclrs s5 '}'
+  134     | ENUM • '*' '{' s4 dclrs s5 '}'
+  139     | ENUM • id
+  140     | ENUM • sc
+  149     | ENUM • error '}'
+  156 enum: ENUM • id utype
+  157 enumsc: ENUM • sc utype
+  158 mask: ENUM • '*' id utype
+  159 masksc: ENUM • '*' sc utype
 
     error   shift, and go to state 91
     STRUCT  shift, and go to state 92
@@ -1000,45 +1000,45 @@ State 15
 
 State 16
 
-  187 store: REGISTER .
+  187 store: REGISTER •
 
     $default  reduce using rule 187 (store)
 
 
 State 17
 
-  191 store: TYPEDEF .
+  191 store: TYPEDEF •
 
     $default  reduce using rule 191 (store)
 
 
 State 18
 
-  105 type: CHAR .
+  105 type: CHAR •
 
     $default  reduce using rule 105 (type)
 
 
 State 19
 
-  190 store: EXTERN .
+  190 store: EXTERN •
 
     $default  reduce using rule 190 (store)
 
 
 State 20
 
-  199 store: RETURN .
+  199 store: RETURN •
 
     $default  reduce using rule 199 (store)
 
 
 State 21
 
-  130 type: UNION . '{' s3 decls '}'
-  132     | UNION . id
-  148     | UNION . error '}'
-  155 union: UNION . id
+  130 type: UNION • '{' s3 decls '}'
+  132     | UNION • id
+  148     | UNION • error '}'
+  155 union: UNION • id
 
     error  shift, and go to state 98
     ID     shift, and go to state 87
@@ -1050,65 +1050,65 @@ State 21
 
 State 22
 
-  193 store: CONST .
+  193 store: CONST •
 
     $default  reduce using rule 193 (store)
 
 
 State 23
 
-  113 type: FLOAT .
+  113 type: FLOAT •
 
     $default  reduce using rule 113 (type)
 
 
 State 24
 
-  107 type: SHORT .
+  107 type: SHORT •
 
     $default  reduce using rule 107 (type)
 
 
 State 25
 
-  116 type: UNSIGNED .
+  116 type: UNSIGNED •
 
     $default  reduce using rule 116 (type)
 
 
 State 26
 
-  115 type: SIGNED .
+  115 type: SIGNED •
 
     $default  reduce using rule 115 (type)
 
 
 State 27
 
-  103 type: VOID .
+  103 type: VOID •
 
     $default  reduce using rule 103 (type)
 
 
 State 28
 
-  202 store: VOLATILE .
+  202 store: VOLATILE •
 
     $default  reduce using rule 202 (store)
 
 
 State 29
 
-  188 store: STATIC .
+  188 store: STATIC •
 
     $default  reduce using rule 188 (store)
 
 
 State 30
 
-  123 type: CLASS . '{' s2 decls '}'
-  146     | CLASS . error '}'
-  153 class: CLASS . id
+  123 type: CLASS • '{' s2 decls '}'
+  146     | CLASS • error '}'
+  153 class: CLASS • id
 
     error  shift, and go to state 101
     ID     shift, and go to state 87
@@ -1120,8 +1120,8 @@ State 30
 
 State 31
 
-  192 store: VIRTUAL .
-  211 virtual: VIRTUAL .
+  192 store: VIRTUAL •
+  211 virtual: VIRTUAL •
 
     '~'       reduce using rule 211 (virtual)
     $default  reduce using rule 192 (store)
@@ -1129,50 +1129,50 @@ State 31
 
 State 32
 
-  197 store: INLINE .
+  197 store: INLINE •
 
     $default  reduce using rule 197 (store)
 
 
 State 33
 
-   41 name: OPERATOR . '!'
-   42     | OPERATOR . '~'
-   43     | OPERATOR . '='
-   44     | OPERATOR . PA
-   45     | OPERATOR . NA
-   46     | OPERATOR . TA
-   47     | OPERATOR . DA
-   48     | OPERATOR . MA
-   49     | OPERATOR . AA
-   50     | OPERATOR . XA
-   51     | OPERATOR . OA
-   52     | OPERATOR . LA
-   53     | OPERATOR . RA
-   54     | OPERATOR . OR
-   55     | OPERATOR . AN
-   56     | OPERATOR . '|'
-   57     | OPERATOR . '^'
-   58     | OPERATOR . '&'
-   59     | OPERATOR . EQ
-   60     | OPERATOR . NE
-   61     | OPERATOR . '<'
-   62     | OPERATOR . LE
-   63     | OPERATOR . '>'
-   64     | OPERATOR . GE
-   65     | OPERATOR . LS
-   66     | OPERATOR . RS
-   67     | OPERATOR . '+'
-   68     | OPERATOR . '-'
-   69     | OPERATOR . '*'
-   70     | OPERATOR . '/'
-   71     | OPERATOR . '%'
-   72     | OPERATOR . PP
-   73     | OPERATOR . NN
-   74     | OPERATOR . AR
-   75     | OPERATOR . '[' ']'
-   76     | OPERATOR . '(' ')'
-   77     | OPERATOR . texp
+   41 name: OPERATOR • '!'
+   42     | OPERATOR • '~'
+   43     | OPERATOR • '='
+   44     | OPERATOR • PA
+   45     | OPERATOR • NA
+   46     | OPERATOR • TA
+   47     | OPERATOR • DA
+   48     | OPERATOR • MA
+   49     | OPERATOR • AA
+   50     | OPERATOR • XA
+   51     | OPERATOR • OA
+   52     | OPERATOR • LA
+   53     | OPERATOR • RA
+   54     | OPERATOR • OR
+   55     | OPERATOR • AN
+   56     | OPERATOR • '|'
+   57     | OPERATOR • '^'
+   58     | OPERATOR • '&'
+   59     | OPERATOR • EQ
+   60     | OPERATOR • NE
+   61     | OPERATOR • '<'
+   62     | OPERATOR • LE
+   63     | OPERATOR • '>'
+   64     | OPERATOR • GE
+   65     | OPERATOR • LS
+   66     | OPERATOR • RS
+   67     | OPERATOR • '+'
+   68     | OPERATOR • '-'
+   69     | OPERATOR • '*'
+   70     | OPERATOR • '/'
+   71     | OPERATOR • '%'
+   72     | OPERATOR • PP
+   73     | OPERATOR • NN
+   74     | OPERATOR • AR
+   75     | OPERATOR • '[' ']'
+   76     | OPERATOR • '(' ')'
+   77     | OPERATOR • texp
 
     error           shift, and go to state 104
     AUTO            shift, and go to state 10
@@ -1273,127 +1273,127 @@ State 33
 
 State 34
 
-  110 type: LLONG .
+  110 type: LLONG •
 
     $default  reduce using rule 110 (type)
 
 
 State 35
 
-  104 type: BOOL .
+  104 type: BOOL •
 
     $default  reduce using rule 104 (type)
 
 
 State 36
 
-  106 type: WCHAR .
+  106 type: WCHAR •
 
     $default  reduce using rule 106 (type)
 
 
 State 37
 
-  121 type: TIME .
+  121 type: TIME •
 
     $default  reduce using rule 121 (type)
 
 
 State 38
 
-  111 type: ULLONG .
+  111 type: ULLONG •
 
     $default  reduce using rule 111 (type)
 
 
 State 39
 
-  198 store: MUSTUNDERSTAND .
+  198 store: MUSTUNDERSTAND •
 
     $default  reduce using rule 198 (store)
 
 
 State 40
 
-  112 type: SIZE .
+  112 type: SIZE •
 
     $default  reduce using rule 112 (type)
 
 
 State 41
 
-  196 store: FRIEND .
+  196 store: FRIEND •
 
     $default  reduce using rule 196 (store)
 
 
 State 42
 
-  122 type: TEMPLATE . '<' tname id '>' CLASS id
+  122 type: TEMPLATE • '<' tname id '>' CLASS id
 
     '<'  shift, and go to state 147
 
 
 State 43
 
-  189 store: EXPLICIT .
+  189 store: EXPLICIT •
 
     $default  reduce using rule 189 (store)
 
 
 State 44
 
-  203 store: MUTABLE .
+  203 store: MUTABLE •
 
     $default  reduce using rule 203 (store)
 
 
 State 45
 
-  194 store: FINAL .
+  194 store: FINAL •
 
     $default  reduce using rule 194 (store)
 
 
 State 46
 
-  195 store: OVERRIDE .
+  195 store: OVERRIDE •
 
     $default  reduce using rule 195 (store)
 
 
 State 47
 
-  117 type: UCHAR .
+  117 type: UCHAR •
 
     $default  reduce using rule 117 (type)
 
 
 State 48
 
-  118 type: USHORT .
+  118 type: USHORT •
 
     $default  reduce using rule 118 (type)
 
 
 State 49
 
-  119 type: UINT .
+  119 type: UINT •
 
     $default  reduce using rule 119 (type)
 
 
 State 50
 
-  120 type: ULONG .
+  120 type: ULONG •
 
     $default  reduce using rule 120 (type)
 
 
 State 51
 
-   38 id: ID .
-   91 sym: ID . tag init
+   38 id: ID •
+   91 sym: ID • tag init
 
     TAG  shift, and go to state 148
 
@@ -1405,9 +1405,9 @@ State 51
 
 State 52
 
-   39 id: TYPE .
-  141 type: TYPE .
-  142     | TYPE . '<' texpf '>'
+   39 id: TYPE •
+  141 type: TYPE •
+  142     | TYPE • '<' texpf '>'
 
     '<'  shift, and go to state 150
 
@@ -1417,65 +1417,65 @@ State 52
 
 State 53
 
-   21 t1: '[' .
+   21 t1: '[' •
 
     $default  reduce using rule 21 (t1)
 
 
 State 54
 
-   22 t2: ']' .
+   22 t2: ']' •
 
     $default  reduce using rule 22 (t2)
 
 
 State 55
 
-  200 store: '@' .
+  200 store: '@' •
 
     $default  reduce using rule 200 (store)
 
 
 State 56
 
-  201 store: '$' .
+  201 store: '$' •
 
     $default  reduce using rule 201 (store)
 
 
 State 57
 
-    6 exts1: exts1 ext .
+    6 exts1: exts1 ext •
 
     $default  reduce using rule 6 (exts1)
 
 
 State 58
 
-    8 ext: pragma .
+    8 ext: pragma •
 
     $default  reduce using rule 8 (ext)
 
 
 State 59
 
-    9 ext: t1 .
+    9 ext: t1 •
 
     $default  reduce using rule 9 (ext)
 
 
 State 60
 
-   10 ext: t2 .
+   10 ext: t2 •
 
     $default  reduce using rule 10 (ext)
 
 
 State 61
 
-    7 ext: dclrs . ';'
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
+    7 ext: dclrs • ';'
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
 
     ','  shift, and go to state 151
     ';'  shift, and go to state 152
@@ -1483,21 +1483,21 @@ State 61
 
 State 62
 
-   40 name: id .
+   40 name: id •
 
     $default  reduce using rule 40 (name)
 
 
 State 63
 
-   78 ctor: name .
+   78 ctor: name •
 
     $default  reduce using rule 78 (ctor)
 
 
 State 64
 
-   29 dclrs: ctor . func
+   29 dclrs: ctor • func
 
     $default  reduce using rule 81 (fname)
 
@@ -1507,7 +1507,7 @@ State 64
 
 State 65
 
-   30 dclrs: dtor . func
+   30 dclrs: dtor • func
 
     $default  reduce using rule 81 (fname)
 
@@ -1517,16 +1517,16 @@ State 65
 
 State 66
 
-   31 dclrs: sym .
+   31 dclrs: sym •
 
     $default  reduce using rule 31 (dclrs)
 
 
 State 67
 
-   26 dclrs: spec .
-   27      | spec . dclr
-   28      | spec . fdclr func
+   26 dclrs: spec •
+   27      | spec • dclr
+   28      | spec • fdclr func
 
     ','       reduce using rule 26 (dclrs)
     '}'       reduce using rule 26 (dclrs)
@@ -1540,8 +1540,8 @@ State 67
 
 State 68
 
-   96 spec: type .
-   98     | type . spec
+   96 spec: type •
+   98     | type • spec
 
     error           shift, and go to state 104
     AUTO            shift, and go to state 10
@@ -1615,14 +1615,14 @@ State 68
 
 State 69
 
-  128 type: structid . '{' decls '}'
+  128 type: structid • '{' decls '}'
 
     '{'  shift, and go to state 160
 
 
 State 70
 
-  150 structid: struct . s2
+  150 structid: struct • s2
 
     $default  reduce using rule 180 (s2)
 
@@ -1631,8 +1631,8 @@ State 70
 
 State 71
 
-  124 type: classid . '{' decls '}'
-  125     | classid . ':' base '{' decls '}'
+  124 type: classid • '{' decls '}'
+  125     | classid • ':' base '{' decls '}'
 
     ':'  shift, and go to state 162
     '{'  shift, and go to state 163
@@ -1640,8 +1640,8 @@ State 71
 
 State 72
 
-  126 type: class .
-  152 classid: class . s2
+  126 type: class •
+  152 classid: class • s2
 
     ':'       reduce using rule 180 (s2)
     '{'       reduce using rule 180 (s2)
@@ -1652,14 +1652,14 @@ State 72
 
 State 73
 
-  131 type: unionid . '{' decls '}'
+  131 type: unionid • '{' decls '}'
 
     '{'  shift, and go to state 165
 
 
 State 74
 
-  154 unionid: union . s3
+  154 unionid: union • s3
 
     $default  reduce using rule 181 (s3)
 
@@ -1668,35 +1668,35 @@ State 74
 
 State 75
 
-  135 type: enum . '{' s2 dclrs s5 '}'
+  135 type: enum • '{' s2 dclrs s5 '}'
 
     '{'  shift, and go to state 167
 
 
 State 76
 
-  136 type: enumsc . '{' s2 dclrs s5 '}'
+  136 type: enumsc • '{' s2 dclrs s5 '}'
 
     '{'  shift, and go to state 168
 
 
 State 77
 
-  137 type: mask . '{' s4 dclrs s5 '}'
+  137 type: mask • '{' s4 dclrs s5 '}'
 
     '{'  shift, and go to state 169
 
 
 State 78
 
-  138 type: masksc . '{' s4 dclrs s5 '}'
+  138 type: masksc • '{' s4 dclrs s5 '}'
 
     '{'  shift, and go to state 170
 
 
 State 79
 
-   97 spec: store . spec
+   97 spec: store • spec
 
     error           shift, and go to state 104
     AUTO            shift, and go to state 10
@@ -1760,14 +1760,14 @@ State 79
 
 State 80
 
-   79 dtor: virtual . '~' id
+   79 dtor: virtual • '~' id
 
     '~'  shift, and go to state 172
 
 
 State 81
 
-    3 exts: NAMESPACE ID '{' . exts1 '}'
+    3 exts: NAMESPACE ID '{' • exts1 '}'
 
     $default  reduce using rule 5 (exts1)
 
@@ -1776,9 +1776,9 @@ State 81
 
 State 82
 
-   34 dclrs: error ID .
-  143 type: error ID . error
-  144     | error ID . '>'
+   34 dclrs: error ID •
+  143 type: error ID • error
+  144     | error ID • '>'
 
     error  shift, and go to state 174
     '>'    shift, and go to state 175
@@ -1790,49 +1790,49 @@ State 82
 
 State 83
 
-  145 type: error '>' .
+  145 type: error '>' •
 
     $default  reduce using rule 145 (type)
 
 
 State 84
 
-   11 ext: error ';' .
+   11 ext: error ';' •
 
     $default  reduce using rule 11 (ext)
 
 
 State 85
 
-   35 dclrs: error ')' .
+   35 dclrs: error ')' •
 
     $default  reduce using rule 35 (dclrs)
 
 
 State 86
 
-  147 type: STRUCT error . '}'
+  147 type: STRUCT error • '}'
 
     '}'  shift, and go to state 176
 
 
 State 87
 
-   38 id: ID .
+   38 id: ID •
 
     $default  reduce using rule 38 (id)
 
 
 State 88
 
-   39 id: TYPE .
+   39 id: TYPE •
 
     $default  reduce using rule 39 (id)
 
 
 State 89
 
-  127 type: STRUCT '{' . s2 decls '}'
+  127 type: STRUCT '{' • s2 decls '}'
 
     $default  reduce using rule 180 (s2)
 
@@ -1841,8 +1841,8 @@ State 89
 
 State 90
 
-  129 type: STRUCT id .
-  151 struct: STRUCT id .
+  129 type: STRUCT id •
+  151 struct: STRUCT id •
 
     '{'       reduce using rule 151 (struct)
     $default  reduce using rule 129 (type)
@@ -1850,14 +1850,14 @@ State 90
 
 State 91
 
-  149 type: ENUM error . '}'
+  149 type: ENUM error • '}'
 
     '}'  shift, and go to state 178
 
 
 State 92
 
-  160 sc: STRUCT . id
+  160 sc: STRUCT • id
 
     ID    shift, and go to state 87
     TYPE  shift, and go to state 88
@@ -1867,7 +1867,7 @@ State 92
 
 State 93
 
-  161 sc: CLASS . id
+  161 sc: CLASS • id
 
     ID    shift, and go to state 87
     TYPE  shift, and go to state 88
@@ -1877,9 +1877,9 @@ State 93
 
 State 94
 
-  134 type: ENUM '*' . '{' s4 dclrs s5 '}'
-  158 mask: ENUM '*' . id utype
-  159 masksc: ENUM '*' . sc utype
+  134 type: ENUM '*' • '{' s4 dclrs s5 '}'
+  158 mask: ENUM '*' • id utype
+  159 masksc: ENUM '*' • sc utype
 
     STRUCT  shift, and go to state 92
     CLASS   shift, and go to state 93
@@ -1893,7 +1893,7 @@ State 94
 
 State 95
 
-  133 type: ENUM '{' . s2 dclrs s5 '}'
+  133 type: ENUM '{' • s2 dclrs s5 '}'
 
     $default  reduce using rule 180 (s2)
 
@@ -1902,8 +1902,8 @@ State 95
 
 State 96
 
-  139 type: ENUM id .
-  156 enum: ENUM id . utype
+  139 type: ENUM id •
+  156 enum: ENUM id • utype
 
     ':'  shift, and go to state 185
 
@@ -1915,8 +1915,8 @@ State 96
 
 State 97
 
-  140 type: ENUM sc .
-  157 enumsc: ENUM sc . utype
+  140 type: ENUM sc •
+  157 enumsc: ENUM sc • utype
 
     ':'  shift, and go to state 185
 
@@ -1928,14 +1928,14 @@ State 97
 
 State 98
 
-  148 type: UNION error . '}'
+  148 type: UNION error • '}'
 
     '}'  shift, and go to state 188
 
 
 State 99
 
-  130 type: UNION '{' . s3 decls '}'
+  130 type: UNION '{' • s3 decls '}'
 
     $default  reduce using rule 181 (s3)
 
@@ -1944,8 +1944,8 @@ State 99
 
 State 100
 
-  132 type: UNION id .
-  155 union: UNION id .
+  132 type: UNION id •
+  155 union: UNION id •
 
     '{'       reduce using rule 155 (union)
     $default  reduce using rule 132 (type)
@@ -1953,14 +1953,14 @@ State 100
 
 State 101
 
-  146 type: CLASS error . '}'
+  146 type: CLASS error • '}'
 
     '}'  shift, and go to state 190
 
 
 State 102
 
-  123 type: CLASS '{' . s2 decls '}'
+  123 type: CLASS '{' • s2 decls '}'
 
     $default  reduce using rule 180 (s2)
 
@@ -1969,16 +1969,16 @@ State 102
 
 State 103
 
-  153 class: CLASS id .
+  153 class: CLASS id •
 
     $default  reduce using rule 153 (class)
 
 
 State 104
 
-  143 type: error . ID error
-  144     | error . ID '>'
-  145     | error . '>'
+  143 type: error • ID error
+  144     | error • ID '>'
+  145     | error • '>'
 
     ID   shift, and go to state 192
     '>'  shift, and go to state 83
@@ -1986,15 +1986,15 @@ State 104
 
 State 105
 
-  192 store: VIRTUAL .
+  192 store: VIRTUAL •
 
     $default  reduce using rule 192 (store)
 
 
 State 106
 
-  141 type: TYPE .
-  142     | TYPE . '<' texpf '>'
+  141 type: TYPE •
+  142     | TYPE • '<' texpf '>'
 
     '<'  shift, and go to state 150
 
@@ -2003,267 +2003,267 @@ State 106
 
 State 107
 
-   43 name: OPERATOR '=' .
+   43 name: OPERATOR '=' •
 
     $default  reduce using rule 43 (name)
 
 
 State 108
 
-   44 name: OPERATOR PA .
+   44 name: OPERATOR PA •
 
     $default  reduce using rule 44 (name)
 
 
 State 109
 
-   45 name: OPERATOR NA .
+   45 name: OPERATOR NA •
 
     $default  reduce using rule 45 (name)
 
 
 State 110
 
-   46 name: OPERATOR TA .
+   46 name: OPERATOR TA •
 
     $default  reduce using rule 46 (name)
 
 
 State 111
 
-   47 name: OPERATOR DA .
+   47 name: OPERATOR DA •
 
     $default  reduce using rule 47 (name)
 
 
 State 112
 
-   48 name: OPERATOR MA .
+   48 name: OPERATOR MA •
 
     $default  reduce using rule 48 (name)
 
 
 State 113
 
-   49 name: OPERATOR AA .
+   49 name: OPERATOR AA •
 
     $default  reduce using rule 49 (name)
 
 
 State 114
 
-   50 name: OPERATOR XA .
+   50 name: OPERATOR XA •
 
     $default  reduce using rule 50 (name)
 
 
 State 115
 
-   51 name: OPERATOR OA .
+   51 name: OPERATOR OA •
 
     $default  reduce using rule 51 (name)
 
 
 State 116
 
-   52 name: OPERATOR LA .
+   52 name: OPERATOR LA •
 
     $default  reduce using rule 52 (name)
 
 
 State 117
 
-   53 name: OPERATOR RA .
+   53 name: OPERATOR RA •
 
     $default  reduce using rule 53 (name)
 
 
 State 118
 
-   54 name: OPERATOR OR .
+   54 name: OPERATOR OR •
 
     $default  reduce using rule 54 (name)
 
 
 State 119
 
-   55 name: OPERATOR AN .
+   55 name: OPERATOR AN •
 
     $default  reduce using rule 55 (name)
 
 
 State 120
 
-   56 name: OPERATOR '|' .
+   56 name: OPERATOR '|' •
 
     $default  reduce using rule 56 (name)
 
 
 State 121
 
-   57 name: OPERATOR '^' .
+   57 name: OPERATOR '^' •
 
     $default  reduce using rule 57 (name)
 
 
 State 122
 
-   58 name: OPERATOR '&' .
+   58 name: OPERATOR '&' •
 
     $default  reduce using rule 58 (name)
 
 
 State 123
 
-   59 name: OPERATOR EQ .
+   59 name: OPERATOR EQ •
 
     $default  reduce using rule 59 (name)
 
 
 State 124
 
-   60 name: OPERATOR NE .
+   60 name: OPERATOR NE •
 
     $default  reduce using rule 60 (name)
 
 
 State 125
 
-   61 name: OPERATOR '<' .
+   61 name: OPERATOR '<' •
 
     $default  reduce using rule 61 (name)
 
 
 State 126
 
-   62 name: OPERATOR LE .
+   62 name: OPERATOR LE •
 
     $default  reduce using rule 62 (name)
 
 
 State 127
 
-   63 name: OPERATOR '>' .
+   63 name: OPERATOR '>' •
 
     $default  reduce using rule 63 (name)
 
 
 State 128
 
-   64 name: OPERATOR GE .
+   64 name: OPERATOR GE •
 
     $default  reduce using rule 64 (name)
 
 
 State 129
 
-   65 name: OPERATOR LS .
+   65 name: OPERATOR LS •
 
     $default  reduce using rule 65 (name)
 
 
 State 130
 
-   66 name: OPERATOR RS .
+   66 name: OPERATOR RS •
 
     $default  reduce using rule 66 (name)
 
 
 State 131
 
-   67 name: OPERATOR '+' .
+   67 name: OPERATOR '+' •
 
     $default  reduce using rule 67 (name)
 
 
 State 132
 
-   68 name: OPERATOR '-' .
+   68 name: OPERATOR '-' •
 
     $default  reduce using rule 68 (name)
 
 
 State 133
 
-   69 name: OPERATOR '*' .
+   69 name: OPERATOR '*' •
 
     $default  reduce using rule 69 (name)
 
 
 State 134
 
-   70 name: OPERATOR '/' .
+   70 name: OPERATOR '/' •
 
     $default  reduce using rule 70 (name)
 
 
 State 135
 
-   71 name: OPERATOR '%' .
+   71 name: OPERATOR '%' •
 
     $default  reduce using rule 71 (name)
 
 
 State 136
 
-   74 name: OPERATOR AR .
+   74 name: OPERATOR AR •
 
     $default  reduce using rule 74 (name)
 
 
 State 137
 
-   72 name: OPERATOR PP .
+   72 name: OPERATOR PP •
 
     $default  reduce using rule 72 (name)
 
 
 State 138
 
-   73 name: OPERATOR NN .
+   73 name: OPERATOR NN •
 
     $default  reduce using rule 73 (name)
 
 
 State 139
 
-   75 name: OPERATOR '[' . ']'
+   75 name: OPERATOR '[' • ']'
 
     ']'  shift, and go to state 193
 
 
 State 140
 
-   41 name: OPERATOR '!' .
+   41 name: OPERATOR '!' •
 
     $default  reduce using rule 41 (name)
 
 
 State 141
 
-   42 name: OPERATOR '~' .
+   42 name: OPERATOR '~' •
 
     $default  reduce using rule 42 (name)
 
 
 State 142
 
-   76 name: OPERATOR '(' . ')'
+   76 name: OPERATOR '(' • ')'
 
     ')'  shift, and go to state 194
 
 
 State 143
 
-   77 name: OPERATOR texp .
+   77 name: OPERATOR texp •
 
     $default  reduce using rule 77 (name)
 
 
 State 144
 
-   94 texp: tspec . ptrs array
-   95     | tspec . ptrs ID array
+   94 texp: tspec • ptrs array
+   95     | tspec • ptrs ID array
 
     $default  reduce using rule 212 (ptrs)
 
@@ -2272,8 +2272,8 @@ State 144
 
 State 145
 
-  100 tspec: type .
-  102      | type . tspec
+  100 tspec: type •
+  102      | type • tspec
 
     error           shift, and go to state 104
     AUTO            shift, and go to state 10
@@ -2349,8 +2349,8 @@ State 145
 
 State 146
 
-   99 tspec: store .
-  101      | store . tspec
+   99 tspec: store •
+  101      | store • tspec
 
     error           shift, and go to state 104
     AUTO            shift, and go to state 10
@@ -2426,7 +2426,7 @@ State 146
 
 State 147
 
-  122 type: TEMPLATE '<' . tname id '>' CLASS id
+  122 type: TEMPLATE '<' • tname id '>' CLASS id
 
     STRUCT    shift, and go to state 198
     CLASS     shift, and go to state 199
@@ -2437,14 +2437,14 @@ State 147
 
 State 148
 
-  226 tag: TAG .
+  226 tag: TAG •
 
     $default  reduce using rule 226 (tag)
 
 
 State 149
 
-   91 sym: ID tag . init
+   91 sym: ID tag • init
 
     '='  shift, and go to state 202
     EQ   shift, and go to state 203
@@ -2456,7 +2456,7 @@ State 149
 
 State 150
 
-  142 type: TYPE '<' . texpf '>'
+  142 type: TYPE '<' • texpf '>'
 
     error           shift, and go to state 104
     AUTO            shift, and go to state 10
@@ -2522,8 +2522,8 @@ State 150
 
 State 151
 
-   32 dclrs: dclrs ',' . dclr
-   33      | dclrs ',' . fdclr func
+   32 dclrs: dclrs ',' • dclr
+   33      | dclrs ',' • fdclr func
 
     $default  reduce using rule 212 (ptrs)
 
@@ -2534,42 +2534,42 @@ State 151
 
 State 152
 
-    7 ext: dclrs ';' .
+    7 ext: dclrs ';' •
 
     $default  reduce using rule 7 (ext)
 
 
 State 153
 
-   29 dclrs: ctor func .
+   29 dclrs: ctor func •
 
     $default  reduce using rule 29 (dclrs)
 
 
 State 154
 
-   80 func: fname . '(' s6 fargso ')' const abstract
+   80 func: fname • '(' s6 fargso ')' const abstract
 
     '('  shift, and go to state 210
 
 
 State 155
 
-   30 dclrs: dtor func .
+   30 dclrs: dtor func •
 
     $default  reduce using rule 30 (dclrs)
 
 
 State 156
 
-   27 dclrs: spec dclr .
+   27 dclrs: spec dclr •
 
     $default  reduce using rule 27 (dclrs)
 
 
 State 157
 
-   28 dclrs: spec fdclr . func
+   28 dclrs: spec fdclr • func
 
     $default  reduce using rule 81 (fname)
 
@@ -2579,11 +2579,11 @@ State 157
 
 State 158
 
-   36 dclr: ptrs . ID arrayck tag bounds brinit
-   37 fdclr: ptrs . name
-  213 ptrs: ptrs . '*'
-  214     | ptrs . '&'
-  215     | ptrs . AN
+   36 dclr: ptrs • ID arrayck tag bounds brinit
+   37 fdclr: ptrs • name
+  213 ptrs: ptrs • '*'
+  214     | ptrs • '&'
+  215     | ptrs • AN
 
     OPERATOR  shift, and go to state 33
     ID        shift, and go to state 212
@@ -2598,14 +2598,14 @@ State 158
 
 State 159
 
-   98 spec: type spec .
+   98 spec: type spec •
 
     $default  reduce using rule 98 (spec)
 
 
 State 160
 
-  128 type: structid '{' . decls '}'
+  128 type: structid '{' • decls '}'
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -2688,14 +2688,14 @@ State 160
 
 State 161
 
-  150 structid: struct s2 .
+  150 structid: struct s2 •
 
     $default  reduce using rule 150 (structid)
 
 
 State 162
 
-  125 type: classid ':' . base '{' decls '}'
+  125 type: classid ':' • base '{' decls '}'
 
     STRUCT     shift, and go to state 225
     CLASS      shift, and go to state 226
@@ -2709,7 +2709,7 @@ State 162
 
 State 163
 
-  124 type: classid '{' . decls '}'
+  124 type: classid '{' • decls '}'
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -2792,14 +2792,14 @@ State 163
 
 State 164
 
-  152 classid: class s2 .
+  152 classid: class s2 •
 
     $default  reduce using rule 152 (classid)
 
 
 State 165
 
-  131 type: unionid '{' . decls '}'
+  131 type: unionid '{' • decls '}'
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -2882,14 +2882,14 @@ State 165
 
 State 166
 
-  154 unionid: union s3 .
+  154 unionid: union s3 •
 
     $default  reduce using rule 154 (unionid)
 
 
 State 167
 
-  135 type: enum '{' . s2 dclrs s5 '}'
+  135 type: enum '{' • s2 dclrs s5 '}'
 
     $default  reduce using rule 180 (s2)
 
@@ -2898,7 +2898,7 @@ State 167
 
 State 168
 
-  136 type: enumsc '{' . s2 dclrs s5 '}'
+  136 type: enumsc '{' • s2 dclrs s5 '}'
 
     $default  reduce using rule 180 (s2)
 
@@ -2907,7 +2907,7 @@ State 168
 
 State 169
 
-  137 type: mask '{' . s4 dclrs s5 '}'
+  137 type: mask '{' • s4 dclrs s5 '}'
 
     $default  reduce using rule 182 (s4)
 
@@ -2916,7 +2916,7 @@ State 169
 
 State 170
 
-  138 type: masksc '{' . s4 dclrs s5 '}'
+  138 type: masksc '{' • s4 dclrs s5 '}'
 
     $default  reduce using rule 182 (s4)
 
@@ -2925,14 +2925,14 @@ State 170
 
 State 171
 
-   97 spec: store spec .
+   97 spec: store spec •
 
     $default  reduce using rule 97 (spec)
 
 
 State 172
 
-   79 dtor: virtual '~' . id
+   79 dtor: virtual '~' • id
 
     ID    shift, and go to state 87
     TYPE  shift, and go to state 88
@@ -2942,8 +2942,8 @@ State 172
 
 State 173
 
-    3 exts: NAMESPACE ID '{' exts1 . '}'
-    6 exts1: exts1 . ext
+    3 exts: NAMESPACE ID '{' exts1 • '}'
+    6 exts1: exts1 • ext
 
     error           shift, and go to state 8
     PRAGMA          shift, and go to state 9
@@ -3026,28 +3026,28 @@ State 173
 
 State 174
 
-  143 type: error ID error .
+  143 type: error ID error •
 
     $default  reduce using rule 143 (type)
 
 
 State 175
 
-  144 type: error ID '>' .
+  144 type: error ID '>' •
 
     $default  reduce using rule 144 (type)
 
 
 State 176
 
-  147 type: STRUCT error '}' .
+  147 type: STRUCT error '}' •
 
     $default  reduce using rule 147 (type)
 
 
 State 177
 
-  127 type: STRUCT '{' s2 . decls '}'
+  127 type: STRUCT '{' s2 • decls '}'
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -3130,28 +3130,28 @@ State 177
 
 State 178
 
-  149 type: ENUM error '}' .
+  149 type: ENUM error '}' •
 
     $default  reduce using rule 149 (type)
 
 
 State 179
 
-  160 sc: STRUCT id .
+  160 sc: STRUCT id •
 
     $default  reduce using rule 160 (sc)
 
 
 State 180
 
-  161 sc: CLASS id .
+  161 sc: CLASS id •
 
     $default  reduce using rule 161 (sc)
 
 
 State 181
 
-  134 type: ENUM '*' '{' . s4 dclrs s5 '}'
+  134 type: ENUM '*' '{' • s4 dclrs s5 '}'
 
     $default  reduce using rule 182 (s4)
 
@@ -3160,7 +3160,7 @@ State 181
 
 State 182
 
-  158 mask: ENUM '*' id . utype
+  158 mask: ENUM '*' id • utype
 
     ':'  shift, and go to state 185
 
@@ -3171,7 +3171,7 @@ State 182
 
 State 183
 
-  159 masksc: ENUM '*' sc . utype
+  159 masksc: ENUM '*' sc • utype
 
     ':'  shift, and go to state 185
 
@@ -3182,7 +3182,7 @@ State 183
 
 State 184
 
-  133 type: ENUM '{' s2 . dclrs s5 '}'
+  133 type: ENUM '{' s2 • dclrs s5 '}'
 
     error           shift, and go to state 244
     AUTO            shift, and go to state 10
@@ -3257,14 +3257,14 @@ State 184
 
 State 185
 
-  162 utype: ':' . CHAR
-  163      | ':' . WCHAR
-  164      | ':' . SHORT
-  165      | ':' . INT
-  166      | ':' . LONG
-  167      | ':' . LLONG
-  168      | ':' . TYPE
-  169      | ':' .
+  162 utype: ':' • CHAR
+  163      | ':' • WCHAR
+  164      | ':' • SHORT
+  165      | ':' • INT
+  166      | ':' • LONG
+  167      | ':' • LLONG
+  168      | ':' • TYPE
+  169      | ':' •
 
     INT    shift, and go to state 246
     LONG   shift, and go to state 247
@@ -3279,28 +3279,28 @@ State 185
 
 State 186
 
-  156 enum: ENUM id utype .
+  156 enum: ENUM id utype •
 
     $default  reduce using rule 156 (enum)
 
 
 State 187
 
-  157 enumsc: ENUM sc utype .
+  157 enumsc: ENUM sc utype •
 
     $default  reduce using rule 157 (enumsc)
 
 
 State 188
 
-  148 type: UNION error '}' .
+  148 type: UNION error '}' •
 
     $default  reduce using rule 148 (type)
 
 
 State 189
 
-  130 type: UNION '{' s3 . decls '}'
+  130 type: UNION '{' s3 • decls '}'
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -3383,14 +3383,14 @@ State 189
 
 State 190
 
-  146 type: CLASS error '}' .
+  146 type: CLASS error '}' •
 
     $default  reduce using rule 146 (type)
 
 
 State 191
 
-  123 type: CLASS '{' s2 . decls '}'
+  123 type: CLASS '{' s2 • decls '}'
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -3473,8 +3473,8 @@ State 191
 
 State 192
 
-  143 type: error ID . error
-  144     | error ID . '>'
+  143 type: error ID • error
+  144     | error ID • '>'
 
     error  shift, and go to state 174
     '>'    shift, and go to state 175
@@ -3482,25 +3482,25 @@ State 192
 
 State 193
 
-   75 name: OPERATOR '[' ']' .
+   75 name: OPERATOR '[' ']' •
 
     $default  reduce using rule 75 (name)
 
 
 State 194
 
-   76 name: OPERATOR '(' ')' .
+   76 name: OPERATOR '(' ')' •
 
     $default  reduce using rule 76 (name)
 
 
 State 195
 
-   94 texp: tspec ptrs . array
-   95     | tspec ptrs . ID array
-  213 ptrs: ptrs . '*'
-  214     | ptrs . '&'
-  215     | ptrs . AN
+   94 texp: tspec ptrs • array
+   95     | tspec ptrs • ID array
+  213 ptrs: ptrs • '*'
+  214     | ptrs • '&'
+  215     | ptrs • AN
 
     ID   shift, and go to state 255
     AN   shift, and go to state 213
@@ -3515,42 +3515,42 @@ State 195
 
 State 196
 
-  102 tspec: type tspec .
+  102 tspec: type tspec •
 
     $default  reduce using rule 102 (tspec)
 
 
 State 197
 
-  101 tspec: store tspec .
+  101 tspec: store tspec •
 
     $default  reduce using rule 101 (tspec)
 
 
 State 198
 
-  172 tname: STRUCT .
+  172 tname: STRUCT •
 
     $default  reduce using rule 172 (tname)
 
 
 State 199
 
-  171 tname: CLASS .
+  171 tname: CLASS •
 
     $default  reduce using rule 171 (tname)
 
 
 State 200
 
-  173 tname: TYPENAME .
+  173 tname: TYPENAME •
 
     $default  reduce using rule 173 (tname)
 
 
 State 201
 
-  122 type: TEMPLATE '<' tname . id '>' CLASS id
+  122 type: TEMPLATE '<' tname • id '>' CLASS id
 
     ID    shift, and go to state 87
     TYPE  shift, and go to state 88
@@ -3560,7 +3560,7 @@ State 201
 
 State 202
 
-  223 init: '=' . cexp
+  223 init: '=' • cexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -3590,7 +3590,7 @@ State 202
 
 State 203
 
-  224 init: EQ . cexp
+  224 init: EQ • cexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -3620,30 +3620,30 @@ State 203
 
 State 204
 
-   91 sym: ID tag init .
+   91 sym: ID tag init •
 
     $default  reduce using rule 91 (sym)
 
 
 State 205
 
-  142 type: TYPE '<' texpf . '>'
+  142 type: TYPE '<' texpf • '>'
 
     '>'  shift, and go to state 283
 
 
 State 206
 
-   92 texpf: texp .
+   92 texpf: texp •
 
     $default  reduce using rule 92 (texpf)
 
 
 State 207
 
-   93 texpf: tspec . ptrs '(' s6 fargso ')'
-   94 texp: tspec . ptrs array
-   95     | tspec . ptrs ID array
+   93 texpf: tspec • ptrs '(' s6 fargso ')'
+   94 texp: tspec • ptrs array
+   95     | tspec • ptrs ID array
 
     $default  reduce using rule 212 (ptrs)
 
@@ -3652,14 +3652,14 @@ State 207
 
 State 208
 
-   32 dclrs: dclrs ',' dclr .
+   32 dclrs: dclrs ',' dclr •
 
     $default  reduce using rule 32 (dclrs)
 
 
 State 209
 
-   33 dclrs: dclrs ',' fdclr . func
+   33 dclrs: dclrs ',' fdclr • func
 
     $default  reduce using rule 81 (fname)
 
@@ -3669,7 +3669,7 @@ State 209
 
 State 210
 
-   80 func: fname '(' . s6 fargso ')' const abstract
+   80 func: fname '(' • s6 fargso ')' const abstract
 
     $default  reduce using rule 185 (s6)
 
@@ -3678,15 +3678,15 @@ State 210
 
 State 211
 
-   28 dclrs: spec fdclr func .
+   28 dclrs: spec fdclr func •
 
     $default  reduce using rule 28 (dclrs)
 
 
 State 212
 
-   36 dclr: ptrs ID . arrayck tag bounds brinit
-   38 id: ID .
+   36 dclr: ptrs ID • arrayck tag bounds brinit
+   38 id: ID •
 
     '['  shift, and go to state 256
 
@@ -3699,40 +3699,40 @@ State 212
 
 State 213
 
-  215 ptrs: ptrs AN .
+  215 ptrs: ptrs AN •
 
     $default  reduce using rule 215 (ptrs)
 
 
 State 214
 
-  214 ptrs: ptrs '&' .
+  214 ptrs: ptrs '&' •
 
     $default  reduce using rule 214 (ptrs)
 
 
 State 215
 
-  213 ptrs: ptrs '*' .
+  213 ptrs: ptrs '*' •
 
     $default  reduce using rule 213 (ptrs)
 
 
 State 216
 
-   37 fdclr: ptrs name .
+   37 fdclr: ptrs name •
 
     $default  reduce using rule 37 (fdclr)
 
 
 State 217
 
-   20 decls: error . ';'
-   34 dclrs: error . ID
-   35      | error . ')'
-  143 type: error . ID error
-  144     | error . ID '>'
-  145     | error . '>'
+   20 decls: error • ';'
+   34 dclrs: error • ID
+   35      | error • ')'
+  143 type: error • ID error
+  144     | error • ID '>'
+  145     | error • '>'
 
     ID   shift, and go to state 82
     '>'  shift, and go to state 83
@@ -3742,28 +3742,28 @@ State 217
 
 State 218
 
-   15 decls: PRIVATE . ':' t3 decls
+   15 decls: PRIVATE • ':' t3 decls
 
     ':'  shift, and go to state 290
 
 
 State 219
 
-   16 decls: PROTECTED . ':' t4 decls
+   16 decls: PROTECTED • ':' t4 decls
 
     ':'  shift, and go to state 291
 
 
 State 220
 
-   17 decls: PUBLIC . ':' t5 decls
+   17 decls: PUBLIC • ':' t5 decls
 
     ':'  shift, and go to state 292
 
 
 State 221
 
-   19 decls: ';' . decls
+   19 decls: ';' • decls
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -3847,14 +3847,14 @@ State 221
 
 State 222
 
-  128 type: structid '{' decls . '}'
+  128 type: structid '{' decls • '}'
 
     '}'  shift, and go to state 294
 
 
 State 223
 
-   18 decls: t1 . decls t2 decls
+   18 decls: t1 • decls t2 decls
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -3937,9 +3937,9 @@ State 223
 
 State 224
 
-   14 decls: dclrs . ';' decls
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
+   14 decls: dclrs • ';' decls
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
 
     ','  shift, and go to state 151
     ';'  shift, and go to state 296
@@ -3947,7 +3947,7 @@ State 224
 
 State 225
 
-  178 base: STRUCT . id
+  178 base: STRUCT • id
 
     ID    shift, and go to state 87
     TYPE  shift, and go to state 88
@@ -3957,7 +3957,7 @@ State 225
 
 State 226
 
-  179 base: CLASS . id
+  179 base: CLASS • id
 
     ID    shift, and go to state 87
     TYPE  shift, and go to state 88
@@ -3967,7 +3967,7 @@ State 226
 
 State 227
 
-  175 base: PRIVATE . base
+  175 base: PRIVATE • base
 
     STRUCT     shift, and go to state 225
     CLASS      shift, and go to state 226
@@ -3981,7 +3981,7 @@ State 227
 
 State 228
 
-  174 base: PROTECTED . base
+  174 base: PROTECTED • base
 
     STRUCT     shift, and go to state 225
     CLASS      shift, and go to state 226
@@ -3995,7 +3995,7 @@ State 228
 
 State 229
 
-  176 base: PUBLIC . base
+  176 base: PUBLIC • base
 
     STRUCT     shift, and go to state 225
     CLASS      shift, and go to state 226
@@ -4009,35 +4009,35 @@ State 229
 
 State 230
 
-  177 base: TYPE .
+  177 base: TYPE •
 
     $default  reduce using rule 177 (base)
 
 
 State 231
 
-  125 type: classid ':' base . '{' decls '}'
+  125 type: classid ':' base • '{' decls '}'
 
     '{'  shift, and go to state 302
 
 
 State 232
 
-  124 type: classid '{' decls . '}'
+  124 type: classid '{' decls • '}'
 
     '}'  shift, and go to state 303
 
 
 State 233
 
-  131 type: unionid '{' decls . '}'
+  131 type: unionid '{' decls • '}'
 
     '}'  shift, and go to state 304
 
 
 State 234
 
-  135 type: enum '{' s2 . dclrs s5 '}'
+  135 type: enum '{' s2 • dclrs s5 '}'
 
     error           shift, and go to state 244
     AUTO            shift, and go to state 10
@@ -4112,7 +4112,7 @@ State 234
 
 State 235
 
-  136 type: enumsc '{' s2 . dclrs s5 '}'
+  136 type: enumsc '{' s2 • dclrs s5 '}'
 
     error           shift, and go to state 244
     AUTO            shift, and go to state 10
@@ -4187,7 +4187,7 @@ State 235
 
 State 236
 
-  137 type: mask '{' s4 . dclrs s5 '}'
+  137 type: mask '{' s4 • dclrs s5 '}'
 
     error           shift, and go to state 244
     AUTO            shift, and go to state 10
@@ -4262,7 +4262,7 @@ State 236
 
 State 237
 
-  138 type: masksc '{' s4 . dclrs s5 '}'
+  138 type: masksc '{' s4 • dclrs s5 '}'
 
     error           shift, and go to state 244
     AUTO            shift, and go to state 10
@@ -4337,28 +4337,28 @@ State 237
 
 State 238
 
-   79 dtor: virtual '~' id .
+   79 dtor: virtual '~' id •
 
     $default  reduce using rule 79 (dtor)
 
 
 State 239
 
-    3 exts: NAMESPACE ID '{' exts1 '}' .
+    3 exts: NAMESPACE ID '{' exts1 '}' •
 
     $default  reduce using rule 3 (exts)
 
 
 State 240
 
-  127 type: STRUCT '{' s2 decls . '}'
+  127 type: STRUCT '{' s2 decls • '}'
 
     '}'  shift, and go to state 309
 
 
 State 241
 
-  134 type: ENUM '*' '{' s4 . dclrs s5 '}'
+  134 type: ENUM '*' '{' s4 • dclrs s5 '}'
 
     error           shift, and go to state 244
     AUTO            shift, and go to state 10
@@ -4433,25 +4433,25 @@ State 241
 
 State 242
 
-  158 mask: ENUM '*' id utype .
+  158 mask: ENUM '*' id utype •
 
     $default  reduce using rule 158 (mask)
 
 
 State 243
 
-  159 masksc: ENUM '*' sc utype .
+  159 masksc: ENUM '*' sc utype •
 
     $default  reduce using rule 159 (masksc)
 
 
 State 244
 
-   34 dclrs: error . ID
-   35      | error . ')'
-  143 type: error . ID error
-  144     | error . ID '>'
-  145     | error . '>'
+   34 dclrs: error • ID
+   35      | error • ')'
+  143 type: error • ID error
+  144     | error • ID '>'
+  145     | error • '>'
 
     ID   shift, and go to state 82
     '>'  shift, and go to state 83
@@ -4460,9 +4460,9 @@ State 244
 
 State 245
 
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
-  133 type: ENUM '{' s2 dclrs . s5 '}'
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
+  133 type: ENUM '{' s2 dclrs • s5 '}'
 
     ','  shift, and go to state 311
 
@@ -4473,70 +4473,70 @@ State 245
 
 State 246
 
-  165 utype: ':' INT .
+  165 utype: ':' INT •
 
     $default  reduce using rule 165 (utype)
 
 
 State 247
 
-  166 utype: ':' LONG .
+  166 utype: ':' LONG •
 
     $default  reduce using rule 166 (utype)
 
 
 State 248
 
-  162 utype: ':' CHAR .
+  162 utype: ':' CHAR •
 
     $default  reduce using rule 162 (utype)
 
 
 State 249
 
-  164 utype: ':' SHORT .
+  164 utype: ':' SHORT •
 
     $default  reduce using rule 164 (utype)
 
 
 State 250
 
-  167 utype: ':' LLONG .
+  167 utype: ':' LLONG •
 
     $default  reduce using rule 167 (utype)
 
 
 State 251
 
-  163 utype: ':' WCHAR .
+  163 utype: ':' WCHAR •
 
     $default  reduce using rule 163 (utype)
 
 
 State 252
 
-  168 utype: ':' TYPE .
+  168 utype: ':' TYPE •
 
     $default  reduce using rule 168 (utype)
 
 
 State 253
 
-  130 type: UNION '{' s3 decls . '}'
+  130 type: UNION '{' s3 decls • '}'
 
     '}'  shift, and go to state 313
 
 
 State 254
 
-  123 type: CLASS '{' s2 decls . '}'
+  123 type: CLASS '{' s2 decls • '}'
 
     '}'  shift, and go to state 314
 
 
 State 255
 
-   95 texp: tspec ptrs ID . array
+   95 texp: tspec ptrs ID • array
 
     '['  shift, and go to state 256
 
@@ -4547,8 +4547,8 @@ State 255
 
 State 256
 
-  217 array: '[' . cexp ']' array
-  218      | '[' . ']' array
+  217 array: '[' • cexp ']' array
+  218      | '[' • ']' array
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4579,77 +4579,77 @@ State 256
 
 State 257
 
-   94 texp: tspec ptrs array .
+   94 texp: tspec ptrs array •
 
     $default  reduce using rule 94 (texp)
 
 
 State 258
 
-  122 type: TEMPLATE '<' tname id . '>' CLASS id
+  122 type: TEMPLATE '<' tname id • '>' CLASS id
 
     '>'  shift, and go to state 318
 
 
 State 259
 
-  291 lexp: SIZEOF . '(' texp ')'
+  291 lexp: SIZEOF • '(' texp ')'
 
     '('  shift, and go to state 319
 
 
 State 260
 
-  299 pexp: CFALSE .
+  299 pexp: CFALSE •
 
     $default  reduce using rule 299 (pexp)
 
 
 State 261
 
-  300 pexp: CTRUE .
+  300 pexp: CTRUE •
 
     $default  reduce using rule 300 (pexp)
 
 
 State 262
 
-  294 pexp: ID .
+  294 pexp: ID •
 
     $default  reduce using rule 294 (pexp)
 
 
 State 263
 
-  295 pexp: LNG .
+  295 pexp: LNG •
 
     $default  reduce using rule 295 (pexp)
 
 
 State 264
 
-  296 pexp: DBL .
+  296 pexp: DBL •
 
     $default  reduce using rule 296 (pexp)
 
 
 State 265
 
-  297 pexp: CHR .
+  297 pexp: CHR •
 
     $default  reduce using rule 297 (pexp)
 
 
 State 266
 
-  298 pexp: STR .
+  298 pexp: STR •
 
     $default  reduce using rule 298 (pexp)
 
 
 State 267
 
-  290 lexp: '&' . lexp
+  290 lexp: '&' • lexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4673,7 +4673,7 @@ State 267
 
 State 268
 
-  288 lexp: '+' . lexp
+  288 lexp: '+' • lexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4697,7 +4697,7 @@ State 268
 
 State 269
 
-  287 lexp: '-' . lexp
+  287 lexp: '-' • lexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4721,7 +4721,7 @@ State 269
 
 State 270
 
-  289 lexp: '*' . lexp
+  289 lexp: '*' • lexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4745,7 +4745,7 @@ State 270
 
 State 271
 
-  285 lexp: '!' . lexp
+  285 lexp: '!' • lexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4769,7 +4769,7 @@ State 271
 
 State 272
 
-  286 lexp: '~' . lexp
+  286 lexp: '~' • lexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4793,7 +4793,7 @@ State 272
 
 State 273
 
-  293 pexp: '(' . expr ')'
+  293 pexp: '(' • expr ')'
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -4824,15 +4824,15 @@ State 273
 
 State 274
 
-  223 init: '=' cexp .
+  223 init: '=' cexp •
 
     $default  reduce using rule 223 (init)
 
 
 State 275
 
-  260 cexp: oexp .
-  264 obex: oexp .
+  260 cexp: oexp •
+  264 obex: oexp •
 
     '?'       reduce using rule 264 (obex)
     OR        reduce using rule 264 (obex)
@@ -4841,8 +4841,8 @@ State 275
 
 State 276
 
-  259 cexp: obex . '?' qexp ':' cexp
-  262 oexp: obex . OR aexp
+  259 cexp: obex • '?' qexp ':' cexp
+  262 oexp: obex • OR aexp
 
     '?'  shift, and go to state 328
     OR   shift, and go to state 329
@@ -4850,8 +4850,8 @@ State 276
 
 State 277
 
-  263 oexp: aexp .
-  267 abex: aexp .
+  263 oexp: aexp •
+  267 abex: aexp •
 
     AN        reduce using rule 267 (abex)
     $default  reduce using rule 263 (oexp)
@@ -4859,30 +4859,30 @@ State 277
 
 State 278
 
-  265 aexp: abex . AN rexp
+  265 aexp: abex • AN rexp
 
     AN  shift, and go to state 330
 
 
 State 279
 
-  266 aexp: rexp .
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  266 aexp: rexp •
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '|'  shift, and go to state 331
     '^'  shift, and go to state 332
@@ -4906,40 +4906,40 @@ State 279
 
 State 280
 
-  284 rexp: lexp .
+  284 rexp: lexp •
 
     $default  reduce using rule 284 (rexp)
 
 
 State 281
 
-  292 lexp: pexp .
+  292 lexp: pexp •
 
     $default  reduce using rule 292 (lexp)
 
 
 State 282
 
-  224 init: EQ cexp .
+  224 init: EQ cexp •
 
     $default  reduce using rule 224 (init)
 
 
 State 283
 
-  142 type: TYPE '<' texpf '>' .
+  142 type: TYPE '<' texpf '>' •
 
     $default  reduce using rule 142 (type)
 
 
 State 284
 
-   93 texpf: tspec ptrs . '(' s6 fargso ')'
-   94 texp: tspec ptrs . array
-   95     | tspec ptrs . ID array
-  213 ptrs: ptrs . '*'
-  214     | ptrs . '&'
-  215     | ptrs . AN
+   93 texpf: tspec ptrs • '(' s6 fargso ')'
+   94 texp: tspec ptrs • array
+   95     | tspec ptrs • ID array
+  213 ptrs: ptrs • '*'
+  214     | ptrs • '&'
+  215     | ptrs • AN
 
     ID   shift, and go to state 255
     AN   shift, and go to state 213
@@ -4955,14 +4955,14 @@ State 284
 
 State 285
 
-   33 dclrs: dclrs ',' fdclr func .
+   33 dclrs: dclrs ',' fdclr func •
 
     $default  reduce using rule 33 (dclrs)
 
 
 State 286
 
-   80 func: fname '(' s6 . fargso ')' const abstract
+   80 func: fname '(' s6 • fargso ')' const abstract
 
     error           shift, and go to state 348
     AUTO            shift, and go to state 10
@@ -5031,14 +5031,14 @@ State 286
 
 State 287
 
-  219 arrayck: array .
+  219 arrayck: array •
 
     $default  reduce using rule 219 (arrayck)
 
 
 State 288
 
-   36 dclr: ptrs ID arrayck . tag bounds brinit
+   36 dclr: ptrs ID arrayck • tag bounds brinit
 
     TAG  shift, and go to state 148
 
@@ -5049,14 +5049,14 @@ State 288
 
 State 289
 
-   20 decls: error ';' .
+   20 decls: error ';' •
 
     $default  reduce using rule 20 (decls)
 
 
 State 290
 
-   15 decls: PRIVATE ':' . t3 decls
+   15 decls: PRIVATE ':' • t3 decls
 
     $default  reduce using rule 23 (t3)
 
@@ -5065,7 +5065,7 @@ State 290
 
 State 291
 
-   16 decls: PROTECTED ':' . t4 decls
+   16 decls: PROTECTED ':' • t4 decls
 
     $default  reduce using rule 24 (t4)
 
@@ -5074,7 +5074,7 @@ State 291
 
 State 292
 
-   17 decls: PUBLIC ':' . t5 decls
+   17 decls: PUBLIC ':' • t5 decls
 
     $default  reduce using rule 25 (t5)
 
@@ -5083,21 +5083,21 @@ State 292
 
 State 293
 
-   19 decls: ';' decls .
+   19 decls: ';' decls •
 
     $default  reduce using rule 19 (decls)
 
 
 State 294
 
-  128 type: structid '{' decls '}' .
+  128 type: structid '{' decls '}' •
 
     $default  reduce using rule 128 (type)
 
 
 State 295
 
-   18 decls: t1 decls . t2 decls
+   18 decls: t1 decls • t2 decls
 
     ']'  shift, and go to state 54
 
@@ -5106,7 +5106,7 @@ State 295
 
 State 296
 
-   14 decls: dclrs ';' . decls
+   14 decls: dclrs ';' • decls
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -5190,42 +5190,42 @@ State 296
 
 State 297
 
-  178 base: STRUCT id .
+  178 base: STRUCT id •
 
     $default  reduce using rule 178 (base)
 
 
 State 298
 
-  179 base: CLASS id .
+  179 base: CLASS id •
 
     $default  reduce using rule 179 (base)
 
 
 State 299
 
-  175 base: PRIVATE base .
+  175 base: PRIVATE base •
 
     $default  reduce using rule 175 (base)
 
 
 State 300
 
-  174 base: PROTECTED base .
+  174 base: PROTECTED base •
 
     $default  reduce using rule 174 (base)
 
 
 State 301
 
-  176 base: PUBLIC base .
+  176 base: PUBLIC base •
 
     $default  reduce using rule 176 (base)
 
 
 State 302
 
-  125 type: classid ':' base '{' . decls '}'
+  125 type: classid ':' base '{' • decls '}'
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -5308,23 +5308,23 @@ State 302
 
 State 303
 
-  124 type: classid '{' decls '}' .
+  124 type: classid '{' decls '}' •
 
     $default  reduce using rule 124 (type)
 
 
 State 304
 
-  131 type: unionid '{' decls '}' .
+  131 type: unionid '{' decls '}' •
 
     $default  reduce using rule 131 (type)
 
 
 State 305
 
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
-  135 type: enum '{' s2 dclrs . s5 '}'
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
+  135 type: enum '{' s2 dclrs • s5 '}'
 
     ','  shift, and go to state 311
 
@@ -5335,9 +5335,9 @@ State 305
 
 State 306
 
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
-  136 type: enumsc '{' s2 dclrs . s5 '}'
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
+  136 type: enumsc '{' s2 dclrs • s5 '}'
 
     ','  shift, and go to state 311
 
@@ -5348,9 +5348,9 @@ State 306
 
 State 307
 
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
-  137 type: mask '{' s4 dclrs . s5 '}'
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
+  137 type: mask '{' s4 dclrs • s5 '}'
 
     ','  shift, and go to state 311
 
@@ -5361,9 +5361,9 @@ State 307
 
 State 308
 
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
-  138 type: masksc '{' s4 dclrs . s5 '}'
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
+  138 type: masksc '{' s4 dclrs • s5 '}'
 
     ','  shift, and go to state 311
 
@@ -5374,16 +5374,16 @@ State 308
 
 State 309
 
-  127 type: STRUCT '{' s2 decls '}' .
+  127 type: STRUCT '{' s2 decls '}' •
 
     $default  reduce using rule 127 (type)
 
 
 State 310
 
-   32 dclrs: dclrs . ',' dclr
-   33      | dclrs . ',' fdclr func
-  134 type: ENUM '*' '{' s4 dclrs . s5 '}'
+   32 dclrs: dclrs • ',' dclr
+   33      | dclrs • ',' fdclr func
+  134 type: ENUM '*' '{' s4 dclrs • s5 '}'
 
     ','  shift, and go to state 311
 
@@ -5394,9 +5394,9 @@ State 310
 
 State 311
 
-   32 dclrs: dclrs ',' . dclr
-   33      | dclrs ',' . fdclr func
-  184 s5: ',' .
+   32 dclrs: dclrs ',' • dclr
+   33      | dclrs ',' • fdclr func
+  184 s5: ',' •
 
     '}'       reduce using rule 184 (s5)
     $default  reduce using rule 212 (ptrs)
@@ -5408,35 +5408,35 @@ State 311
 
 State 312
 
-  133 type: ENUM '{' s2 dclrs s5 . '}'
+  133 type: ENUM '{' s2 dclrs s5 • '}'
 
     '}'  shift, and go to state 365
 
 
 State 313
 
-  130 type: UNION '{' s3 decls '}' .
+  130 type: UNION '{' s3 decls '}' •
 
     $default  reduce using rule 130 (type)
 
 
 State 314
 
-  123 type: CLASS '{' s2 decls '}' .
+  123 type: CLASS '{' s2 decls '}' •
 
     $default  reduce using rule 123 (type)
 
 
 State 315
 
-   95 texp: tspec ptrs ID array .
+   95 texp: tspec ptrs ID array •
 
     $default  reduce using rule 95 (texp)
 
 
 State 316
 
-  218 array: '[' ']' . array
+  218 array: '[' ']' • array
 
     '['  shift, and go to state 256
 
@@ -5447,21 +5447,21 @@ State 316
 
 State 317
 
-  217 array: '[' cexp . ']' array
+  217 array: '[' cexp • ']' array
 
     ']'  shift, and go to state 367
 
 
 State 318
 
-  122 type: TEMPLATE '<' tname id '>' . CLASS id
+  122 type: TEMPLATE '<' tname id '>' • CLASS id
 
     CLASS  shift, and go to state 368
 
 
 State 319
 
-  291 lexp: SIZEOF '(' . texp ')'
+  291 lexp: SIZEOF '(' • texp ')'
 
     error           shift, and go to state 104
     AUTO            shift, and go to state 10
@@ -5526,50 +5526,50 @@ State 319
 
 State 320
 
-  290 lexp: '&' lexp .
+  290 lexp: '&' lexp •
 
     $default  reduce using rule 290 (lexp)
 
 
 State 321
 
-  288 lexp: '+' lexp .
+  288 lexp: '+' lexp •
 
     $default  reduce using rule 288 (lexp)
 
 
 State 322
 
-  287 lexp: '-' lexp .
+  287 lexp: '-' lexp •
 
     $default  reduce using rule 287 (lexp)
 
 
 State 323
 
-  289 lexp: '*' lexp .
+  289 lexp: '*' lexp •
 
     $default  reduce using rule 289 (lexp)
 
 
 State 324
 
-  285 lexp: '!' lexp .
+  285 lexp: '!' lexp •
 
     $default  reduce using rule 285 (lexp)
 
 
 State 325
 
-  286 lexp: '~' lexp .
+  286 lexp: '~' lexp •
 
     $default  reduce using rule 286 (lexp)
 
 
 State 326
 
-  257 expr: expr . ',' expr
-  293 pexp: '(' expr . ')'
+  257 expr: expr • ',' expr
+  293 pexp: '(' expr • ')'
 
     ','  shift, and go to state 370
     ')'  shift, and go to state 371
@@ -5577,14 +5577,14 @@ State 326
 
 State 327
 
-  258 expr: cexp .
+  258 expr: cexp •
 
     $default  reduce using rule 258 (expr)
 
 
 State 328
 
-  259 cexp: obex '?' . qexp ':' cexp
+  259 cexp: obex '?' • qexp ':' cexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5616,7 +5616,7 @@ State 328
 
 State 329
 
-  262 oexp: obex OR . aexp
+  262 oexp: obex OR • aexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5643,7 +5643,7 @@ State 329
 
 State 330
 
-  265 aexp: abex AN . rexp
+  265 aexp: abex AN • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5668,7 +5668,7 @@ State 330
 
 State 331
 
-  268 rexp: rexp '|' . rexp
+  268 rexp: rexp '|' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5693,7 +5693,7 @@ State 331
 
 State 332
 
-  269 rexp: rexp '^' . rexp
+  269 rexp: rexp '^' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5718,7 +5718,7 @@ State 332
 
 State 333
 
-  270 rexp: rexp '&' . rexp
+  270 rexp: rexp '&' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5743,7 +5743,7 @@ State 333
 
 State 334
 
-  271 rexp: rexp EQ . rexp
+  271 rexp: rexp EQ • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5768,7 +5768,7 @@ State 334
 
 State 335
 
-  272 rexp: rexp NE . rexp
+  272 rexp: rexp NE • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5793,7 +5793,7 @@ State 335
 
 State 336
 
-  273 rexp: rexp '<' . rexp
+  273 rexp: rexp '<' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5818,7 +5818,7 @@ State 336
 
 State 337
 
-  274 rexp: rexp LE . rexp
+  274 rexp: rexp LE • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5843,7 +5843,7 @@ State 337
 
 State 338
 
-  275 rexp: rexp '>' . rexp
+  275 rexp: rexp '>' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5868,7 +5868,7 @@ State 338
 
 State 339
 
-  276 rexp: rexp GE . rexp
+  276 rexp: rexp GE • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5893,7 +5893,7 @@ State 339
 
 State 340
 
-  277 rexp: rexp LS . rexp
+  277 rexp: rexp LS • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5918,7 +5918,7 @@ State 340
 
 State 341
 
-  278 rexp: rexp RS . rexp
+  278 rexp: rexp RS • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5943,7 +5943,7 @@ State 341
 
 State 342
 
-  279 rexp: rexp '+' . rexp
+  279 rexp: rexp '+' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5968,7 +5968,7 @@ State 342
 
 State 343
 
-  280 rexp: rexp '-' . rexp
+  280 rexp: rexp '-' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -5993,7 +5993,7 @@ State 343
 
 State 344
 
-  281 rexp: rexp '*' . rexp
+  281 rexp: rexp '*' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -6018,7 +6018,7 @@ State 344
 
 State 345
 
-  282 rexp: rexp '/' . rexp
+  282 rexp: rexp '/' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -6043,7 +6043,7 @@ State 345
 
 State 346
 
-  283 rexp: rexp '%' . rexp
+  283 rexp: rexp '%' • rexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -6068,7 +6068,7 @@ State 346
 
 State 347
 
-   93 texpf: tspec ptrs '(' . s6 fargso ')'
+   93 texpf: tspec ptrs '(' • s6 fargso ')'
 
     $default  reduce using rule 185 (s6)
 
@@ -6077,11 +6077,11 @@ State 347
 
 State 348
 
-   86 fargs: error . ID
-   87      | error . ','
-  143 type: error . ID error
-  144     | error . ID '>'
-  145     | error . '>'
+   86 fargs: error • ID
+   87      | error • ','
+  143 type: error • ID error
+  144     | error • ID '>'
+  145     | error • '>'
 
     ID   shift, and go to state 393
     ','  shift, and go to state 394
@@ -6090,22 +6090,22 @@ State 348
 
 State 349
 
-   80 func: fname '(' s6 fargso . ')' const abstract
+   80 func: fname '(' s6 fargso • ')' const abstract
 
     ')'  shift, and go to state 395
 
 
 State 350
 
-   83 fargso: fargs .
+   83 fargso: fargs •
 
     $default  reduce using rule 83 (fargso)
 
 
 State 351
 
-   84 fargs: farg .
-   85      | farg . ',' fargs
+   84 fargs: farg •
+   85      | farg • ',' fargs
 
     ','  shift, and go to state 396
 
@@ -6114,7 +6114,7 @@ State 351
 
 State 352
 
-   88 farg: tspec . ptrs arg
+   88 farg: tspec • ptrs arg
 
     $default  reduce using rule 212 (ptrs)
 
@@ -6123,7 +6123,7 @@ State 352
 
 State 353
 
-   36 dclr: ptrs ID arrayck tag . bounds brinit
+   36 dclr: ptrs ID arrayck tag • bounds brinit
 
     null  shift, and go to state 398
 
@@ -6135,7 +6135,7 @@ State 353
 
 State 354
 
-   15 decls: PRIVATE ':' t3 . decls
+   15 decls: PRIVATE ':' t3 • decls
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -6219,7 +6219,7 @@ State 354
 
 State 355
 
-   16 decls: PROTECTED ':' t4 . decls
+   16 decls: PROTECTED ':' t4 • decls
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -6303,7 +6303,7 @@ State 355
 
 State 356
 
-   17 decls: PUBLIC ':' t5 . decls
+   17 decls: PUBLIC ':' t5 • decls
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -6387,7 +6387,7 @@ State 356
 
 State 357
 
-   18 decls: t1 decls t2 . decls
+   18 decls: t1 decls t2 • decls
 
     error           shift, and go to state 217
     AUTO            shift, and go to state 10
@@ -6471,70 +6471,70 @@ State 357
 
 State 358
 
-   14 decls: dclrs ';' decls .
+   14 decls: dclrs ';' decls •
 
     $default  reduce using rule 14 (decls)
 
 
 State 359
 
-  125 type: classid ':' base '{' decls . '}'
+  125 type: classid ':' base '{' decls • '}'
 
     '}'  shift, and go to state 405
 
 
 State 360
 
-  135 type: enum '{' s2 dclrs s5 . '}'
+  135 type: enum '{' s2 dclrs s5 • '}'
 
     '}'  shift, and go to state 406
 
 
 State 361
 
-  136 type: enumsc '{' s2 dclrs s5 . '}'
+  136 type: enumsc '{' s2 dclrs s5 • '}'
 
     '}'  shift, and go to state 407
 
 
 State 362
 
-  137 type: mask '{' s4 dclrs s5 . '}'
+  137 type: mask '{' s4 dclrs s5 • '}'
 
     '}'  shift, and go to state 408
 
 
 State 363
 
-  138 type: masksc '{' s4 dclrs s5 . '}'
+  138 type: masksc '{' s4 dclrs s5 • '}'
 
     '}'  shift, and go to state 409
 
 
 State 364
 
-  134 type: ENUM '*' '{' s4 dclrs s5 . '}'
+  134 type: ENUM '*' '{' s4 dclrs s5 • '}'
 
     '}'  shift, and go to state 410
 
 
 State 365
 
-  133 type: ENUM '{' s2 dclrs s5 '}' .
+  133 type: ENUM '{' s2 dclrs s5 '}' •
 
     $default  reduce using rule 133 (type)
 
 
 State 366
 
-  218 array: '[' ']' array .
+  218 array: '[' ']' array •
 
     $default  reduce using rule 218 (array)
 
 
 State 367
 
-  217 array: '[' cexp ']' . array
+  217 array: '[' cexp ']' • array
 
     '['  shift, and go to state 256
 
@@ -6545,7 +6545,7 @@ State 367
 
 State 368
 
-  122 type: TEMPLATE '<' tname id '>' CLASS . id
+  122 type: TEMPLATE '<' tname id '>' CLASS • id
 
     ID    shift, and go to state 87
     TYPE  shift, and go to state 88
@@ -6555,14 +6555,14 @@ State 368
 
 State 369
 
-  291 lexp: SIZEOF '(' texp . ')'
+  291 lexp: SIZEOF '(' texp • ')'
 
     ')'  shift, and go to state 413
 
 
 State 370
 
-  257 expr: expr ',' . expr
+  257 expr: expr ',' • expr
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -6593,15 +6593,15 @@ State 370
 
 State 371
 
-  293 pexp: '(' expr ')' .
+  293 pexp: '(' expr ')' •
 
     $default  reduce using rule 293 (pexp)
 
 
 State 372
 
-  257 expr: expr . ',' expr
-  261 qexp: expr .
+  257 expr: expr • ',' expr
+  261 qexp: expr •
 
     ','  shift, and go to state 370
 
@@ -6610,15 +6610,15 @@ State 372
 
 State 373
 
-  259 cexp: obex '?' qexp . ':' cexp
+  259 cexp: obex '?' qexp • ':' cexp
 
     ':'  shift, and go to state 415
 
 
 State 374
 
-  262 oexp: obex OR aexp .
-  267 abex: aexp .
+  262 oexp: obex OR aexp •
+  267 abex: aexp •
 
     AN        reduce using rule 267 (abex)
     $default  reduce using rule 262 (oexp)
@@ -6626,23 +6626,23 @@ State 374
 
 State 375
 
-  265 aexp: abex AN rexp .
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  265 aexp: abex AN rexp •
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '|'  shift, and go to state 331
     '^'  shift, and go to state 332
@@ -6666,23 +6666,23 @@ State 375
 
 State 376
 
-  268 rexp: rexp . '|' rexp
-  268     | rexp '|' rexp .
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  268     | rexp '|' rexp •
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '^'  shift, and go to state 332
     '&'  shift, and go to state 333
@@ -6705,23 +6705,23 @@ State 376
 
 State 377
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  269     | rexp '^' rexp .
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  269     | rexp '^' rexp •
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '&'  shift, and go to state 333
     EQ   shift, and go to state 334
@@ -6743,23 +6743,23 @@ State 377
 
 State 378
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  270     | rexp '&' rexp .
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  270     | rexp '&' rexp •
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     EQ   shift, and go to state 334
     NE   shift, and go to state 335
@@ -6780,23 +6780,23 @@ State 378
 
 State 379
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  271     | rexp EQ rexp .
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  271     | rexp EQ rexp •
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '<'  shift, and go to state 336
     LE   shift, and go to state 337
@@ -6815,23 +6815,23 @@ State 379
 
 State 380
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  272     | rexp NE rexp .
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  272     | rexp NE rexp •
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '<'  shift, and go to state 336
     LE   shift, and go to state 337
@@ -6850,23 +6850,23 @@ State 380
 
 State 381
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  273     | rexp '<' rexp .
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  273     | rexp '<' rexp •
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     LS   shift, and go to state 340
     RS   shift, and go to state 341
@@ -6881,23 +6881,23 @@ State 381
 
 State 382
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  274     | rexp LE rexp .
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  274     | rexp LE rexp •
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     LS   shift, and go to state 340
     RS   shift, and go to state 341
@@ -6912,23 +6912,23 @@ State 382
 
 State 383
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  275     | rexp '>' rexp .
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  275     | rexp '>' rexp •
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     LS   shift, and go to state 340
     RS   shift, and go to state 341
@@ -6943,23 +6943,23 @@ State 383
 
 State 384
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  276     | rexp GE rexp .
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  276     | rexp GE rexp •
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     LS   shift, and go to state 340
     RS   shift, and go to state 341
@@ -6974,23 +6974,23 @@ State 384
 
 State 385
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  277     | rexp LS rexp .
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  277     | rexp LS rexp •
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '+'  shift, and go to state 342
     '-'  shift, and go to state 343
@@ -7003,23 +7003,23 @@ State 385
 
 State 386
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  278     | rexp RS rexp .
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  278     | rexp RS rexp •
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '+'  shift, and go to state 342
     '-'  shift, and go to state 343
@@ -7032,23 +7032,23 @@ State 386
 
 State 387
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  279     | rexp '+' rexp .
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  279     | rexp '+' rexp •
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '*'  shift, and go to state 344
     '/'  shift, and go to state 345
@@ -7059,23 +7059,23 @@ State 387
 
 State 388
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  280     | rexp '-' rexp .
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  280     | rexp '-' rexp •
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     '*'  shift, and go to state 344
     '/'  shift, and go to state 345
@@ -7086,76 +7086,76 @@ State 388
 
 State 389
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  281     | rexp '*' rexp .
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  281     | rexp '*' rexp •
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
 
     $default  reduce using rule 281 (rexp)
 
 
 State 390
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  282     | rexp '/' rexp .
-  283     | rexp . '%' rexp
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  282     | rexp '/' rexp •
+  283     | rexp • '%' rexp
 
     $default  reduce using rule 282 (rexp)
 
 
 State 391
 
-  268 rexp: rexp . '|' rexp
-  269     | rexp . '^' rexp
-  270     | rexp . '&' rexp
-  271     | rexp . EQ rexp
-  272     | rexp . NE rexp
-  273     | rexp . '<' rexp
-  274     | rexp . LE rexp
-  275     | rexp . '>' rexp
-  276     | rexp . GE rexp
-  277     | rexp . LS rexp
-  278     | rexp . RS rexp
-  279     | rexp . '+' rexp
-  280     | rexp . '-' rexp
-  281     | rexp . '*' rexp
-  282     | rexp . '/' rexp
-  283     | rexp . '%' rexp
-  283     | rexp '%' rexp .
+  268 rexp: rexp • '|' rexp
+  269     | rexp • '^' rexp
+  270     | rexp • '&' rexp
+  271     | rexp • EQ rexp
+  272     | rexp • NE rexp
+  273     | rexp • '<' rexp
+  274     | rexp • LE rexp
+  275     | rexp • '>' rexp
+  276     | rexp • GE rexp
+  277     | rexp • LS rexp
+  278     | rexp • RS rexp
+  279     | rexp • '+' rexp
+  280     | rexp • '-' rexp
+  281     | rexp • '*' rexp
+  282     | rexp • '/' rexp
+  283     | rexp • '%' rexp
+  283     | rexp '%' rexp •
 
     $default  reduce using rule 283 (rexp)
 
 
 State 392
 
-   93 texpf: tspec ptrs '(' s6 . fargso ')'
+   93 texpf: tspec ptrs '(' s6 • fargso ')'
 
     error           shift, and go to state 348
     AUTO            shift, and go to state 10
@@ -7224,9 +7224,9 @@ State 392
 
 State 393
 
-   86 fargs: error ID .
-  143 type: error ID . error
-  144     | error ID . '>'
+   86 fargs: error ID •
+  143 type: error ID • error
+  144     | error ID • '>'
 
     error  shift, and go to state 174
     '>'    shift, and go to state 175
@@ -7236,14 +7236,14 @@ State 393
 
 State 394
 
-   87 fargs: error ',' .
+   87 fargs: error ',' •
 
     $default  reduce using rule 87 (fargs)
 
 
 State 395
 
-   80 func: fname '(' s6 fargso ')' . const abstract
+   80 func: fname '(' s6 fargso ')' • const abstract
 
     $default  reduce using rule 204 (const)
 
@@ -7252,7 +7252,7 @@ State 395
 
 State 396
 
-   85 fargs: farg ',' . fargs
+   85 fargs: farg ',' • fargs
 
     error           shift, and go to state 348
     AUTO            shift, and go to state 10
@@ -7318,10 +7318,10 @@ State 396
 
 State 397
 
-   88 farg: tspec ptrs . arg
-  213 ptrs: ptrs . '*'
-  214     | ptrs . '&'
-  215     | ptrs . AN
+   88 farg: tspec ptrs • arg
+  213 ptrs: ptrs • '*'
+  214     | ptrs • '&'
+  215     | ptrs • AN
 
     ID   shift, and go to state 419
     AN   shift, and go to state 213
@@ -7338,14 +7338,14 @@ State 397
 
 State 398
 
-  237 nullptr: null .
+  237 nullptr: null •
 
     $default  reduce using rule 237 (nullptr)
 
 
 State 399
 
-   36 dclr: ptrs ID arrayck tag bounds . brinit
+   36 dclr: ptrs ID arrayck tag bounds • brinit
 
     '='  shift, and go to state 202
     EQ   shift, and go to state 203
@@ -7359,10 +7359,10 @@ State 399
 
 State 400
 
-  232 bounds: nullptr . patt
-  233       | nullptr . patt value min
-  234       | nullptr . patt value minmax value
-  235       | nullptr . patt max value
+  232 bounds: nullptr • patt
+  233       | nullptr • patt value min
+  234       | nullptr • patt value minmax value
+  235       | nullptr • patt max value
 
     STR  shift, and go to state 425
 
@@ -7373,106 +7373,106 @@ State 400
 
 State 401
 
-   15 decls: PRIVATE ':' t3 decls .
+   15 decls: PRIVATE ':' t3 decls •
 
     $default  reduce using rule 15 (decls)
 
 
 State 402
 
-   16 decls: PROTECTED ':' t4 decls .
+   16 decls: PROTECTED ':' t4 decls •
 
     $default  reduce using rule 16 (decls)
 
 
 State 403
 
-   17 decls: PUBLIC ':' t5 decls .
+   17 decls: PUBLIC ':' t5 decls •
 
     $default  reduce using rule 17 (decls)
 
 
 State 404
 
-   18 decls: t1 decls t2 decls .
+   18 decls: t1 decls t2 decls •
 
     $default  reduce using rule 18 (decls)
 
 
 State 405
 
-  125 type: classid ':' base '{' decls '}' .
+  125 type: classid ':' base '{' decls '}' •
 
     $default  reduce using rule 125 (type)
 
 
 State 406
 
-  135 type: enum '{' s2 dclrs s5 '}' .
+  135 type: enum '{' s2 dclrs s5 '}' •
 
     $default  reduce using rule 135 (type)
 
 
 State 407
 
-  136 type: enumsc '{' s2 dclrs s5 '}' .
+  136 type: enumsc '{' s2 dclrs s5 '}' •
 
     $default  reduce using rule 136 (type)
 
 
 State 408
 
-  137 type: mask '{' s4 dclrs s5 '}' .
+  137 type: mask '{' s4 dclrs s5 '}' •
 
     $default  reduce using rule 137 (type)
 
 
 State 409
 
-  138 type: masksc '{' s4 dclrs s5 '}' .
+  138 type: masksc '{' s4 dclrs s5 '}' •
 
     $default  reduce using rule 138 (type)
 
 
 State 410
 
-  134 type: ENUM '*' '{' s4 dclrs s5 '}' .
+  134 type: ENUM '*' '{' s4 dclrs s5 '}' •
 
     $default  reduce using rule 134 (type)
 
 
 State 411
 
-  217 array: '[' cexp ']' array .
+  217 array: '[' cexp ']' array •
 
     $default  reduce using rule 217 (array)
 
 
 State 412
 
-  122 type: TEMPLATE '<' tname id '>' CLASS id .
+  122 type: TEMPLATE '<' tname id '>' CLASS id •
 
     $default  reduce using rule 122 (type)
 
 
 State 413
 
-  291 lexp: SIZEOF '(' texp ')' .
+  291 lexp: SIZEOF '(' texp ')' •
 
     $default  reduce using rule 291 (lexp)
 
 
 State 414
 
-  257 expr: expr . ',' expr
-  257     | expr ',' expr .
+  257 expr: expr • ',' expr
+  257     | expr ',' expr •
 
     $default  reduce using rule 257 (expr)
 
 
 State 415
 
-  259 cexp: obex '?' qexp ':' . cexp
+  259 cexp: obex '?' qexp ':' • cexp
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -7502,17 +7502,17 @@ State 415
 
 State 416
 
-   93 texpf: tspec ptrs '(' s6 fargso . ')'
+   93 texpf: tspec ptrs '(' s6 fargso • ')'
 
     ')'  shift, and go to state 428
 
 
 State 417
 
-   80 func: fname '(' s6 fargso ')' const . abstract
-  205 const: const . CONST
-  206      | const . FINAL
-  207      | const . OVERRIDE
+   80 func: fname '(' s6 fargso ')' const • abstract
+  205 const: const • CONST
+  206      | const • FINAL
+  207      | const • OVERRIDE
 
     CONST     shift, and go to state 429
     FINAL     shift, and go to state 430
@@ -7526,14 +7526,14 @@ State 417
 
 State 418
 
-   85 fargs: farg ',' fargs .
+   85 fargs: farg ',' fargs •
 
     $default  reduce using rule 85 (fargs)
 
 
 State 419
 
-   90 arg: ID . arrayck tag occurs init
+   90 arg: ID • arrayck tag occurs init
 
     '['  shift, and go to state 256
 
@@ -7545,14 +7545,14 @@ State 419
 
 State 420
 
-   88 farg: tspec ptrs arg .
+   88 farg: tspec ptrs arg •
 
     $default  reduce using rule 88 (farg)
 
 
 State 421
 
-   89 arg: arrayck . init
+   89 arg: arrayck • init
 
     '='  shift, and go to state 202
     EQ   shift, and go to state 203
@@ -7564,7 +7564,7 @@ State 421
 
 State 422
 
-  221 brinit: '{' . cexp '}'
+  221 brinit: '{' • cexp '}'
 
     SIZEOF  shift, and go to state 259
     CFALSE  shift, and go to state 260
@@ -7594,31 +7594,31 @@ State 422
 
 State 423
 
-   36 dclr: ptrs ID arrayck tag bounds brinit .
+   36 dclr: ptrs ID arrayck tag bounds brinit •
 
     $default  reduce using rule 36 (dclr)
 
 
 State 424
 
-  220 brinit: init .
+  220 brinit: init •
 
     $default  reduce using rule 220 (brinit)
 
 
 State 425
 
-  239 patt: STR .
+  239 patt: STR •
 
     $default  reduce using rule 239 (patt)
 
 
 State 426
 
-  232 bounds: nullptr patt .
-  233       | nullptr patt . value min
-  234       | nullptr patt . value minmax value
-  235       | nullptr patt . max value
+  232 bounds: nullptr patt •
+  233       | nullptr patt • value min
+  234       | nullptr patt • value minmax value
+  235       | nullptr patt • max value
 
     LNG  shift, and go to state 437
     DBL  shift, and go to state 438
@@ -7636,56 +7636,56 @@ State 426
 
 State 427
 
-  259 cexp: obex '?' qexp ':' cexp .
+  259 cexp: obex '?' qexp ':' cexp •
 
     $default  reduce using rule 259 (cexp)
 
 
 State 428
 
-   93 texpf: tspec ptrs '(' s6 fargso ')' .
+   93 texpf: tspec ptrs '(' s6 fargso ')' •
 
     $default  reduce using rule 93 (texpf)
 
 
 State 429
 
-  205 const: const CONST .
+  205 const: const CONST •
 
     $default  reduce using rule 205 (const)
 
 
 State 430
 
-  206 const: const FINAL .
+  206 const: const FINAL •
 
     $default  reduce using rule 206 (const)
 
 
 State 431
 
-  207 const: const OVERRIDE .
+  207 const: const OVERRIDE •
 
     $default  reduce using rule 207 (const)
 
 
 State 432
 
-  209 abstract: '=' . LNG
+  209 abstract: '=' • LNG
 
     LNG  shift, and go to state 446
 
 
 State 433
 
-   80 func: fname '(' s6 fargso ')' const abstract .
+   80 func: fname '(' s6 fargso ')' const abstract •
 
     $default  reduce using rule 80 (func)
 
 
 State 434
 
-   90 arg: ID arrayck . tag occurs init
+   90 arg: ID arrayck • tag occurs init
 
     TAG  shift, and go to state 148
 
@@ -7696,43 +7696,43 @@ State 434
 
 State 435
 
-   89 arg: arrayck init .
+   89 arg: arrayck init •
 
     $default  reduce using rule 89 (arg)
 
 
 State 436
 
-  221 brinit: '{' cexp . '}'
+  221 brinit: '{' cexp • '}'
 
     '}'  shift, and go to state 448
 
 
 State 437
 
-  241 value: LNG .
+  241 value: LNG •
 
     $default  reduce using rule 241 (value)
 
 
 State 438
 
-  240 value: DBL .
+  240 value: DBL •
 
     $default  reduce using rule 240 (value)
 
 
 State 439
 
-  242 value: CHR .
+  242 value: CHR •
 
     $default  reduce using rule 242 (value)
 
 
 State 440
 
-  254 max: ':' .
-  255    | ':' . '<'
+  254 max: ':' •
+  255    | ':' • '<'
 
     '<'  shift, and go to state 449
 
@@ -7741,14 +7741,14 @@ State 440
 
 State 441
 
-  256 max: '<' .
+  256 max: '<' •
 
     $default  reduce using rule 256 (max)
 
 
 State 442
 
-  243 value: '+' . value
+  243 value: '+' • value
 
     LNG  shift, and go to state 437
     DBL  shift, and go to state 438
@@ -7761,7 +7761,7 @@ State 442
 
 State 443
 
-  244 value: '-' . value
+  244 value: '-' • value
 
     LNG  shift, and go to state 437
     DBL  shift, and go to state 438
@@ -7774,8 +7774,8 @@ State 443
 
 State 444
 
-  233 bounds: nullptr patt value . min
-  234       | nullptr patt value . minmax value
+  233 bounds: nullptr patt value • min
+  234       | nullptr patt value • minmax value
 
     ':'  shift, and go to state 452
     '<'  shift, and go to state 453
@@ -7788,7 +7788,7 @@ State 444
 
 State 445
 
-  235 bounds: nullptr patt max . value
+  235 bounds: nullptr patt max • value
 
     LNG  shift, and go to state 437
     DBL  shift, and go to state 438
@@ -7801,14 +7801,14 @@ State 445
 
 State 446
 
-  209 abstract: '=' LNG .
+  209 abstract: '=' LNG •
 
     $default  reduce using rule 209 (abstract)
 
 
 State 447
 
-   90 arg: ID arrayck tag . occurs init
+   90 arg: ID arrayck tag • occurs init
 
     null  shift, and go to state 398
 
@@ -7820,37 +7820,37 @@ State 447
 
 State 448
 
-  221 brinit: '{' cexp '}' .
+  221 brinit: '{' cexp '}' •
 
     $default  reduce using rule 221 (brinit)
 
 
 State 449
 
-  255 max: ':' '<' .
+  255 max: ':' '<' •
 
     $default  reduce using rule 255 (max)
 
 
 State 450
 
-  243 value: '+' value .
+  243 value: '+' value •
 
     $default  reduce using rule 243 (value)
 
 
 State 451
 
-  244 value: '-' value .
+  244 value: '-' value •
 
     $default  reduce using rule 244 (value)
 
 
 State 452
 
-  246 min: ':' .
-  249 minmax: ':' .
-  251       | ':' . '<'
+  246 min: ':' •
+  249 minmax: ':' •
+  251       | ':' • '<'
 
     '<'  shift, and go to state 459
 
@@ -7864,11 +7864,11 @@ State 452
 
 State 453
 
-  247 min: '<' . ':'
-  248    | '<' .
-  250 minmax: '<' . ':'
-  252       | '<' . ':' '<'
-  253       | '<' .
+  247 min: '<' • ':'
+  248    | '<' •
+  250 minmax: '<' • ':'
+  252       | '<' • ':' '<'
+  253       | '<' •
 
     ':'  shift, and go to state 460
 
@@ -7882,14 +7882,14 @@ State 453
 
 State 454
 
-  233 bounds: nullptr patt value min .
+  233 bounds: nullptr patt value min •
 
     $default  reduce using rule 233 (bounds)
 
 
 State 455
 
-  234 bounds: nullptr patt value minmax . value
+  234 bounds: nullptr patt value minmax • value
 
     LNG  shift, and go to state 437
     DBL  shift, and go to state 438
@@ -7902,14 +7902,14 @@ State 455
 
 State 456
 
-  235 bounds: nullptr patt max value .
+  235 bounds: nullptr patt max value •
 
     $default  reduce using rule 235 (bounds)
 
 
 State 457
 
-   90 arg: ID arrayck tag occurs . init
+   90 arg: ID arrayck tag occurs • init
 
     '='  shift, and go to state 202
     EQ   shift, and go to state 203
@@ -7921,11 +7921,11 @@ State 457
 
 State 458
 
-  227 occurs: nullptr .
-  228       | nullptr . LNG
-  229       | nullptr . LNG ':'
-  230       | nullptr . LNG ':' LNG
-  231       | nullptr . ':' LNG
+  227 occurs: nullptr •
+  228       | nullptr • LNG
+  229       | nullptr • LNG ':'
+  230       | nullptr • LNG ':' LNG
+  231       | nullptr • ':' LNG
 
     LNG  shift, and go to state 463
     ':'  shift, and go to state 464
@@ -7935,16 +7935,16 @@ State 458
 
 State 459
 
-  251 minmax: ':' '<' .
+  251 minmax: ':' '<' •
 
     $default  reduce using rule 251 (minmax)
 
 
 State 460
 
-  247 min: '<' ':' .
-  250 minmax: '<' ':' .
-  252       | '<' ':' . '<'
+  247 min: '<' ':' •
+  250 minmax: '<' ':' •
+  252       | '<' ':' • '<'
 
     '<'  shift, and go to state 465
 
@@ -7958,23 +7958,23 @@ State 460
 
 State 461
 
-  234 bounds: nullptr patt value minmax value .
+  234 bounds: nullptr patt value minmax value •
 
     $default  reduce using rule 234 (bounds)
 
 
 State 462
 
-   90 arg: ID arrayck tag occurs init .
+   90 arg: ID arrayck tag occurs init •
 
     $default  reduce using rule 90 (arg)
 
 
 State 463
 
-  228 occurs: nullptr LNG .
-  229       | nullptr LNG . ':'
-  230       | nullptr LNG . ':' LNG
+  228 occurs: nullptr LNG •
+  229       | nullptr LNG • ':'
+  230       | nullptr LNG • ':' LNG
 
     ':'  shift, and go to state 466
 
@@ -7983,22 +7983,22 @@ State 463
 
 State 464
 
-  231 occurs: nullptr ':' . LNG
+  231 occurs: nullptr ':' • LNG
 
     LNG  shift, and go to state 467
 
 
 State 465
 
-  252 minmax: '<' ':' '<' .
+  252 minmax: '<' ':' '<' •
 
     $default  reduce using rule 252 (minmax)
 
 
 State 466
 
-  229 occurs: nullptr LNG ':' .
-  230       | nullptr LNG ':' . LNG
+  229 occurs: nullptr LNG ':' •
+  230       | nullptr LNG ':' • LNG
 
     LNG  shift, and go to state 468
 
@@ -8007,13 +8007,13 @@ State 466
 
 State 467
 
-  231 occurs: nullptr ':' LNG .
+  231 occurs: nullptr ':' LNG •
 
     $default  reduce using rule 231 (occurs)
 
 
 State 468
 
-  230 occurs: nullptr LNG ':' LNG .
+  230 occurs: nullptr LNG ':' LNG •
 
     $default  reduce using rule 230 (occurs)

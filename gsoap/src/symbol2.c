@@ -6808,7 +6808,7 @@ gen_proxy_code(FILE *fd, Table *table, Symbol *ns, const char *name)
     fprintf(fd, "\n\n%s::%s(soap_mode iomode) : soap(iomode)\n{\t%s_init(iomode, iomode);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const char *soap_endpoint_url, soap_mode iomode) : soap(iomode)\n{\t%s_init(iomode, iomode);\n\tsoap_endpoint = soap_endpoint_url;\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode imode, soap_mode omode) : soap(imode, omode)\n{\t%s_init(imode, omode);\n}", name, name, name);
-    fprintf(fd, "\n\n%s::~%s()\n{\n\tthis->destroy();\n}", name, name);
+    fprintf(fd, "\n\n%s::~%s()\n{\n\t%s::destroy();\n}", name, name, name);
   }
   else
   {
@@ -6820,7 +6820,7 @@ gen_proxy_code(FILE *fd, Table *table, Symbol *ns, const char *name)
     fprintf(fd, "\n\n%s::%s(soap_mode iomode)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(iomode, iomode);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const char *soap_endpoint_url, soap_mode iomode)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(iomode, iomode);\n\tsoap_endpoint = soap_endpoint_url;\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode imode, soap_mode omode)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(imode, omode);\n}", name, name, name);
-    fprintf(fd, "\n\n%s::~%s()\n{\tif (this->soap_own)\n\t{\tthis->destroy();\n\t\tsoap_free(this->soap);\n\t}\n}", name, name);
+    fprintf(fd, "\n\n%s::~%s()\n{\tif (this->soap_own)\n\t{\t%s::destroy();\n\t\tsoap_free(this->soap);\n\t}\n}", name, name, name);
   }
   fprintf(fd, "\n\nvoid %s::%s_init(soap_mode imode, soap_mode omode)\n{\tsoap_imode(%s, imode);\n\tsoap_omode(%s, omode);\n\tsoap_endpoint = NULL;\n\tstatic const struct Namespace namespaces[] = ", name, name, soap, soap);
   gen_nsmap(fd);
@@ -7076,7 +7076,7 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
     fprintf(fd, "\n\n%s::%s(const struct soap &_soap) : soap(_soap)\n{ }", name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode iomode) : soap(iomode)\n{\t%s_init(iomode, iomode);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode imode, soap_mode omode) : soap(imode, omode)\n{\t%s_init(imode, omode);\n}", name, name, name);
-    fprintf(fd, "\n\n%s::~%s()\n{\n\tthis->destroy();\n}", name, name);
+    fprintf(fd, "\n\n%s::~%s()\n{\n\t%s::destroy();\n}", name, name, name);
   }
   else
   {
@@ -7085,7 +7085,7 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
     fprintf(fd, "\n\n%s::%s(struct soap *_soap)\n{\tthis->soap = _soap;\n\tthis->soap_own = false;\n\t%s_init(_soap->imode, _soap->omode);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode iomode)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(iomode, iomode);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode imode, soap_mode omode)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(imode, omode);\n}", name, name, name);
-    fprintf(fd, "\n\n%s::~%s()\n{\tif (this->soap_own)\n\t{\tthis->destroy();\n\t\tsoap_free(this->soap);\n\t}\n}", name, name);
+    fprintf(fd, "\n\n%s::~%s()\n{\tif (this->soap_own)\n\t{\t%s::destroy();\n\t\tsoap_free(this->soap);\n\t}\n}", name, name, name);
   }
   fprintf(fd, "\n\nvoid %s::%s_init(soap_mode imode, soap_mode omode)\n{\tsoap_imode(%s, imode);\n\tsoap_omode(%s, omode);\n\tstatic const struct Namespace namespaces[] = ", name, name, soap, soap);
   gen_nsmap(fd);

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.114
+        stdsoap2.c[pp] 2.8.115
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208114
+#define GSOAP_LIB_VERSION 208115
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.114 2021-04-20 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.115 2021-06-25 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.114 2021-04-20 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.115 2021-06-25 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4160,7 +4160,7 @@ soap_ssl_init()
 #else
       srand((unsigned int)time(NULL));
 #endif
-      do 
+      do
       {
 #ifdef HAVE_RANDOM
         long r = random(); /* we actually do no use random() anywhere, except to further seed the OpenSSL PRNG */
@@ -4624,7 +4624,7 @@ ssl_auth_init(struct soap *soap)
     int err;
     err = gsk_environment_open(&soap->ctx);
     if (err == GSK_OK)
-      err = gsk_attribute_set_enum(soap->ctx, GSK_PROTOCOL_SSLV2, GSK_PROTOCOL_SSLV2_OFF); 
+      err = gsk_attribute_set_enum(soap->ctx, GSK_PROTOCOL_SSLV2, GSK_PROTOCOL_SSLV2_OFF);
     /* enable all TSLv1 protocols and disable SSLv3 by default if no SSL/TLS flags are set */
     if ((soap->ssl_flags & SOAP_SSLv3_TLSv1) == 0)
       soap->ssl_flags |= SOAP_TLSv1;
@@ -4834,7 +4834,7 @@ soap_ssl_accept(struct soap *soap)
   if (soap->recv_timeout || soap->send_timeout)
   {
     int t = soap->recv_timeout > soap->send_timeout ? soap->recv_timeout : soap->send_timeout;
-    if (t > 0) 
+    if (t > 0)
       retries = 10 * t;
     else if (t > -100000)
       retries = 1;
@@ -4900,7 +4900,7 @@ soap_ssl_accept(struct soap *soap)
   if (soap->recv_timeout || soap->send_timeout)
   {
     int t = soap->recv_timeout > soap->send_timeout ? soap->recv_timeout : soap->send_timeout;
-    if (t > 0) 
+    if (t > 0)
       retries = 10 * t;
     else if (t > -100000)
       retries = 1;
@@ -4956,7 +4956,7 @@ soap_ssl_accept(struct soap *soap)
   if (soap->recv_timeout || soap->send_timeout)
   {
     int t = soap->recv_timeout > soap->send_timeout ? soap->recv_timeout : soap->send_timeout;
-    if (t > 0) 
+    if (t > 0)
       retries = 10 * t;
     else if (t > -100000)
       retries = 1;
@@ -5079,7 +5079,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
 {
 #if (defined(_AIX43) || defined(TRU64) || defined(HP_UX)) && defined(HAVE_GETHOSTBYNAME_R)
   struct hostent_data ht_data;
-#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   int r;
   char *tmpbuf = soap->tmpbuf;
   size_t tmplen = sizeof(soap->tmpbuf);
@@ -5112,7 +5112,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     hostent = NULL;
     soap->errnum = h_errno;
   }
-#elif (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   while ((r = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &hostent, &soap->errnum)) < 0)
   {
     if (tmpbuf != soap->tmpbuf)
@@ -5162,7 +5162,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     if (soap_memcpy((void*)inaddr, sizeof(struct in_addr), (const void*)hostent->h_addr, (size_t)hostent->h_length))
     {
 #if (!defined(_AIX43) && !defined(TRU64) && !defined(HP_UX)) || !defined(HAVE_GETHOSTBYNAME_R)
-#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#if (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
       if (tmpbuf && tmpbuf != soap->tmpbuf)
         SOAP_FREE(soap, tmpbuf);
 #endif
@@ -5171,7 +5171,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     }
 #endif
   }
-#if (!defined(__GLIBC__) || !defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#if (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
   if (tmpbuf && tmpbuf != soap->tmpbuf)
     SOAP_FREE(soap, tmpbuf);
 #endif
@@ -5964,7 +5964,7 @@ again:
       int t = soap->recv_timeout > soap->send_timeout ? soap->recv_timeout : soap->send_timeout;
       if (soap->connect_timeout > 0 && t < soap->connect_timeout)
         t = soap->connect_timeout;
-      if (t > 0) 
+      if (t > 0)
         retries = 10 * t;
       else if (t > -100000)
         retries = 1;
@@ -6213,7 +6213,7 @@ again:
       int t = soap->recv_timeout > soap->send_timeout ? soap->recv_timeout : soap->send_timeout;
       if (soap->connect_timeout > 0 && t < soap->connect_timeout)
         t = soap->connect_timeout;
-      if (t > 0) 
+      if (t > 0)
         retries = 10 * t;
       else if (t > -100000)
         retries = 1;
@@ -6286,7 +6286,7 @@ again:
       int t = soap->recv_timeout > soap->send_timeout ? soap->recv_timeout : soap->send_timeout;
       if (soap->connect_timeout > 0 && t < soap->connect_timeout)
         t = soap->connect_timeout;
-      if (t > 0) 
+      if (t > 0)
         retries = 10 * t;
       else if (t > -100000)
         retries = 1;
@@ -7463,7 +7463,7 @@ soap_done(struct soap *soap)
   if (soap->state == SOAP_INIT)
     if (soap->ctx)
       gsk_environment_close(&soap->ctx);
-#endif  
+#endif
 #ifdef WITH_C_LOCALE
   SOAP_FREELOCALE(soap);
 #endif
@@ -8044,25 +8044,25 @@ http_post(struct soap *soap, const char *endpoint, const char *host, int port, c
   size_t l;
   switch (soap->status)
   {
-    case SOAP_GET: 
+    case SOAP_GET:
       s = "GET";
       break;
-    case SOAP_PUT: 
+    case SOAP_PUT:
       s = "PUT";
       break;
-    case SOAP_PATCH: 
+    case SOAP_PATCH:
       s = "PATCH";
       break;
-    case SOAP_DEL: 
+    case SOAP_DEL:
       s = "DELETE";
       break;
     case SOAP_CONNECT:
       s = "CONNECT";
       break;
-    case SOAP_HEAD: 
+    case SOAP_HEAD:
       s = "HEAD";
       break;
-    case SOAP_OPTIONS: 
+    case SOAP_OPTIONS:
       s = "OPTIONS";
       break;
     default:
@@ -12421,7 +12421,6 @@ soap_begin(struct soap *soap)
   soap->peeked = 0;
   soap->ahead = 0;
   soap->level = 0;
-  *soap->endpoint = '\0';
   soap->encodingStyle = SOAP_STR_EOS;
   soap_free_temp(soap);
 }
@@ -17687,7 +17686,7 @@ soap_QName(struct soap *soap, const char *s, long minlen, long maxlen, const cha
             }
             else
             {
-              flag = 1; 
+              flag = 1;
               r = soap->local_namespaces[np->index].ns;
               m = strlen(r);
             }
@@ -20535,12 +20534,15 @@ soap_begin_recv(struct soap *soap)
   soap->count = 0;
   soap->length = 0;
   soap->cdata = 0;
-  *soap->endpoint = '\0';
-  soap->action = NULL;
+  if (!(soap->mode & SOAP_ENC_PLAIN))
+  {
+    *soap->endpoint = '\0';
+    soap->action = NULL;
+    soap->fform = NULL;
+  }
   soap->header = NULL;
   soap->fault = NULL;
   soap->status = 0;
-  soap->fform = NULL;
   soap->body = 1;
 #ifndef WITH_LEANER
   soap->dom = NULL;
@@ -20795,15 +20797,16 @@ soap_begin_recv(struct soap *soap)
           return 405;
       }
       if (soap->error == SOAP_OK)
-        return soap->error = SOAP_STOP; /* prevents further processing */
+        return soap->error = SOAP_STOP; /* prevents further processing and calls soap_closesock() */
       if (soap->error != SOAP_FORM || !soap->fform) /* continue if handler returned SOAP_FORM */
         return soap->error;
       soap->error = SOAP_OK;
     }
     if (soap->fform)
     {
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Invoking http form handler\n"));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Invoking http post/form handler\n"));
       soap->error = soap->fform(soap);
+      soap->fform = NULL;
       if (soap->error == SOAP_OK)
         return soap->error = SOAP_STOP; /* prevents further processing */
       if (soap->status != SOAP_POST || soap->error != 404) /* continue with POST if handler returned HTTP not found */
@@ -20812,6 +20815,17 @@ soap_begin_recv(struct soap *soap)
     }
     if (!soap->body)
       return soap->error = SOAP_NO_DATA;
+  }
+  else if (soap->fform)
+  {
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Invoking http form handler\n"));
+    soap->error = soap->fform(soap);
+    soap->fform = NULL;
+    if (soap->error == SOAP_OK)
+      return soap->error = SOAP_STOP; /* prevents further processing */
+    if (soap->error != 404) /* continue with POST if handler returned HTTP not found */
+      return soap->error;
+    soap->error = SOAP_OK;
   }
 #endif
 #ifndef WITH_LEANER
@@ -20961,7 +20975,7 @@ soap_http_get_form(struct soap *soap)
 {
   return soap_http_get_body_prefix(soap, NULL, "?");
 }
-  
+
 /******************************************************************************/
 
 SOAP_FMAC1
@@ -20979,7 +20993,7 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
   if (len)
     *len = 0;
   /* check HTTP body, return "" if none */
-  if (!k && !(soap->mode & SOAP_ENC_ZLIB) && (soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
+  if (!k && !(soap->mode & SOAP_ENC_PLAIN) && !(soap->mode & SOAP_ENC_ZLIB) && (soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
     return soap_strdup(soap, prefix);
   /* do not consume DIME or MIME attachments, leave this to soap_end_recv */
   if ((soap->mode & SOAP_ENC_DIME) || (soap->mode & SOAP_ENC_MIME))
@@ -21001,8 +21015,17 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
     if (s)
     {
       size_t i = 0;
-      (void)soap_memcpy(t, n, prefix, n);
-      t += n;
+      if (n)
+      {
+        (void)soap_memcpy(t, n, prefix, n);
+        t += n;
+      }
+      if (soap->ahead && j > 0)
+      {
+        *t++ = soap->ahead;
+        ++i;
+        soap->ahead = 0;
+      }
       while (i < j)
       {
         size_t m;
@@ -21040,6 +21063,15 @@ soap_http_get_body_prefix(struct soap *soap, size_t *len, const char *prefix)
         return NULL;
       (void)soap_memcpy(s, n, prefix, n);
       l += n;
+    }
+    if (soap->ahead)
+    {
+      s = (char*)soap_push_block(soap, NULL, 1);
+      if (!s)
+        return NULL;
+      *s = soap->ahead;
+      ++l;
+      soap->ahead = 0;
     }
     for (;;)
     {
@@ -21533,7 +21565,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
 #ifndef WITH_NOHTTP
   if (http_command == SOAP_GET || http_command == SOAP_DEL || http_command == SOAP_HEAD || http_command == SOAP_OPTIONS)
   {
-    soap->mode &= ~SOAP_IO;
+    soap->mode &= ~(SOAP_IO | SOAP_ENC_ZLIB);
     soap->mode |= SOAP_IO_BUFFER;
   }
   if ((soap->mode & SOAP_IO) != SOAP_IO_STORE && !(soap->mode & SOAP_ENC_PLAIN) && endpoint)
@@ -21574,7 +21606,7 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
   struct SOAP_ENV__Header *oldheader;
   if (soap->ntlm_challenge && userid && passwd && soap->authrealm)
   {
-    tSmbNtlmAuthRequest req;  
+    tSmbNtlmAuthRequest req;
     tSmbNtlmAuthResponse res;
     tSmbNtlmAuthChallenge ch;
     int keep_alive = soap->keep_alive;
@@ -22529,8 +22561,10 @@ soap_recv_empty_response(struct soap *soap)
     {
       if (soap_http_skip_body(soap) || soap_end_recv(soap))
         return soap_closesock(soap);
+      if (soap->status < SOAP_STOP)
+        soap->error = soap->status;
     }
-    else if (soap->error == 200 || soap->error == 201 || soap->error == 202)
+    if (soap->error == 200 || soap->error == 201 || soap->error == 202)
     {
       soap->error = SOAP_OK;
     }
@@ -22558,7 +22592,7 @@ soap_strerror(struct soap *soap)
   {
 #ifndef WIN32
 # ifdef HAVE_STRERROR_R
-#  if !defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600))) /* || !defined(__GLIBC__)) */
+#  if !defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && ((!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600)))
     err = strerror_r(err, soap->msgbuf, sizeof(soap->msgbuf)); /* XSI-compliant */
     if (err != 0)
       soap_strcpy(soap->msgbuf, sizeof(soap->msgbuf), "unknown error");

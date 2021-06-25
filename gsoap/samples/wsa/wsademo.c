@@ -120,7 +120,7 @@ int main(int argc, char **argv)
         wsa5__FaultCodesType fault;
 	const char *info;
 
-        if (soap->error == 202)	/* HTTP ACCEPTED */
+        if (soap->error == 200 || soap->error == 202)	/* HTTP OK or ACCEPTED */
           printf("Request was accepted\n");
         else if (soap_wsa_check_fault(soap, &fault, &info))
 	{ switch (fault)
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
         else
 	  soap_print_fault(soap, stderr);
 #else
-        if (soap->error == 202)	/* HTTP ACCEPTED */
+        if (soap->error == 200 || soap->error == 202)	/* HTTP OK or ACCEPTED */
           printf("Request was accepted\n");
         else
 	  soap_print_fault(soap, stderr);

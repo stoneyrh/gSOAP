@@ -3101,9 +3101,8 @@ PATCH and DELETE request handlers in this table:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     struct http_post_handlers my_handlers[] = {
-      { "application/json",   json_handler },
-      { "application/json;*", json_handler },
-      { "POST",               generic_POST_handler },
+      { "application/json",   json_post_handler },
+      { "POST",               generic_POST_handler }, // see note below
       { "PUT",                generic_PUT_handler },
       { "PATCH",              generic_PATCH_handler },
       { "DELETE",             generic_DELETE_handler },
@@ -3111,10 +3110,10 @@ PATCH and DELETE request handlers in this table:
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that `*` can be used as a wildcard, in this case we use `*` to also capture
-`"application/json; charset=utf-8"` content type variations.
+A `*` can be used as a wildcard to match any characters and `-` is a wildcard
+that matches one character.  For example, `"text/*"` matches any text media type.
 
-To register the plugin:
+To register the plugin (see also the gSOAP manual):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     #include "plugin/httppost.h"
@@ -3136,7 +3135,7 @@ A handler in the `my_handlers` table is a function that takes the context and
 returns `SOAP_OK` or an error code.  Here is an example `json_handler` in C:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
-    int json_handler(struct soap *ctx)
+    int json_post_handler(struct soap *ctx)
     {
       struct value *request = new_value(ctx);
       struct value *response = new_value(ctx);
@@ -3183,6 +3182,12 @@ code use the following:
       soap_closesock(soap);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The `soap_closesock()` call only closes the connection when it shoud not be
+kept alive.  This function is also called automatically after the handler
+returns.  The function returns the `soap:error` value in order to pass an error
+code along the chain of calls.  There is no harm in calling this function more
+than once.
+
 A `generic_POST_handler` should be similar to the above.  The HTTP content type
 of the request is stored in the `http_content` string variable of the context.
 
@@ -3213,6 +3218,21 @@ character) wildcards.
 
 To compile your server application that serves JSON and SOAP requests, see
 \ref json-cc.
+
+The httppost plugin sets the `soap::fput`, `soap::fpatch` and `soap::fdel`
+callbacks to serve HTTP PUT, PATCH and DELETE requests, respectively.  The HTTP
+POST requests are handled differently, via `soap_serve()` that invokes the
+`soap::fform` callback that points to the handler.  This callback is set by the
+httppost plugin upon receiving a HTTP POST request that matches the key in the
+table, i.e.  `"POST"` always matches and `"application/json"` only matches when
+the HTTP Content-Type is `application/json`.  When a `SOAPAction` header is
+present in the HTTP POST request, then the POST handler is never invoked to
+allow `soap_serve()` to process the request.
+
+@note a `generic_POST_handler`, when specified with a `"POST"` key entry in the
+table, takes priority over `soap_serve()` if no `SOAPAction` HTTP header is
+included in the message.  This means that SOAP/XML messages without a
+`SOAPAction` header will not be processed by `soap_serve()`!
 
 Floating point format                                                      {#fp}
 ---------------------

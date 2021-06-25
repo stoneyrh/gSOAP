@@ -64,22 +64,25 @@ int generic_PUT_handler(struct soap *soap);
 int generic_DELETE_handler(struct soap *soap);
 
 int main(int argc, char **argv)
-{ char *buf;
+{
+  char *buf;
   size_t len;
   struct soap soap;
 
   soap_init(&soap);
   /* chunking conserves memory and is generally faster: */
   soap_set_omode(&soap, SOAP_IO_CHUNK);
+  /* enable the following line to compress messages */
+  /* soap_set_omode(&soap, SOAP_ENC_ZLIB); */
 
   if (argc < 2)
-  { /* CGI server */
+  {
+    /* CGI server */
     struct http_post_handlers handlers[] =
-    { { "image/jpg", jpg_post_handler },
+    {
+      { "image/jpg", jpg_post_handler },
       { "image/*",   image_post_handler },
-      { "image/*;*", image_post_handler },
       { "text/*",    text_post_handler },
-      { "text/*;*",  text_post_handler },
       { "POST",      generic_POST_handler },
       { "PUT",       generic_PUT_handler },
       { "DELETE",    generic_DELETE_handler },
@@ -96,18 +99,50 @@ int main(int argc, char **argv)
    || soap_send(&soap, argc == 2 ? "Hello" : argv[2])
    || soap_send(&soap, "</html>")
    || soap_end_send(&soap))
-  { soap_print_fault(&soap, stderr);
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
   /* after sending POST content, receive body (note: POST handlers should not be set for client) */
   if (soap_begin_recv(&soap)
    || soap_http_body(&soap, &buf, &len)
    || soap_end_recv(&soap))
-  { soap_print_fault(&soap, stderr);
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
   soap_closesock(&soap); /* close only when not keep-alive */
-  printf("Received %lu bytes of type %s:\n", (unsigned long)len, soap.http_content?soap.http_content:"");
+  printf("Received POST %lu bytes of type %s:\n", (unsigned long)len, soap.http_content?soap.http_content:"");
+
+  /* HTTP PUT client */
+  if (soap_put_connect(&soap, argv[1], NULL, "text/html")
+   || soap_send(&soap, "<html>")
+   || soap_send(&soap, argc == 2 ? "Hello" : argv[2])
+   || soap_send(&soap, "</html>")
+   || soap_end_send(&soap))
+  {
+    soap_print_fault(&soap, stderr);
+    exit(1);
+  }
+  /* after sending PUT content, receive confirmation */
+  if (soap_recv_empty_response(&soap))
+  {
+    soap_print_fault(&soap, stderr);
+    if (soap.error != 200 && soap.error != 202)
+      exit(1);
+  }
+  printf("PUT OK\n");
+
+  /* HTTP DELETE client */
+  if (soap_delete_connect(&soap, argv[1]))
+  {
+    soap_print_fault(&soap, stderr);
+    if (soap.error != 200 && soap.error != 202)
+      exit(1);
+  }
+  printf("DELETE OK\n");
+
+  soap_closesock(&soap); /* close only when not keep-alive */
   soap_end(&soap);
   soap_done(&soap);
   return 0;
@@ -115,33 +150,39 @@ int main(int argc, char **argv)
 
 /* Calculator service operations */
 int __ns1__add(struct soap *soap, struct ns2__pair *in, double *out)
-{ *out = in->a + in->b;
+{
+  *out = in->a + in->b;
   return SOAP_OK;
 }
 
 int __ns1__sub(struct soap *soap, struct ns2__pair *in, double *out)
-{ *out = in->a - in->b;
+{
+  *out = in->a - in->b;
   return SOAP_OK;
 }
 
 int __ns1__mul(struct soap *soap, struct ns2__pair *in, double *out)
-{ *out = in->a * in->b;
+{
+  *out = in->a * in->b;
   return SOAP_OK;
 }
 
 int __ns1__div(struct soap *soap, struct ns2__pair *in, double *out)
-{ *out = in->a / in->b;
+{
+  *out = in->a / in->b;
   return SOAP_OK;
 }
 
 int __ns1__pow(struct soap *soap, struct ns2__pair *in, double *out)
-{ *out = pow(in->a, in->b);
+{
+  *out = pow(in->a, in->b);
   return SOAP_OK;
 }
 
 /* the jpg handler just responds with HTTP OK */
 int jpg_post_handler(struct soap *soap)
-{ char *buf;
+{
+  char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
   soap_response(soap, SOAP_OK);
@@ -151,7 +192,8 @@ int jpg_post_handler(struct soap *soap)
 
 /* the image handler responds with HTTP OK and a text/html body */
 int image_post_handler(struct soap *soap)
-{ char *buf;
+{
+  char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
   soap_response(soap, SOAP_HTML);
@@ -162,7 +204,8 @@ int image_post_handler(struct soap *soap)
 
 /* the text handler copies the message back */
 int text_post_handler(struct soap *soap)
-{ char *buf;
+{
+  char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
   /* use current soap->http_content from HTTP header as return HTTP type */
@@ -174,7 +217,8 @@ int text_post_handler(struct soap *soap)
 
 /* the generic POST handler */
 int generic_POST_handler(struct soap *soap)
-{ char *buf;
+{
+  char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
   fprintf(stderr, "Generic POST accepted URL=\"%s\" content=\"%s\"\n", soap->endpoint, soap->http_content);
@@ -186,7 +230,8 @@ int generic_POST_handler(struct soap *soap)
 
 /* the generic PUT handler */
 int generic_PUT_handler(struct soap *soap)
-{ char *buf;
+{
+  char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
   fprintf(stderr, "Generic PUT accepted URL=\"%s\" content=\"%s\"\n", soap->endpoint, soap->http_content);
@@ -195,7 +240,8 @@ int generic_PUT_handler(struct soap *soap)
 
 /* the generic DELETE handler */
 int generic_DELETE_handler(struct soap *soap)
-{ fprintf(stderr, "Generic DELETE accepted URL=\"%s\"\n", soap->endpoint);
+{
+  fprintf(stderr, "Generic DELETE accepted URL=\"%s\"\n", soap->endpoint);
   return 202; /* HTTP Accepted */
 }
 

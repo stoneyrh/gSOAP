@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">mod_gsoap.c File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Jun 4 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Jun 24 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -107,16 +107,18 @@ Macros</h2></td></tr>
 <tr class="separator:a88a4bf7f483aad3f3945773f3383e713"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa93f0eb578d23995850d61f7d61c55c1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:aa93f0eb578d23995850d61f7d61c55c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8cecfc5c5c054d2875c03e77b7be15d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#aa8cecfc5c5c054d2875c03e77b7be15d">TRUE</a>&#160;&#160;&#160;((<a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>)0xffff)</td></tr>
+<tr class="memitem:aa8cecfc5c5c054d2875c03e77b7be15d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#aa8cecfc5c5c054d2875c03e77b7be15d">TRUE</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:aa8cecfc5c5c054d2875c03e77b7be15d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ced999d2a8efcb57d24ce5a3c30f525"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a5ced999d2a8efcb57d24ce5a3c30f525">IOBUF_CHUNK_SIZE</a>&#160;&#160;&#160;8192</td></tr>
-<tr class="separator:a5ced999d2a8efcb57d24ce5a3c30f525"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3aea27dc90ac347ff1d9b0f348d5cff1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a3aea27dc90ac347ff1d9b0f348d5cff1">GSOAP_ID</a>&#160;&#160;&#160;&quot;Apache 2.0 mod_gsoap gsoap httpd extension 0.0.9&quot;</td></tr>
+<tr class="memitem:a3aea27dc90ac347ff1d9b0f348d5cff1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a3aea27dc90ac347ff1d9b0f348d5cff1">GSOAP_ID</a>&#160;&#160;&#160;&quot;Apache 2.x mod_gsoap gsoap httpd extension 1.0&quot;</td></tr>
 <tr class="separator:a3aea27dc90ac347ff1d9b0f348d5cff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e0f5c42b68801054532c293169317d8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a4e0f5c42b68801054532c293169317d8">DLSYM</a>(a,  b)&#160;&#160;&#160;dlsym(a,b)</td></tr>
 <tr class="separator:a4e0f5c42b68801054532c293169317d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a14867c4f7ccec2b5a804bd0fd66a53"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a0a14867c4f7ccec2b5a804bd0fd66a53">DLOPEN</a>(a,  b)&#160;&#160;&#160;dlopen(a,b)</td></tr>
 <tr class="separator:a0a14867c4f7ccec2b5a804bd0fd66a53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1defcae089d0d937682cc78981a0ef99"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a1defcae089d0d937682cc78981a0ef99">DLCLOSE</a>(a)&#160;&#160;&#160;dlclose(a)</td></tr>
+<tr class="separator:a1defcae089d0d937682cc78981a0ef99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a690562dc6c92cb811f90e8391bfeb801"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a690562dc6c92cb811f90e8391bfeb801">DLERROR</a>()&#160;&#160;&#160;dlerror()</td></tr>
+<tr class="separator:a690562dc6c92cb811f90e8391bfeb801"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -215,8 +217,8 @@ Functions</h2></td></tr>
 <tr class="separator:a0aa18871544b54006821f66e731e994d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f92c3957b78ea8032c97031191da13a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a0991eb12b4d6a3f5210ffb7ea2812ddb">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a6f92c3957b78ea8032c97031191da13a">SendErrorMessage</a> (request_rec *r, const char *pszError)</td></tr>
 <tr class="separator:a6f92c3957b78ea8032c97031191da13a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9693d094ae44f14ce75d866e2c7e081f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a0991eb12b4d6a3f5210ffb7ea2812ddb">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a9693d094ae44f14ce75d866e2c7e081f">HTTPGet_SendWSDL</a> (request_rec *r, const char *path)</td></tr>
-<tr class="separator:a9693d094ae44f14ce75d866e2c7e081f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0afe610a6e858322aae16888564d5ee"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#ab0afe610a6e858322aae16888564d5ee">HTTPGet_SendWSDL</a> (request_rec *r, const char *path)</td></tr>
+<tr class="separator:ab0afe610a6e858322aae16888564d5ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e755e85578c680e678afda31ad17136"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a0e755e85578c680e678afda31ad17136">send_header_to_gsoap</a> (<a class="el" href="apache__gsoap_8h.html#a0991eb12b4d6a3f5210ffb7ea2812ddb">void</a> *pvoid, const char *key, const char *value)</td></tr>
 <tr class="separator:a0e755e85578c680e678afda31ad17136"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae748be697938319e6dc025dd89e5bdaf"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#ae748be697938319e6dc025dd89e5bdaf">http_post_header</a> (struct soap *soap, const char *key, const char *value)</td></tr>
@@ -225,10 +227,6 @@ Functions</h2></td></tr>
 <tr class="separator:ad7f919991ac976b1bd66900b34b3f778"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d38f07c129e0aa11fde8bdbb4b285e9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a2d38f07c129e0aa11fde8bdbb4b285e9">fsend</a> (struct soap *psoap, const char *pBuf, apr_size_t len)</td></tr>
 <tr class="separator:a2d38f07c129e0aa11fde8bdbb4b285e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af761b6a4ce1d5ff9f2639d14618f76f2"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#af761b6a4ce1d5ff9f2639d14618f76f2">http_parse</a> (struct soap *psoap)</td></tr>
-<tr class="separator:af761b6a4ce1d5ff9f2639d14618f76f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f79c6dc269fb73702ff4a86561fd41e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a9f79c6dc269fb73702ff4a86561fd41e">fpoll</a> (struct soap *psoap)</td></tr>
-<tr class="separator:a9f79c6dc269fb73702ff4a86561fd41e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84e1f4364447614c07e21499d317180c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a84e1f4364447614c07e21499d317180c">mod_gsoap_plugin_copy</a> (struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src)</td></tr>
 <tr class="separator:a84e1f4364447614c07e21499d317180c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ef19535ea738dff496e8c1ab5e8dd1a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="apache__gsoap_8h.html#a0991eb12b4d6a3f5210ffb7ea2812ddb">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mod__gsoap_8c.html#a1ef19535ea738dff496e8c1ab5e8dd1a">mod_gsoap_delete</a> (struct soap *soap, struct soap_plugin *p)</td></tr>
@@ -254,8 +252,8 @@ Variables</h2></td></tr>
 <tr class="separator:ae6a35763be8689a974b3be8f9784aaad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Apache gSOAP module for Apache 2.0</p>
-<p>originator: Christian Aberger (<a href="http://www.aberger.at">http://www.aberger.at</a>) ported to Apache 2.0 by Mick Wall (<a href="#" onclick="location.href='mai'+'lto:'+'mic'+'k@'+'mic'+'ka'+'ndw'+'en'+'dy.'+'co'+'m'; return false;">mick@<span style="display: none;">.nosp@m.</span>mick<span style="display: none;">.nosp@m.</span>andwe<span style="display: none;">.nosp@m.</span>ndy.<span style="display: none;">.nosp@m.</span>com</a>) updated by Robert van Engelen (<a href="#" onclick="location.href='mai'+'lto:'+'eng'+'el'+'en@'+'ac'+'m.o'+'rg'; return false;">engel<span style="display: none;">.nosp@m.</span>en@a<span style="display: none;">.nosp@m.</span>cm.or<span style="display: none;">.nosp@m.</span>g</a>) updated by David Viner (<a href="#" onclick="location.href='mai'+'lto:'+'dvi'+'ne'+'r@a'+'pa'+'che'+'.o'+'rg'; return false;">dvine<span style="display: none;">.nosp@m.</span>r@ap<span style="display: none;">.nosp@m.</span>ache.<span style="display: none;">.nosp@m.</span>org</a>) updated by Ryan Troll (patch removed) updated by La Cam Chung and Robert van Engelen (HTTP GET ?wsdl to get WSDL)</p>
+<div class="textblock"><p>Apache gSOAP module for Apache 2.x</p>
+<p>originator: Christian Aberger (<a href="http://www.aberger.at">http://www.aberger.at</a>) ported to Apache 2.0 by Mick Wall (<a href="#" onclick="location.href='mai'+'lto:'+'mic'+'k@'+'mic'+'ka'+'ndw'+'en'+'dy.'+'co'+'m'; return false;">mick@<span style="display: none;">.nosp@m.</span>mick<span style="display: none;">.nosp@m.</span>andwe<span style="display: none;">.nosp@m.</span>ndy.<span style="display: none;">.nosp@m.</span>com</a>) updated by Robert van Engelen (<a href="#" onclick="location.href='mai'+'lto:'+'eng'+'el'+'en@'+'ac'+'m.o'+'rg'; return false;">engel<span style="display: none;">.nosp@m.</span>en@a<span style="display: none;">.nosp@m.</span>cm.or<span style="display: none;">.nosp@m.</span>g</a>) updated by David Viner (<a href="#" onclick="location.href='mai'+'lto:'+'dvi'+'ne'+'r@a'+'pa'+'che'+'.o'+'rg'; return false;">dvine<span style="display: none;">.nosp@m.</span>r@ap<span style="display: none;">.nosp@m.</span>ache.<span style="display: none;">.nosp@m.</span>org</a>) updated by Ryan Troll (patch removed) updated by La Cam Chung and Robert van Engelen (HTTP GET ?wsdl to get WSDL) revised and upgraded by Robert van Engelen (<a href="#" onclick="location.href='mai'+'lto:'+'eng'+'el'+'en@'+'ac'+'m.o'+'rg'; return false;">engel<span style="display: none;">.nosp@m.</span>en@a<span style="display: none;">.nosp@m.</span>cm.or<span style="display: none;">.nosp@m.</span>g</a>) to support more plugins, REST and decompression</p>
 <p>Contributed to the gSOAP package under the terms and conditions of the gSOAP public license. </p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="a76a46571037bc82ff5ae544efcd5b3d1"></a>
@@ -280,6 +278,37 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define APR_WANT_STRFUNC</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a1defcae089d0d937682cc78981a0ef99"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DLCLOSE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">a</td><td>)</td>
+          <td>&#160;&#160;&#160;dlclose(a)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a690562dc6c92cb811f90e8391bfeb801"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DLERROR</td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td>&#160;&#160;&#160;dlerror()</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -355,19 +384,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define GSOAP_ID&#160;&#160;&#160;&quot;Apache 2.0 mod_gsoap gsoap httpd extension 0.0.9&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a5ced999d2a8efcb57d24ce5a3c30f525"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define IOBUF_CHUNK_SIZE&#160;&#160;&#160;8192</td>
+          <td class="memname">#define GSOAP_ID&#160;&#160;&#160;&quot;Apache 2.x mod_gsoap gsoap httpd extension 1.0&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -379,7 +396,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define TRUE&#160;&#160;&#160;((<a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a>)0xffff)</td>
+          <td class="memname">#define TRUE&#160;&#160;&#160;1</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -627,31 +644,6 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Command handler for the TAKE1 "SOAPSupportLibrary" directive. We remember the load path for a shared library that must additionally loaded. This is a mechanism to load libraries that the SOAPLibrary depends on. This type of libraries do not contain our soap server. </p>
-
-</div>
-</div>
-<a class="anchor" id="a9f79c6dc269fb73702ff4a86561fd41e"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a> fpoll </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>psoap</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>make sure we go through soap_send_fault(), which calls fpoll </p>
 
 </div>
 </div>
@@ -1219,31 +1211,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af761b6a4ce1d5ff9f2639d14618f76f2"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a> http_parse </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>psoap</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>instead of real header parsing we skip that. </p>
-
-</div>
-</div>
 <a class="anchor" id="ae748be697938319e6dc025dd89e5bdaf"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1284,7 +1251,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9693d094ae44f14ce75d866e2c7e081f"></a>
+<a class="anchor" id="ab0afe610a6e858322aae16888564d5ee"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -1292,7 +1259,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="apache__gsoap_8h.html#a0991eb12b4d6a3f5210ffb7ea2812ddb">void</a> HTTPGet_SendWSDL </td>
+          <td class="memname">static <a class="el" href="apache__gsoap_8h.html#a11e882d8a51e8a7612f1f31dc4424b5d">int</a> HTTPGet_SendWSDL </td>
           <td>(</td>
           <td class="paramtype">request_rec *&#160;</td>
           <td class="paramname"><em>r</em>, </td>
@@ -2192,9 +2159,9 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    AP_INIT_TAKE1(<span class="stringliteral">&quot;SOAPLibrary&quot;</span>,    </div><div class="line">                  (<a class="code" href="mod__gsoap_8c.html#a83777756befcbbd91e7f3343a1832da5">command_function_interface</a>) <a class="code" href="mod__gsoap_8c.html#a4e874b31a2d1a38bcbeb933f187a0023">cmd_SoapLibrary</a>, </div><div class="line">                  NULL,         </div><div class="line">                  ACCESS_CONF,  </div><div class="line">                  <span class="stringliteral">&quot;SOAP shared library that will be dynamically loaded. - 1 argument (path)&quot;</span>    </div><div class="line">        ),</div><div class="line">    AP_INIT_TAKE1(<span class="stringliteral">&quot;SupportLibrary&quot;</span>, </div><div class="line">                  (<a class="code" href="mod__gsoap_8c.html#a83777756befcbbd91e7f3343a1832da5">command_function_interface</a>) <a class="code" href="mod__gsoap_8c.html#a840c96f243dc114ae3e60ce93891e9fd">cmd_SupportLibrary</a>,  </div><div class="line">                  NULL,         </div><div class="line">                  ACCESS_CONF,  </div><div class="line">                  <span class="stringliteral">&quot;additional library that must be dynamically loaded - 1 argument (path)&quot;</span>  </div><div class="line">        ),</div><div class="line">    {NULL}</div><div class="line">}</div><div class="ttc" id="mod__gsoap_8c_html_a840c96f243dc114ae3e60ce93891e9fd"><div class="ttname"><a href="mod__gsoap_8c.html#a840c96f243dc114ae3e60ce93891e9fd">cmd_SupportLibrary</a></div><div class="ttdeci">static const char * cmd_SupportLibrary(cmd_parms *cmd, void *mconfig, const char *pszPath)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:556</div></div>
-<div class="ttc" id="mod__gsoap_8c_html_a4e874b31a2d1a38bcbeb933f187a0023"><div class="ttname"><a href="mod__gsoap_8c.html#a4e874b31a2d1a38bcbeb933f187a0023">cmd_SoapLibrary</a></div><div class="ttdeci">static const char * cmd_SoapLibrary(cmd_parms *cmd, void *mconfig, const char *pszPath)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:542</div></div>
-<div class="ttc" id="mod__gsoap_8c_html_a83777756befcbbd91e7f3343a1832da5"><div class="ttname"><a href="mod__gsoap_8c.html#a83777756befcbbd91e7f3343a1832da5">command_function_interface</a></div><div class="ttdeci">const char *(* command_function_interface)()</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:564</div></div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    AP_INIT_TAKE1(<span class="stringliteral">&quot;SOAPLibrary&quot;</span>,    </div><div class="line">                  (<a class="code" href="mod__gsoap_8c.html#a83777756befcbbd91e7f3343a1832da5">command_function_interface</a>) <a class="code" href="mod__gsoap_8c.html#a4e874b31a2d1a38bcbeb933f187a0023">cmd_SoapLibrary</a>, </div><div class="line">                  NULL,         </div><div class="line">                  ACCESS_CONF,  </div><div class="line">                  <span class="stringliteral">&quot;SOAP shared library that will be dynamically loaded. - 1 argument (path)&quot;</span>    </div><div class="line">        ),</div><div class="line">    AP_INIT_TAKE1(<span class="stringliteral">&quot;SupportLibrary&quot;</span>, </div><div class="line">                  (<a class="code" href="mod__gsoap_8c.html#a83777756befcbbd91e7f3343a1832da5">command_function_interface</a>) <a class="code" href="mod__gsoap_8c.html#a840c96f243dc114ae3e60ce93891e9fd">cmd_SupportLibrary</a>,  </div><div class="line">                  NULL,         </div><div class="line">                  ACCESS_CONF,  </div><div class="line">                  <span class="stringliteral">&quot;additional library that must be dynamically loaded - 1 argument (path)&quot;</span>  </div><div class="line">        ),</div><div class="line">    {NULL}</div><div class="line">}</div><div class="ttc" id="mod__gsoap_8c_html_a840c96f243dc114ae3e60ce93891e9fd"><div class="ttname"><a href="mod__gsoap_8c.html#a840c96f243dc114ae3e60ce93891e9fd">cmd_SupportLibrary</a></div><div class="ttdeci">static const char * cmd_SupportLibrary(cmd_parms *cmd, void *mconfig, const char *pszPath)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:553</div></div>
+<div class="ttc" id="mod__gsoap_8c_html_a4e874b31a2d1a38bcbeb933f187a0023"><div class="ttname"><a href="mod__gsoap_8c.html#a4e874b31a2d1a38bcbeb933f187a0023">cmd_SoapLibrary</a></div><div class="ttdeci">static const char * cmd_SoapLibrary(cmd_parms *cmd, void *mconfig, const char *pszPath)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:538</div></div>
+<div class="ttc" id="mod__gsoap_8c_html_a83777756befcbbd91e7f3343a1832da5"><div class="ttname"><a href="mod__gsoap_8c.html#a83777756befcbbd91e7f3343a1832da5">command_function_interface</a></div><div class="ttdeci">const char *(* command_function_interface)()</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:562</div></div>
 </div><!-- fragment --><p>List of directives specific to our module. </p>
 
 </div>
@@ -2208,12 +2175,12 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    STANDARD20_MODULE_STUFF,</div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a25eb3640318cb29a43c074092946e929">gsoap_create_dir_config</a>,    </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a2ad19d6568c933db34ff9870b7b49410">gsoap_merge_dir_config</a>,     </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#ae5132b5cd8dd45220d73289dc564ce02">gsoap_create_server_config</a>, </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a453588368c2a0e84ead712da75fe0c7d">gsoap_merge_server_config</a>,  </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a52b8e9a75834b5b456e683d866cfa279">gsoap_cmds</a>,                 </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a25e10510767f058583417a4d2b367bb7">gsoap_hooks</a>,                </div><div class="line">}</div><div class="ttc" id="mod__gsoap_8c_html_a25e10510767f058583417a4d2b367bb7"><div class="ttname"><a href="mod__gsoap_8c.html#a25e10510767f058583417a4d2b367bb7">gsoap_hooks</a></div><div class="ttdeci">static void gsoap_hooks(apr_pool_t *p)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:605</div></div>
-<div class="ttc" id="mod__gsoap_8c_html_a25eb3640318cb29a43c074092946e929"><div class="ttname"><a href="mod__gsoap_8c.html#a25eb3640318cb29a43c074092946e929">gsoap_create_dir_config</a></div><div class="ttdeci">static void * gsoap_create_dir_config(apr_pool_t *p, char *dirspec)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1234</div></div>
-<div class="ttc" id="mod__gsoap_8c_html_a453588368c2a0e84ead712da75fe0c7d"><div class="ttname"><a href="mod__gsoap_8c.html#a453588368c2a0e84ead712da75fe0c7d">gsoap_merge_server_config</a></div><div class="ttdeci">static void * gsoap_merge_server_config(apr_pool_t *p, void *server1_conf, void *server2_conf)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1298</div></div>
-<div class="ttc" id="mod__gsoap_8c_html_a2ad19d6568c933db34ff9870b7b49410"><div class="ttname"><a href="mod__gsoap_8c.html#a2ad19d6568c933db34ff9870b7b49410">gsoap_merge_dir_config</a></div><div class="ttdeci">static void * gsoap_merge_dir_config(apr_pool_t *p, void *parent_conf, void *newloc_conf)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1258</div></div>
-<div class="ttc" id="mod__gsoap_8c_html_a52b8e9a75834b5b456e683d866cfa279"><div class="ttname"><a href="mod__gsoap_8c.html#a52b8e9a75834b5b456e683d866cfa279">gsoap_cmds</a></div><div class="ttdeci">static const command_rec gsoap_cmds[]</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:568</div></div>
-<div class="ttc" id="mod__gsoap_8c_html_ae5132b5cd8dd45220d73289dc564ce02"><div class="ttname"><a href="mod__gsoap_8c.html#ae5132b5cd8dd45220d73289dc564ce02">gsoap_create_server_config</a></div><div class="ttdeci">static void * gsoap_create_server_config(apr_pool_t *p, server_rec *s)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1276</div></div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    STANDARD20_MODULE_STUFF,</div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a25eb3640318cb29a43c074092946e929">gsoap_create_dir_config</a>,    </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a2ad19d6568c933db34ff9870b7b49410">gsoap_merge_dir_config</a>,     </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#ae5132b5cd8dd45220d73289dc564ce02">gsoap_create_server_config</a>, </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a453588368c2a0e84ead712da75fe0c7d">gsoap_merge_server_config</a>,  </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a52b8e9a75834b5b456e683d866cfa279">gsoap_cmds</a>,                 </div><div class="line">    <a class="code" href="mod__gsoap_8c.html#a25e10510767f058583417a4d2b367bb7">gsoap_hooks</a>,                </div><div class="line">}</div><div class="ttc" id="mod__gsoap_8c_html_a25e10510767f058583417a4d2b367bb7"><div class="ttname"><a href="mod__gsoap_8c.html#a25e10510767f058583417a4d2b367bb7">gsoap_hooks</a></div><div class="ttdeci">static void gsoap_hooks(apr_pool_t *p)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:603</div></div>
+<div class="ttc" id="mod__gsoap_8c_html_a25eb3640318cb29a43c074092946e929"><div class="ttname"><a href="mod__gsoap_8c.html#a25eb3640318cb29a43c074092946e929">gsoap_create_dir_config</a></div><div class="ttdeci">static void * gsoap_create_dir_config(apr_pool_t *p, char *dirspec)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1250</div></div>
+<div class="ttc" id="mod__gsoap_8c_html_a453588368c2a0e84ead712da75fe0c7d"><div class="ttname"><a href="mod__gsoap_8c.html#a453588368c2a0e84ead712da75fe0c7d">gsoap_merge_server_config</a></div><div class="ttdeci">static void * gsoap_merge_server_config(apr_pool_t *p, void *server1_conf, void *server2_conf)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1314</div></div>
+<div class="ttc" id="mod__gsoap_8c_html_a2ad19d6568c933db34ff9870b7b49410"><div class="ttname"><a href="mod__gsoap_8c.html#a2ad19d6568c933db34ff9870b7b49410">gsoap_merge_dir_config</a></div><div class="ttdeci">static void * gsoap_merge_dir_config(apr_pool_t *p, void *parent_conf, void *newloc_conf)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1274</div></div>
+<div class="ttc" id="mod__gsoap_8c_html_a52b8e9a75834b5b456e683d866cfa279"><div class="ttname"><a href="mod__gsoap_8c.html#a52b8e9a75834b5b456e683d866cfa279">gsoap_cmds</a></div><div class="ttdeci">static const command_rec gsoap_cmds[]</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:566</div></div>
+<div class="ttc" id="mod__gsoap_8c_html_ae5132b5cd8dd45220d73289dc564ce02"><div class="ttname"><a href="mod__gsoap_8c.html#ae5132b5cd8dd45220d73289dc564ce02">gsoap_create_server_config</a></div><div class="ttdeci">static void * gsoap_create_server_config(apr_pool_t *p, server_rec *s)</div><div class="ttdef"><b>Definition:</b> mod_gsoap.c:1292</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2260,10 +2227,10 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Jun 4 2020 12:14:32 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Jun 24 2021 18:08:28 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

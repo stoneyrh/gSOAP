@@ -57,9 +57,9 @@ compiling, linking, and/or using OpenSSL is allowed.
         type and a the handler function:
 
         struct http_post_handlers my_handlers[] = {
-          { "application/json",   json_handler },
-          { "image/jpg",          jpeg_handler },
-          { "text/html",          html_handler },
+          { "application/json",   json_post_handler },
+          { "image/jpg",          jpeg_post_handler },
+          { "text/html",          html_post_handler },
           { "POST",               generic_POST_handler },
           { "PUT",                generic_PUT_handler },
           { "PATCH",              generic_PATCH_handler },
@@ -67,16 +67,25 @@ compiling, linking, and/or using OpenSSL is allowed.
           { NULL }
         };
 
+        A `generic_POST_handler`, when specified with a `"POST"` key entry in
+        the table, takes priority over `soap_serve()` if no `SOAPAction` HTTP
+        header is included in the message.  This means that SOAP/XML messages
+        without a `SOAPAction` header will not be processed by `soap_serve()`!
+
         Note that `*` and `-` can be used as wildcards to match any text and
         any character, respectively:
 
-          { "image*",            image_handler },
-          { "text*",             text_handler },
+          { "image*",            image_post_handler },
+          { "text*",             text_post_handler },
           { "text/---",          three_char_type_text_handler },
 
         In the above, to be more accurate, we should use a slash / between
         image and the wildcard * (which is not shown in the table above due to
         compilers throwing a fit at the / and * combo in this comment block).
+
+        It is possible to specify other paramters that must match:
+
+          { "text/html; charset=utf-8", html_post_handler },
 
         Media types may have optional parameters after `;` such as `charset`
         and `boundary`.  These parameters can be matched by the media type
@@ -104,7 +113,7 @@ compiling, linking, and/or using OpenSSL is allowed.
         http_post_handlers table. Use http_http_get_body() as below to retrieve
         HTTP POST body data:
 
-        int image_handler(struct soap *soap)
+        int image_post_handler(struct soap *soap)
         {
           const char *buf;
           size_t len;
@@ -141,6 +150,10 @@ compiling, linking, and/or using OpenSSL is allowed.
             return soap_closesock(soap);
           return SOAP_OK;
         }
+
+        The soap_closesock() call only closes the connection when it shoud not
+        be kept alive.  This function is called automatically after the handler
+        returns.  There is no harm in calling this function more than once.
 
         The soap_send(soap, char*) and soap_send_raw(soap, char*, size_t) can
         be used to return content from server.
@@ -318,6 +331,17 @@ static int http_fdel(struct soap *soap)
 
 /******************************************************************************/
 
+/* call soap_http_get_body to receive HTTP body and set buf and len */
+int soap_http_body(struct soap *soap, char **buf, size_t *len)
+{
+  *buf = soap_http_get_body(soap, len);
+  if (*buf)
+    return SOAP_OK;
+  return soap->error;
+}
+
+/******************************************************************************/
+
 /* deprecated: use soap_POST instead */
 int soap_post_connect(struct soap *soap, const char *endpoint, const char *action, const char *type)
 {
@@ -334,15 +358,6 @@ int soap_put_connect(struct soap *soap, const char *endpoint, const char *action
 int soap_delete_connect(struct soap *soap, const char *endpoint)
 {
   return soap_DELETE(soap, endpoint);
-}
-
-/* deprecated: use soap_http_get_body instead */
-int soap_http_body(struct soap *soap, char **buf, size_t *len)
-{
-  *buf = soap_http_get_body(soap, len);
-  if (*buf)
-    return SOAP_OK;
-  return soap->error;
 }
 
 /******************************************************************************/

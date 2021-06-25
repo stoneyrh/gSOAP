@@ -1,6 +1,6 @@
 /**
   * Interface between the apache http - server (http://httpd.apache.org) and
-  * the gsoap stack (http://genivia.com)
+  * the gsoap stack (http://www.genivia.com)
   * @file apache_gsoap.h
   */
 
@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define APACHE_GSOAP_INTERFACE_VERSION 7
+#define APACHE_GSOAP_INTERFACE_VERSION 10000 /* 1.0 */
 #define APACHE_HTTPSERVER_ENTRY_POINT "apache_init_soap_interface"
 
 /*
@@ -61,7 +61,7 @@ SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_done(struct soap *soap, request_r
 SOAP_FMAC1 int SOAP_FMAC2 apache_default_soap_register_plugin_arg(struct soap *, int (*fcreate) (struct soap *, struct soap_plugin *, void *), void *arg, request_rec *);
 SOAP_FMAC1 void *SOAP_FMAC2 apache_default_soap_lookup_plugin(struct soap *soap, const char *plugin, request_rec *);
 
-struct apache_soap_interface
+typedef struct apache_soap_interface
 {
     unsigned int len;       /* length of this struct in bytes (for version control). */
     unsigned int interface_version;
@@ -88,15 +88,15 @@ struct apache_soap_interface
     void (*soap_markelement) (struct soap *soap, const void *, int);
     int (*soap_putelement) (struct soap *soap, const void *, const char *, int, int);
     void *(*soap_getelement) (struct soap *soap, const char *, int *);
-};
+} apache_soap_interface;
 
-typedef void (*apache_init_soap_interface_fn) (struct apache_soap_interface*, request_rec*);
+typedef void (*apache_init_soap_interface_fn)(apache_soap_interface *, request_rec *);
 
 /*
  * exported shared library function called by mod_gsoap from within apache http server 
  *  This function fills the members of the apache_soap_interface struct. 
  */
-SOAP_FMAC1 void SOAP_FMAC2 apache_init_soap_interface(struct apache_soap_interface*, request_rec*);
+SOAP_FMAC1 void SOAP_FMAC2 apache_init_soap_interface(apache_soap_interface *, request_rec *);
 
 #define IMPLEMENT_GSOAP_SERVER_INIT(INIT) \
   SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_init(struct soap *soap, request_rec *r) \
@@ -113,8 +113,8 @@ SOAP_FMAC1 void SOAP_FMAC2 apache_init_soap_interface(struct apache_soap_interfa
     { return soap_register_plugin_arg(soap, fcreate, arg); }\
   SOAP_FMAC1 void* SOAP_FMAC2 apache_default_soap_lookup_plugin(struct soap *soap, const char *plugin, request_rec *r) \
     { return soap_lookup_plugin(soap, plugin); }\
-  void apache_init_soap_interface(struct apache_soap_interface *pInt, request_rec *r) {\
-      pInt->len = sizeof(struct apache_soap_interface);\
+  void apache_init_soap_interface(apache_soap_interface *pInt, request_rec *r) {\
+      pInt->len = sizeof(apache_soap_interface);\
       pInt->interface_version = APACHE_GSOAP_INTERFACE_VERSION;\
       pInt->fsoap_user_init = INIT;\
       pInt->fsoap_init = apache_default_soap_init;\

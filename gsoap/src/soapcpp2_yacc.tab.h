@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.5.4.  */
+/* A Bison parser, made by GNU Bison 3.7.6.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,8 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_SOAPCPP2_YACC_TAB_H_INCLUDED
 # define YY_YY_SOAPCPP2_YACC_TAB_H_INCLUDED
@@ -44,106 +45,111 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    PRAGMA = 258,
-    AUTO = 259,
-    DOUBLE = 260,
-    INT = 261,
-    STRUCT = 262,
-    BREAK = 263,
-    ELSE = 264,
-    LONG = 265,
-    SWITCH = 266,
-    CASE = 267,
-    ENUM = 268,
-    REGISTER = 269,
-    TYPEDEF = 270,
-    CHAR = 271,
-    EXTERN = 272,
-    RETURN = 273,
-    UNION = 274,
-    CONST = 275,
-    FLOAT = 276,
-    SHORT = 277,
-    UNSIGNED = 278,
-    CONTINUE = 279,
-    FOR = 280,
-    SIGNED = 281,
-    VOID = 282,
-    DEFAULT = 283,
-    GOTO = 284,
-    SIZEOF = 285,
-    VOLATILE = 286,
-    DO = 287,
-    IF = 288,
-    STATIC = 289,
-    WHILE = 290,
-    CLASS = 291,
-    PRIVATE = 292,
-    PROTECTED = 293,
-    PUBLIC = 294,
-    VIRTUAL = 295,
-    INLINE = 296,
-    OPERATOR = 297,
-    LLONG = 298,
-    BOOL = 299,
-    CFALSE = 300,
-    CTRUE = 301,
-    WCHAR = 302,
-    TIME = 303,
-    USING = 304,
-    NAMESPACE = 305,
-    ULLONG = 306,
-    MUSTUNDERSTAND = 307,
-    SIZE = 308,
-    FRIEND = 309,
-    TEMPLATE = 310,
-    EXPLICIT = 311,
-    TYPENAME = 312,
-    MUTABLE = 313,
-    null = 314,
-    RESTRICT = 315,
-    FINAL = 316,
-    OVERRIDE = 317,
-    UCHAR = 318,
-    USHORT = 319,
-    UINT = 320,
-    ULONG = 321,
-    NONE = 322,
-    ID = 323,
-    LAB = 324,
-    TYPE = 325,
-    LNG = 326,
-    DBL = 327,
-    CHR = 328,
-    TAG = 329,
-    STR = 330,
-    PA = 331,
-    NA = 332,
-    TA = 333,
-    DA = 334,
-    MA = 335,
-    AA = 336,
-    XA = 337,
-    OA = 338,
-    LA = 339,
-    RA = 340,
-    OR = 341,
-    AN = 342,
-    EQ = 343,
-    NE = 344,
-    LE = 345,
-    GE = 346,
-    LS = 347,
-    RS = 348,
-    AR = 349,
-    PP = 350,
-    NN = 351
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    PRAGMA = 258,                  /* PRAGMA  */
+    AUTO = 259,                    /* AUTO  */
+    DOUBLE = 260,                  /* DOUBLE  */
+    INT = 261,                     /* INT  */
+    STRUCT = 262,                  /* STRUCT  */
+    BREAK = 263,                   /* BREAK  */
+    ELSE = 264,                    /* ELSE  */
+    LONG = 265,                    /* LONG  */
+    SWITCH = 266,                  /* SWITCH  */
+    CASE = 267,                    /* CASE  */
+    ENUM = 268,                    /* ENUM  */
+    REGISTER = 269,                /* REGISTER  */
+    TYPEDEF = 270,                 /* TYPEDEF  */
+    CHAR = 271,                    /* CHAR  */
+    EXTERN = 272,                  /* EXTERN  */
+    RETURN = 273,                  /* RETURN  */
+    UNION = 274,                   /* UNION  */
+    CONST = 275,                   /* CONST  */
+    FLOAT = 276,                   /* FLOAT  */
+    SHORT = 277,                   /* SHORT  */
+    UNSIGNED = 278,                /* UNSIGNED  */
+    CONTINUE = 279,                /* CONTINUE  */
+    FOR = 280,                     /* FOR  */
+    SIGNED = 281,                  /* SIGNED  */
+    VOID = 282,                    /* VOID  */
+    DEFAULT = 283,                 /* DEFAULT  */
+    GOTO = 284,                    /* GOTO  */
+    SIZEOF = 285,                  /* SIZEOF  */
+    VOLATILE = 286,                /* VOLATILE  */
+    DO = 287,                      /* DO  */
+    IF = 288,                      /* IF  */
+    STATIC = 289,                  /* STATIC  */
+    WHILE = 290,                   /* WHILE  */
+    CLASS = 291,                   /* CLASS  */
+    PRIVATE = 292,                 /* PRIVATE  */
+    PROTECTED = 293,               /* PROTECTED  */
+    PUBLIC = 294,                  /* PUBLIC  */
+    VIRTUAL = 295,                 /* VIRTUAL  */
+    INLINE = 296,                  /* INLINE  */
+    OPERATOR = 297,                /* OPERATOR  */
+    LLONG = 298,                   /* LLONG  */
+    BOOL = 299,                    /* BOOL  */
+    CFALSE = 300,                  /* CFALSE  */
+    CTRUE = 301,                   /* CTRUE  */
+    WCHAR = 302,                   /* WCHAR  */
+    TIME = 303,                    /* TIME  */
+    USING = 304,                   /* USING  */
+    NAMESPACE = 305,               /* NAMESPACE  */
+    ULLONG = 306,                  /* ULLONG  */
+    MUSTUNDERSTAND = 307,          /* MUSTUNDERSTAND  */
+    SIZE = 308,                    /* SIZE  */
+    FRIEND = 309,                  /* FRIEND  */
+    TEMPLATE = 310,                /* TEMPLATE  */
+    EXPLICIT = 311,                /* EXPLICIT  */
+    TYPENAME = 312,                /* TYPENAME  */
+    MUTABLE = 313,                 /* MUTABLE  */
+    null = 314,                    /* null  */
+    RESTRICT = 315,                /* RESTRICT  */
+    FINAL = 316,                   /* FINAL  */
+    OVERRIDE = 317,                /* OVERRIDE  */
+    UCHAR = 318,                   /* UCHAR  */
+    USHORT = 319,                  /* USHORT  */
+    UINT = 320,                    /* UINT  */
+    ULONG = 321,                   /* ULONG  */
+    NONE = 322,                    /* NONE  */
+    ID = 323,                      /* ID  */
+    LAB = 324,                     /* LAB  */
+    TYPE = 325,                    /* TYPE  */
+    LNG = 326,                     /* LNG  */
+    DBL = 327,                     /* DBL  */
+    CHR = 328,                     /* CHR  */
+    TAG = 329,                     /* TAG  */
+    STR = 330,                     /* STR  */
+    PA = 331,                      /* PA  */
+    NA = 332,                      /* NA  */
+    TA = 333,                      /* TA  */
+    DA = 334,                      /* DA  */
+    MA = 335,                      /* MA  */
+    AA = 336,                      /* AA  */
+    XA = 337,                      /* XA  */
+    OA = 338,                      /* OA  */
+    LA = 339,                      /* LA  */
+    RA = 340,                      /* RA  */
+    OR = 341,                      /* OR  */
+    AN = 342,                      /* AN  */
+    EQ = 343,                      /* EQ  */
+    NE = 344,                      /* NE  */
+    LE = 345,                      /* LE  */
+    GE = 346,                      /* GE  */
+    LS = 347,                      /* LS  */
+    RS = 348,                      /* RS  */
+    AR = 349,                      /* AR  */
+    PP = 350,                      /* PP  */
+    NN = 351                       /* NN  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
@@ -163,7 +169,7 @@ union YYSTYPE
   Entry   *e;
   IR      ir;
 
-#line 167 "soapcpp2_yacc.tab.h"
+#line 173 "soapcpp2_yacc.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

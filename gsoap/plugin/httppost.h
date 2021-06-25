@@ -1,12 +1,12 @@
 /*
-	httppost.h
+        httppost.h
 
-	gSOAP HTTP POST plugin for non-SOAP payloads.
+        gSOAP HTTP POST plugin for non-SOAP payloads.
 
-	See httppost.c for instructions.
+        See httppost.c for instructions.
 
-	Revisions:
-	register multiple POST content handlers, each for a content type
+        Revisions:
+        register multiple POST content handlers, each for a content type
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2018, Robert van Engelen, Genivia, Inc. All Rights Reserved.
@@ -57,7 +57,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-#define HTTP_POST_ID "SOAP-HTTP-POST/2.1" /* plugin identification */
+#define HTTP_POST_ID "SOAP-HTTP-POST/2.2" /* plugin identification */
 
 extern const char http_post_id[];
 

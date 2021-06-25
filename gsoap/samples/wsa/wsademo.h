@@ -46,8 +46,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	for services based on WS-Addressing. At the server side, WS-Addressing
 	enables forwarding/relaying of service responses and faults to other
 	services. At the client side, a relayed response or fault will not be
-	received and an HTTP ACCEPTED (code 202) is delivered instead, assuming
-	that the relay was successful.
+        received and an HTTP OK or ACCEPTED (code 200 or 202) is delivered
+        instead, assuming that the relay was successful.
 
 	This header file illustrates two gSOAP soapcpp2 tooling tricks to
 	enable services to accept SOAP Fault messages and to create a one-way

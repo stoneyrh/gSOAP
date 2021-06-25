@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.114
+        stdsoap2.h 2.8.115
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208114
+#define GSOAP_VERSION 208115
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -195,7 +195,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-#ifdef __SYMBIAN32__ 
+#ifdef __SYMBIAN32__
 # define SYMBIAN
 # undef WIN32
 #endif
@@ -208,7 +208,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #if defined(__digital__) && defined(__unix__)
 # ifndef TRU64
-#  define TRU64 
+#  define TRU64
 # endif
 #endif
 
@@ -604,9 +604,9 @@ extern intmax_t __strtoull(const char*, char**, int);
 #endif
 
 /* silence clang's C99 variadic macro warnings */
-#ifdef __clang__ 
-# pragma clang diagnostic ignored "-Wvariadic-macros" 
-#endif 
+#ifdef __clang__
+# pragma clang diagnostic ignored "-Wvariadic-macros"
+#endif
 
 #if defined(WITH_PURE_VIRTUAL)
 # define SOAP_PURE_VIRTUAL = 0
@@ -724,18 +724,18 @@ extern intmax_t __strtoull(const char*, char**, int);
 # include <netinet\in.h>
 # include <netdb.h>
 # include <stdio.h>
-# include <fcntl.h>                                           
-# include <string.h>                                          
-# include <stdlib.h>                                          
-# include <memory.h>                                          
-# include <errno.h>                                           
+# include <fcntl.h>
+# include <string.h>
+# include <stdlib.h>
+# include <memory.h>
+# include <errno.h>
 # include <cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
-# define INET_ERROR 4294967295                                
-#pragma list                                                  
+# define INET_ERROR 4294967295
+#pragma list
 #elif defined(__TANDEM) /* Support for OSS */
 # define int32_t int
 # define SOAP_BUFLEN (32767)
-#endif                                                        
+#endif
 
 #ifdef WITH_NTLM
 # include <ntlm.h>
@@ -1315,7 +1315,7 @@ extern "C" {
 # define SOAP_MAXLEVEL (10000)
 #endif
 
-/* maximum string content length if not already constrained by XML schema validation maxLength constraints, zero or negative means unlimited string lengths are allowed unless restricted by XML schema maxLength */ 
+/* maximum string content length if not already constrained by XML schema validation maxLength constraints, zero or negative means unlimited string lengths are allowed unless restricted by XML schema maxLength */
 #ifndef SOAP_MAXLENGTH
 # define SOAP_MAXLENGTH (0)
 #endif
@@ -1329,7 +1329,7 @@ extern "C" {
 # ifdef WMW_RPM_IO
 #  include "httpLib.h"
 # endif
-# ifdef __INCmathh 
+# ifdef __INCmathh
 #  include <private/mathP.h>
 #  ifndef HAVE_ISNAN
 #   define HAVE_ISNAN
@@ -1343,7 +1343,7 @@ extern "C" {
 # endif
 #endif
 
-#ifdef WIN32 
+#ifdef WIN32
 # ifndef HAVE_ISNAN
 #  define HAVE_ISNAN
 # endif
@@ -1700,7 +1700,7 @@ typedef soap_int32 soap_mode;
 
 #define SOAP_ENC                0x00000FFF      /* IO and ENC mask */
 #define SOAP_ENC_LATIN          0x00000020      /* in: accept iso-8859-1 */
-#define SOAP_ENC_PLAIN          0x00000040      /* out: plain (XML or other) body, no HTTP header */
+#define SOAP_ENC_PLAIN          0x00000040      /* out: plain (XML or other) body, no HTTP header, in: skip HTTP header (use soap::length) */
 #define SOAP_ENC_XML            0x00000040      /* deprecated, alias for SOAP_ENC_PLAIN */
 #define SOAP_ENC_DIME           0x00000080
 #define SOAP_ENC_MIME           0x00000100
@@ -1762,7 +1762,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_SSL_CLIENT                         (0x8000)  /* client context flag for internal use */
 
 #define SOAP_SSL_DEFAULT                        SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION
- 
+
 typedef unsigned short soap_ssl_flags;
 
 /* state */
@@ -3317,7 +3317,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_getposition(const char *, int *);
 
 SOAP_FMAC1 char* SOAP_FMAC2 soap_putsizesoffsets(struct soap*, const char *, const int *, const int *, int);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_putoffsets(struct soap*, const int *, int);
- 
+
 SOAP_FMAC1 int SOAP_FMAC2 soap_closesock(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_force_closesock(struct soap*);
 

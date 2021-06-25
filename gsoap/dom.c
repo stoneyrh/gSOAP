@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.114
+        DOM API v5 gSOAP 2.8.115
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208114
+#define GSOAP_LIB_VERSION 208115
 
 #include "stdsoap2.h"
 
@@ -171,7 +171,7 @@ void
 SOAP_FMAC4
 soap_traverse_xsd__anyType(struct soap *soap, struct soap_dom_element *node, const char *s, soap_walker p, soap_walker q)
 {
-  (void)soap; (void)node; (void)s; (void)p; (void)q; 
+  (void)soap; (void)node; (void)s; (void)p; (void)q;
 }
 
 /******************************************************************************/
@@ -189,7 +189,7 @@ void
 SOAP_FMAC2
 soap_traverse_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *node, const char *s, soap_walker p, soap_walker q)
 {
-  (void)soap; (void)node; (void)s; (void)p; (void)q; 
+  (void)soap; (void)node; (void)s; (void)p; (void)q;
 }
 
 /******************************************************************************/
@@ -230,7 +230,7 @@ soap_default_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *nod
 
 /******************************************************************************/
 
-static int 
+static int
 out_element(struct soap *soap, const struct soap_dom_element *node, const char *prefix, const char *name)
 {
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node lead '%s'\n", node->lead ? node->lead : ""));
@@ -349,7 +349,7 @@ out_attribute(struct soap *soap, const char *prefix, const char *name, const cha
     s = (char*)SOAP_MALLOC(soap, l + 2);
     if (!s)
       return soap->error = SOAP_EOM;
-  } 
+  }
   (SOAP_SNPRINTF(s, l + 2, l + 1), "%s:%s", prefix, t);
   if (isearly)
     err = soap_set_attr(soap, s, text, 2);
@@ -1062,7 +1062,7 @@ soap_prefix_of(struct soap *soap, const char *ns)
 {
   struct soap_nlist *np;
   for (np = soap->nlist; np; np = np->next)
-    if (np->ns && !strcmp(np->ns, ns)) 
+    if (np->ns && !strcmp(np->ns, ns))
       return np->id;
   return NULL;
 }

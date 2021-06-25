@@ -18072,14 +18072,15 @@ To simplify the server-side handling of POST requests, handlers can be associate
 ~~~{.cpp}
     struct http_post_handlers my_handlers[] = 
     {
-      { "image/jpg", jpeg_handler }, 
-      { "image/*",   image_handler }, 
-      { "text/html", html_handler }, 
-      { "text/*",    text_handler }, 
-      { "POST",      generic_POST_handler }, 
-      { "PUT",       generic_PUT_handler }, 
-      { "PATCH",     generic_PATCH_handler }, 
-      { "DELETE",    generic_DELETE_handler }, 
+      { "application/json", json_post_handler },
+      { "image/jpg",        jpeg_handler }, 
+      { "image/*",          image_handler }, 
+      { "text/html",        html_handler }, 
+      { "text/*",           text_handler }, 
+      { "POST",             generic_POST_handler }, 
+      { "PUT",              generic_PUT_handler }, 
+      { "PATCH",            generic_PATCH_handler }, 
+      { "DELETE",           generic_DELETE_handler }, 
       { NULL } 
     };
 ~~~
@@ -18094,7 +18095,22 @@ patterns that are less specific in the table.  For example,
 type of the message reveived, such as `"text/xml; charset=utf-8"` (only
 since gSOAP version 2.8.75).
 
-The handlers are functions that will be invoked when a POSTed request message
+The httppost plugin sets the `soap::fput`, `soap::fpatch` and `soap::fdel`
+callbacks to serve HTTP PUT, PATCH and DELETE requests, respectively.  The HTTP
+POST requests are handled differently, via `soap_serve()` that invokes the
+`soap::fform` callback that points to the handler.  This callback is set by the
+httppost plugin upon receiving a HTTP POST request that matches the key in the
+table, i.e.  `"POST"` always matches and `"application/json"` only matches when
+the HTTP Content-Type is `application/json`.  When a `SOAPAction` header is
+present in the HTTP POST request, then the POST handler is never invoked to
+allow `soap_serve()` to process the request.
+
+A `generic_POST_handler`, when specified with a `"POST"` key entry in the
+table, takes priority over `soap_serve()` if no `SOAPAction` HTTP header is
+included in the message.  This means that SOAP/XML messages without a
+`SOAPAction` header will not be processed by `soap_serve()`!
+
+The handlers are functions that will be invoked when a POST request message
 matching media type is sent to the server.
 
 An example image handler that checks the specific image type:
@@ -18115,7 +18131,8 @@ An example image handler that checks the specific image type:
     }
 ~~~
 
-The above example returns HTTP OK. If content is supposed to be returned, then use:
+The above example returns HTTP OK. If content is supposed to be returned, as
+expected with POST, PATCH, and GET, use:
 
 ~~~{.cpp}
     struct soap *soap = soap_new();
@@ -18127,6 +18144,81 @@ The above example returns HTTP OK. If content is supposed to be returned, then u
       return soap_closesock(soap);
     return SOAP_OK;
 ~~~
+
+The `soap_closesock()` call only closes the connection when it shoud not be
+kept alive.  This function is also called automatically after the handler
+returns.  The function returns the `soap:error` value in order to pass an error
+code along the chain of calls.  There is no harm in calling this function more
+than once.
+
+HTTP POST requests with Content-Type `application/json` are sent to the
+`http_post_handler`, for example a currentTime server (this is based on
+gsoap/samples/xml-rpc-json/json-currentTimeServer.c):
+
+~~~{.cpp}
+    int json_post_handler(struct soap *ctx)
+    {
+      /* receive JSON request */
+      struct value request;
+      if (soap_begin_recv(ctx)
+       || json_recv(ctx, request)
+       || soap_end_recv(ctx))
+      {
+        json_send_fault(ctx);
+      }
+      else
+      {
+        if (is_string(request) && !strcmp(*string_of(request), "getCurrentTime"))
+        {
+          struct value *response = new_value(ctx);
+          *dateTime_of(response) = soap_dateTime2s(ctx, time(0));
+          ctx->http_content = "application/json; charset=utf-8";
+          if (soap_response(ctx, SOAP_FILE)
+           || json_send(ctx, response)
+           || soap_end_send(ctx))
+            return soap_closesock(soap);
+        }
+        else
+        {
+          /* JSON error as per Google JSON Style Guide */
+          json_send_error(ctx, 400, "Wrong method", *string_of(request));
+        }
+      }
+      return soap_closesock(soap);
+    }
+~~~
+
+@note never call `soap_serve()` in a handler function.  Instead, call
+`soap_serve_request()` to process the XML request message and produce an XML
+response message for "two-way" SOAP/XML messaging with POST or PATCH.
+"Two-way" POST or PATCH and "one-way" SOAP/XML messaging with PUT and GET is
+possible and automatic when the interface header file for soapcpp2 declares
+protocols for XML REST for service operations `ns__Method`:
+
+~~~{.cpp}
+    //gsoap ns service method-protocol: Method1 POST
+    int ns__Method1(...);
+    //gsoap ns service method-protocol: Method2 PUT
+    int ns__Method2(...);
+    //gsoap ns service method-protocol: Method3 GET
+    int ns__Method3(...);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `POST` (or `HTTP` which is the same as `POST`) and `PATCH` methods are
+"two-way".  The `PUT` and `GET` methods are "one-way" REST operations.  SOAP
+protocols for messages with SOAP envelopes are declared similarly:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap ns service method-protocol: Method1 SOAP
+    int ns__Method1(...);
+    //gsoap ns service method-protocol: Method2 SOAP-PUT
+    int ns__Method2(...);
+    //gsoap ns service method-protocol: Method3 SOAP-GET
+    int ns__Method3(...);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `SOAP` method is "two-way" messaging with SOAP envelopes.  The `SOAP-PUT`
+and `SOAP-GET` methods are "one-way" SOAP operations.
 
 For client applications to use HTTP POST, use the `::soap_POST` operation:
 

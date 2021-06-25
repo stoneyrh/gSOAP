@@ -1,3 +1,0 @@
-apache compiled with --enable-module=so and installed
-apxs in path and working
-libtool installed.
