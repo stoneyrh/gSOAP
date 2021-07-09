@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.115
+        DOM API v5 gSOAP 2.8.116
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208115
+#define GSOAP_LIB_VERSION 208116
 
 #include "stdsoap2.h"
 
@@ -371,7 +371,11 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
   if (node)
   {
     const char *prefix; /* namespace prefix, if namespace is present */
-    if (!(soap->mode & SOAP_DOM_ASIS) && !(soap->mode & SOAP_XML_CANONICAL))
+    if (node->name)
+      tag = node->name;
+    else if (!tag)
+      tag = "-";
+    if (*tag != '-' && !(soap->mode & SOAP_DOM_ASIS) && !(soap->mode & SOAP_XML_CANONICAL))
     {
       const struct soap_dom_attribute *att;
       for (att = node->atts; att; att = att->next)
@@ -388,10 +392,6 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
         }
       }
     }
-    if (node->name)
-      tag = node->name;
-    else if (!tag)
-      tag = "-";
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' start at level=%u\n", tag, soap->level));
     prefix = NULL;
     if (!(soap->mode & SOAP_DOM_ASIS))
@@ -423,44 +423,47 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
       return soap->error;
     if (!node->type || !node->node)
     {
-      struct soap_dom_attribute *att;
       struct soap_dom_element *elt;
-      for (att = node->atts; att; att = att->next)
+      if (*tag != '-')
       {
-        if (att->name)
+        struct soap_dom_attribute *att;
+        for (att = node->atts; att; att = att->next)
         {
-          if (!(soap->mode & SOAP_XML_CANONICAL) || strcmp(att->name, "xmlns") || (!prefix && !strchr(tag, ':')))
+          if (att->name)
           {
-            if (!(soap->mode & SOAP_DOM_ASIS))
+            if (!(soap->mode & SOAP_XML_CANONICAL) || strcmp(att->name, "xmlns") || (!prefix && !strchr(tag, ':')))
             {
-              const char *p = NULL;
-              if (strncmp(att->name, "xml", 3))
+              if (!(soap->mode & SOAP_DOM_ASIS))
               {
-                if (att->nstr)
-                  p = soap_prefix_of(soap, att->nstr);
-                if (!p)
+                const char *p = NULL;
+                if (strncmp(att->name, "xml", 3))
                 {
-                  const struct soap_nlist *np;
-                  size_t n = 0;
-                  p = strchr(att->name, ':');
-                  if (p)
-                    n = p - att->name;
-                  p = NULL;
-                  np = soap_lookup_ns(soap, att->name, n);
-                  if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
+                  if (att->nstr)
+                    p = soap_prefix_of(soap, att->nstr);
+                  if (!p)
                   {
-                    p = soap_push_prefix(soap, att->name, n, att->nstr, 0, 0);
-                    if (!p)
-                      return soap->error;
+                    const struct soap_nlist *np;
+                    size_t n = 0;
+                    p = strchr(att->name, ':');
+                    if (p)
+                      n = p - att->name;
+                    p = NULL;
+                    np = soap_lookup_ns(soap, att->name, n);
+                    if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
+                    {
+                      p = soap_push_prefix(soap, att->name, n, att->nstr, 0, 0);
+                      if (!p)
+                        return soap->error;
+                    }
                   }
                 }
+                if (out_attribute(soap, p, att->name, att->text, 0))
+                  return soap->error;
               }
-              if (out_attribute(soap, p, att->name, att->text, 0))
+              else if (soap_attribute(soap, att->name, att->text))
+              {
                 return soap->error;
-            }
-            else if (soap_attribute(soap, att->name, att->text))
-            {
-              return soap->error;
+              }
             }
           }
         }
@@ -744,7 +747,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
       }
       elt = &(*elt)->next;
     }
-    if (!node->text && !node->elts)
+    if (!node->text && !node->code && !node->elts)
       node->tail = ""; /* has body so tail is non-NULL for non-empty element tag */
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' end (level=%u)\n", node->name, soap->level));
     if (soap_element_end_in(soap, NULL))

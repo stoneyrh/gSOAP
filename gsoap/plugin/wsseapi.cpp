@@ -4235,6 +4235,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
         SOAP_FREE(soap, soap->nlist);
         soap->nlist = np;
       }
+      /* push xmlns:ns="..." */
       for (prt = dom->prnt; prt; prt = prt->prnt)
       {
         for (att = prt->atts; att; att = att->next)
@@ -4244,6 +4245,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
             (void)soap_attribute(soap, att->name, att->text);
         }
       }
+      /* push xmlns="..." */
       for (prt = dom->prnt; prt; prt = prt->prnt)
       {
         for (att = prt->atts; att; att = att->next)
@@ -6635,7 +6637,9 @@ soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag)
         count += soap_wsse_verify_nested(soap, elt, URI, tag);
         /* go to next sibling or back up */
         if (elt->next)
+        {
           elt = elt->next;
+        }
         else
         {
           do elt = elt->prnt;

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.115
+        stdsoap2.c[pp] 2.8.116
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208115
+#define GSOAP_LIB_VERSION 208116
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.115 2021-06-25 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.116 2021-07-09 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.115 2021-06-25 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.116 2021-07-09 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -2351,7 +2351,7 @@ soap_gethex(struct soap *soap, int *n)
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
   {
-    soap->dom->text = soap_string_in(soap, 0, -1, -1, NULL);
+    soap->dom->text = soap_string_in(soap, 1, -1, -1, NULL);
     return (unsigned char*)soap_hex2s(soap, soap->dom->text, NULL, 0, n);
   }
 #endif
@@ -2536,7 +2536,7 @@ soap_getbase64(struct soap *soap, int *n, int malloc_flag)
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
   {
-    soap->dom->text = soap_string_in(soap, 0, -1, -1, NULL);
+    soap->dom->text = soap_string_in(soap, 1, -1, -1, NULL);
     return (unsigned char*)soap_base642s(soap, soap->dom->text, NULL, 0, n);
   }
 #endif
@@ -13937,16 +13937,13 @@ soap_element_end_in(struct soap *soap, const char *tag)
   soap_wchar c;
   char *s = NULL;
   int n = 0;
-  if (tag && *tag == '-')
-    return SOAP_OK;
   if (soap->error == SOAP_NO_TAG)
     soap->error = SOAP_OK;
 #ifdef WITH_DOM
   /* this whitespace or mixed content is significant for DOM "as-is" */
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
   {
-    const char *t = soap->dom->code; /* save XML code */
-    s = soap_string_in(soap, -1, -1, -1, NULL);
+    s = soap_string_in(soap, 0, -1, -1, NULL);
     if (!soap->peeked && !s)
       return soap->error;
     if (soap->dom->prnt)
@@ -13957,9 +13954,10 @@ soap_element_end_in(struct soap *soap, const char *tag)
         if (!soap_coblank((soap_wchar)*s))
           return soap->error = SOAP_END_TAG; /* reject mixed content before ending tag */
     }
-    soap->dom->code = t; /* restore XML code */
   }
 #endif
+  if (tag && *tag == '-')
+    return SOAP_OK;
   if (soap->peeked)
   {
     if (*soap->tag)
@@ -15811,9 +15809,19 @@ end:
   if ((soap->mode & SOAP_XML_DOM) && soap->dom && *t)
   {
     if (flag > 0)
+    {
       soap->dom->text = t;
+    }
     else
+    {
       soap->dom->code = t;
+      if (flag < 0)
+      {
+        /* the tag URI and name are already in the XML code string */
+        soap->dom->nstr = NULL;
+        soap->dom->name = NULL;
+      }
+    }
   }
 #endif
   if (flag == 2)
@@ -18943,9 +18951,9 @@ soap_inliteral(struct soap *soap, const char *tag, char **p)
   if (soap->body || (tag && *tag == '-'))
   {
     if (tag && *tag != '-')
-      *p = soap_string_in(soap, -1, -1, -1, NULL);
-    else
       *p = soap_string_in(soap, 0, -1, -1, NULL);
+    else
+      *p = soap_string_in(soap, -1, -1, -1, NULL);
     if (!*p)
       return NULL;
     if (!**p && tag && *tag == '-')
@@ -19017,9 +19025,9 @@ soap_inwliteral(struct soap *soap, const char *tag, wchar_t **p)
   if (soap->body)
   {
     if (tag && *tag != '-')
-      *p = soap_wstring_in(soap, -1, -1, -1, NULL);
-    else
       *p = soap_wstring_in(soap, 0, -1, -1, NULL);
+    else
+      *p = soap_wstring_in(soap, -1, -1, -1, NULL);
     if (!*p)
       return NULL;
     if (!**p && tag && *tag == '-')

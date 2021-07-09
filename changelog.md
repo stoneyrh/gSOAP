@@ -1684,11 +1684,17 @@ Version 2.8.114 (04/20/2021)
 
 - Minor change to `_GNU_SOURCE` checking to resolve a source code portability issue.
 
-Version 2.8.115 (06/25/2021) {#latest}
+Version 2.8.115 (06/25/2021)
 ---
 
 - Upgraded Apache module `mod_gsoap` with new features to simplify support for HTTP PUT, GET, PATCH and DELETE using the `httpget` and `httppost` plugins; support decompression with `apxs -a -i -DWITH_GZIP -lz -c mod_gsoap.c`.
 - Updated `wsaapi` plugin with new registry parameter `SOAP_WSA_NEW_TRANSFER` to allow `wsaapi` to be used with the `mod_gsoap` plugin.
+
+Version 2.8.116 (07/09/2021) {#latest}
+---
+
+- Fixed `custom/duration.c` custom deserializer for `xsd:duration` seconds with fractions issue.
+- Updated the `_XML` literal string serializer to a fix digital signature hashing mismatch issue that caused a digest mismatch in the `wsseapi` plugin, i.e. when used with service operations that use the special `_XML` literal strings type.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

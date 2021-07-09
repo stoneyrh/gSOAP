@@ -190,22 +190,27 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_s2xsd__duration(struct soap *soap, const char *s,
 	  N = n;
 	  break;
 	case '.':
-	  S = n;
+          {
+            char *r = NULL;
 #if defined(WITH_C_LOCALE) && defined(HAVE_STRTOD_L)
 # ifdef WIN32
-          f = _strtod_l(s, NULL, SOAP_LOCALE(soap));
+            f = _strtod_l(s, &r, SOAP_LOCALE(soap));
 # else
-          f = strtod_l(s, NULL, SOAP_LOCALE(soap));
+            f = strtod_l(s, &r, SOAP_LOCALE(soap));
 # endif
 #elif defined(HAVE_STRTOD)
-          f = strtod(s, NULL);
+            f = strtod(s, &r);
 #elif defined(WITH_C_LOCALE) && defined(HAVE_STRTOF_L)
-          f = (double)strtof_l((char*)s, NULL, SOAP_LOCALE(soap));
+            f = (double)strtof_l((char*)s, &r, SOAP_LOCALE(soap));
 #elif defined(HAVE_STRTOF)
-          f = (double)strtof((char*)s, NULL);
+            f = (double)strtof((char*)s, &r);
 #endif
-	  s = NULL;
-	  continue;
+            s = r;
+            if (!s || (*s != 'S' && *s != 's'))
+              return soap->error = SOAP_TYPE;
+            S = n;
+            break;
+          }
 	case 'S':
 	case 's':
 	  S = n;
