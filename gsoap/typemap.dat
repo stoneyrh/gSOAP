@@ -94,9 +94,10 @@
 #       which replaces all 'float' with 'double' in the wsdl2h output. Beware
 #       that replacing types may lead to xsi:type mismatches and SOAP
 #       encoding id-ref mismatches when parsing inbound XML messages. However,
-#       this is not a problem when using XML instead of SOAP and when mapping
-#       schema root elements to their types, for example the WCF serialization
-#       root element remappings defined further below.
+#       this is not a problem when using XML and doc/lit SOAP instead of
+#       RPC-encoded SOAP and when mapping schema root elements to their types,
+#       for example the WCF serialization root element remappings defined
+#       further below.
 
 ####### BUILT-IN VARIABLES
 

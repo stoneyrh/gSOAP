@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">WITH_MACRO compile-time flags</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Jun 24 2021 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Aug 19 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -171,6 +171,9 @@ Macros</h2></td></tr>
 <tr class="memitem:ga32da1a1af344a155b0ad01e6dbb7daaa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#ga32da1a1af344a155b0ad01e6dbb7daaa">WITH_TCPFIN</a></td></tr>
 <tr class="memdesc:ga32da1a1af344a155b0ad01e6dbb7daaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), the engine transmits TCP FIN using <code>shutdown(sock, SHUT_WR)</code> after all sends are completed and just before the socket closes.  <a href="#ga32da1a1af344a155b0ad01e6dbb7daaa">More...</a><br /></td></tr>
 <tr class="separator:ga32da1a1af344a155b0ad01e6dbb7daaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga861b3552cdade3f062b0caa2e187746f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#ga861b3552cdade3f062b0caa2e187746f">WITH_SSL_FULL_SHUTDOWN</a></td></tr>
+<tr class="memdesc:ga861b3552cdade3f062b0caa2e187746f"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), the engine calls <code>SSL_shutdown(ssl)</code> twice, the second after <code>close_notify</code> (with a 5 second timeout), before closing the socket (<code>WITH_LEAN</code> n/a: calls <code>SSL_shutdown(ssl)</code> a second time without any timeout)  <a href="#ga861b3552cdade3f062b0caa2e187746f">More...</a><br /></td></tr>
+<tr class="separator:ga861b3552cdade3f062b0caa2e187746f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0f1f2dd7a7d88f5acdaaab010d8e99ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#ga0f1f2dd7a7d88f5acdaaab010d8e99ff">WITH_SELF_PIPE</a></td></tr>
 <tr class="memdesc:ga0f1f2dd7a7d88f5acdaaab010d8e99ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), the engine is configured to enable <code><a class="el" href="group__group__io.html#ga139afbf916c84724fef3f82aca4857d3" title="Close the connection of the specified context using a self-pipe. ">soap_close_connection</a></code> using a "self-pipe".  <a href="#ga0f1f2dd7a7d88f5acdaaab010d8e99ff">More...</a><br /></td></tr>
 <tr class="separator:ga0f1f2dd7a7d88f5acdaaab010d8e99ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -216,6 +219,7 @@ Macros</h2></td></tr>
 <li><code><a class="el" href="group__group__with.html#ga3a99ea572d2ad520776c2a92a5f50304" title="When this macro is defined at compile time (undefined by default), enables case insensitive XML tag n...">WITH_CASEINSENSITIVETAGS</a></code></li>
 <li><code><a class="el" href="group__group__with.html#ga11ff99091a8f7fa179705bb3bff1aed2" title="When this macro is defined at compile time (undefined by default), prevents a server port from stayin...">WITH_SOCKET_CLOSE_ON_EXIT</a></code></li>
 <li><code><a class="el" href="group__group__with.html#ga32da1a1af344a155b0ad01e6dbb7daaa" title="When this macro is defined at compile time (undefined by default), the engine transmits TCP FIN using...">WITH_TCPFIN</a></code></li>
+<li><code><a class="el" href="group__group__with.html#ga861b3552cdade3f062b0caa2e187746f" title="When this macro is defined at compile time (undefined by default), the engine calls SSL_shutdown(ssl)...">WITH_SSL_FULL_SHUTDOWN</a></code></li>
 <li><code><a class="el" href="group__group__with.html#ga0f1f2dd7a7d88f5acdaaab010d8e99ff" title="When this macro is defined at compile time (undefined by default), the engine is configured to enable...">WITH_SELF_PIPE</a></code></li>
 <li><code><a class="el" href="group__group__with.html#ga3bb3800c453e42fa5549c413b0c917e9" title="When this macro is defined at compile time (undefined by default), the engine is configured to replac...">WITH_CRTOLF</a></code> </li>
 </ul>
@@ -900,6 +904,21 @@ c++ -D SOAPDEFS_H=mydefs.h -o client stdsoap2.cpp dom.cpp soapC.cpp soapClient.c
 
 </div>
 </div>
+<a class="anchor" id="ga861b3552cdade3f062b0caa2e187746f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define WITH_SSL_FULL_SHUTDOWN</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>When this macro is defined at compile time (undefined by default), the engine calls <code>SSL_shutdown(ssl)</code> twice, the second after <code>close_notify</code> (with a 5 second timeout), before closing the socket (<code>WITH_LEAN</code> n/a: calls <code>SSL_shutdown(ssl)</code> a second time without any timeout) </p>
+<dl class="section user"><dt>Example:</dt><dd><pre class="fragment">c++ -D WITH_SSL_FULL_SHUTDOWN -c stdsoap2.cpp</pre> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ga32da1a1af344a155b0ad01e6dbb7daaa"></a>
 <div class="memitem">
 <div class="memproto">
@@ -941,7 +960,7 @@ c++ -D WITH_ZLIB -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lz
 Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Jun 24 2021 13:19:51 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Aug 19 2021 15:37:52 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

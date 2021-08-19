@@ -1653,12 +1653,12 @@ For the GET method, pass a NULL to `in`.  For the PUT method, pass a NULL to
 Besides `json_call`, there are other JSON API functions:
 
 - `int json_call(soap *ctx, const char *URL, value *in, value *out)` makes a
-  POST, GET, PUT, DELETE call, returns `SOAP_OK` or error code.
-  POST method: pass both `in` and `out`.  GET method: pass a NULL to `in`.  PUT
-  method: pass a NULL to `out`.  DELETE method: pass both NULL to `in` and
-  `out`.  `SOAP_OK` is returned for POST and GET methods upon success.  An HTTP
-  status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE
-  methods upon success.
+  POST, GET, PUT, DELETE call, returns `SOAP_OK` or error code, including HTTP
+  error codes.  POST method: pass both `in` and `out`.  GET method: pass a NULL
+  to `in`.  PUT method: pass a NULL to `out`.  DELETE method: pass both NULL to
+  `in` and `out`.  `SOAP_OK` is returned for POST and GET methods upon success.
+  An HTTP status code of 200 (OK) or 202 (Accepted) is returned for PUT and
+  DELETE methods upon success.
 
 - `int json_write(soap *ctx, const value *v)` writes JSON value to current
   file, socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket file
@@ -2706,11 +2706,11 @@ Besides `json_call`, there are other JSON API functions:
 
 - `int json_call(struct soap *ctx, const char *URL, struct value *in, struct
   value *out)` makes a POST, GET, PUT, DELETE call, returns `SOAP_OK` or error
-  code.  POST method: pass both `in` and `out`.  GET method: pass a NULL to
-  `in`.  PUT method: pass a NULL to `out`.  DELETE method: pass both NULL to `in`
-  and `out`.  `SOAP_OK` is returned for POST and GET methods upon success.  An
-  HTTP status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE
-  methods upon success.
+  code, including HTTP error codes.  POST method: pass both `in` and `out`.
+  GET method: pass a NULL to `in`.  PUT method: pass a NULL to `out`.  DELETE
+  method: pass both NULL to `in` and `out`.  `SOAP_OK` is returned for POST and
+  GET methods upon success.  An HTTP status code of 200 (OK) or 202 (Accepted)
+  is returned for PUT and DELETE methods upon success.
 
 - `int json_write(struct soap *ctx, const struct value *v)` Writes JSON value
   to current file or socket.  Returns `SOAP_OK` or error.  Set current

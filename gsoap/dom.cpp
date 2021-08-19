@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.116
+        DOM API v5 gSOAP 2.8.117
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208116
+#define GSOAP_LIB_VERSION 208117
 
 #include "stdsoap2.h"
 
@@ -3282,8 +3282,9 @@ soap_dom_find_next(const struct soap_dom_element *elt, const struct soap_dom_ele
 @param soap context to manage IO
 @param endpoint server URL
 @param optional SOAP Action or NULL
-@param in request XML to be send to server, or NULL for GET or DELETE (both in and out are NULL)
-@param out response to be populated with response XML received from server, or NULL for PUT or DELETE (both in and out are NULL)
+@param in request XML to send to server, or NULL for GET or DELETE (for DELETE both in and out should be NULL)
+@param out response to populate with response XML received from server, or NULL for PUT or DELETE (for DELETE both in and out should be NULL)
+@return SOAP_OK or error code
 */
 SOAP_FMAC1
 int

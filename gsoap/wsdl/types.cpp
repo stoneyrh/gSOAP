@@ -1553,6 +1553,8 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       const char *baseURI = NULL;
       if (simpleType.restriction->simpleTypePtr() && simpleType.restriction->simpleTypePtr()->schemaPtr())
         baseURI = simpleType.restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
+      else
+        baseURI = URI;
       if (!anonymous)
       {
         if (simpleType.restriction->length && simpleType.restriction->length->value)
@@ -1656,6 +1658,8 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       const char *baseURI = NULL;
       if (simpleType.restriction->simpleTypePtr() && simpleType.restriction->simpleTypePtr()->schemaPtr())
         baseURI = simpleType.restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
+      else
+        baseURI = URI;
       if (!anonymous)
         fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction of type %s.\n///\n", URI ? URI : "", name, base);
       document(simpleType.annotation);
@@ -1697,8 +1701,8 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             bool letters_ok = true;
             for (std::vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
             {
-              const char *s;
-              if ((s = (*enumeration).value))
+              const char *s = (*enumeration).value;
+              if (s)
               {
                 if (!enumvals.count(s))
                 {
@@ -1723,8 +1727,8 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             {
               for (std::vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
               {
-                const char *s;
-                if ((s = (*enumeration).value))
+                const char *s = (*enumeration).value;
+                if (s)
                 {
                   if (!enumvals.count(s))
                   {
@@ -1743,8 +1747,8 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           }
           for (std::vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
           {
-            const char *s;
-            if ((s = (*enumeration).value))
+            const char *s = (*enumeration).value;
+            if (s)
             {
               if (!enumvals.count(s))
               {
@@ -2191,7 +2195,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       }
       else
       {
-        const char *base;
+        const char *base = NULL;
         if (!strcmp(simpleType.list->itemType, "xs:QName"))
           base = "xs:QName";
         else
@@ -2450,13 +2454,15 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       {
         const char *base = complexType.simpleContent->restriction->base;
         const char *baseURI = NULL;
-        const xs__complexType *p = complexType.simpleContent->restriction->complexTypePtr();
-        if (p)
+        if (complexType.simpleContent->restriction->simpleTypePtr() && complexType.simpleContent->restriction->simpleTypePtr()->schemaPtr())
+          baseURI = complexType.simpleContent->restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
+        else if (complexType.simpleContent->restriction->complexTypePtr() && complexType.simpleContent->restriction->complexTypePtr()->schemaPtr())
+          baseURI = complexType.simpleContent->restriction->complexTypePtr()->schemaPtr()->targetNamespace;
+        else
+          baseURI = URI;
+        if (complexType.simpleContent->restriction->complexTypePtr())
         {
-          if (complexType.simpleContent->restriction->simpleTypePtr() && complexType.simpleContent->restriction->simpleTypePtr()->schemaPtr())
-            baseURI = complexType.simpleContent->restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
-          else if (complexType.simpleContent->restriction->complexTypePtr() && complexType.simpleContent->restriction->complexTypePtr()->schemaPtr())
-            baseURI = complexType.simpleContent->restriction->complexTypePtr()->schemaPtr()->targetNamespace;
+          const xs__complexType *p = complexType.simpleContent->restriction->complexTypePtr();
           fprintf(stream, "class %s : public %s\n{ public:\n", t, cname(NULL, baseURI, base));
           soapflag = true;
           if (p && !p->simpleContent)
@@ -2511,13 +2517,15 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       {
         const char *base = complexType.simpleContent->extension->base;
         const char *baseURI = NULL;
-        const xs__complexType *p = complexType.simpleContent->extension->complexTypePtr();
-        if (p)
+        if (complexType.simpleContent->extension->simpleTypePtr() && complexType.simpleContent->extension->simpleTypePtr()->schemaPtr())
+          baseURI = complexType.simpleContent->extension->simpleTypePtr()->schemaPtr()->targetNamespace;
+        else if (complexType.simpleContent->extension->complexTypePtr() && complexType.simpleContent->extension->complexTypePtr()->schemaPtr())
+          baseURI = complexType.simpleContent->extension->complexTypePtr()->schemaPtr()->targetNamespace;
+        else
+          baseURI = URI;
+        if (complexType.simpleContent->extension->complexTypePtr())
         {
-          if (complexType.simpleContent->extension->simpleTypePtr() && complexType.simpleContent->extension->simpleTypePtr()->schemaPtr())
-            baseURI = complexType.simpleContent->extension->simpleTypePtr()->schemaPtr()->targetNamespace;
-          else if (complexType.simpleContent->extension->complexTypePtr() && complexType.simpleContent->extension->complexTypePtr()->schemaPtr())
-            baseURI = complexType.simpleContent->extension->complexTypePtr()->schemaPtr()->targetNamespace;
+          const xs__complexType *p = complexType.simpleContent->extension->complexTypePtr();
           fprintf(stream, "class %s : public %s\n{ public:\n", t, cname(NULL, baseURI, base));
           soapflag = true;
           if (p && !p->simpleContent)
@@ -2680,7 +2688,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
         }
         while (p)
         {
-          const char *pURI;
+          const char *pURI = NULL;
           if (p->schemaPtr())
             pURI = p->schemaPtr()->targetNamespace;
           else
@@ -2769,6 +2777,8 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       const char *baseURI = NULL;
       if (p && p->schemaPtr())
         baseURI = p->schemaPtr()->targetNamespace;
+      else
+        baseURI = URI;
       if (anonymous)
       {
         if (cflag)
@@ -3084,7 +3094,7 @@ void Types::gen(const char *URI, const xs__attribute& attribute, SetOfString& me
     fprintf(stream, "/// Attribute \"%s\" has no type or ref: assuming string content.\n", name ? name : "");
     fprintf(stream, attributeformat, pname(is_optional, true, NULL, NULL, type), aname(NULL, nameURI, name, &members));
   }
-  const char *s;
+  const char *s = NULL;
   switch (attribute.use)
   {
     case prohibited:
@@ -3411,7 +3421,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     }
     else if (max && strcmp(max, "1")) // maxOccurs != "1"
     {
-      const char *s;
+      const char *s = NULL;
       if (cflag && zflag != 1)
         s = tnameptr(true, typeprefix, typeURI, type);
       else if (Fflag || fflag)
@@ -3481,7 +3491,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     }
     else if (max && strcmp(max, "1")) // maxOccurs != "1"
     {
-      const char *s;
+      const char *s = NULL;
       if (cflag && zflag != 1)
         s = tnameptr(true, NULL, URI, type);
       else if (Fflag || fflag)
@@ -4036,12 +4046,12 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
   const xs__complexType *p = complexType;
   if (!p)
     return;
-  const char *pURI;
+  const char *baseURI = NULL;
   if (p->schemaPtr())
-    pURI = p->schemaPtr()->targetNamespace;
+    baseURI = p->schemaPtr()->targetNamespace;
   else
-    pURI = URI;
-  const char *b = p->name ? cname(NULL, pURI, p->name) : NULL;
+    baseURI = URI;
+  const char *b = p->name ? cname(NULL, baseURI, p->name) : NULL;
   if (p->simpleContent && p->simpleContent->restriction)
     gen_inh(URI, p->simpleContent->restriction->complexTypePtr(), anonymous);
   else if (p->simpleContent && p->simpleContent->extension)
@@ -4064,7 +4074,7 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
     }
   }
   if (cflag || Fflag || fflag || anonymous)
-    pURI = URI; // if base ns != derived ns then qualify elts and atts
+    baseURI = URI; // if base ns != derived ns then qualify elts and atts
   SetOfString members;
   if (p->simpleContent && p->simpleContent->restriction)
   {
@@ -4074,7 +4084,7 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
       if (!base)
         base = "xs:string";
       fprintf(stream, "/// __item wraps simpleContent of type %s.\n", base);
-      fprintf(stream, elementformat, tname(NULL, pURI, base), "__item");
+      fprintf(stream, elementformat, tname(NULL, baseURI, base), "__item");
       fprintf(stream, ";\n");
     }
   }
@@ -4086,55 +4096,55 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
       if (!base)
         base = "xs:string";
       fprintf(stream, "/// __item wraps simpleContent of type %s.\n", base);
-      fprintf(stream, elementformat, tname(NULL, pURI, base), "__item");
+      fprintf(stream, elementformat, tname(NULL, baseURI, base), "__item");
       fprintf(stream, ";\n");
     }
-    gen(pURI, p->simpleContent->extension->attribute, members);
-    gen(pURI, p->simpleContent->extension->attributeGroup, members);
+    gen(baseURI, p->simpleContent->extension->attribute, members);
+    gen(baseURI, p->simpleContent->extension->attributeGroup, members);
     if (p->simpleContent->extension->anyAttribute)
-      gen(pURI, *p->simpleContent->extension->anyAttribute);
+      gen(baseURI, *p->simpleContent->extension->anyAttribute);
   }
   else if (p->complexContent && p->complexContent->extension)
   {
     if (p->complexContent->extension->group)
-      gen(pURI, *p->complexContent->extension->group, NULL, NULL, members);
+      gen(baseURI, *p->complexContent->extension->group, NULL, NULL, members);
     if (p->complexContent->extension->all)
-      gen(pURI, *p->complexContent->extension->all, NULL, NULL, members);
+      gen(baseURI, *p->complexContent->extension->all, NULL, NULL, members);
     if (p->complexContent->extension->sequence)
-      gen(pURI, *p->complexContent->extension->sequence, NULL, NULL, members);
+      gen(baseURI, *p->complexContent->extension->sequence, NULL, NULL, members);
     if (p->complexContent->extension->choice)
-      gen(pURI, p->name, *p->complexContent->extension->choice, NULL, NULL, members);
-    gen(pURI, p->complexContent->extension->attribute, members);
-    gen(pURI, p->complexContent->extension->attributeGroup, members);
+      gen(baseURI, p->name, *p->complexContent->extension->choice, NULL, NULL, members);
+    gen(baseURI, p->complexContent->extension->attribute, members);
+    gen(baseURI, p->complexContent->extension->attributeGroup, members);
     if (p->complexContent->extension->anyAttribute)
-      gen(pURI, *p->complexContent->extension->anyAttribute);
+      gen(baseURI, *p->complexContent->extension->anyAttribute);
   }
   else
   {
     if (p->all)
-      gen(pURI, p->all->element, NULL, NULL, members);
+      gen(baseURI, p->all->element, NULL, NULL, members);
     else if (p->all)
-      gen(pURI, *p->all, NULL, NULL, members);
+      gen(baseURI, *p->all, NULL, NULL, members);
     else if (p->choice)
-      gen(pURI, p->name, *p->choice, NULL, NULL, members);
+      gen(baseURI, p->name, *p->choice, NULL, NULL, members);
     else if (p->sequence)
-      gen(pURI, *p->sequence, NULL, NULL, members);
+      gen(baseURI, *p->sequence, NULL, NULL, members);
     else if (p->any)
-      gen(pURI, *p->any, NULL, NULL);
+      gen(baseURI, *p->any, NULL, NULL);
     if (p->defaultAttributesApply && p->schemaPtr() && p->schemaPtr()->attributeGroupPtr())
     {
       xs__attributeGroup *a = p->schemaPtr()->attributeGroupPtr();
       if (a->attributeGroupPtr())
         a = a->attributeGroupPtr();
-      gen(pURI, a->attribute, members);
-      gen(pURI, a->attributeGroup, members);
+      gen(baseURI, a->attribute, members);
+      gen(baseURI, a->attributeGroup, members);
       if (a->anyAttribute)
-        gen(pURI, *a->anyAttribute);
+        gen(baseURI, *a->anyAttribute);
     }
-    gen(pURI, p->attribute, members);
-    gen(pURI, p->attributeGroup, members);
+    gen(baseURI, p->attribute, members);
+    gen(baseURI, p->attributeGroup, members);
     if (p->anyAttribute)
-      gen(pURI, *p->anyAttribute);
+      gen(baseURI, *p->anyAttribute);
   }
   if (b)
   {
@@ -4218,7 +4228,7 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
 void Types::gen_substitutions(const char *URI, const xs__element& element, SetOfString& members)
 {
   const std::vector<xs__element*> *substitutions;
-  const char *name;
+  const char *name = NULL;
   const char *r = NULL, *s = NULL, *t = NULL;
   bool use_union = !uflag;
   bool wrap_union = false;

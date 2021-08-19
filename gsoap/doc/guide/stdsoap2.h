@@ -375,6 +375,7 @@ This module defines the following compile-time flags to configure the engine bui
 - `#WITH_CASEINSENSITIVETAGS`
 - `#WITH_SOCKET_CLOSE_ON_EXIT`
 - `#WITH_TCPFIN`
+- `#WITH_SSL_FULL_SHUTDOWN`
 - `#WITH_SELF_PIPE`
 - `#WITH_CRTOLF`
 
@@ -1053,6 +1054,14 @@ XML is case sensitive, whereas HTML is case insensitive.  XML parsing is always 
     c++ -D WITH_TCPFIN -c stdsoap2.cpp
 */
 #define WITH_TCPFIN
+
+/// When this macro is defined at compile time (undefined by default), the engine calls `SSL_shutdown(ssl)` twice, the second after `close_notify` (with a 5 second timeout), before closing the socket (`WITH_LEAN` n/a: calls `SSL_shutdown(ssl)` a second time without any timeout)
+/**
+@par Example:
+
+    c++ -D WITH_SSL_FULL_SHUTDOWN -c stdsoap2.cpp
+*/
+#define WITH_SSL_FULL_SHUTDOWN
 
 /// When this macro is defined at compile time (undefined by default), the engine is configured to enable `::soap_close_connection` using a "self-pipe"
 /**
@@ -3623,21 +3632,21 @@ struct soap {
   /* in_addr_t in6addr->sin6_scope_id IPv6 value */
   /// User-definable value to set `sockaddr_in6::sin6_scope_id` when nonzero
   /**
-  This value is used by the engine for UDP multicast messaging at the client side, sets `sockaddr_in6::sin6_scope_id` to `::soap::ipv6_multicast_if` when nonzero.
+  This value is used by the engine for UDP multicast messaging at the client side, sets `sockaddr_in6::sin6_scope_id` to `::soap::ipv6_multicast_if` when nonzero. Requires `#WITH_IPV6`.
 
-  @see `#SOAP_IO_UDP`, `::soap::ipv4_multicast_if`, `::soap::ipv4_multicast_ttl`.
+  @see `#WITH_IPV6`, `#SOAP_IO_UDP`, `::soap::ipv4_multicast_if`, `::soap::ipv4_multicast_ttl`.
   */
   unsigned int ipv6_multicast_if;
   /// User-definable value to set `setsockopt` level `IPPROTO_IP` to `IP_MULTICAST_IF` when non-NULL
   /**
   This value is used by the engine for UDP multicast messaging at the client side, sets `setsockopt` level `IPPROTO_IP` to `IP_MULTICAST_IF` with value `::soap::ipv4_multicast_if` when non-NULL.
 
-  @see `#SOAP_IO_UDP`, `::soap::ipv6_multicast_if`, `::soap::ipv4_multicast_ttl`.
+  @see `#WITH_IPV6`, `#SOAP_IO_UDP`, `::soap::ipv6_multicast_if`, `::soap::ipv4_multicast_ttl`.
   */
   char* ipv4_multicast_if;
   /// User-definable value to set `setsockopt` level `IPPROTO_IP` to `IP_MULTICAST_TTL` when nonzero
   /**
-  This value is used by the engine for UDP multicast messaging at the client side, sets `setsockopt` level `IPPROTO_IP` to `IP_MULTICAST_TTL` with value `::soap::ipv4_multicast_ttl` when nonzero.
+  This value is used by the engine for UDP multicast messaging at the client side, sets `setsockopt` level `IPPROTO_IP` to `IP_MULTICAST_TTL` with value `::soap::ipv4_multicast_ttl` when nonzero. Requires `#WITH_IPV6`.
 
   @par Example:
 
@@ -3647,13 +3656,13 @@ struct soap {
   soap->send_timeout = 5;                // 5 seconds max socket delay
   soap->connect_flags = SO_BROADCAST;    // required for broadcast 
   soap->ipv4_multicast_if = &addr;       // optional for IPv4, see setsockopt IPPROTO_IP IP_MULTICAST_IF 
-  soap->ipv6_multicast_if = addr;        // optional for IPv6, multicast sin6_scope_id 
+  soap->ipv6_multicast_if = addr;        // optional for IPv6 (requires WITH_IPV6), multicast sin6_scope_id 
   soap->ipv4_multicast_ttl = 1;          // optional, see setsockopt IPPROTO_IP, IP_MULTICAST_TTL 
   ~~~
 
   Refer to the socket options for `IPPROTO_IP` `IP_MULTICAST_TTL` to limit the lifetime of the packet.  Multicast datagrams are sent with a default value of 1, to prevent them to be forwarded beyond the local network.  This parameter can be set between 1 to 255.
 
-  @see `#SOAP_IO_UDP`, `::soap::ipv6_multicast_if`, `::soap::ipv4_multicast_if`.
+  @see `#WITH_IPV6`, `#SOAP_IO_UDP`, `::soap::ipv6_multicast_if`, `::soap::ipv4_multicast_if`.
   */
   unsigned char ipv4_multicast_ttl;
   /// User-definable client address to bind to before connecting to a server, when non-NULL (Windows: n/a)

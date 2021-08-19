@@ -362,8 +362,8 @@ var NAVTREEINDEX =
 "group__group__flags.html#gabdb47a4b2321c119055eff7db3ecd7e6",
 "group__group__s2s.html#ga62c6452f879498f8751d52ced3dff798",
 "group__group__with.html#ga11ff99091a8f7fa179705bb3bff1aed2",
-"index.html#soapcpp2-2",
-"structsoap.html#ae731dd4b82b3a91b679c410756ee4faa"
+"index.html#soapcpp2-0",
+"structsoap.html#ae4a79c23a3ebab6023b6b6e16de734cc"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

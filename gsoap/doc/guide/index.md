@@ -13349,7 +13349,7 @@ uses a broadcast address and the `SO_BROADCAST` socket option:
     soap.send_timeout = 5; // 5 seconds max socket delay
     soap.connect_flags = SO_BROADCAST; // required for broadcast 
     soap.ipv4_multicast_if = &addr; // optional for IPv4: see setsockopt IPPROTO_IP IP_MULTICAST_IF 
-    soap.ipv6_multicast_if = addr; // optional for IPv6: multicast sin6_scope_id 
+    soap.ipv6_multicast_if = addr; // optional for IPv6 (requires WITH_IPV6): multicast sin6_scope_id
     soap.ipv4_multicast_ttl = 1; // optional, see setsockopt IPPROTO_IP, IP_MULTICAST_TTL 
     // set up WS-Addressing header
     soap_wsa_request(&soap, "message ID", "endpoint", "SOAP action");
@@ -13637,7 +13637,8 @@ define                        | result
 `#WITH_DEFAULT_VIRTUAL`       | enables C++ base service classes with default virtual methods returning fault `#SOAP_NO_METHOD`, requires soapcpp2 option `-i` or `-j`
 `#WITH_CASEINSENSITIVETAGS`   | enables case insensitive XML parsing 
 `#WITH_SOCKET_CLOSE_ON_EXIT`  | prevents a server port from staying in listening mode after exit by internally setting `fcntl(sock, F_SETFD, FD_CLOEXEC)` 
-`#WITH_TCPFIN`                | enables TCP FIN after sends when socket is ready to close 
+`#WITH_TCPFIN`                | enables sending TCP FIN after sends when socket is ready to close 
+`#WITH_WITH_SSL_FULL_SHUTDOWN`| enables second `SSL_shutdown(ssl)` call after `close_notify` before closing the socket (`WITH_LEAN` n/a)
 `#WITH_SELF_PIPE`             | enables a "self pipe" to enable the `::soap_close_connection` function (gSOAP 2.8.71 or greater)
 
 The following subset of macros are defined in the API documentation Module \ref group_soap.  These macros are used to enable or disable features as specified below, by compiling source code files with compiler option <b>`-D`</b> to set the macro:
@@ -13838,13 +13839,13 @@ context flag                 | result
 ---------------------------- | ------
 `::soap::ipv4_multicast_if`  | set `setsockopt` level `IPPROTO_IP` to `IP_MULTICAST_IF` with value `::soap::ipv4_multicast_if` when non-NULL
 `::soap::ipv4_multicast_ttl` | set `setsockopt` level `IPPROTO_IP` to `IP_MULTICAST_TTL` with value `::soap::ipv4_multicast_ttl` when nonzero
-`::soap::ipv6_multicast_if`  | set `sockaddr_in6::sin6_scope_id` to `::soap::ipv6_multicast_if` when nonzero
+`::soap::ipv6_multicast_if`  | set `sockaddr_in6::sin6_scope_id` to `::soap::ipv6_multicast_if` when nonzero, requires `#WITH_IPV6`
 
 🔝 [Back to table of contents](#)
 
 # Run-time error codes        {#errcodes}
 
-Status error codes are integer values, which are returned by the gSOAP API functions.  The full list of `::soap_status` error codes is listed below:
+Status error codes are integer values, which are returned by the gSOAP API functions.  Error codes 200 and higher are reserved for HTTP error codes.  HTTP error codes may be returned by a server to the client.  HTTP codes 200, 400 and 500 are not returned when the HTTP body contains a response message, where HTTP codes 400 and 500 are reserved for SOAP Fault messages.  The list of `::soap_status` error codes is listed below:
 
 Error code                  | Description
 --------------------------- | -----------
@@ -13872,7 +13873,7 @@ Error code                  | Description
 `#SOAP_LENGTH`              | XML element or attribute length validation error or `#SOAP_MAXLENGTH` exceeded
 `#SOAP_LEVEL`               | XML nesting depth level exceeds `#SOAP_MAXLEVEL`
 `#SOAP_MIME_END`            | End of MIME attachments protocol error 
-`#SOAP_MIME_ERROR`          | MIME attachment parsing error 
+`#SOAP_MIME_ERROR`          | MIME attachment parsing or processing error 
 `#SOAP_MIME_HREF`           | MIME attachment has no href from SOAP body and no MIME callbacks were defined to save the attachment
 `#SOAP_MISSING_ID`          | An XML element with id attribute is missing that should match the element with href/ref attribute (applicable to SOAP multi-ref encoding and `#SOAP_XML_GRAPH` serialization) 
 `#SOAP_MOE`                 | Memory overflow or memory corruption error (applicable in `#DEBUG` mode only) 
@@ -13920,7 +13921,7 @@ To determine the type of error that occurred, use:
 - `#soap_ssl_error_check(soap_status e)` checks for SSL/TLS protocol errors, returns true if the specified error code is a SSL/TLS error, when true use `::soap::errnum` to retrieve the `errno` value to determine the cause.
 - `#soap_zlib_error_check(soap_status e)` checks for zlib library errors, returns true if the specified error code is a zlib error.
 
-An HTTP status code is returned when the client fails to connect to an HTTP server and the HTTP server response with an error.  The list of HTTP status codes is given below:
+An HTTP status or error code is returned when the client fails to connect to an HTTP server or when the server responds with an error.  A gSOAP server operation implementation may also return an HTTP error code instead of `#SOAP_OK` to respond to (an invalid) client request.  The list of HTTP status codes is given below:
 
 Code | Description
 ---- | -----------
@@ -13963,7 +13964,7 @@ Code | Description
 504  | Gateway Time-out 
 505  | HTTP Version not supported 
 
-HTTP status code 200 is not flagged as an error by the engine.  Status codes 201 and 202 are informative and should not be considered errors by the application logic.
+HTTP status codes 200 to 299, 400 and 500 when received by a client are not flagged as an error, unless an HTTP message body is absent in the server's response to the client.  Status codes 200, 201 and 202 are informative and should not be considered errors by the application logic.
 
 Server-side implementations of service operations should return `#SOAP_OK` when the operation was successful, which returns a "200 OK" HTTP header with the XML response message.  Server-side implementations of service operations in gSOAP may directly return an HTTP status code when an HTTP-related error should be returned.  For example, `return 404` returns "404 Not Found" to the client and the `::soap::error` variable is set to 404 at the client side.
 
@@ -13973,7 +13974,7 @@ To return a SOAP Fault from a server-side implementation of a service operation,
 - `int soap_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail)` returns `#SOAP_FAULT` and populates a SOAP Fault message indicating a SOAP 1.1 server fault / SOAP 1.2 receiver fault that is populated with the text `faultstring` and an XML fragment `faultdetail` or NULL when omitted.
 - `int soap_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)` same as `::soap_receiver_fault` with the addition of a QName-formatted string `faultsubcode`.
 
-A receiver error indicates that the service could not handle the client request, but it can possibly recover from the error later, for example when resources are temporarily unavailable.  A sender error indicates that the client request is faulty and s rejected by the service.
+A "receiver fault" indicates that the service could not handle the client request, but it can possibly recover from the error later, for example when resources are temporarily unavailable.  A "sender fault" indicates that the client request is faulty and is rejected by the service.
 
 See Section \ref fault for more details on how to use these functions.
 

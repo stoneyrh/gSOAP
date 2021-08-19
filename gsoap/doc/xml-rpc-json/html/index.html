@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML-RPC/JSON and jsoncpp</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Fri Jun 18 2021 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Aug 11 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -436,7 +436,7 @@ C++ JSON REST clients and servers                                      </h2>
 <p>To use the HTTP POST method, pass both <code>in</code> and <code>out</code> values to <code>json_call</code>. For the GET method, pass a NULL to <code>in</code>. For the PUT method, pass a NULL to <code>out</code>. For the DELETE method, pass both NULL to <code>in</code> and <code>out</code>.</p>
 <p>Besides <code>json_call</code>, there are other JSON API functions:</p>
 <ul>
-<li><code>int json_call(soap *ctx, const char *URL, value *in, value *out)</code> makes a POST, GET, PUT, DELETE call, returns <code>SOAP_OK</code> or error code. POST method: pass both <code>in</code> and <code>out</code>. GET method: pass a NULL to <code>in</code>. PUT method: pass a NULL to <code>out</code>. DELETE method: pass both NULL to <code>in</code> and <code>out</code>. <code>SOAP_OK</code> is returned for POST and GET methods upon success. An HTTP status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE methods upon success.</li>
+<li><code>int json_call(soap *ctx, const char *URL, value *in, value *out)</code> makes a POST, GET, PUT, DELETE call, returns <code>SOAP_OK</code> or error code, including HTTP error codes. POST method: pass both <code>in</code> and <code>out</code>. GET method: pass a NULL to <code>in</code>. PUT method: pass a NULL to <code>out</code>. DELETE method: pass both NULL to <code>in</code> and <code>out</code>. <code>SOAP_OK</code> is returned for POST and GET methods upon success. An HTTP status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE methods upon success.</li>
 <li><code>int json_write(soap *ctx, const value *v)</code> writes JSON value to current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor to write to with <code>ctx-&gt;sendfd = fd</code> (1 by default). In C++, set output stream with <code>ctx-&gt;os = ostream</code> to write to.</li>
 <li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c" title="Read JSON value from context&#39;s input (socket, stream, FILE, or string) ">json_read(soap *ctx, value *v)</a></code> reads JSON value from current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code> to read from (0 by default). In C++, set input stream with <code>ctx-&gt;is = istream</code>.</li>
 </ul>
@@ -595,7 +595,7 @@ C JSON REST clients and servers                                          </h2>
 <p>To use the JSON REST POST method, pass both <code>in</code> and <code>out</code> values to <code>json_call</code>. For the GET method, pass a NULL to <code>in</code>. For the PUT method, pass a NULL to <code>out</code>. For the DELETE method, pass both NULL to <code>in</code> and <code>out</code>.</p>
 <p>Besides <code>json_call</code>, there are other JSON API functions:</p>
 <ul>
-<li><code>int json_call(struct soap *ctx, const char *URL, struct value *in, struct value *out)</code> makes a POST, GET, PUT, DELETE call, returns <code>SOAP_OK</code> or error code. POST method: pass both <code>in</code> and <code>out</code>. GET method: pass a NULL to <code>in</code>. PUT method: pass a NULL to <code>out</code>. DELETE method: pass both NULL to <code>in</code> and <code>out</code>. <code>SOAP_OK</code> is returned for POST and GET methods upon success. An HTTP status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE methods upon success.</li>
+<li><code>int json_call(struct soap *ctx, const char *URL, struct value *in, struct value *out)</code> makes a POST, GET, PUT, DELETE call, returns <code>SOAP_OK</code> or error code, including HTTP error codes. POST method: pass both <code>in</code> and <code>out</code>. GET method: pass a NULL to <code>in</code>. PUT method: pass a NULL to <code>out</code>. DELETE method: pass both NULL to <code>in</code> and <code>out</code>. <code>SOAP_OK</code> is returned for POST and GET methods upon success. An HTTP status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE methods upon success.</li>
 <li><code>int <a class="el" href="json_8h.html#ae0b41e1415944a28b8ef92dc98be8c50" title="Write JSON value to the context&#39;s output (socket, stream, FILE, or string) ">json_write(struct soap *ctx, const struct value *v)</a></code> Writes JSON value to current file or socket. Returns <code>SOAP_OK</code> or error. Set current file/socket file descriptor with <code>ctx-&gt;sendfd = fd</code>. Or save JSON to a string by setting <code>ctx-&gt;os = &amp;cs</code> with <code>const char *cs</code> a string pointer that will be set to a NUL-terminated string when the write completed.</li>
 <li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c" title="Read JSON value from context&#39;s input (socket, stream, FILE, or string) ">json_read(struct soap *ctx, struct value *v)</a></code> Reads JSON value from current file or socket. Returns <code>SOAP_OK</code> or error. Set current file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code>. Or read from string by setting <code>ctx-&gt;is = cs</code> to a <code>const char *cs</code> NUL-terminated string.</li>
 </ul>
@@ -722,7 +722,7 @@ Copyright                                                           </h1>
 Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Fri Jun 18 2021 15:26:35 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Aug 11 2021 09:40:58 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.116
+        stdsoap2.c[pp] 2.8.117
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208116
+#define GSOAP_LIB_VERSION 208117
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.116 2021-07-09 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.117 2021-08-19 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.116 2021-07-09 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.117 2021-08-19 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -3465,7 +3465,7 @@ SOAP_FMAC2
 soap_getsizes(const char *attr, int *size, int dim)
 {
   size_t i, k, n;
-  if (!*attr)
+  if (!attr || !*attr || dim < 1) /* actually attr != NULL and dim is guaranteed >= 1 by soapcpp2-generated code */
     return 0;
   i = strlen(attr);
   n = 1;
@@ -5260,25 +5260,12 @@ tcp_connect(struct soap *soap, const char *endpoint, const char *host, int port)
       if (soap->ipv4_multicast_if && !soap->ipv6_multicast_if)
       {
         if (setsockopt(soap->socket, IPPROTO_IP, IP_MULTICAST_IF, (char*)soap->ipv4_multicast_if, sizeof(struct in_addr)))
-#ifndef WINDOWS
         {
           soap->errnum = soap_socket_errno;
           (void)soap_set_receiver_error(soap, tcp_error(soap), "setsockopt IP_MULTICAST_IF failed in tcp_connect()", SOAP_TCP_ERROR);
           (void)soap->fclosesocket(soap, soap->socket);
           return soap->socket = SOAP_INVALID_SOCKET;
         }
-#else
-#ifndef IP_MULTICAST_IF
-#define IP_MULTICAST_IF 2
-#endif
-        if (setsockopt(soap->socket, IPPROTO_IP, IP_MULTICAST_IF, (char*)soap->ipv4_multicast_if, sizeof(struct in_addr)))
-        {
-          soap->errnum = soap_socket_errno;
-          (void)soap_set_receiver_error(soap, tcp_error(soap), "setsockopt IP_MULTICAST_IF failed in tcp_connect()", SOAP_TCP_ERROR);
-          (void)soap->fclosesocket(soap, soap->socket);
-          return soap->socket = SOAP_INVALID_SOCKET;
-        }
-#endif
       }
 #endif
       return soap->socket;
@@ -5484,10 +5471,9 @@ again:
         return soap->socket = SOAP_INVALID_SOCKET;
       }
     }
-    if ((soap->omode & SOAP_IO_UDP) && soap->ipv4_multicast_if && !soap->ipv6_multicast_if)
+    if (soap->ipv4_multicast_if && !soap->ipv6_multicast_if)
     {
       if (setsockopt(sk, IPPROTO_IP, IP_MULTICAST_IF, (char*)soap->ipv4_multicast_if, sizeof(struct in_addr)))
-#ifndef WINDOWS
       {
         soap->errnum = soap_socket_errno;
 #ifdef WITH_IPV6
@@ -5497,21 +5483,6 @@ again:
         (void)soap->fclosesocket(soap, sk);
         return soap->socket = SOAP_INVALID_SOCKET;
       }
-#else
-#ifndef IP_MULTICAST_IF
-#define IP_MULTICAST_IF 2
-#endif
-      if (setsockopt(sk, IPPROTO_IP, IP_MULTICAST_IF, (char*)soap->ipv4_multicast_if, sizeof(struct in_addr)))
-      {
-        soap->errnum = soap_socket_errno;
-#ifdef WITH_IPV6
-        freeaddrinfo(ressave);
-#endif
-        (void)soap_set_receiver_error(soap, tcp_error(soap), "setsockopt IP_MULTICAST_IF failed in tcp_connect()", SOAP_TCP_ERROR);
-        (void)soap->fclosesocket(soap, sk);
-        return soap->socket = SOAP_INVALID_SOCKET;
-      }
-#endif
     }
   }
 #endif
@@ -6651,6 +6622,21 @@ tcp_disconnect(struct soap *soap)
           soap->ssl = NULL;
           return SOAP_OK;
         }
+#ifdef WITH_SSL_FULL_SHUTDOWN
+        if (!SSL_want_read(soap->ssl) || SSL_read(soap->ssl, NULL, 0))
+        {
+          r = SSL_shutdown(soap->ssl);
+          if (r <= 0)
+          {
+            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Shutdown failed: %d\n", SSL_get_error(soap->ssl, r)));
+            if (soap_valid_socket(soap->socket) && !(soap->omode & SOAP_IO_UDP))
+            {
+              (void)soap->fclosesocket(soap, soap->socket);
+              soap->socket = SOAP_INVALID_SOCKET;
+            }
+          }
+        }
+#endif
 #else
         r = SSL_shutdown(soap->ssl);
         if (r <= 0)
@@ -20075,11 +20061,13 @@ soap_putmime(struct soap *soap)
       if (!handle)
       {
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "fmimereadopen failed\n"));
+        if (!soap->error)
+          soap->error = SOAP_MIME_ERROR;
         return soap->error;
       }
       if (soap_putmimehdr(soap, content))
         return soap->error;
-      if (!size)
+      if (!size) /* streaming MIME is indicated by size zero content size when streaming MIME callbacks are set */
       {
         if ((soap->mode & SOAP_ENC_PLAIN) || (soap->mode & SOAP_IO) == SOAP_IO_CHUNK || (soap->mode & SOAP_IO) == SOAP_IO_STORE)
         {
@@ -20109,7 +20097,7 @@ soap_putmime(struct soap *soap)
           if (!bufsize)
           {
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "fmimeread failed: insufficient data (%lu bytes remaining from %lu bytes)\n", (unsigned long)size, (unsigned long)content->size));
-            err = SOAP_EOF;
+            err = SOAP_MIME_ERROR; /* used to be EOF, SOAP_MIME_ERROR is more appropriaate */
             break;
           }
           err = soap_send_raw(soap, soap->tmpbuf, bufsize);
@@ -20119,7 +20107,7 @@ soap_putmime(struct soap *soap)
       if (soap->fmimereadclose)
         soap->fmimereadclose(soap, handle);
       if (err)
-        return err;
+        return soap->error = err;
     }
     else
     {

@@ -1601,18 +1601,28 @@ Likewise, you can write a DOM node graph in XML to a string by using a
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is also possible to send and receive XML over HTTP as REST operations as was
-illustrated in the introduction.  To make REST HTTP POST, GET, OUT, and DELETE
-calls, use:
+illustrated in the introduction.  To make REST HTTP POST, GET, PUT, and DELETE
+calls, use `soap_dom_call`.  This function optionally takes a DOM to send or
+NULL to send nothing and optionally a DOM to receive or NULL to receive nothing
+(e.g. with HTTP PUT).  The function returns `SOAP_OK` (zero) for success or an
+error code:
 
 - `int soap_dom_call(soap *ctx, const char *URL, const char *action, const xsd__anyType *in, xsd__anyType *out)`
   Make a POST, GET, PUT, DELETE call.  Connect to endpoint `URL` with HTTP
   SOAPAction `action` (or NULL) and send request `in` to server and receive
-  response `out`.  Returns `SOAP_OK` (zero) or an error code.  POST method:
-  pass both `in` and `out`.  GET method: pass a NULL to `in`.  PUT method: pass
-  a NULL to `out`.  DELETE method: pass both NULL to `in` and `out`.
+  response `out`.  Returns `SOAP_OK` (zero) or an error code, including HTTP
+  error codes.  POST method: pass both `in` and `out`.  GET method: pass a NULL
+  to `in`.  PUT method: pass a NULL to `out`.  DELETE method: pass both NULL to
+  `in` and `out`.
 
 This function is overloaded to accept references to the `in` and `out`
-parameters in C++.
+parameters in C++ instead of pointers.
+
+If the server response does not include an HTTP body with XML, then an HTTP
+error code is returned such as 200.  If the server responds with HTTP codes
+200, 400 and 500 with an HTTP body with XML, `SOAP_OK` is returned.  The 400
+and 500 HTTP status codes may be used to return SOAP/XML Fault messages and
+are therefore not returned as error codes.
 
 C XML DOM API                                                               {#c}
 =============
@@ -2262,15 +2272,25 @@ The `soap_read_xsd__anyType(ctx, dom)` and `soap_write_xsd__anyType(ctx, dom)`
 functions return `SOAP_OK` (zero) or an error code in `ctx->error`.
 
 It is also possible to send and receive XML over HTTP as REST operations as was
-illustrated in the introduction.  To make REST HTTP POST, GET, OUT, and DELETE
-calls, use:
+illustrated in the introduction.  To make REST HTTP POST, GET, PUT, and DELETE
+calls, use `soap_dom_call`.  This function optionally takes a DOM to send or
+NULL to send nothing and optionally a DOM to receive or NULL to receive nothing
+(e.g. with HTTP PUT).  The function returns `SOAP_OK` (zero) for success or an
+error code:
 
 - `int soap_dom_call(struct soap *ctx, const char *URL, const char *action, const xsd__anyType *in, xsd__anyType *out)`
   Make a POST, GET, PUT, DELETE call.  Connect to endpoint `URL` with HTTP
   SOAPAction `action` (or NULL) and send request `in` to server and receive
-  response `out`.  Returns `SOAP_OK` (zero) or an error code.  POST method:
-  pass both `in` and `out`.  GET method: pass a NULL to `in`.  PUT method: pass
-  a NULL to `out`.  DELETE method: pass both NULL to `in` and `out`.
+  response `out`.  Returns `SOAP_OK` (zero) or an error code, including HTTP
+  error codes.  POST method: pass both `in` and `out`.  GET method: pass a NULL
+  to `in`.  PUT method: pass a NULL to `out`.  DELETE method: pass both NULL to
+  `in` and `out`.
+
+If the server response does not include an HTTP body with XML, then an HTTP
+error code is returned such as 200.  If the server responds with HTTP codes
+200, 400 and 500 with an HTTP body with XML, `SOAP_OK` is returned.  The 400
+and 500 HTTP status codes may be used to return SOAP/XML Fault messages and
+are therefore not returned as error codes.
 
 XML DOM parsing and display options                                       {#opt}
 ===================================

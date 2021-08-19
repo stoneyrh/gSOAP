@@ -35,6 +35,7 @@ var group__group__with =
     [ "WITH_SELF_PIPE", "group__group__with.html#ga0f1f2dd7a7d88f5acdaaab010d8e99ff", null ],
     [ "WITH_SOAPDEFS_H", "group__group__with.html#ga24620333a812a36ed84902ff3d897ff6", null ],
     [ "WITH_SOCKET_CLOSE_ON_EXIT", "group__group__with.html#ga11ff99091a8f7fa179705bb3bff1aed2", null ],
+    [ "WITH_SSL_FULL_SHUTDOWN", "group__group__with.html#ga861b3552cdade3f062b0caa2e187746f", null ],
     [ "WITH_TCPFIN", "group__group__with.html#ga32da1a1af344a155b0ad01e6dbb7daaa", null ],
     [ "WITH_ZLIB", "group__group__with.html#gad2cdc1f87f3fc46b92e957d9e251797c", null ]
 ];
