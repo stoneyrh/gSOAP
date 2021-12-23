@@ -6101,14 +6101,14 @@ int soap_ssl_server_context(
     const char *cafile,   ///< file with certificates in PEM format or NULL
     const char *capath,   ///< directory to certificates
     const char *dhfile,   ///< file with DH parameters or numeric string value to generate DH parameters or NULL
-    const char *randfile, ///< file to see the PRNG or NULL
+    const char *randfile, ///< file to seed the PRNG or NULL
     const char *sid)      ///< a unique server id for session caching or NULL
   /// @returns `#SOAP_OK` or a `::soap_status` error code
   ;
 
 /// Initialize the client-side SSL/TLS context
 /**
-This function initializes the client-side SSL/TLS context of the OpenSSL or GNUTLS library.  The `flags` parameter initializes the context with a combination of `::soap_ssl_flags`.  The `keyfile` parameter when non-NULL is the server's private key PEM file, typically concatenated with its certificate in the PEM file.  The `password` parameter when non-NULL is used to unlock the password-protected private key in the key file.  The `cafile` parameter when non-NULL is used to authenticate clients when the `#SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION` flag is used and contains the client or CA certificate(s).  Alternatively, a directory name `capath` can be specified to point to a directory with the certificate(s).  The `randfile` parameter when non-NULL can be used to seed the PRNG using the specified file with random data.  Returns `#SOAP_OK` or a `::soap_status` error code.
+This function initializes the client-side SSL/TLS context of the OpenSSL or GNUTLS library.  The `flags` parameter initializes the context with a combination of `::soap_ssl_flags`.  The `keyfile` parameter when non-NULL is the client's private key PEM file, typically concatenated with its certificate in the PEM file.  The client's key is normally NULL and should only be specified if the server requires client authentication.  The `password` parameter when non-NULL is used to unlock the password-protected private key in the key file.  The `cafile` parameter when non-NULL is used to authenticate servers and contains the CA certificates of the server or servers.  Alternatively, a directory name `capath` can be specified to point to a directory with the certificate(s).  The `randfile` parameter when non-NULL can be used to seed the PRNG using the specified file with random data.  Returns `#SOAP_OK` or a `::soap_status` error code.
 
 All strings passed to this function must be persistent in memory until the SSL/TLS context is implicitly deleted when the `::soap` context is deleted.
 
@@ -6234,7 +6234,7 @@ int soap_ssl_client_context(
     const char *password, ///< password to unlock the private key or NULL
     const char *cafile,   ///< file with certificates in PEM format or NULL
     const char *capath,   ///< directory to certificates
-    const char *randfile) ///< file to see the PRNG or NULL
+    const char *randfile) ///< file to seed the PRNG or NULL
   /// @returns `#SOAP_OK` or a `::soap_status` error code
   ;
 

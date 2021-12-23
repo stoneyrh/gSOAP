@@ -5,7 +5,7 @@ includedir=${prefix}/include
 
 Name: GSoap
 Description: SOAP C++ Web Services
-Version: 2.8.117
+Version: 2.8.118
 Requires:
 Libs: -L${libdir} -lgsoap++
 Libs.private: -lm

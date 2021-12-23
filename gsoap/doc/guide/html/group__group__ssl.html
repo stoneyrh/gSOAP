@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">SSL/TLS context and functions</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Aug 19 2021 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Dec 23 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -533,7 +533,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initialize the client-side SSL/TLS context. </p>
-<p>This function initializes the client-side SSL/TLS context of the OpenSSL or GNUTLS library. The <code>flags</code> parameter initializes the context with a combination of <code><a class="el" href="group__group__ssl.html#ga0cd7f0c3eda00033f2a3b6da331f39ed" title="SSL/TLS (HTTPS) client and server context flags for soap_ssl_client_context and soap_ssl_server_conte...">soap_ssl_flags</a></code>. The <code>keyfile</code> parameter when non-NULL is the server's private key PEM file, typically concatenated with its certificate in the PEM file. The <code>password</code> parameter when non-NULL is used to unlock the password-protected private key in the key file. The <code>cafile</code> parameter when non-NULL is used to authenticate clients when the <code><a class="el" href="group__group__ssl.html#ga4ab5e7f3fbb00fa2669e29e9ca000d12" title="soap_ssl_flags flag for servers to require clients to authenticate to servers during the HTTPS handsh...">SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION</a></code> flag is used and contains the client or CA certificate(s). Alternatively, a directory name <code>capath</code> can be specified to point to a directory with the certificate(s). The <code>randfile</code> parameter when non-NULL can be used to seed the PRNG using the specified file with random data. Returns <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> or a <code><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444" title="Status and error codes are int values, a zero value or SOAP_OK (0) means no error, nonzero means error. ">soap_status</a></code> error code.</p>
+<p>This function initializes the client-side SSL/TLS context of the OpenSSL or GNUTLS library. The <code>flags</code> parameter initializes the context with a combination of <code><a class="el" href="group__group__ssl.html#ga0cd7f0c3eda00033f2a3b6da331f39ed" title="SSL/TLS (HTTPS) client and server context flags for soap_ssl_client_context and soap_ssl_server_conte...">soap_ssl_flags</a></code>. The <code>keyfile</code> parameter when non-NULL is the client's private key PEM file, typically concatenated with its certificate in the PEM file. The client's key is normally NULL and should only be specified if the server requires client authentication. The <code>password</code> parameter when non-NULL is used to unlock the password-protected private key in the key file. The <code>cafile</code> parameter when non-NULL is used to authenticate servers and contains the CA certificates of the server or servers. Alternatively, a directory name <code>capath</code> can be specified to point to a directory with the certificate(s). The <code>randfile</code> parameter when non-NULL can be used to seed the PRNG using the specified file with random data. Returns <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> or a <code><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444" title="Status and error codes are int values, a zero value or SOAP_OK (0) means no error, nonzero means error. ">soap_status</a></code> error code.</p>
 <p>All strings passed to this function must be persistent in memory until the SSL/TLS context is implicitly deleted when the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context is deleted.</p>
 <p>After <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code> initialization you can select a specific cipher list using OpenSSL function <code>SSL_CTX_set_cipher_list(soap-&gt;ctx, "...")</code>. When authentication requires the use of CRLs, you can use <code><a class="el" href="group__group__ssl.html#gae4052d1c701d1756c3e1b86c740881d5" title="Enable SSL/TLS CRLs. ">soap_ssl_crl</a></code> to specify a CRL file and to use any CRLs provided with SSL/TLS handshakes.</p>
 <p>All OpenSSL versions prior to 1.1.0 require mutex locks to be explicitly set up in your code for multi-threaded applications by calling <code><a class="el" href="group__group__ssl.html#gaedc51dd2ab95cdff45057639fac70a8f" title="Setup function for OpenSSL versions prior to 1.1.1 to set locks for multi-threaded SSL/TLS applicatio...">CRYPTO_thread_setup()</a></code> and <code><a class="el" href="group__group__ssl.html#ga8b29e4ea1419a4af49823862765f2918" title="Cleanup function for OpenSSL versions prior to 1.1.1. ">CRYPTO_thread_cleanup()</a></code>.</p>
@@ -549,7 +549,7 @@ Functions</h2></td></tr>
     <tr><td class="paramname">password</td><td>password to unlock the private key or NULL </td></tr>
     <tr><td class="paramname">cafile</td><td>file with certificates in PEM format or NULL </td></tr>
     <tr><td class="paramname">capath</td><td>directory to certificates </td></tr>
-    <tr><td class="paramname">randfile</td><td>file to see the PRNG or NULL </td></tr>
+    <tr><td class="paramname">randfile</td><td>file to seed the PRNG or NULL </td></tr>
   </table>
   </dd>
 </dl>
@@ -719,7 +719,7 @@ Functions</h2></td></tr>
     <tr><td class="paramname">cafile</td><td>file with certificates in PEM format or NULL </td></tr>
     <tr><td class="paramname">capath</td><td>directory to certificates </td></tr>
     <tr><td class="paramname">dhfile</td><td>file with DH parameters or numeric string value to generate DH parameters or NULL </td></tr>
-    <tr><td class="paramname">randfile</td><td>file to see the PRNG or NULL </td></tr>
+    <tr><td class="paramname">randfile</td><td>file to seed the PRNG or NULL </td></tr>
     <tr><td class="paramname">sid</td><td>a unique server id for session caching or NULL </td></tr>
   </table>
   </dd>
@@ -734,7 +734,7 @@ Functions</h2></td></tr>
 Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Aug 19 2021 15:37:52 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Dec 23 2021 13:46:46 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

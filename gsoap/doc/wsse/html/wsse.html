@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Security plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Nov 19 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Mon Sep 6 2021 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -377,7 +377,8 @@ Encrypting Messages</h2>
 <p>When excluding the encrypted key certificate from the message, the token handler callback must be provided on the receiving end to obtain the certificate that corresponds to the issuer name and serial number.</p>
 <p>To encrypt specific elements of the SOAP Header, such as the signature, and Body rather than just the SOAP Body alone, use <code>soap_wsse_add_EncryptedKey_encrypt_only</code> to specify elements to encrypt in combination with <code>soap_wsse_set_wsu_id</code> to specify these elements:</p>
 <div class="fragment"><div class="line">X509 *cert = ...; <span class="comment">// from PEM file or local secure store as shown above</span></div><div class="line"><span class="comment">// the SOAP Body contains one &lt;ns:myContract&gt; and one &lt;ns:myPIN&gt; (not nested)</span></div><div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ns:myContract ns:myPIN&quot;</span>);</div><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL, <span class="stringliteral">&quot;ds:Signature ns:myContract ns:myPIN&quot;</span>))</div><div class="line">  soap_print_fault(soap, stderr);</div></div><!-- fragment --><p>To encrypt the SOAP Body and SOAP Header element(s), such as ds:Signature, use "SOAP-ENV:Body" with <code>soap_wsse_add_EncryptedKey_encrypt_only</code> to specify these elements:</p>
-<div class="fragment"><div class="line">X509 *cert = ...; <span class="comment">// from PEM file or local secure store as shown above</span></div><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL, <span class="stringliteral">&quot;ds:Signature SOAP-ENV:Body&quot;</span>))</div><div class="line">  soap_print_fault(soap, stderr);</div></div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>The <code>soap_wsse_set_wsu_id</code> MUST be used to specify all element tag names to encrypt. Additional elements MAY be specified in <code>soap_wsse_set_wsu_id</code> (for example elements to digitally sign). You do not have to use this function to set the wsu:Id of the SOAP Body which always has a wsu:Id with "Body".</dd>
+<div class="fragment"><div class="line">X509 *cert = ...; <span class="comment">// from PEM file or local secure store as shown above</span></div><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL, <span class="stringliteral">&quot;ds:Signature SOAP-ENV:Body&quot;</span>))</div><div class="line">  soap_print_fault(soap, stderr);</div></div><!-- fragment --><p>This means that you should not combine <code>soap_wsse_encrypt_body</code> with <code>soap_wsse_encrypt_only</code> to encrypt the SOAP Body.</p>
+<dl class="section note"><dt>Note</dt><dd>The <code>soap_wsse_set_wsu_id</code> MUST be used to specify all element tag names to encrypt. Additional elements MAY be specified in <code>soap_wsse_set_wsu_id</code> (for example elements to digitally sign). You do not have to use this function to set the wsu:Id of the SOAP Body which always has a wsu:Id with "Body". Likewise, the <code>ds:Signature</code> does not require to be specified with <code>soap_wsse_set_wsu_id</code>.</dd>
 <dd>
 The elements identified by the tag names in <code>soap_wsse_set_wsu_id</code> to encrypt MUST occur NO MORE THAN ONCE in the XML message.</dd></dl>
 <p>For symmetric encryption with a shared secret key, generate a 160-bit triple DES key and make sure both the sender and reciever can use the key without it being shared by any other party (key exchange problem). Then use the <code>soap_wsse_encrypt_body</code> function to encrypt the SOAP Body as follows:</p>
@@ -486,10 +487,10 @@ WS-SecureConversation and WS-Trust</h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Nov 19 2020 12:38:39 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Mon Sep 6 2021 11:22:56 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

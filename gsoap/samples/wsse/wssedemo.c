@@ -540,7 +540,7 @@ int main(int argc, char **argv)
 	{
           alg = SOAP_MEC_ENV_ENC_DES_CBC;
 	}
-        if (0) /* 1 to encrypt the SOAP Body only, 1 to encrypt the signature and the SOAP Body (recommended) */
+        if (0) /* 1 to encrypt the SOAP Body only, 0 to encrypt the signature and the SOAP Body (recommended) */
         {
           /* encrypt the SOAP Body only */
           if (soap_wsse_add_EncryptedKey(soap, alg, "Cert", cert, SubjectKeyId, NULL, NULL))

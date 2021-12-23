@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.117
+        DOM API v5 gSOAP 2.8.118
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208117
+#define GSOAP_LIB_VERSION 208118
 
 #include "stdsoap2.h"
 
@@ -1144,6 +1144,8 @@ soap_ns_to_find(struct soap *soap, const char *tag)
 static int soap_tag_match(const char *name, const char *tag)
 {
   const char *s;
+  if (!tag)
+    return 0;
   if (!name)
     return !*tag;
   s = strchr(name, ':');
@@ -1160,6 +1162,8 @@ static int soap_tag_match(const char *name, const char *tag)
 static int soap_patt_match(const char *name, const char *patt)
 {
   const char *s;
+  if (!patt)
+    return 0;
   if (!name)
     return !*patt;
   s = strchr(name, ':');
@@ -1175,29 +1179,30 @@ static int soap_patt_match(const char *name, const char *patt)
 
 static int soap_name_match(const char *name, const char *patt)
 {
+  const char *a = NULL;
+  const char *b = NULL;
   for (;;)
   {
     int c1 = *name;
     int c2 = *patt;
     if (!c1)
       break;
-    if (c1 != c2)
+    if (c2 == '*')
     {
-      if (c2 != '*')
-        return 0;
       c2 = *++patt;
       if (!c2)
         return 1;
-      for (;;)
-      {
-        c1 = *name;
-        if (!c1)
-          break;
-        if (c1 == c2 && soap_name_match(name + 1, patt + 1))
-          return 1;
-        name++;
-      }
-      break;
+      a = name;
+      b = patt;
+      continue;
+    }
+    if (c1 != c2)
+    {
+      if (!a)
+        return 0;
+      name = ++a;
+      patt = b;
+      continue;
     }
     name++;
     patt++;

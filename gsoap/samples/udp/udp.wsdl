@@ -126,7 +126,7 @@
 </binding>
 
 <service name="udp">
-  <documentation>gSOAP 2.8.117 generated service definition</documentation>
+  <documentation>gSOAP 2.8.118 generated service definition</documentation>
   <port name="udp" binding="tns:udp">
     <SOAP:address location="soap.udp://localhost:10000"/>
   </port>

@@ -26,12 +26,12 @@ Grammar
 
     1 prog: s1 exts
 
-    2 s1: %empty
+    2 s1: ε
 
     3 exts: NAMESPACE ID '{' exts1 '}'
     4     | exts1
 
-    5 exts1: %empty
+    5 exts1: ε
     6      | exts1 ext
 
     7 ext: dclrs ';'
@@ -42,7 +42,7 @@ Grammar
 
    12 pragma: PRAGMA
 
-   13 decls: %empty
+   13 decls: ε
    14      | dclrs ';' decls
    15      | PRIVATE ':' t3 decls
    16      | PROTECTED ':' t4 decls
@@ -55,11 +55,11 @@ Grammar
 
    22 t2: ']'
 
-   23 t3: %empty
+   23 t3: ε
 
-   24 t4: %empty
+   24 t4: ε
 
-   25 t5: %empty
+   25 t5: ε
 
    26 dclrs: spec
    27      | spec dclr
@@ -124,9 +124,9 @@ Grammar
 
    80 func: fname '(' s6 fargso ')' const abstract
 
-   81 fname: %empty
+   81 fname: ε
 
-   82 fargso: %empty
+   82 fargso: ε
    83       | fargs
 
    84 fargs: farg
@@ -235,7 +235,7 @@ Grammar
   167      | ':' LLONG
   168      | ':' TYPE
   169      | ':'
-  170      | %empty
+  170      | ε
 
   171 tname: CLASS
   172      | STRUCT
@@ -248,16 +248,16 @@ Grammar
   178     | STRUCT id
   179     | CLASS id
 
-  180 s2: %empty
+  180 s2: ε
 
-  181 s3: %empty
+  181 s3: ε
 
-  182 s4: %empty
+  182 s4: ε
 
-  183 s5: %empty
+  183 s5: ε
   184   | ','
 
-  185 s6: %empty
+  185 s6: ε
 
   186 store: AUTO
   187      | REGISTER
@@ -278,23 +278,23 @@ Grammar
   202      | VOLATILE
   203      | MUTABLE
 
-  204 const: %empty
+  204 const: ε
   205      | const CONST
   206      | const FINAL
   207      | const OVERRIDE
 
-  208 abstract: %empty
+  208 abstract: ε
   209         | '=' LNG
 
-  210 virtual: %empty
+  210 virtual: ε
   211        | VIRTUAL
 
-  212 ptrs: %empty
+  212 ptrs: ε
   213     | ptrs '*'
   214     | ptrs '&'
   215     | ptrs AN
 
-  216 array: %empty
+  216 array: ε
   217      | '[' cexp ']' array
   218      | '[' ']' array
 
@@ -303,11 +303,11 @@ Grammar
   220 brinit: init
   221       | '{' cexp '}'
 
-  222 init: %empty
+  222 init: ε
   223     | '=' cexp
   224     | EQ cexp
 
-  225 tag: %empty
+  225 tag: ε
   226    | TAG
 
   227 occurs: nullptr
@@ -321,10 +321,10 @@ Grammar
   234       | nullptr patt value minmax value
   235       | nullptr patt max value
 
-  236 nullptr: %empty
+  236 nullptr: ε
   237        | null
 
-  238 patt: %empty
+  238 patt: ε
   239     | STR
 
   240 value: DBL
@@ -333,7 +333,7 @@ Grammar
   243      | '+' value
   244      | '-' value
 
-  245 min: %empty
+  245 min: ε
   246    | ':'
   247    | '<' ':'
   248    | '<'

@@ -103,7 +103,9 @@ To use the wsse plugin:
 -# (Re-)compile stdsoap2.c/pp, dom.c/pp, smdevp.c, mecevp.c, wsseapi.c and the
    generated source files with the `-DWITH_DOM` and `-DWITH_OPENSSL` compiler
    flags set. The smdevp.c, mecevp.c, and wsseapi.c files are located in the
-   'plugin' directory.
+   'plugin' directory.  If you used `./configure` to configure the software,
+   then it is recommended to use `-DHAVE_CONFIG_H` to compile stdsoap2.c/pp and
+   all other source code by including the config.h settings.
 -# Use the wsse plugin API functions described below to add and verify
    Security headers, sign and verify messages, and to encrypt/decrypt messages.
 
@@ -1541,11 +1543,16 @@ these elements:
       soap_print_fault(soap, stderr);
 @endcode
 
+This means that you should not combine `soap_wsse_encrypt_body` with
+`soap_wsse_encrypt_only` to encrypt the SOAP Body.
+
 @note
 The `soap_wsse_set_wsu_id` MUST be used to specify all element tag names to
 encrypt. Additional elements MAY be specified in `soap_wsse_set_wsu_id` (for
 example elements to digitally sign). You do not have to use this function to
 set the wsu:Id of the SOAP Body which always has a wsu:Id with "Body".
+Likewise, the `ds:Signature` does not require to be specified with
+`soap_wsse_set_wsu_id`.
 
 @note
 The elements identified by the tag names in `soap_wsse_set_wsu_id` to

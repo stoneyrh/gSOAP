@@ -157,7 +157,7 @@ Versions 1.3.3 and 2.1.3 (4/27/2002)
 - Improved DLL build support (gSOAP 2.1.3 only).
 - Improved WinCE support (gSOAP 2.1.3 only, thanks to Sean Ryan for his suggestions).
 - Improved Mac OS X support.
-- WSDL generator improvements and fixes.
+- WSDL generator improvements.
 - Workaround a bug in .NET SOAP Headers (non-unique id name values in .NET).
 - Fixed `disable_href=1` bug.
 - Fixed XML in string parsing code generation problem.
@@ -868,7 +868,7 @@ Version 2.8.19 (11/8/2014)
 - Fixed *`xs:choice`* strict validation with *`minOccurs="0"`* element(s).
 - Fixed `TCP_FASTOPEN` with UDP.
 - Fixed MTOM Content-Disposition ID overriding problem.
-- AIX portability fixes.
+- AIX portability issue fixed.
 
 Version 2.8.20 (11/30/2014)
 ---
@@ -1078,7 +1078,7 @@ Version 2.8.34 (08/17/2016)
 - Updated VC++ ISAPI plugin.
 - Fixed `soap_send_empty_response()` with HTTP keep-alive to prevent exit of the server loop back to `soap_accept()`, i.e. prematurely killing the keep-alive connection causing EOF/RST.
 - Fixed `#import "wsse.h"` in `gsoap/import/ds.h` by moving it down to avoid missing type declaration of `_ds__KeyInfo` which may cause a soapcpp2 syntax error.
-- Fixed WS-Security interoperability issues, fixes issues with XML encryption. Token handler callback has new parameters to pass the key data of SecurityTokenReference/KeyIdentifier.
+- Fixed WS-Security interoperability issues with XML encryption formatting. Token handler callback has new parameters to pass the key data of SecurityTokenReference/KeyIdentifier.
 - Fixed the internal `feltbegout` and `feltendout` callbacks: when set no longer emits XML and (alternative) output is expected to be emitted by these callbacks.
 
 Version 2.8.35 (09/19/2016)
@@ -1167,7 +1167,7 @@ Version 2.8.46 (05/16/2017)
 
 - Improved WS-Trust API, updated import/wst.h, import/saml1.h, import/saml2.h and import/wsdd.h definitions.
 - Added `soap::client_interface` string to set the client IP address interface with `inet_pton()` (not generally available on windows).
-- Fixes for minor issues, improvements.
+- Fixed a minor issue, improvements.
 
 Version 2.8.47 (06/07/2017)
 ---
@@ -1181,7 +1181,7 @@ Version 2.8.48 upd (06/21/2017)
 
 - Improved element and attribute `default` and `fixed` value validation.  Changed the code generation by wsdl2h slightly for optional elements with default values.  This fixes an issue when an optional element is omitted in XML and becomes indistinguishable from an empty element because in both cases a default value is assigned.  An omitted optional element has no default value.  New XML validation error codes `SOAP_FIXED` and `SOAP_EMPTY`.
 - Added `soap::transfer_timeout` max transfer timeout, to use in combination with `soap::send_timeout` and `soap::recv_timeout`.
-- Fixed a potential vulnerability (CVE-2017-9765) in the XML parser that may be exposed with an impossibly large and specific XML message over 2GB in size when received by a stand-alone server that does not block oversized XML messages (server implementations set appropriate max message length and timeouts to make this bug impossible to occur.)  After receiving this specific 2GB message, a buffer overflow can cause an open unsecured application to crash or malfunction.  Clients communicating with HTTPS with trusted servers are not affected.
+- Fixed a potential vulnerability (CVE-2017-9765) in the XML parser that may be exposed with an impossibly large and specific (not generic) XML message over 2GB in size when received by a stand-alone server that does not block oversized XML messages (server implementations set appropriate max message length and timeouts to make this bug impossible to occur!  Note that gSOAP supports XML larger than 2GB, but doing so with XML web services is not recommended.)  After receiving this specific 2GB XML message, a buffer overflow can cause an open unsecured application to crash or malfunction.  Clients communicating with HTTPS with trusted servers are not affected.
 
 Version 2.8.49 upd (07/28/2017,07/28/2017)
 ---
@@ -1190,7 +1190,7 @@ Version 2.8.49 upd (07/28/2017,07/28/2017)
 - Improved white space handling of built-in XSD types that have "replace" and "collapse" white space properties. Further, types derived from these built-in XSD types will now inherit the white space "replace" or "collapse" property, meaning that white space of inbound strings are normalized (`xsd__anyURI`, `xsd__language` `xsd__ENTITY`, `xsd__ENTITIES`, `xsd__ID`, `xsd__IDREF`, `xsd__IDREFS`, `xsd__Name`, `xsd__NCName`, `xsd__NMTOKEN`, `xsd__NMTOKENS`, `xsd__normalizedString`, `xsd__token`, etc).
 - Fixed a memory leak in the deserializer of `std::vector<xsd__anyType>` (and dynamic arrays of `xsd__anyType`) where `xsd__anyType` is a DOM node imported with `#import "dom.h"`.
 - Fixed WSSE plugin recanonicalization of inclusive C14N SignedInfo.
-- Fixes for minor issues, improvements.
+- Fixed minor issue, improvements.
 
 Version 2.8.50 upd (07/23/2017,07/28/2017)
 ---
@@ -1431,7 +1431,7 @@ Version 2.8.75 (1/14/2019)
 - Updated the CURL plugin to support the proxy settings specified by the user as proxy host `soap::proxy_host`, proxy port `soap::proxy_port`, and proxy credentials `soap::proxy_userid` and `soap::proxy_passwd`.
 - Updated the WinInet plugin to support the proxy settings specified by the user as proxy host `soap::proxy_host`, proxy port `soap::proxy_port`, and proxy credentials `soap::proxy_userid` and `soap::proxy_passwd`.
 - Updated call to OpenSSL `ERR_remove_state` (deprecated) by `ERR_remove_thread_state`.
-- Fixed a potential double heap deallocation bug in the optional HTTP cookie handling code by the engine (CVE-2019-7659).  HTTP cookies are disabled by default and enabled with the `-DWITH_COOKIES` compile-time flag or when using the C/C++ `libgsoapck`/`libgsoapck++` and `libgsoapssl`/`libgsoapssl++` libraries.  Removed `-DWITH_COOKIES` from the `libgsoapssl`/`libgsoapssl++` build, disabling HTTP cookies by default for this library.  Instead, compile `stdsoap2.c`/`stdsoap2.cpp` and `dom.c`/`dom.cpp` with `-DWITH_IPV6` `-DWITH_OPENSSL` `-DWITH_GZIP` `-DWITH_DOM` `-DWITH_COOKIES` to obtain the same functionality as the old `libgsoapssl`/`libgsoapssl++` libraries.
+- Fixed a potential double heap deallocation bug in the optional HTTP cookie handling code by the engine (CVE-2019-7659).  HTTP cookies are disabled by default and enabled with the `-DWITH_COOKIES` compile-time flag or when using the C/C++ `libgsoapck`/`libgsoapck++` and `libgsoapssl`/`libgsoapssl++` libraries.  Removed `-DWITH_COOKIES` from the `libgsoapssl`/`libgsoapssl++` build, disabling HTTP cookies by default for this library.  Instead, compile `stdsoap2.c`/`stdsoap2.cpp` and `dom.c`/`dom.cpp` with `-DWITH_IPV6` `-DWITH_OPENSSL` `-DWITH_GZIP` `-DWITH_DOM` `-DWITH_COOKIES` to obtain the same functionality as the old `libgsoapssl`/`libgsoapssl++` libraries. Note: the `-DWITH_COOKIES` flag to enable HTTP cookies is generally not necessary to deploy SOAP/XML services and not used with the gSOAP Apache and ISAPI extensions to deploy services.
 
 Version 2.8.76 (1/21/2019)
 ---
@@ -1444,7 +1444,7 @@ Version 2.8.76 (1/21/2019)
 Version 2.8.77 (1/23/2019)
 ---
 
-- Updated wsdl2h to display warnings for invalid complexType and simpleType extensions/restrictions but generates valid code in such cases by inference, the update also fixes a valid extension case.
+- Updated wsdl2h to display warnings for invalid complexType and simpleType extensions/restrictions but generates valid code in such cases by inference, the update also fixed a valid XML schema extension case that was rejected.
 - Updated `gsoap/samples/async` examples.
 - Fixed compilation error for soapcpp2 options `-i` and `-j` caused by special case with empty input arguments to service operations.
 
@@ -1521,7 +1521,7 @@ Version 2.8.88 (7/25/2019)
 ---
 
 - Fixed an issue with wsdl2h `typemap.dat` for WS-Trust WSDLs causing missing types in the generated header file.
-- Portability fixes and improvements.
+- Software portability fixes and improvements.
 
 Version 2.8.89 (8/5/2019)
 ---
@@ -1539,7 +1539,7 @@ Version 2.8.90 (8/14/2019)
 Version 2.8.91 (8/15/2019)
 ---
 
-- Correction to fix soapcpp2 2.8.90 `-z#` flag enforcement problem.
+- Correction to fix soapcpp2 2.8.90 `-z#` flag enforcement issue.
 
 Version 2.8.92 (9/16/2019)
 ---
@@ -1655,12 +1655,12 @@ Version 2.8.109 (11/19/2020)
 - Fixed wsdl2h output for a special case when schemas have no namespaces.
 - Improved streaming MIME/MTOM attachment output.
 - Removed C/C++ compiler warnings.
-- Updated WS-Addressing and WS-Security plugins to fix potential null pointer dereferences and to fix a potential random 2GB heap corruption issue in the WS-Addressing plugin (CVE-2020-13574 to 8 and duplicate CVE-2021-21783; the CVE authors appear to attempt to maximize getting credit by spreading of CVEs, even though the bugs are related and in the same code).
+- Updated WS-Addressing and WS-Security plugins to fix potential null pointer dereferences and to fix a potential but highly unlikely random 2GB heap corruption issue in the WS-Addressing plugin (CVE-2020-13574 to 13578 and duplicate CVE-2021-21783; the CVE authors appear to attempt to maximize getting credit by spreading of CVEs, even though the potential null pointer bugs are related and in the same code.)
 
 Version 2.8.110 (01/17/2021)
 ---
 
-- Updated wsdl2h to correct an XML parsing rejection problem for the special case when XML schemas have no targetNamespaces (i.e. empty namespace, no namespace prefixes) for elements defined in a `<sequence>` schema component, the wsdl2h-generated struct/class member names require two underscores instead of one, such as `__Name_sequence`.)
+- Updated wsdl2h to correct an XML parsing rejection issue for the special case when XML schemas have no targetNamespaces (i.e. empty namespace, no namespace prefixes) for elements defined in a `<sequence>` schema component, the wsdl2h-generated struct/class member names require two underscores instead of one, such as `__Name_sequence`.)
 
 Version 2.8.111 (01/22/2021)
 ---
@@ -1682,7 +1682,7 @@ Version 2.8.113 (04/15/2021)
 Version 2.8.114 (04/20/2021)
 ---
 
-- Minor change to `_GNU_SOURCE` checking to resolve a source code portability problem that may occur with some systems.
+- Minor change to `_GNU_SOURCE` checking to resolve a source code portability issue that may occur with some systems.
 
 Version 2.8.115 (06/25/2021)
 ---
@@ -1696,11 +1696,17 @@ Version 2.8.116 (07/09/2021)
 - Fixed `custom/duration.c` custom deserializer for `xsd:duration` seconds with fractions issue.
 - Updated the `_XML` literal string serializer to fix a digital signature hashing mismatch in the `wsseapi` plugin.  Applies to cases when `_XML` literal strings are used with service operations (the DOM API is more powerful and preferred to the "dumb" `_XML` literal strings).
 
-Version 2.8.117 (08/19/2021) {#latest}
+Version 2.8.117 (08/19/2021)
 ---
 
 - Minor update to wsdl2h to support chameleon schema imports when imported schema simple types are extended and inherit the importing schema target namespace (previously, the `__item` type would be left unqualified, resulting in a warning).
 - Added `WITH_WITH_SSL_FULL_SHUTDOWN` compile-time flag to configure the engine (not recommended to use this flag in general).
+
+Version 2.8.118 (12/23/2021) {#latest}
+---
+
+- Source code portability update for VxWorks and SunOS/Solaris platforms.
+- Stricter strict mode flag `SOAP_XML_STRICT` to reject attributes with an unquoted value and attributes without a value, this update rejects legacy XML-like formats such as HTML.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

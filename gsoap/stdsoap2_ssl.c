@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.117
+        stdsoap2.c[pp] 2.8.118
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208117
+#define GSOAP_LIB_VERSION 208118
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.117 2021-08-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.118 2021-12-23 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.117 2021-08-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.118 2021-12-23 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -286,12 +286,12 @@ static const char *soap_strerror(struct soap*);
   #define SOAP_SOCKBLOCK(fd) \
   { \
     u_long blocking = 0; \
-    ioctl(fd, FIONBIO, (int)(&blocking)); \
+    ioctl(fd, FIONBIO, (void*)(&blocking)); \
   }
   #define SOAP_SOCKNONBLOCK(fd) \
   { \
     u_long nonblocking = 1; \
-    ioctl(fd, FIONBIO, (int)(&nonblocking)); \
+    ioctl(fd, FIONBIO, (void*)(&nonblocking)); \
   }
 #elif defined(__VMS)
   #define SOAP_SOCKBLOCK(fd) \
@@ -4146,7 +4146,7 @@ soap_ssl_init()
     SSL_load_error_strings();
 #endif
 #endif
-#if !defined(WIN32) && !defined(CYGWIN) && !defined(__MINGW32__) && !defined(__MINGW64__)
+#if !defined(WIN32) && !defined(CYGWIN) && !defined(__MINGW32__) && !defined(__MINGW64__) && !defined(VXWORKS)
     if (!RAND_load_file("/dev/urandom", 1024))
 #else
     if (1)
@@ -5112,7 +5112,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     hostent = NULL;
     soap->errnum = h_errno;
   }
-#elif (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && !defined(SUN_OS) && defined(HAVE_GETHOSTBYNAME_R)
   while ((r = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &hostent, &soap->errnum)) < 0)
   {
     if (tmpbuf != soap->tmpbuf)
@@ -14684,8 +14684,13 @@ soap_peek_element(struct soap *soap)
       } while (soap_coblank(c));
       if (c != SOAP_QT && c != SOAP_AP)
       {
+        if ((soap->mode & SOAP_XML_STRICT))
+        {
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Unquoted attribute value in %s\n", soap->tag));
+          return soap->error = SOAP_SYNTAX_ERROR;
+        }
         soap_unget(soap, c);
-        c = ' '; /* blank delimiter */
+        c = ' '; /* allow blank delimiter for non-well formed XML like HTML */
       }
       k = tp->size;
       if (soap_getattrval(soap, tp->value, &k, c))
@@ -14787,6 +14792,11 @@ soap_peek_element(struct soap *soap)
     }
     else
     {
+      if ((soap->mode & SOAP_XML_STRICT))
+      {
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Attribute withput a value in %s\n", soap->tag));
+        return soap->error = SOAP_SYNTAX_ERROR;
+      }
       tp->visible = 1; /* seen this attribute w/o value */
     }
 #ifdef WITH_DOM
@@ -17150,6 +17160,7 @@ soap_s2unsignedInt(struct soap *soap, const char *s, unsigned int *p)
 {
   if (s)
   {
+    unsigned long n;
     char *r;
     if (!*s)
       return soap->error = SOAP_EMPTY;
@@ -17158,8 +17169,11 @@ soap_s2unsignedInt(struct soap *soap, const char *s, unsigned int *p)
     soap_reset_errno;
 #endif
 #endif
-    *p = (unsigned int)soap_strtoul(s, &r, 10);
+    n = soap_strtoul(s, &r, 10);
     if (s == r || *r
+#ifndef WITH_LEAN
+        || n != (unsigned int)n
+#endif
 #ifndef WITH_NOIO
 #ifndef WITH_LEAN
         || soap_errno == SOAP_ERANGE
@@ -17168,9 +17182,10 @@ soap_s2unsignedInt(struct soap *soap, const char *s, unsigned int *p)
     )
       soap->error = SOAP_TYPE;
 #ifdef HAVE_STRTOUL
-    if (*p > 0 && strchr(s, '-'))
+    if (n > 0 && strchr(s, '-'))
       return soap->error = SOAP_TYPE;
 #endif
+    *p = (unsigned int)n;
   }
   return soap->error;
 }
@@ -22981,6 +22996,7 @@ soap_register_plugin_arg(struct soap *soap, int (*fcreate)(struct soap*, struct 
       return SOAP_OK;
     }
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not register plugin '%s': plugin with the same ID already registered\n", p->id));
+    p->fdelete(soap, p);
     SOAP_FREE(soap, p);
     return SOAP_OK;
   }

@@ -5,7 +5,7 @@ gSOAP user guide                                                    {#mainpage}
 
 # User guide
 
-<div align="right"><i>Copyright (c) 2000-2020, Genivia Inc.<br>All rights reserved.</i></div>
+<div align="right"><i>Copyright (c) 2000-2021, Genivia Inc.<br>All rights reserved.</i></div>
 
 # Introduction                                                         {#intro}
 

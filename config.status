@@ -687,8 +687,6 @@ S["SOAPCPP2_DEBUG"]=""
 S["DEBUG_COMPILE_FALSE"]=""
 S["DEBUG_COMPILE_TRUE"]="#"
 S["LIBOBJS"]=" ${LIBOBJDIR}mktime$U.o"
-S["EGREP"]="/usr/local/bin/ggrep -E"
-S["GREP"]="/usr/local/bin/ggrep"
 S["platform"]="MACOSX"
 S["SAMPLE_EXTRA_LIBS"]="-lm"
 S["AR"]="ar"
@@ -734,6 +732,9 @@ S["AM_BACKSLASH"]="\\"
 S["AM_DEFAULT_VERBOSITY"]="1"
 S["AM_DEFAULT_V"]="$(AM_DEFAULT_VERBOSITY)"
 S["AM_V"]="$(V)"
+S["CSCOPE"]="cscope"
+S["ETAGS"]="etags"
+S["CTAGS"]="ctags"
 S["am__untar"]="$${TAR-tar} xf -"
 S["am__tar"]="$${TAR-tar} chof - \"$$tardir\""
 S["AMTAR"]="$${TAR-tar}"
@@ -885,10 +886,8 @@ D["HAVE_OPENSSL_SSL_H"]=" 1"
 D["HAVE_GNUTLS_GNUTLS_H"]=" 1"
 D["HAVE_ZLIB_H"]=" 1"
 D["HAVE_SOCKLEN_T"]=" 1"
-D["TIME_WITH_SYS_TIME"]=" 1"
 D["HAVE_STRUCT_TM_TM_GMTOFF"]=" 1"
 D["HAVE_ALARM"]=" 1"
-D["RETSIGTYPE"]=" void"
 D["HAVE_STRFTIME"]=" 1"
 D["HAVE_RANDOM"]=" 1"
 D["HAVE_GETTIMEOFDAY"]=" 1"
@@ -1254,6 +1253,7 @@ printf "%s\n" "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
+    "config.h":H) sys/time.h ;;
     "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
   # Older Autoconf quotes --file arguments for eval, but not when files
   # are listed without --file.  Let's play safe and only enable the eval

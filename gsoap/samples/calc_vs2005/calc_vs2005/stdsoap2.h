@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.117
+        stdsoap2.h 2.8.118
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208117
+#define GSOAP_VERSION 208118
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -662,7 +662,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  include <ctype.h>
 # endif
 # if !defined(HAVE_CONFIG_H) || defined(HAVE_LIMITS_H)
-#  include <limits.h>   /* for MB_LEN_MAX */
+#  include <limits.h>   /* for MB_LEN_MAX strtol strtoll strtoul strtoull */
 # endif
 # if !defined(HAVE_CONFIG_H) || defined(HAVE_FLOAT_H)
 #  include <float.h>    /* for INFINITY */
