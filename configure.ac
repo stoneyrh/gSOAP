@@ -4,7 +4,7 @@ AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([gsoap/stdsoap2.cpp])
 AC_CANONICAL_HOST
 
-AC_CONFIG_HEADERS([config.h],[sys/time.h])
+AC_CONFIG_HEADERS([config.h])
 
 # we use subdirs.
 AC_PROG_MAKE_SET 
