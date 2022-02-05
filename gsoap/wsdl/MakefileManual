@@ -22,8 +22,11 @@ SOCKLIB=
 #
 SSLFLAGS=
 #	SSLFLAGS=-I/opt/local/include
+#	SSLFLAGS=-I/usr/local/opt/openssl/include
+#
 SSLLIB=-lcrypto -lssl
 #	SSLLIB=-L/opt/local/lib -lcrypto -lssl
+#	SSLLIB=-L/usr/local/opt/openssl/lib -lcrypto -lssl
 #
 LIBS=-lm $(SOCKLIB)
 #

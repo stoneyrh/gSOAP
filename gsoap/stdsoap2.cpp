@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.118
+        stdsoap2.c[pp] 2.8.119
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208118
+#define GSOAP_LIB_VERSION 208119
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.118 2021-12-23 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.119 2022-02-05 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.118 2021-12-23 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.119 2022-02-05 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4307,7 +4307,7 @@ ssl_auth_init(struct soap *soap)
   if (!soap->ctx)
   {
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
-    /* TLS_method: a TLS/SSL connection established may understand the SSLv3, TLSv1, TLSv1.1 and TLSv1.2 protocols. */
+    /* TLS_method: a TLS/SSL connection established may understand the SSLv3, TLSv1, TLSv1.1, TLSv1.2 and TLSv1.3 protocols. */
     soap->ctx = SSL_CTX_new(TLS_method());
 #else
     /* SSLv23_method: a TLS/SSL connection established may understand the SSLv3, TLSv1, TLSv1.1 and TLSv1.2 protocols. */
@@ -4342,11 +4342,11 @@ ssl_auth_init(struct soap *soap)
     if (soap_ssl_crl(soap, soap->crlfile))
       return soap->error;
   }
-/* This code assumes a typical scenario with key and cert in one PEM file, see alternative code below */
+/* This code assumes a typical scenario with key and cert combined in one PEM file */
 #if 1
   if (soap->keyfile)
   {
-    if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile))
+    if (SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile) != 1)
       return soap_set_receiver_error(soap, "SSL/TLS error", "Can't find or read certificate in private key PEM file", SOAP_SSL_ERROR);
     if (soap->password)
     {
@@ -4354,34 +4354,40 @@ ssl_auth_init(struct soap *soap)
       SSL_CTX_set_default_passwd_cb(soap->ctx, ssl_password);
     }
 #ifndef WM_SECURE_KEY_STORAGE
-    if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
+    if (SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM) != 1)
       return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
 #endif
   }
 #else
-/* Suggested alternative approach to check the key file for cert only when cafile==NULL */
+/* Alternative approach to check the key file for cert only when cafile==NULL */
+#ifndef WM_SECURE_KEY_STORAGE
   if (soap->password)
   {
     SSL_CTX_set_default_passwd_cb_userdata(soap->ctx, (void*)soap->password);
     SSL_CTX_set_default_passwd_cb(soap->ctx, ssl_password);
   }
+#endif
   if (!soap->cafile)
   {
     if (soap->keyfile)
     {
-      if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile))
+      if (SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile) != 1)
         return soap_set_receiver_error(soap, "SSL/TLS error", "Can't find or read certificate in private key PEM file", SOAP_SSL_ERROR);
-      if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
+#ifndef WM_SECURE_KEY_STORAGE
+      if (SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM) != 1)
         return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
+#endif
     }
   }
-  else /* use cafile for (server) cert and keyfile for (server) key */
+  else /* use cafile for the root CA and (server) cert, and keyfile for (server) key */
   {
-    if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->cafile))
+    if (SSL_CTX_use_certificate_chain_file(soap->ctx, soap->cafile) != 1)
       return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA PEM file", SOAP_SSL_ERROR);
+#ifndef WM_SECURE_KEY_STORAGE
     if (soap->keyfile)
-      if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
+      if (SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM) != 1)
         return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
+#endif
   }
 #endif
 #if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)

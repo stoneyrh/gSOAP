@@ -97,7 +97,7 @@ int main()
     SOAP_SSL_DEFAULT,	/* use SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION to verify clients: client must provide a key file e.g. "client.pem" and "password" */
     "server.pem",	/* keyfile (cert+key): see README.txt to create this file */
     "password",		/* password to read the private key in the key file */
-    "cacert.pem",	/* cacert file to store trusted certificates (to authenticate clients), see README.txt */
+    NULL, 	        /* cacert file to store trusted certificates (to authenticate clients), see README.txt */
     NULL,		/* capath */
     NULL,       	/* DH file name (e.g. "dh2048.pem") or DH param key len bits in string (e.g. "2048"), if NULL then RSA with 2048 bits is used instead (bits defined by SOAP_SSL_RSA_BITS) */
     NULL,		/* if randfile!=NULL: use a file with random data to seed randomness */ 

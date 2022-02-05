@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">WITH_MACRO compile-time flags</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Dec 23 2021 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Feb 5 2022 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -797,6 +797,8 @@ c++ -D WITH_NTLM -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lnt
 </div><div class="memdoc">
 
 <p>When this macro is defined at compile time (undefined by default), enables linkage with OpenSSL for HTTPS and WS-Security (this macro should also be defined when using plugins that rely on OpenSSL) </p>
+<p>OpenSSL 3.0 and 1.1 are supported. Earlier OpenSSL versions are also supported, but not recommended.</p>
+<p>An alternative to OpenSSL is GNUTLS. Use <code><a class="el" href="group__group__with.html#gaba33a0ba79add64c641997a7e5070f27" title="When this macro is defined at compile time (undefined by default), enables linking the GNUTLS library...">WITH_GNUTLS</a></code>.</p>
 <p>Use the following functions to configure SSL/TLS connections and to accept SSL/TLS connections:</p><ul>
 <li><code><a class="el" href="group__group__ssl.html#ga570b262ac9d55fc509f1f5999deaa18f" title="Initialize the SSL/TLS library. ">soap_ssl_init</a></code></li>
 <li><code><a class="el" href="group__group__ssl.html#ga0391e39e900926438969dc2461634574" title="Do not initalized the SSL/TLS library. ">soap_ssl_noinit</a></code></li>
@@ -957,10 +959,10 @@ c++ -D WITH_ZLIB -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lz
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Dec 23 2021 13:46:46 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Feb 5 2022 09:36:40 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

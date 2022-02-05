@@ -93,6 +93,9 @@ The material in this section relates to the WS-Security specification.
 
 @subsection wsse_5_1 Getting started
 
+The following requires the OpenSSL library 3.0 or 1.1 installed on your system.
+OpenSSL versions prior to 1.1.0 are also supported, but are not recommended.
+
 To use the wsse plugin:
 -# Run wsdl2h -t typemap.dat on a WSDL of a service that requires WS-Security
    headers. The typemap.dat file is used to recognize and translate Security

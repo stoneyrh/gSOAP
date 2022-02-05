@@ -1702,11 +1702,18 @@ Version 2.8.117 (08/19/2021)
 - Minor update to wsdl2h to support chameleon schema imports when imported schema simple types are extended and inherit the importing schema target namespace (previously, the `__item` type would be left unqualified, resulting in a warning).
 - Added `WITH_WITH_SSL_FULL_SHUTDOWN` compile-time flag to configure the engine (not recommended to use this flag in general).
 
-Version 2.8.118 (12/23/2021) {#latest}
+Version 2.8.118 (12/23/2021)
 ---
 
 - Source code portability update for VxWorks and SunOS/Solaris platforms.
 - Stricter strict mode flag `SOAP_XML_STRICT` to reject attributes with an unquoted value and attributes without a value, this update rejects legacy XML-like formats such as HTML.
+
+Version 2.8.119 (02/05/2022) {#latest}
+---
+- Improved wsdl2h tool to handle problematic SOAP header definitions with doc/lit and rpc mixing with invalid or missing message parts.
+- Improved wsdl2h tool to handle ONVIF schemas better, notably avoid the `final` C++ keyword clash.
+- Updated TLS/SSL samples sslserver and webserver demo PEM keys and certificates to work with OpenSSL 3.0.
+- Updated samples/ssl README instructions and scripts to generate keys and certificates compliant to OpenSSL 3.0; note that all gSOAP 2.8 releases compile and run with all OpenSSL versions including 3.0, when the proper PEM-formatted keys and certificates are used.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -575,6 +575,10 @@ if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
 
 /// When this macro is defined at compile time (undefined by default), enables linkage with OpenSSL for HTTPS and WS-Security (this macro should also be defined when using plugins that rely on OpenSSL)
 /**
+OpenSSL 3.0 and 1.1 are supported.  Earlier OpenSSL versions are also supported, but not recommended.
+
+An alternative to OpenSSL is GNUTLS.  Use `#WITH_GNUTLS`.
+
 Use the following functions to configure SSL/TLS connections and to accept SSL/TLS connections:
 - `::soap_ssl_init`
 - `::soap_ssl_noinit`
@@ -2198,7 +2202,7 @@ else
 */
 #define SOAP_C_NOIOB 0x01000000
 
-/// `::soap_mode` input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 encoded wide characters
+/// `::soap_mode` input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 encoded Unicode characters
 /**
 @par Example:
 
@@ -6014,10 +6018,10 @@ if (soap_ssl_server_context(soap,
       SOAP_SSL_DEFAULT, // authenticate, use TLSv1.0 to 1.3
       "server.pem",     // private key and certificate
       "password",       // password to read server.pem
-      NULL,
-      NULL,
-      NULL,
-      NULL,
+      NULL,             // no certificates to authenticate clients
+      NULL,             // no CA path to authenticate clients
+      NULL,             // use RSA, not DH
+      NULL,             // no rand file to seed randomness entropy
       "my_unique_server_id123" // server identification to enable SSL session caching to speed up TLS
       ))
 {
@@ -6036,7 +6040,7 @@ if (soap_ssl_server_context(soap,
       "password",                  // password to read server.pem
       NULL,
       NULL,
-      "dh1024.pem",                // use DH with 1024 bits
+      "dh1024.pem",                // use DH with 1024 bits instead of RSA
       NULL,
       "my_unique_server_id123"     // identification to enable SSL session caching to speed up TLS
       ))
@@ -6075,7 +6079,7 @@ if (soap_ssl_server_context(soap,
       "server.pem",                           // private key and certificate
       "password",                             // password to read server.pem
       "cacert.pem",                           // certificate to authenticate clients
-      NULL,
+      NULL,                                   // no CA path to certificates to authenticate clients
       NULL,
       NULL,
       soap_rand_uuid(soap, NULL) // identification to enable SSL session caching to speed up TLS
@@ -6115,6 +6119,8 @@ All strings passed to this function must be persistent in memory until the SSL/T
 After `::soap_ssl_client_context` initialization you can select a specific cipher list using OpenSSL function `SSL_CTX_set_cipher_list(soap->ctx, "...")`.  When authentication requires the use of CRLs, you can use `::soap_ssl_crl` to specify a CRL file and to use any CRLs provided with SSL/TLS handshakes.
 
 All OpenSSL versions prior to 1.1.0 require mutex locks to be explicitly set up in your code for multi-threaded applications by calling `CRYPTO_thread_setup()` and `CRYPTO_thread_cleanup()`.
+
+Keychains can be used as an alternative to the `cafile` and `capath` parameters.  See the gsoap/samples/ssl files `ssl_setup.h`, `ssl_setup.c` and `ssl_setup.cpp` for details.
 
 @par Examples:
 

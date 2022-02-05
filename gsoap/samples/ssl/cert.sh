@@ -4,9 +4,9 @@ if [ "$#" = 1 ]
 then
 
   echo "* This utility create certificate ${1}.pem signed by the root CA:"
-  echo "*  ${1}cert.pem - public key (CA-signed certificate to be shared)"
-  echo "*  ${1}key.pem  - private key (keep this secret)"
-  echo "*  ${1}.pem     - private key bundled with certificates (keep secret)"
+  echo "  ${1}cert.pem - public key (CA-signed certificate to be shared)"
+  echo "  ${1}key.pem  - private key (keep this secret)"
+  echo "  ${1}.pem     - private key bundled with certificates (keep secret)"
   echo "* Distribute the CA root cacert.pem (and/or ${1}cert.pem when needed)"
   echo "* Before using this utility, create a root CA root.pem using root.sh"
   echo "* Keep ${1}.pem key file secret: store locally with client/server app"
@@ -19,20 +19,20 @@ then
 
   # Create a certificate and signing request
 
-  openssl req -newkey rsa:1024 -sha1 -keyout ${1}key.pem -out ${1}req.pem
+  openssl req -newkey rsa:2048 -sha256 -keyout ${1}key.pem -out ${1}req.pem
 
   # Sign the certificate with the root CA
 
-  openssl x509 -req -in ${1}req.pem -sha1 -extfile openssl.cnf -extensions usr_cert -CA root.pem -CAkey root.pem -CAcreateserial -out ${1}cert.pem -days 1095
+  openssl x509 -req -in ${1}req.pem -sha256 -extfile openssl.cnf -extensions usr_cert -CA root.pem -CAkey root.pem -CAcreateserial -out ${1}cert.pem -days 1095
+
+  # Bundle certificates with the private key file
+
+  cat ${1}key.pem ${1}cert.pem > ${1}.pem
 
   # Bundle the CA certificate cacert with the certificate file
 
   cat ${1}cert.pem cacert.pem > ${1}tmp.pem
   mv -f ${1}tmp.pem ${1}cert.pem
-
-  # Bundle certificates with the private key file
-
-  cat ${1}key.pem ${1}cert.pem > ${1}.pem
 
   # Show what we got
 

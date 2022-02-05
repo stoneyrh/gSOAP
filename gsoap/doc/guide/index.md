@@ -116,8 +116,8 @@ be interpreted as described in RFC-2119.
   require intermediate storage of XML in a DOM to deserialize data.
 
 * **HTTP**: HTTP 1.0/1.1 (HTTP 2.0 will be available soon), IPv4 and IPv6,
-  HTTPS (requires OpenSSL or GNUTLS), cookies, authentication, Zlib deflate and
-  gzip compression, and connecting through HTTP proxies.
+  HTTPS (requires OpenSSL 3.0 or 1.1 or GNUTLS), cookies, authentication, Zlib
+  deflate and gzip compression, and connecting through HTTP proxies.
 
 * **Attachments**: MIME (SwA), DIME, and MTOM attachments are supported.
   Streaming capabilities to direct the data stream to/from resources using
@@ -195,9 +195,9 @@ To start using gSOAP, you will need:
 
 * A C or C++ compiler.
 
-* OpenSSL (or GNUTLS) and the Zlib libraries to enable SSL (HTTPS) and
-  compression. These libraries are available for most platforms and are often
-  already installed.
+* OpenSSL (3.0 or 1.1, earlier versions are supported but not recommended) or
+  GNUTLS and the Zlib libraries to enable SSL (HTTPS) and compression. These
+  libraries are available for most platforms and are often already installed.
 
 * Flex <http://flex.sourceforge.net> and Bison <http://www.gnu.org/software/bison>
   to build the soapcpp2 tool.  You can also build soapcpp2 without Bison and
@@ -16032,7 +16032,7 @@ To override the host and port of the client connecting to a server, set `::soap:
 
 ## Secure Web services with HTTPS {#serveropenssl}
 
-To enable SSL for stand-alone gSOAP Web servers, first install OpenSSL and use
+To enable SSL for stand-alone gSOAP Web servers, first install OpenSSL (3.0 or 1.1) and use
 option the compile-time flag `#WITH_OPENSSL` to compile the sources with your C or C++ compiler
 (or use the compile-time flag `#WITH_GNUTLS` if you prefer GNUTLS), for example:
 
@@ -16070,11 +16070,11 @@ multi-threaded stand-alone SOAP Web Service:
         SOAP_SSL_DEFAULT, 
         "server.pem",      /* keyfile: required when server must authenticate to clients (see SSL docs on how to obtain this file) */ 
         "password",        /* password to read the key file (not used with GNUTLS) */ 
-        "cacert.pem",      /* optional cacert file to store trusted certificates */ 
-        NULL,              /* optional capath to directory with trusted certificates */ 
-        "dh512.pem",       /* DH file name or DH key len bits (minimum is 512, e.g. "512") to generate DH param, if NULL use RSA */ 
+        "cacert.pem",      /* NULL or optional cacert file to store trusted certificates to authenticate clients */ 
+        NULL,              /* NULL or optional capath to directory with trusted certificates */ 
+        "dh512.pem",       /* optional DH file name or DH key len bits (minimum is 512, e.g. "512") to generate DH param, NULL to use RSA */ 
         NULL,              /* if randfile!=NULL: use a file with random data to seed randomness */  
-        NULL               /* optional server identification to enable SSL session caching to speed up TLS (must be a unique name) */
+        NULL               /* NULL or optional server identification to enable SSL session caching to speed up TLS (must be a unique name) */
       )) 
       {
         soap_print_fault(soap, stderr); 
@@ -16159,7 +16159,7 @@ in your code for multi-threaded applications by calling `CRYPTO_thread_setup()`
 and `CRYPTO_thread_cleanup()` as was shown in the code above.  OpenSSL 1.1.0
 and greater does not require these locks to be set up.  If you are not sure
 which version of OpenSSL you may be using with your multi-threaded application,
-      then set up the locks.
+then set up the locks.
 
 For Unix and Linux, make sure you have signal handlers set in your service
 and/or client applications to catch broken connections (`SIGPIPE`):
@@ -16182,9 +16182,9 @@ authentication use the following:
         SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION, 
         "server.pem", 
         "password", 
-        "cacert.pem", 
+        "cacert.pem", /* certificates to authenticate clients */
         NULL, 
-        "dh512.pem", 
+        "dh512.pem",  /* optional use of DH, use NULL for RSA */
         NULL, 
         NULL)) 
     {
@@ -16236,10 +16236,11 @@ See also API documentation Module \ref group_ssl for more details on the SSL/TLS
 
 ## Secure clients with HTTPS        {#clientopenssl}
 
-To utilize HTTPS/SSL, you need to install the OpenSSL library on your platform
-or GNUTLS for a light-weight SSL/TLS library.  After installation, compile all
-the sources of your application with compile-time flag `#WITH_OPENSSL` (or
-`#WITH_GNUTLS` when using GNUTLS). For example on Linux:
+To utilize HTTPS/SSL, you need the OpenSSL library (3.0 or 1.1, earlier
+versions are supported but not recommended) on your platform or GNUTLS for a
+light-weight SSL/TLS library.  After installation, compile all the sources of
+your application with compile-time flag `#WITH_OPENSSL` (or `#WITH_GNUTLS` when
+using GNUTLS). For example on Linux:
 
      c++ -DWITH_OPENSSL myclient.cpp stdsoap.cpp soapC.cpp soapClient.cpp -lssl -lcrypto
 

@@ -98,7 +98,7 @@ static const char *keywords[] =
   "extern",
   "false",
   "FILE",
-  //"final",            may actually be used as an identifier
+  "final",
   "float",
   "for",
   "friend",
@@ -125,7 +125,7 @@ static const char *keywords[] =
   "operator",
   "or",
   "or_eq",
-  //"override",         may actually be used as an identifier
+  "override",
   "private",
   "protected",
   "public",

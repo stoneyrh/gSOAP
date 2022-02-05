@@ -1075,9 +1075,13 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       else
         h->URI = service->URI;
       if (h->part && h->part->element)
+      {
         h->name = types.aname(NULL, NULL, h->part->element);
+      }
       else if (h->URI && h->part && h->part->name && h->part->type)
+      {
         h->name = types.aname(NULL, h->URI, h->part->name);
+      }
       else
       {
         fprintf(stderr, "\nError in SOAP Header part definition: input part \"%s\" missing?\n", h->part && h->part->name ? h->part->name : "?");
@@ -1105,9 +1109,13 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
         else
           hf->URI = service->URI;
         if (hf->part && hf->part->element)
+        {
           hf->name = types.aname(NULL, NULL, hf->part->element);
+        }
         else if (hf->URI && hf->part && hf->part->name && hf->part->type)
+        {
           hf->name = types.aname(NULL, hf->URI, hf->part->name);
+        }
         else
         {
           fprintf(stderr, "\nError in SOAP HeaderFault part definition: input part \"%s\" missing?\n", hf->part && hf->part->name ? hf->part->name : "?");
@@ -1170,11 +1178,18 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       h->element = NULL;
       h->body_parts = NULL;
       h->part = (*header).partPtr();
-      h->URI = urienc(definitions.soap, (*header).namespace_);
+      if ((*header).namespace_)
+        h->URI = urienc(definitions.soap, (*header).namespace_);
+      else
+        h->URI = service->URI;
       if (h->part && h->part->element)
+      {
         h->name = types.aname(NULL, NULL, h->part->element);
+      }
       else if (h->URI && h->part && h->part->name && h->part->type)
+      {
         h->name = types.aname(NULL, h->URI, h->part->name);
+      }
       else
       {
         fprintf(stderr, "\nError in SOAP Header part definition: output part \"%s\" missing?\n", h->part && h->part->name ? h->part->name : "?");
@@ -1202,9 +1217,13 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
         else
           hf->URI = service->URI;
         if (hf->part && hf->part->element)
+        {
           hf->name = types.aname(NULL, NULL, hf->part->element);
+        }
         else if (hf->URI && hf->part && hf->part->name && hf->part->type)
+        {
           hf->name = types.aname(NULL, hf->URI, hf->part->name);
+        }
         else
         {
           fprintf(stderr, "\nError in SOAP HeaderFault part definition: output part \"%s\" missing?\n", hf->part && hf->part->name ? hf->part->name : "?");
