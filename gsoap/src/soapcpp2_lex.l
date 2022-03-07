@@ -98,7 +98,7 @@ id              (:?{alpha})(:?{alpha}|{digit}|::)*
 tag             `[^`\t\v\r\f\n>]+`
 int             {digit}+[lLuU]*
 hex             0[xX][0-9a-fA-F]+[lLuU]*
-num             {digit}+(\.{digit}+([Ee][+-]?{digit}+)?|(\.{digit}+)?[Ee][+-]?{digit}+)[fFlL]?|{digit}+[fF]
+num             ({digit}*\.{digit}+([Ee][+-]?{digit}+)?|{digit}+(\.{digit}+)?[Ee][+-]?{digit}+)[fFlL]?|{digit}+[fF]
 chr             '(\\'|[^'\n])*'
 str             L?\"(\\\"|\\\n|[^"])*\"
 module          #{ws}*module{ws}+.*\n

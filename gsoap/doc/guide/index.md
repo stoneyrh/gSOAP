@@ -14923,6 +14923,12 @@ This callback is called by the HTTP FORM handler plugin to parse HTML forms rece
 
 This callback is called immediately after parsing a SOAP Header into the `::soap::header` structure.  The SOAP Header structure `::soap::header` can be inspected by this function and verified or rejected before the rest of the message with the SOAP Body is consumed.  Returns `#SOAP_OK` or a `::soap_status` (int) error code.  No built-in function is assigned to `::soap::fheader`.
 
+### fencoding
+
+`int (soap::fencoding)(struct soap *soap, const char *encoding)` 
+
+This callback is called when an unrecognized XML encoding format is encountered in an XML PI.  Supported encoding formats are latin (ASCII) and UTF-8.  Other encoding formats can be rejected or supported by setting this callback.  To reject the encoding, return a nonzero error code.  To accept the encoding without further action, return `#SOAP_OK`.  To decode the encoding, the input stream should be redictected through a decoder, for example by overriding the `::soap::frecv` callback with a specific handler to convert the encoding.
+
 ### fignore
 
 `int (soap::fignore)(struct soap *soap, const char *tag)` 

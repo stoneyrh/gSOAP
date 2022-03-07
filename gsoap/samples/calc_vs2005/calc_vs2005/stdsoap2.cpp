@@ -1,10 +1,10 @@
 /*
-        stdsoap2.c[pp] 2.8.119
+        stdsoap2.c[pp] 2.8.120
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208119
+#define GSOAP_LIB_VERSION 208120
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.119 2022-02-05 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.120 2022-03-07 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.119 2022-02-05 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.120 2022-03-07 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -2112,6 +2112,7 @@ soap_getpi(struct soap *soap)
     s = strstr(buf, " encoding=");
     if (s && s[10])
     {
+      int err;
       if (!soap_tag_cmp(s + 11, "iso-8859-*")
        || !soap_tag_cmp(s + 11, "latin*"))
       {
@@ -2122,6 +2123,12 @@ soap_getpi(struct soap *soap)
       {
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Switching to utf-8 encoding\n"));
         soap->mode &= ~SOAP_ENC_LATIN;
+      }
+      else if (soap->fencoding && (err = soap->fencoding(soap, s + 11) != SOAP_OK))
+      {
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Callback fencoding returned %d\n", err));
+        soap->error = err;
+        c = EOF;
       }
     }
   }
@@ -7373,6 +7380,7 @@ soap_done(struct soap *soap)
 #endif
   soap->fseterror = NULL;
   soap->fignore = NULL;
+  soap->fencoding = NULL;
   soap->fserveloop = NULL;
 #ifdef WITH_OPENSSL
   if (soap->session)
@@ -12130,6 +12138,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
 #endif
   soap->fseterror = NULL;
   soap->fignore = NULL;
+  soap->fencoding = NULL;
   soap->fserveloop = NULL;
   soap->fplugin = fplugin;
 #ifndef WITH_LEANER

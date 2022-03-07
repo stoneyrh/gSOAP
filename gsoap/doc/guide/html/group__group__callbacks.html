@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Callback functions</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Feb 5 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Mon Mar 7 2022 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -106,6 +106,9 @@ Variables</h2></td></tr>
 <tr class="memitem:gae88b674df5fdcfa866c04e4330fe0afe"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__callbacks.html#gae88b674df5fdcfa866c04e4330fe0afe">soap::fheader</a> )(struct <a class="el" href="structsoap.html">soap</a> *<a class="el" href="structsoap.html">soap</a>)</td></tr>
 <tr class="memdesc:gae88b674df5fdcfa866c04e4330fe0afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to inspect the SOAP Header received before the rest of the message with the SOAP Body is consumed.  <a href="#gae88b674df5fdcfa866c04e4330fe0afe">More...</a><br /></td></tr>
 <tr class="separator:gae88b674df5fdcfa866c04e4330fe0afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6662bdcf10ff0ba101adfbef3a4c17d4"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__callbacks.html#ga6662bdcf10ff0ba101adfbef3a4c17d4">soap::fencoding</a> )(struct <a class="el" href="structsoap.html">soap</a> *<a class="el" href="structsoap.html">soap</a>, const char *encoding)</td></tr>
+<tr class="memdesc:ga6662bdcf10ff0ba101adfbef3a4c17d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to catch unrecognized XML encoding formats.  <a href="#ga6662bdcf10ff0ba101adfbef3a4c17d4">More...</a><br /></td></tr>
+<tr class="separator:ga6662bdcf10ff0ba101adfbef3a4c17d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0c2e1a0b5a5197128af1acc48662b1bd"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__callbacks.html#ga0c2e1a0b5a5197128af1acc48662b1bd">soap::fignore</a> )(struct <a class="el" href="structsoap.html">soap</a> *<a class="el" href="structsoap.html">soap</a>, const char *tag)</td></tr>
 <tr class="memdesc:ga0c2e1a0b5a5197128af1acc48662b1bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to catch unrecognized XML elements and overrides <code><a class="el" href="group__group__flags.html#ga5faa29a69a247642495846d69ec8b90d" title="soap_mode XML input flag value to enable strict XML validation of messages received ...">SOAP_XML_STRICT</a></code> validation errors for these.  <a href="#ga0c2e1a0b5a5197128af1acc48662b1bd">More...</a><br /></td></tr>
 <tr class="separator:ga0c2e1a0b5a5197128af1acc48662b1bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -568,6 +571,31 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ga6662bdcf10ff0ba101adfbef3a4c17d4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int(* soap::fencoding) (struct <a class="el" href="structsoap.html">soap</a> *<a class="el" href="structsoap.html">soap</a>, const char *encoding)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback to catch unrecognized XML encoding formats. </p>
+<p>This callback is called when an unrecognized XML encoding format is encountered in an XML PI. Supported encoding formats are latin (ASCII) and UTF-8. Other encoding formats can be rejected or supported by setting this callback. To reject the encoding, return a nonzero error code. To accept the encoding without further action, return <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code>. To decode the encoding, the input stream should be redictected through a decoder, for example by overriding the <code><a class="el" href="group__group__callbacks.html#ga0c218cd5552045745cc640998e25ed72" title="Callback that receives bytes of data into the given buffer. ">soap::frecv</a></code> callback with a specific handler to convert the encoding.</p>
+<dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a8eb35c04359a567c0b5e2664f3f94d5b" title="User-definable variable that may point to user-specified data of any type to pass the data through to...">soap::user</a></code> and <code><a class="el" href="group__group__callbacks.html#ga0c218cd5552045745cc640998e25ed72" title="Callback that receives bytes of data into the given buffer. ">soap::frecv</a></code>.</dd></dl>
+<dl class="section user"><dt>Example:</dt><dd></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td><code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context </td></tr>
+    <tr><td class="paramname">encoding</td><td>XML encoding extracted from the XML PI header </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> or a <code><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444" title="Status and error codes are int values, a zero value or SOAP_OK (0) means no error, nonzero means error. ">soap_status</a></code> error code </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ga052cdf13e382b4af3d16128955546671"></a>
 <div class="memitem">
 <div class="memproto">
@@ -679,6 +707,7 @@ Variables</h2></td></tr>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> main()</div><div class="line">{</div><div class="line">  <span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>();</div><div class="line">  soap-&gt;<a class="code" href="group__group__callbacks.html#ga0c2e1a0b5a5197128af1acc48662b1bd">fignore</a> = ignore;</div><div class="line">  ... <span class="comment">//</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> ignore(<span class="keyword">struct</span> soap *soap, <span class="keyword">const</span> <span class="keywordtype">char</span> *tag) </div><div class="line">{ </div><div class="line">  <span class="comment">// do not ignore mustUnderstand=&quot;true&quot; </span></div><div class="line">  <span class="keywordflow">if</span> (!soap-&gt;<a class="code" href="structsoap.html#a17c750f20dab579a6a23c30199ed1263">mustUnderstand</a>)</div><div class="line">  {</div><div class="line">    <span class="comment">// tags &lt;ns:someElement&gt; can be safely ignored</span></div><div class="line">    <span class="keywordflow">if</span> (<a class="code" href="group__group__misc.html#ga91a35d2f67eeea8dc31fd23a3cea65d4">soap_match_tag</a>(soap, tag, <span class="stringliteral">&quot;ns:someElement&quot;</span>) == <a class="code" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0">SOAP_OK</a>)</div><div class="line">      <span class="keywordflow">return</span> <a class="code" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0">SOAP_OK</a>;</div><div class="line">  }</div><div class="line">  <span class="keywordflow">return</span> <a class="code" href="group__group__errors.html#ga6e6849f52e3641ffba443df668d55168">SOAP_MUSTUNDERSTAND</a>; </div><div class="line">}</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td><code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context </td></tr>
+    <tr><td class="paramname">tag</td><td>XML tag name </td></tr>
   </table>
   </dd>
 </dl>
@@ -1360,7 +1389,7 @@ Variables</h2></td></tr>
 Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Feb 5 2022 09:36:40 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Mon Mar 7 2022 12:34:06 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

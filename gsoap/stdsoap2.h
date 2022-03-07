@@ -1,10 +1,10 @@
 /*
-        stdsoap2.h 2.8.119
+        stdsoap2.h 2.8.120
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208119
+#define GSOAP_VERSION 208120
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2772,6 +2772,7 @@ struct SOAP_CMAC soap
   size_t (*frecv)(struct soap*, char*, size_t);
   int (*fpoll)(struct soap*);
   void (*fseterror)(struct soap*, const char **c, const char **s);
+  int (*fencoding)(struct soap*, const char*);
   int (*fignore)(struct soap*, const char*);
   int (*fserveloop)(struct soap*);
   void *(*fplugin)(struct soap*, const char*);

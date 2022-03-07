@@ -61,6 +61,7 @@ var structsoap =
     [ "fdimewriteclose", "group__group__callbacks.html#ga1ea0ca0526c4ccba02ec52f62e0678a9", null ],
     [ "fdimewriteopen", "group__group__callbacks.html#ga3b1e4aa046b683535110a34fc46ab1eb", null ],
     [ "fdisconnect", "group__group__callbacks.html#ga2de194075f645d77c15f78c52ca24858", null ],
+    [ "fencoding", "group__group__callbacks.html#ga6662bdcf10ff0ba101adfbef3a4c17d4", null ],
     [ "fform", "group__group__callbacks.html#ga052cdf13e382b4af3d16128955546671", null ],
     [ "fget", "group__group__callbacks.html#gae022204ff7004df2d5ac9e083cbb5b16", null ],
     [ "fhead", "group__group__callbacks.html#gadff52b7b3ecc16379eb2d7b1ff361978", null ],

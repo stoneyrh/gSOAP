@@ -4456,6 +4456,20 @@ struct soap {
   @returns `#SOAP_OK` or a `::soap_status` error code
   */
   int (*fheader)(struct soap *soap);
+  /// Callback to catch unrecognized XML encoding formats
+  /**
+  @ingroup group_callbacks
+  This callback is called when an unrecognized XML encoding format is encountered in an XML PI.  Supported encoding formats are latin (ASCII) and UTF-8.  Other encoding formats can be rejected or supported by setting this callback.  To reject the encoding, return a nonzero error code.  To accept the encoding without further action, return `#SOAP_OK`.  To decode the encoding, the input stream should be redictected through a decoder, for example by overriding the `::soap::frecv` callback with a specific handler to convert the encoding.
+
+  @see `::soap::user` and `::soap::frecv`.
+
+  @par Example:
+
+  @param soap `::soap` context
+  @param encoding XML encoding extracted from the XML PI header
+  @returns `#SOAP_OK` or a `::soap_status` error code
+  */
+  int (*fencoding)(struct soap *soap, const char *encoding);
   /// Callback to catch unrecognized XML elements and overrides `#SOAP_XML_STRICT` validation errors for these
   /**
   @ingroup group_callbacks
@@ -4489,6 +4503,7 @@ struct soap {
   ~~~
 
   @param soap `::soap` context
+  @param tag XML tag name
   @returns `#SOAP_OK` or a `::soap_status` error code
   */
   int (*fignore)(struct soap *soap, const char *tag);

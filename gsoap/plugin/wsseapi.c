@@ -4207,7 +4207,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
     struct soap_dom_attribute *att;
     for (att = elt->atts; att; att = att->next)
     {
-      /* check if attribute is an wsu:Id or ds:Id or ID*/
+      /* check if attribute is an wsu:Id or ds:Id or ID */
       if (att->name
        && ((att->nstr && (!strcmp(att->nstr, wsu_URI) || !strcmp(att->nstr, ds_URI)) && (!strcmp(att->name, "Id") || !soap_tag_cmp(att->name, "*:Id")))
         || (!att->nstr && (!strcmp(att->name, "ID") || !strcmp(att->name, "AssertionID")))))

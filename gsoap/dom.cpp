@@ -1,13 +1,13 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.119
+        DOM API v5 gSOAP 2.8.120
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2021, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2022, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208119
+#define GSOAP_LIB_VERSION 208120
 
 #include "stdsoap2.h"
 
