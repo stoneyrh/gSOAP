@@ -13659,6 +13659,7 @@ define                       | result
 `#SOAP_MAXLENGTH`            | maximum string content length for strings not already constrained by XML schema validation constraints
 `#SOAP_MAXLEVEL`             | maximum XML nesting depth level permitted by the XML parser
 `#SOAP_MAXOCCURS`            | maximum number of array or container elements for containers that are not already constrained by XML schema validation constraints
+`#SOAP_MAXHTTPCHUNK`         | maximum HTTP chunk size receivable
 `#SOAP_MINDEFLATERATIO`      | trusted deflation ratio after `#SOAP_MAXINFLATESIZE` is reached
 `#SOAP_PURE_VIRTUAL`         | set to `= 0` when `#WITH_PURE_VIRTUAL` is defined
 `#SOAP_SSL_RSA_BITS`         | length of the RSA key (2048 by default) 

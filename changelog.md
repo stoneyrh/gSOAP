@@ -1715,9 +1715,14 @@ Version 2.8.119 (02/05/2022)
 - Updated TLS/SSL samples sslserver and webserver demo PEM keys and certificates to work with OpenSSL 3.0.
 - Updated samples/ssl README instructions and scripts to generate keys and certificates compliant to OpenSSL 3.0; note that all gSOAP 2.8 releases compile and run with all OpenSSL versions including 3.0, when the proper PEM-formatted keys and certificates are used.
 
-Version 2.8.120 (03/07/2022) {#latest}
+Version 2.8.120 (03/07/2022)
 ---
 - Added `fencoding` callback to inspect and accept or reject special non-latin/UTF-8 XML encodings.
+
+Version 2.8.121 (04/05/2022) {#latest}
+---
+- Updated wsdl2h option -I to import schemas more "authoritively" by checking lastly the -I path without the importing WSDL/XSD location to import schemas (this also restores the -I option behavior prior to 2.8.75).
+- Fixed a bug for an unlikely edge case in zlib decompression.  Upgrading is recommended.  Note that message compression is not enabled by default or out-of-the-box, but requires compiling the application from the gSOAP source code with the compiler flag `-DWITH_GZIP` and linkage with libz.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

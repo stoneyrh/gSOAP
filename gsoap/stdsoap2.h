@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.120
+        stdsoap2.h 2.8.121
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208120
+#define GSOAP_VERSION 208121
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1246,6 +1246,11 @@ extern "C" {
 # define SOAP_INDEX_RECV  (0)
 # define SOAP_INDEX_SENT  (1)
 # define SOAP_INDEX_TEST  (2)
+#endif
+
+/* max HTTP chunk size is 2GB by default, can be larger but not to exceed size_t range max */
+#ifndef SOAP_MAXHTTPCHUNK
+# define SOAP_MAXHTTPCHUNK (2147483647)
 #endif
 
 /* Tag name of multiref elements in SOAP 1.1 encoding */

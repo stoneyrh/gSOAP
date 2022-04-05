@@ -1127,6 +1127,7 @@ This module defines the following macros with values to configure the engine bui
 - `#SOAP_MAXLENGTH`
 - `#SOAP_MAXLEVEL`
 - `#SOAP_MAXOCCURS`
+- `#SOAP_MAXHTTPCHUNK`
 - `#SOAP_MINDEFLATERATIO`
 - `#SOAP_PURE_VIRTUAL`
 - `#SOAP_SSL_RSA_BITS`
@@ -1269,6 +1270,9 @@ DIME attachments sizes are limited to `#SOAP_MAXDIMESIZE`.  Increase this value 
 
 /// User-definable maximum number of array or container elements for containers that are not already constrained by XML schema validation constraints, must be greater than zero (the value is 100000 by default)
 #define SOAP_MAXOCCURS (100000)
+
+/// User-definable maximum HTTP chunk size receivable (the value is 2147483647 by default), also HTTP chunk sizes cannot exceed `::soap::recv_maxlength`.
+#define SOAP_MAXHTTPCHUNK (2147483647)
 
 /// Trusted deflation ratio after `#SOAP_MAXINFLATESIZE` is reached, trust when compressed / deflated > `#SOAP_MINDEFLATERATIO` (default is 0.00096899224806 or 1032:1, which is according to the zlib site: "The limit (1032:1) comes from the fact that one length/distance pair can represent at most 258 output bytes. A length requires at least one bit and a distance requires at least one bit, so two bits in can give 258 bytes out, or eight bits in give 1032 bytes out. A dynamic block has no length restriction, so you could get arbitrarily close to the limit of 1032:1."
 #define SOAP_MINDEFLATERATIO (1.0/1032.0)

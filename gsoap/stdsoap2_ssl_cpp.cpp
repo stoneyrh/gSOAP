@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.120
+        stdsoap2.c[pp] 2.8.121
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208120
+#define GSOAP_LIB_VERSION 208121
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.120 2022-03-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.121 2022-04-05 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.120 2022-03-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.121 2022-04-05 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1429,6 +1429,7 @@ zlib_again:
     {
       soap_wchar c;
       char *t, tmp[17];
+      unsigned long chunksize;
       if (soap->chunksize)
       {
         soap->buflen = ret = soap->frecv(soap, soap->buf, soap->chunksize > sizeof(soap->buf) ? sizeof(soap->buf) : soap->chunksize);
@@ -1483,8 +1484,15 @@ zlib_again:
       }
       *t = '\0';
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Chunk size = %s (hex)\n", tmp));
-      soap->chunksize = (size_t)soap_strtoul(tmp, &t, 16);
-      if (!soap->chunksize)
+      chunksize = soap_strtoul(tmp, &t, 16);
+      if (*t || chunksize > SOAP_MAXHTTPCHUNK || (soap->recv_maxlength && chunksize > soap->recv_maxlength))
+      {
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Chunk size %lu exceeds max\n", chunksize));
+        return soap->error = SOAP_HTTP_ERROR;
+      }
+      soap->chunksize = (size_t)chunksize;
+      soap->buflen = soap->bufidx + soap->chunksize;
+      if (soap->buflen <= soap->bufidx)
       {
         soap->bufidx = soap->buflen = soap->chunkbuflen = 0;
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of chunked message\n"));
@@ -1492,7 +1500,6 @@ zlib_again:
         soap->ahead = EOF;
         break;
       }
-      soap->buflen = soap->bufidx + soap->chunksize;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Moving buf len to idx=%u len=%u (%s)\n", (unsigned int)soap->bufidx, (unsigned int)soap->buflen, tmp));
       if (soap->buflen > soap->chunkbuflen)
       {
