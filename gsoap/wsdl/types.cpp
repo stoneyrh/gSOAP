@@ -279,26 +279,36 @@ int Types::read(const char *file)
               modtypemap[s] = r;
             }
             else
+            {
               modtypemap[s] = estrdup(def);
+            }
           }
           else
           {
             if (*def)
             {
-              if (strcmp(def, "..."))
+              if (strcmp(def, "...") != 0)
               {
                 deftypemap[s] = estrdup(def);
                 ctypemap[s] = ctype(def);
               }
             }
             else
+            {
               deftypemap[s] = "";
+            }
             if (*use)
+            {
               usetypemap[s] = estrdupf(use);
+            }
             else
+            {
               usetypemap[s] = estrdupf(xsd);
+            }
             if (*ptr)
+            {
               ptrtypemap[s] = estrdupf(ptr);
+            }
             else
             {
               MapOfStringToString::iterator i = ptrtypemap.find(s);
@@ -4617,7 +4627,7 @@ CType Types::ctype(const char *t)
   {
     type = CTNONE;
   }
-  ctypemap[t] = type;
+  ctypemap[estrdup(t)] = type;
   return type;
 }
 

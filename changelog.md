@@ -1719,10 +1719,14 @@ Version 2.8.120 (03/07/2022)
 ---
 - Added `fencoding` callback to inspect and accept or reject special non-latin/UTF-8 XML encodings.
 
-Version 2.8.121 (04/05/2022) {#latest}
+Version 2.8.121 (04/05/2022)
 ---
 - Updated wsdl2h option -I to import schemas more "authoritively" by checking lastly the -I path without the importing WSDL/XSD location to import schemas (this also restores the -I option behavior prior to 2.8.75).
 - Fixed a bug for an unlikely edge case in zlib decompression.  Upgrading is recommended.  Note that message compression is not enabled by default or out-of-the-box, but requires compiling the application from the gSOAP source code with the compiler flag `-DWITH_GZIP` and linkage with libz.
+
+Version 2.8.122 (05/11/2022) {#latest}
+---
+- Fixed an issue with wsdl2h generating inconsistent primitive type default values (schema default values extracted from WSDLs and schemas).
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

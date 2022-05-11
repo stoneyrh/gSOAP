@@ -1,5 +1,7 @@
 var NAVTREEINDEX5 =
 {
+"index.html#services":[6,1],
+"index.html#sessionsplugin":[25,37,5],
 "index.html#smart":[9,2,3],
 "index.html#soapcpp2":[8],
 "index.html#soapcpp2-0":[8,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX5 =
 "structsoap.html#acda1736fbaac07261226befe165a5681":[27,5,0,16],
 "structsoap.html#acef722da5f6789721603beeb0b505838":[27,5,0,128],
 "structsoap.html#acefda44460d269105320e1ebe186608f":[27,5,0,31],
-"structsoap.html#ad75a4abe119a1a74a26d06401fa11c3a":[27,5,0,132],
-"structsoap.html#ad98f12f602efdde049dbd367a43e7cb0":[27,5,0,7],
-"structsoap.html#adcbd52999b85cad509a9b4b479cb9f4d":[27,5,0,110]
+"structsoap.html#ad75a4abe119a1a74a26d06401fa11c3a":[27,5,0,132]
 };

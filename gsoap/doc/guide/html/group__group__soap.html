@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">SOAP_MACRO compile-time values</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Mar 7 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed May 11 2022 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -109,6 +109,9 @@ Macros</h2></td></tr>
 <tr class="memitem:ga3933a58d23a5bf2ad64039725cb23786"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga3933a58d23a5bf2ad64039725cb23786">SOAP_MAXOCCURS</a>&#160;&#160;&#160;(100000)</td></tr>
 <tr class="memdesc:ga3933a58d23a5bf2ad64039725cb23786"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum number of array or container elements for containers that are not already constrained by XML schema validation constraints, must be greater than zero (the value is 100000 by default)  <a href="#ga3933a58d23a5bf2ad64039725cb23786">More...</a><br /></td></tr>
 <tr class="separator:ga3933a58d23a5bf2ad64039725cb23786"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadf06a04f79f46d6c32b4c960e112bdfb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gadf06a04f79f46d6c32b4c960e112bdfb">SOAP_MAXHTTPCHUNK</a>&#160;&#160;&#160;(2147483647)</td></tr>
+<tr class="memdesc:gadf06a04f79f46d6c32b4c960e112bdfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable maximum HTTP chunk size receivable (the value is 2147483647 by default), also HTTP chunk sizes cannot exceed <code><a class="el" href="structsoap.html#a345900c2db67e915ceb02bfa21ecbcbd" title="User-definable maximum message length that is permitted to be received, zero means unlimited (the val...">soap::recv_maxlength</a></code>.  <a href="#gadf06a04f79f46d6c32b4c960e112bdfb">More...</a><br /></td></tr>
+<tr class="separator:gadf06a04f79f46d6c32b4c960e112bdfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga61bac5e1247c779c5ea27090faf0e79d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d">SOAP_MINDEFLATERATIO</a>&#160;&#160;&#160;(1.0/1032.0)</td></tr>
 <tr class="memdesc:ga61bac5e1247c779c5ea27090faf0e79d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trusted deflation ratio after <code><a class="el" href="group__group__soap.html#ga449296b6ea91c469c16ed505f04ca070" title="Trusted inflated content size (1 MB by default), larger content is subject to the SOAP_MINDEFLATERATI...">SOAP_MAXINFLATESIZE</a></code> is reached, trust when compressed / deflated &gt; <code><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d" title="Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached, trust when compressed / deflated &gt; SOAP...">SOAP_MINDEFLATERATIO</a></code> (default is 0.00096899224806 or 1032:1, which is according to the zlib site: "The limit (1032:1) comes from the fact that one length/distance pair can represent at most 258 output bytes. A length requires at least one bit and a distance requires at least one bit, so two bits in can give 258 bytes out, or eight bits in give 1032 bytes out. A dynamic block has no length restriction, so you could get arbitrarily close to the limit of 1032:1.".  <a href="#ga61bac5e1247c779c5ea27090faf0e79d">More...</a><br /></td></tr>
 <tr class="separator:ga61bac5e1247c779c5ea27090faf0e79d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -250,6 +253,7 @@ Macros</h2></td></tr>
 <li><code><a class="el" href="group__group__soap.html#gabd0dd334a752d8c145fa720deb905508" title="User-definable maximum string content length for strings not already constrained by XML schema valida...">SOAP_MAXLENGTH</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga2ad35599c611417132d6b0a9b6870652" title="User-definable maximum XML nesting depth level permitted by the XML parser, must be greater than zero...">SOAP_MAXLEVEL</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga3933a58d23a5bf2ad64039725cb23786" title="User-definable maximum number of array or container elements for containers that are not already cons...">SOAP_MAXOCCURS</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#gadf06a04f79f46d6c32b4c960e112bdfb" title="User-definable maximum HTTP chunk size receivable (the value is 2147483647 by default), also HTTP chunk sizes cannot exceed soap::recv_maxlength. ">SOAP_MAXHTTPCHUNK</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d" title="Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached, trust when compressed / deflated &gt; SOAP...">SOAP_MINDEFLATERATIO</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gad4edb63b6b20a8e5ac3891550013f64a" title="Macro is set to SOAP_PURE_VIRTUAL = 0 at compile time when macro WITH_PURE_VIRTUAL is defined...">SOAP_PURE_VIRTUAL</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145" title="User-definable length of RSA keys used for https connections (the value is 2048 by default) ...">SOAP_SSL_RSA_BITS</a></code></li>
@@ -865,6 +869,20 @@ Macros</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="gadf06a04f79f46d6c32b4c960e112bdfb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_MAXHTTPCHUNK&#160;&#160;&#160;(2147483647)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>User-definable maximum HTTP chunk size receivable (the value is 2147483647 by default), also HTTP chunk sizes cannot exceed <code><a class="el" href="structsoap.html#a345900c2db67e915ceb02bfa21ecbcbd" title="User-definable maximum message length that is permitted to be received, zero means unlimited (the val...">soap::recv_maxlength</a></code>. </p>
+
+</div>
+</div>
 <a class="anchor" id="ga449296b6ea91c469c16ed505f04ca070"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1286,7 +1304,7 @@ C:&gt; link /LIBPATH ws2_32.lib /OUT:mygsoap.dll /DLL envC.obj stdsoap2.obj</pre
 Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Mar 7 2022 12:34:06 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed May 11 2022 15:38:38 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

@@ -102,6 +102,7 @@ var stdsoap2_8h =
     [ "SOAP_MAXARRAYSIZE", "group__group__soap.html#ga29a7dab5c96c2724b3c234505d52c76e", null ],
     [ "SOAP_MAXDIMESIZE", "group__group__soap.html#gad4c2ca8c2293fc75075aec4a09f4dc38", null ],
     [ "SOAP_MAXEINTR", "group__group__soap.html#ga59f0c79e1cd2a135f74351bf9f8c17a6", null ],
+    [ "SOAP_MAXHTTPCHUNK", "group__group__soap.html#gadf06a04f79f46d6c32b4c960e112bdfb", null ],
     [ "SOAP_MAXINFLATESIZE", "group__group__soap.html#ga449296b6ea91c469c16ed505f04ca070", null ],
     [ "SOAP_MAXKEEPALIVE", "group__group__soap.html#ga9750ea0479df8aa88e06f6a148b2a670", null ],
     [ "SOAP_MAXLENGTH", "group__group__soap.html#gabd0dd334a752d8c145fa720deb905508", null ],

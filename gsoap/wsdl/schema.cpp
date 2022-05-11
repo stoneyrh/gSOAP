@@ -2843,10 +2843,8 @@ int xs__union::traverse(xs__schema &schema)
 void xs__union::mark()
 {
   if (Oflag > 1)
-  {
     for (std::vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
       (*i).mark();
-  }
 }
 
 int xs__all::traverse(xs__schema &schema)
