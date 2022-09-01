@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.122
+        stdsoap2.h 2.8.123
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208122
+#define GSOAP_VERSION 208123
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -397,6 +397,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define SOAP_ULONG_FORMAT "%qu"
 #  define HAVE_ISNAN
 #  define HAVE_ISINF
+#  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
 #  define HAVE_XLOCALE_H
 #  define HAVE_RANDOM
@@ -574,6 +575,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
+#  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
 # endif
 #endif

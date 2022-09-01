@@ -6,7 +6,7 @@ rm -f missing
 automake --add-missing
 autoconf
 automake
-./configure --enable-samples --enable-ipv6-v6only --with-openssl=/usr/local/opt/openssl
+./configure --enable-samples --enable-ipv6-v6only --with-openssl=/opt/local
 rm -f gsoap/*.o
 rm -f gsoap/wsdl/wsdlC.cpp
 rm -f gsoap/wsdl/*.o

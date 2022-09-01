@@ -44,7 +44,7 @@
 #define HAVE_GMTIME_R 1
 
 /* Define to 1 if you have the <gnutls/gnutls.h> header file. */
-#define HAVE_GNUTLS_GNUTLS_H 1
+/* #undef HAVE_GNUTLS_GNUTLS_H */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -84,7 +84,7 @@
 #define HAVE_NEWLOCALE 1
 
 /* Define to 1 if you have the <openssl/ssl.h> header file. */
-#define HAVE_OPENSSL_SSL_H 1
+/* #undef HAVE_OPENSSL_SSL_H */
 
 /* Define to 1 if you have the `poll' function. */
 #define HAVE_POLL 1

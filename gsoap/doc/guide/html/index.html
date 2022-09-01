@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">gSOAP user guide</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed May 11 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Aug 31 2022 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -392,7 +392,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </ul>
 </div>
 <div class="textblock"><h1>User guide</h1>
-<div align="right"><em>Copyright (c) 2000-2021, Genivia Inc.<br />
+<div align="right"><em>Copyright (c) 2000-2022, Genivia Inc.<br />
 All rights reserved.</em></div><h1><a class="anchor" id="intro"></a>
 Introduction</h1>
 <p>The gSOAP toolkit offers C/C++ tools and libraries to implement efficient and secure SOAP, XML, JSON and REST client and service Web API applications. The tools also offer XML data bindings for C and C++ to generate XML serializers to efficiently read and write C/C++ data to and from files and streams.</p>
@@ -4537,6 +4537,9 @@ FastCGI</h2>
 <p>To enable FastCGI support, install FastCGI and compile all soapcpp2-generated source code files and your application sources with the compile-time flag <code><a class="el" href="group__group__with.html#gac697013bbde81d22d15d83d122f85f18" title="When this macro is defined at compile time (undefined by default), enables and configures the engine ...">WITH_FASTCGI</a></code> or add:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#define WITH_FASTCGI</span></div></div><!-- fragment --><p>to <em><code>gsoap/stdsoap2.h</code></em> and recompile the project code.</p>
 <dl class="section warning"><dt>Warning</dt><dd>Do not link against the <em><code>gsoap/libgsoap*</code></em> libraries as these are not suitable for FastCGI. Compile <em><code>gsoap/stdsoap2.c</code></em> (or <em><code>gsoap/stdsoap2.cpp</code></em>) instead.</dd></dl>
+<p>The main program should contain a loop like this:</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap soap;</div><div class="line"><a class="code" href="group__group__context.html#ga8e034e1a7d6093eaddc11b647179657c">soap_init</a>(&amp;soap);</div><div class="line"><span class="keywordflow">while</span> (<a class="code" href="group__group__io.html#ga51dba7706a505240bd8935c0b28e419d">soap_serve</a>(&amp;soap) != <a class="code" href="group__group__errors.html#ga224b2c2b830135f12b53536f189b4ebd">SOAP_EOF</a>)</div><div class="line">  <span class="keywordflow">continue</span>;</div><div class="line"><a class="code" href="group__group__context.html#ga28ee8fdcf500443e0e51750324aa6a1a">soap_done</a>(&amp;soap);</div></div><!-- fragment --><p>The <code><a class="el" href="group__group__errors.html#ga224b2c2b830135f12b53536f189b4ebd" title="A soap_status error code: unexpected end of file, no input, transmission interrupted or timed out (sa...">SOAP_EOF</a></code> indicates that FastCGI no longer accepts requests. Otherwise, <code><a class="el" href="group__group__io.html#ga51dba7706a505240bd8935c0b28e419d" title="Serve a pending request. ">soap_serve</a></code> returns <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> on successfully request-response messaging or returns an error code when a messaging or processing error occurred.</p>
+<p>Managed Memory is released in the loop, unless the source code is compiled in <code><a class="el" href="group__group__debug.html#gad72dbcf6d0153db1b8d8a58001feed83" title="User-definable macro to enable debugging and logging. ">DEBUG</a></code> mode.</p>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="lean"></a>
 How to minimize application memory footprint</h2>
@@ -4832,7 +4835,7 @@ All rights reserved.</em> </p>
 Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed May 11 2022 15:38:39 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Aug 31 2022 20:10:03 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

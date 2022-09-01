@@ -31,6 +31,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
+#ifndef XML_RPC_IO_H
+#define XML_RPC_IO_H
+
 #ifdef JSON_NAMESPACE
 namespace json {
 #endif
@@ -43,4 +46,6 @@ extern std::istream& operator>>(std::istream&, struct value&);
 
 #ifdef JSON_NAMESPACE
 } // namespace json
+#endif
+
 #endif

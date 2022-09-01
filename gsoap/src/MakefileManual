@@ -38,6 +38,7 @@ release:
 		$(MAKE) -f MakefileManual soapcpp2
 soapcpp2:	soapcpp2.h soapcpp2_yacc.tab.o symbol2.o error2.o lex.yy.o init2.o soapcpp2.o
 		$(CC) symbol2.o error2.o soapcpp2_yacc.tab.o lex.yy.o init2.o soapcpp2.o $(LIBS) -o $@
+		-rm -f ../binsoapcpp2
 		-cp -f soapcpp2 ../bin
 .c.o:		soapcpp2_yacc.tab.h soapcpp2.h error2.h
 		$(CC) $(CFLAGS) -c $<

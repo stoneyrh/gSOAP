@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.122
+        stdsoap2.c[pp] 2.8.123
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208122
+#define GSOAP_LIB_VERSION 208123
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.122 2022-05-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.123 2022-08-31 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.122 2022-05-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.123 2022-08-31 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -7580,17 +7580,13 @@ http_parse(struct soap *soap)
       {
         char *t;
         *s = '\0';
-        do
-        {
-          s++;
-        } while (*s && *s <= 32);
-        if (*s == '"')
-          s++;
+        while (*++s && *s <= 32)
+          continue;
         t = s + strlen(s) - 1;
         while (t > s && *t <= 32)
           t--;
-        if (t >= s && *t == '"')
-          t--;
+        if (t > s && *s == '"' && *t == '"')
+          s++,t--;
         t[1] = '\0';
         soap->error = soap->fparsehdr(soap, header, s);
         if (soap->error)

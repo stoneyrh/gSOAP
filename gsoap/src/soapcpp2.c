@@ -49,7 +49,7 @@ FILE *fmsg;             /* fd to flush compiler messages */
 
 int soap_version = 0;   /* SOAP version, -1=no SOAP, 0=not set, 1=1.1, 2=1.2 */
 
-const char *copt = NULL;/* "-c" or "-c++11" or "-c++14" or NULL for default option C++ */
+const char *copt = NULL;/* "-c" or "-c++11" or "-c++14" or "-c++17" or NULL for default option C++ */
 
 int vflag = 0;          /* verbose output */
 int wflag = 0;          /* when set, don't generate WSDL and schema files */

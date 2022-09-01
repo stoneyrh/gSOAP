@@ -17808,7 +17808,7 @@ soap_out(Tnode *typ)
     if (is_stdXML(typ))
       fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap *soap, const char *tag, int id, const std::string *s, const char *type)\n{\n\t(void)id; /* appease -Wall -Werror */\n\tconst char *t = s->c_str();\n\treturn soap_outliteral(soap, tag, (char*const*)(void*)&t, type);\n}", c_ident(typ));
     else
-      fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap *soap, const char *tag, int id, const std::string *s, const char *type)\n{\n\tif ((soap->mode & SOAP_C_NILSTRING) && s->empty())\n\t\treturn soap_element_null(soap, tag, id, type);\n\tif (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, s, %s), type) || soap_string_out(soap, s->c_str(), 0) || soap_element_end_out(soap, tag))\n\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), soap_type(typ));
+      fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap *soap, const char *tag, int id, const std::string *s, const char *type)\n{\n\tif (s->empty())\n\t\treturn (soap->mode & SOAP_C_NILSTRING) ? soap_element_null(soap, tag, id, type) : soap_element_empty(soap, tag, id, type);\n\tif (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, s, %s), type) || soap_string_out(soap, s->c_str(), 0) || soap_element_end_out(soap, tag))\n\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), soap_type(typ));
     return;
   }
   if (is_stdwstring(typ))
@@ -17822,7 +17822,7 @@ soap_out(Tnode *typ)
     if (is_stdXML(typ))
       fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap *soap, const char *tag, int id, const std::wstring *s, const char *type)\n{\n\tconst wchar_t *t = s->c_str();\n\treturn soap_outwliteral(soap, tag, (wchar_t*const*)(void*)&t, type);\n}", c_ident(typ));
     else
-      fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap *soap, const char *tag, int id, const std::wstring *s, const char *type)\n{\n\tif ((soap->mode & SOAP_C_NILSTRING) && s->empty())\n\t\treturn soap_element_null(soap, tag, id, type);\n\tif (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, s, %s), type) || soap_wstring_out(soap, s->c_str(), 0) || soap_element_end_out(soap, tag))\n\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), soap_type(typ));
+      fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap *soap, const char *tag, int id, const std::wstring *s, const char *type)\n{\n\tif (s->empty())\n\t\treturn (soap->mode & SOAP_C_NILSTRING) ? soap_element_null(soap, tag, id, type) : soap_element_empty(soap, tag, id, type);\n\tif (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, s, %s), type) || soap_wstring_out(soap, s->c_str(), 0) || soap_element_end_out(soap, tag))\n\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), soap_type(typ));
     return;
   }
   switch(typ->type)

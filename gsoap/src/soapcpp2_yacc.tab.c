@@ -3820,7 +3820,7 @@ yyreduce:
                             (yyval.typ) = mktemplate((yyvsp[-1].rec).typ, (yyvsp[-3].sym));
                             (yyval.typ)->transient = -2; /* volatile indicates smart pointer template */
                             if (!c11flag)
-                              semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
+                              semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14 or -c++17");
                           }
                           else if ((yyvsp[-3].sym) == lookup("std::weak_ptr") ||
                               (yyvsp[-3].sym) == lookup("std::function"))
@@ -4123,7 +4123,7 @@ yyreduce:
                         {
                           (yyval.sym) = (yyvsp[0].sym);
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
+                            semwarn("To use scoped enumerations (enum class) you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14 or -c++17");
                         }
 #line 4129 "soapcpp2_yacc.tab.c"
     break;
@@ -4133,7 +4133,7 @@ yyreduce:
                         {
                           (yyval.sym) = (yyvsp[0].sym);
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
+                            semwarn("To use scoped enumerations (enum class) you must also use wsdl2h and soapcpp2 with option -c++11 or -c++14 or -c++17");
                         }
 #line 4139 "soapcpp2_yacc.tab.c"
     break;

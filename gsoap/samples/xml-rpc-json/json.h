@@ -31,6 +31,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
+#ifndef JSON_H
+#define JSON_H
+
 #ifdef JSON_NAMESPACE
 # include "jsonH.h"
 #else
@@ -188,4 +191,6 @@ template<> inline bool operator>(const value& x, const value& y) { return json_l
 #ifdef __cplusplus
 } // namespace json
 #endif
+#endif
+
 #endif

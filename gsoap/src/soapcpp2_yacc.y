@@ -1466,7 +1466,7 @@ type    : VOID          { $$ = mkvoid(); }
                             $$ = mktemplate($3.typ, $1);
                             $$->transient = -2; /* volatile indicates smart pointer template */
                             if (!c11flag)
-                              semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
+                              semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14 or -c++17");
                           }
                           else if ($1 == lookup("std::weak_ptr") ||
                               $1 == lookup("std::function"))
@@ -1697,12 +1697,12 @@ masksc  : ENUM '*' sc utype
 sc      : STRUCT id     {
                           $$ = $2;
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
+                            semwarn("To use scoped enumerations (enum class) you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14 or -c++17");
                         }
         | CLASS id      {
                           $$ = $2;
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
+                            semwarn("To use scoped enumerations (enum class) you must also use wsdl2h and soapcpp2 with option -c++11 or -c++14 or -c++17");
                         }
         ;
 utype   : ':' CHAR      { $$ = 1; }

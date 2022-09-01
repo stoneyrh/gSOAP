@@ -5,7 +5,7 @@ gSOAP user guide                                                    {#mainpage}
 
 # User guide
 
-<div align="right"><i>Copyright (c) 2000-2021, Genivia Inc.<br>All rights reserved.</i></div>
+<div align="right"><i>Copyright (c) 2000-2022, Genivia Inc.<br>All rights reserved.</i></div>
 
 # Introduction                                                         {#intro}
 
@@ -16840,6 +16840,20 @@ to <i>`gsoap/stdsoap2.h`</i> and recompile the project code.
 @warning Do not link against the <i>`gsoap/libgsoap*`</i> libraries as these are not suitable
 for FastCGI. Compile <i>`gsoap/stdsoap2.c`</i> (or <i>`gsoap/stdsoap2.cpp`</i>)
 instead.
+
+The main program should contain a loop like this:
+
+~~~{.cpp}
+    struct soap soap;
+    soap_init(&soap);
+    while (soap_serve(&soap) != SOAP_EOF)
+      continue;
+    soap_done(&soap);
+~~~
+
+The `#SOAP_EOF` indicates that FastCGI no longer accepts requests.  Otherwise, `::soap_serve` returns `#SOAP_OK` on successfully request-response messaging or returns an error code when a messaging or processing error occurred.
+
+Managed Memory is released in the loop, unless the source code is compiled in `#DEBUG` mode.
 
 🔝 [Back to table of contents](#)
 
