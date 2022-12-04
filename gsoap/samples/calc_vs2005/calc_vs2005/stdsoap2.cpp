@@ -5161,13 +5161,23 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     soap->errnum = soap_errno;
   }
 #else
+  {
+    struct hostent *temp;
 #ifdef AS400
-  hostent = gethostbyname((void*)addr);
+    temp = gethostbyname((void*)addr);
 #else
-  hostent = gethostbyname((char*)addr);
+    temp = gethostbyname((char*)addr);
 #endif
-  if (!hostent)
-    soap->errnum = h_errno;
+    if (!temp)
+    {
+      soap->errnum = h_errno;
+      hostent = NULL;
+    }
+    else
+    {
+      *hostent = *temp;
+    }
+  }
 #endif
   if (!hostent)
   {
