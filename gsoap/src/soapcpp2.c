@@ -197,7 +197,7 @@ main(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S|-CS] [-A] [-a] [-b] [-c|-c++|-c++11] [-d path] [-Ec] [-Ed] [-Et] [-e] [-f N] [-g] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-L] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-T] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S|-CS] [-A] [-a] [-b] [-c|-c++|-c++11|-c++14|-c++17] [-d path] [-Ec] [-Ed] [-Et] [-e] [-f N] [-g] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-L] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-T] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
             fprintf(stderr, "\
 -0      no SOAP, generate REST source code\n\
 -1      generate SOAP 1.1 source code\n\
@@ -209,6 +209,8 @@ main(int argc, char **argv)
 -c      generate C source code\n\
 -c++    generate C++ source code (default)\n\
 -c++11  generate C++ source code optimized for C++11 (compile with -std=c++11)\n\
+-c++14  generate C++ source code optimized for C++14 (compile with -std=c++14)\n\
+-c++17  generate C++ source code optimized for C++17 (compile with -std=c++17)\n\
 -dpath  use path to save files\n\
 -Ec     generate extra functions for deep copying\n\
 -Ed     generate extra functions for deep deletion\n\

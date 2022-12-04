@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.123
+        stdsoap2.c[pp] 2.8.124
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208123
+#define GSOAP_LIB_VERSION 208124
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.123 2022-08-31 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.124 2022-12-04 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.123 2022-08-31 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.124 2022-12-04 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1526,7 +1526,7 @@ zlib_again:
     DBGMSG(RECV, soap->buf, ret);
   }
 #ifdef WITH_ZLIB
-  if ((soap->mode & SOAP_ENC_ZLIB))
+  if ((soap->mode & SOAP_ENC_ZLIB) && soap->d_stream)
   {
     (void)soap_memcpy((void*)soap->z_buf, sizeof(soap->buf), (const void*)soap->buf, sizeof(soap->buf));
     soap->d_stream->next_in = (Byte*)(soap->z_buf + soap->bufidx);
@@ -2131,7 +2131,7 @@ soap_getpi(struct soap *soap)
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Switching to utf-8 encoding\n"));
         soap->mode &= ~SOAP_ENC_LATIN;
       }
-      else if (soap->fencoding && (err = soap->fencoding(soap, s + 11) != SOAP_OK))
+      else if (soap->fencoding && ((err = soap->fencoding(soap, s + 11)) != SOAP_OK))
       {
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Callback fencoding returned %d\n", err));
         soap->error = err;
@@ -10416,7 +10416,8 @@ soap_malloc(struct soap *soap, size_t n)
   size_t k = n;
   if (SOAP_MAXALLOCSIZE > 0 && n > SOAP_MAXALLOCSIZE)
   {
-    soap->error = SOAP_EOM;
+    if (soap)
+      soap->error = SOAP_EOM;
     return NULL;
   }
   if (!soap)
@@ -21770,10 +21771,10 @@ soap_base642s(struct soap *soap, const char *s, char *t, size_t l, int *n)
   soap_wchar c;
   unsigned long m;
   const char *p;
+  if (n)
+    *n = 0;
   if (!s || !*s)
   {
-    if (n)
-      *n = 0;
     if (soap->error)
       return NULL;
     return SOAP_NON_NULL;
@@ -21786,8 +21787,6 @@ soap_base642s(struct soap *soap, const char *s, char *t, size_t l, int *n)
   if (!t)
     return NULL;
   p = t;
-  if (n)
-    *n = 0;
   for (i = 0; ; i += 3, l -= 3)
   {
     m = 0;
@@ -21887,10 +21886,10 @@ SOAP_FMAC2
 soap_hex2s(struct soap *soap, const char *s, char *t, size_t l, int *n)
 {
   const char *p;
+  if (n)
+    *n = 0;
   if (!s || !*s)
   {
-    if (n)
-      *n = 0;
     if (soap->error)
       return NULL;
     return SOAP_NON_NULL;

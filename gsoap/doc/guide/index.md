@@ -115,9 +115,9 @@ be interpreted as described in RFC-2119.
 * **XML**: implements a fast schema-specific XML pull parser that does not
   require intermediate storage of XML in a DOM to deserialize data.
 
-* **HTTP**: HTTP 1.0/1.1 (HTTP 2.0 will be available soon), IPv4 and IPv6,
-  HTTPS (requires OpenSSL 3.0 or 1.1 or GNUTLS), cookies, authentication, Zlib
-  deflate and gzip compression, and connecting through HTTP proxies.
+* **HTTP**: HTTP 1.0/1.1, IPv4 and IPv6, HTTPS (requires OpenSSL 3.0 or 1.1 or
+  GNUTLS), cookies, authentication, Zlib deflate and gzip compression, and
+  connecting through HTTP proxies.
 
 * **Attachments**: MIME (SwA), DIME, and MTOM attachments are supported.
   Streaming capabilities to direct the data stream to/from resources using
@@ -6636,7 +6636,16 @@ Or replace the `char*` strings that are used by default for C with `wchar_t*`:
 
     xsd__string = | wchar_t* | wchar_t*
 
-When a type binding requires only the usage to be changed, the
+When the `ptr-use` part is not specified, it will be auto-generated
+as pointer `T*` for `use` type `T` or `std::shared_ptr<T>` when
+the variable `$POINTER = std::shared`.
+
+The `declaration` part need not be empty, for example if a type must be
+declared.  For example:
+
+    xsd__string = typedef std::string mystring; | mystring | std::optional<mystring>
+
+When a type binding requires only the `use` part to be changed, the
 declaration part can be an ellipsis `...`, as in:
 
     prefix__type = ... | use | ptr-use
@@ -6726,6 +6735,20 @@ default.  For example, to change array size types to `size_t`:
 Permissible types are `int` and `size_t`.  This variable does not affect the
 size of dynamic arrays, `xsd__hexBinary` and `xsd__base64Binary` types, which
 is always `int`.
+
+When C++17 is enabled with wsdl2h and soapcpp2 option <b>`-c++17`</b>, you can
+also semi-automatically enable `std::optional` declarations with optional class
+and structure member variables.  This means that `std::optional` is used
+instead of a (smart) pointer to make a member optional.
+
+To enable `std::optional` with member variables that are primitive types,
+`typedef`, and `enum` automatically:
+
+    $OPTIONAL = std::optional
+
+Local unnamed simpleType restrictions may not adopt the specified optional type
+and still use pointers instead.  This limitation may be lifted in a future
+release.
 
 🔝 [Back to table of contents](#)
 

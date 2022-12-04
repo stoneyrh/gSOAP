@@ -300,7 +300,7 @@ XSD type bindings                                                    {#typemap2}
 Custom C/C++ type bindings can be declared in <i>`typemap.dat`</i> to associate C/C++
 types with specific schema types.  These type bindings have four parts:
 
-    prefix__type = declaration | use | ptruse
+    prefix__type = declaration | use | ptr-use
 
 where
 
@@ -313,11 +313,11 @@ where
 - <b>`use`</b> is an optional part that specifies how the C/C++ type is used in the
   code.  When omitted, it is the same as <b>`prefix__type`</b>;
 
-- <b>`ptruse`</b> is an optional part that specifies how the type is used as a pointer
+- <b>`ptr-use`</b> is an optional part that specifies how the type is used as a pointer
   type.  By default it is the <b>`use`</b> type name with a <b>`*`</b> or C++11
   <b>`std::shared_ptr<type>`</b> when enabled (see further below).  If <b>`use`</b> is already a
   pointer type by the presence of a <b>`*`</b> in the <b>`use`</b> part, then the default
-  <b>`ptruse`</b> type is the same as the <b>`use`</b> type (that is, no double
+  <b>`ptr-use`</b> type is the same as the <b>`use`</b> type (that is, no double
   pointers <b>`**`</b> will be created in this case).
 
 For example, to map <i>`xsd:duration`</i> to a `long long` (`LONG64`) type that holds
@@ -341,22 +341,33 @@ For C++ we can use the `std::wstring` wide string:
     xsd__string = | std::wstring
 
 Note that the first part is empty, because these types do not require a
-declaration.  A <b>`ptruse`</b> part is also defined for `wchar_t*`, but this
+declaration.  A <b>`ptr-use`</b> part is also defined for `wchar_t*`, but this
 is actually needed because the wsdl2h tool recognizes that the <b>`use`</b>
 part `wchar_t*` is already a pointer.  By contrast, when using 8-bit strings,
 it is recommended to use the `SOAP_C_UTFSTRING` flag to enable UTF-8 formatted
 strings.
 
-When the auto-generated declaration should be preserved but the <b>`use`</b> or
-<b>`ptruse`</b> parts replaced, then we use an ellipsis for the declaration part:
+When the <b>`ptr-use`</b> part is not specified, it will be auto-generated
+as pointer `T*` for <b>`use`</b> type `T` or `std::shared_ptr<T>` when
+the variable `$POINTER = std::shared`, see
+[the special variables $CONTAINER, $POINTER, $SIZE and $OPTIONAL](#typemap5).
 
-    prefix__type = ... | use | ptruse
+The <b>`declaration`</b> part need not be empty, for example if a type must be
+declared.  For example:
 
-This is useful to map schema polymorphic types to C types for example, where we
-need to be able to both handle a base type and its extensions as per schema
-extensibility.  Say we have a base type called <i>`ns:base`</i> that is extended, then
-we can remap this to a C type that permits referening the extended types via a
-`void*` as follows:
+    xsd__string = typedef std::string mystring; | mystring | std::optional<mystring>
+
+When a auto-generated <b>`declaration`</b> should be preserved but the
+<b>`use`</b> or <b>`ptr-use`</b> parts must be redefined, then we use an
+ellipsis for the <b>`declaration`</b> part:
+
+    prefix__type = ... | use | ptr-use
+
+The <b>`ptr-use`</b> part is also useful to map schema polymorphic types to C
+types for example, where we need to be able to both handle a base type and its
+extensions as per schema extensibility.  Say we have a base type called
+<i>`ns:base`</i> that is extended, then we can remap this to a C type that
+permits referening the extended types via a `void*` as follows:
 
     ns__base = ... | int __type_base; void*
 
@@ -623,7 +634,7 @@ Custom Qt serializers for XSD types                                        {#qt}
 
 The gSOAP distribution includes several custom serializers for Qt types.  Also
 Qt container classes are supported, see
-[the built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE](#typemap5).
+[the special variables $CONTAINER, $POINTER, $SIZE and $OPTIONAL](#typemap5).
 
 This feature requires gSOAP 2.8.34 or higher and Qt 4.8 or higher.
 
@@ -744,8 +755,8 @@ Therefore, only replace similar types with other similar types that are wider
 
 🔝 [Back to table of contents](#)
 
-The built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE    {#typemap5}
------------------------------------------------------------------
+The special variables $CONTAINER, $POINTER, $SIZE and $OPTIONAL      {#typemap5}
+---------------------------------------------------------------
 
 The <i>`typemap.dat`</i> <b>`$CONTAINER`</b> variable defines the container type to use in
 the wsdl2h-generated declarations for C++, which is `std::vector` by default.
@@ -805,6 +816,20 @@ default.  For example, to change array size types to `size_t`:
 Permissible types are `int` and `size_t`.  This variable does not affect the
 size of dynamic arrays, `xsd__hexBinary` and `xsd__base64Binary` types, which
 is always `int`.
+
+When C++17 is enabled with wsdl2h and soapcpp2 option <b>`-c++17`</b>, you can
+also semi-automatically enable `std::optional` declarations with optional class
+and structure member variables.  This means that `std::optional` is used
+instead of a (smart) pointer to make a member optional.
+
+To enable `std::optional` with member variables that are primitive types,
+`typedef`, and `enum` automatically:
+
+    $OPTIONAL = std::optional
+
+Local unnamed simpleType restrictions may not adopt the specified optional type
+and still use pointers instead.  This limitation may be lifted in a future
+release.
 
 🔝 [Back to table of contents](#)
 

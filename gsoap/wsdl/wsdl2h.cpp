@@ -267,10 +267,10 @@ static void options(int argc, char **argv)
             if (a[1] == '+' && a[2] == '+')
             {
               a += 2;
-              if (a[1] == '1' && (a[2] >= '1' || a[2] <= '7'))
+              if (isdigit(a[1]) && isdigit(a[2]))
               {
+                c11flag = 10*(a[1] - '0') + a[2] - '0'; /* 11 = c++11, 14 = c++14, etc */
                 a += 2;
-                c11flag = 1;
               }
               cflag = 0;
             }
@@ -528,7 +528,9 @@ static void options(int argc, char **argv)
 -b      bi-directional operations (duplex ops) added to serve one-way responses\n\
 -c      generate C source code\n\
 -c++    generate C++ source code (default)\n\
--c++11  generate C++11 source code, also -c++14 and -c++17\n\
+-c++11  generate C++11 source code\n\
+-c++14  generate C++14 source code\n\
+-c++17  generate C++17 source code\n\
 -D      make attribute members with default/fixed values optional with pointers\n\
 -d      use DOM to populate xs:any, xs:anyType, and xs:anyAttribute\n\
 -e      don't qualify enum names\n\

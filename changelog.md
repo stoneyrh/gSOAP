@@ -1728,10 +1728,16 @@ Version 2.8.122 (05/11/2022)
 ---
 - Fixed an issue with wsdl2h generating inconsistent primitive type default values (schema default values extracted from WSDLs and schemas).
 
-Version 2.8.123 (08/31/2022) {#latest}
+Version 2.8.123 (08/31/2022)
 ---
 - Minor update to make `std::string` typed element tags self-closing, which is consistent with `char*` typed element tags.
 - Minor improvement to HTTP header line processing to drop start-end quotes.
+
+Version 2.8.124 (12/04/2022) {#latest}
+---
+- Added C++17 `std::optional` member variable serialization.
+- Updated wsdl2h to automatically generates `std::optional` member variables for optional schemas when typedef.dat defines `$OPTIONAL = std::optional`.  Only primitive type member variables are made `std::optional`, not classes, because optional types must be defined before referenced when in fact cyclic data structure relationships may exist among classes.
+- Added missing `std::vector<xsd__anyType>` deep copy of vector of DOM trees generated with soapcpp2 option `-Ec`.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">C and C++ XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Sep 1 2020 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun Dec 4 2022 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -82,7 +82,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </li>
 <li class="level2"><a href="#typemap3">Class/struct member additions                                        </a></li>
 <li class="level2"><a href="#typemap4">Replacing XSD types by equivalent alternatives                       </a></li>
-<li class="level2"><a href="#typemap5">The built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE    </a></li>
+<li class="level2"><a href="#typemap5">The special variables $CONTAINER, $POINTER, $SIZE and $OPTIONAL      </a></li>
 <li class="level2"><a href="#typemap6">User-defined content                                                 </a></li>
 </ul>
 </li>
@@ -342,21 +342,23 @@ XML namespace bindings                                               </h2>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="typemap2"></a>
 XSD type bindings                                                    </h2>
-<p>Custom C/C++ type bindings can be declared in <em><code>typemap.dat</code></em> to associate C/C++ types with specific schema types. These type bindings have four parts: </p><pre class="fragment">prefix__type = declaration | use | ptruse
+<p>Custom C/C++ type bindings can be declared in <em><code>typemap.dat</code></em> to associate C/C++ types with specific schema types. These type bindings have four parts: </p><pre class="fragment">prefix__type = declaration | use | ptr-use
 </pre><p>where</p>
 <ul>
 <li><b><code>prefix__type</code></b> is the schema type to be customized (the <b><code>prefix__type</code></b> name uses the common double underscore naming convention);</li>
 <li><b><code>declaration</code></b> declares the C/C++ type in the wsdl2h-generated header file. This part can be empty if no explicit declaration is needed;</li>
 <li><b><code>use</code></b> is an optional part that specifies how the C/C++ type is used in the code. When omitted, it is the same as <b><code>prefix__type</code></b>;</li>
-<li><b><code>ptruse</code></b> is an optional part that specifies how the type is used as a pointer type. By default it is the <b><code>use</code></b> type name with a <b><code>*</code></b> or C++11 <b><code>std::shared_ptr&lt;type&gt;</code></b> when enabled (see further below). If <b><code>use</code></b> is already a pointer type by the presence of a <b><code>*</code></b> in the <b><code>use</code></b> part, then the default <b><code>ptruse</code></b> type is the same as the <b><code>use</code></b> type (that is, no double pointers <b><code>**</code></b> will be created in this case).</li>
+<li><b><code>ptr-use</code></b> is an optional part that specifies how the type is used as a pointer type. By default it is the <b><code>use</code></b> type name with a <b><code>*</code></b> or C++11 <b><code>std::shared_ptr&lt;type&gt;</code></b> when enabled (see further below). If <b><code>use</code></b> is already a pointer type by the presence of a <b><code>*</code></b> in the <b><code>use</code></b> part, then the default <b><code>ptr-use</code></b> type is the same as the <b><code>use</code></b> type (that is, no double pointers <b><code>**</code></b> will be created in this case).</li>
 </ul>
 <p>For example, to map <em><code>xsd:duration</code></em> to a <code>long long</code> (<code>LONG64</code>) type that holds millisecond duration values, we can use the custom serializer declared in <em><code>gsoap/custom/duration.h</code></em> by adding the following line to <em><code>typemap.dat</code></em>: </p><pre class="fragment">xsd__duration = #import "custom/duration.h"
 </pre><p>Here, we omitted the second and third parts, because <code>xsd__duration</code> is the name that wsdl2h uses for this type in our generated code so we should leave the <b><code>use</code></b> part unspecified. The third part is omitted to let wsdl2h use <code>xsd__duration *</code> for pointers or <code>std::shared_ptr&lt;xsd__duration&gt;</code> if smart pointers are enabled.</p>
 <p>To map <em><code>xsd:string</code></em> to <code>wchar_t*</code> wide strings for C source code output: </p><pre class="fragment">xsd__string = | wchar_t* | wchar_t*
 </pre><p>For C++ we can use the <code>std::wstring</code> wide string: </p><pre class="fragment">xsd__string = | std::wstring
-</pre><p>Note that the first part is empty, because these types do not require a declaration. A <b><code>ptruse</code></b> part is also defined for <code>wchar_t*</code>, but this is actually needed because the wsdl2h tool recognizes that the <b><code>use</code></b> part <code>wchar_t*</code> is already a pointer. By contrast, when using 8-bit strings, it is recommended to use the <code>SOAP_C_UTFSTRING</code> flag to enable UTF-8 formatted strings.</p>
-<p>When the auto-generated declaration should be preserved but the <b><code>use</code></b> or <b><code>ptruse</code></b> parts replaced, then we use an ellipsis for the declaration part: </p><pre class="fragment">prefix__type = ... | use | ptruse
-</pre><p>This is useful to map schema polymorphic types to C types for example, where we need to be able to both handle a base type and its extensions as per schema extensibility. Say we have a base type called <em><code>ns:base</code></em> that is extended, then we can remap this to a C type that permits referening the extended types via a <code>void*</code> as follows: </p><pre class="fragment">ns__base = ... | int __type_base; void*
+</pre><p>Note that the first part is empty, because these types do not require a declaration. A <b><code>ptr-use</code></b> part is also defined for <code>wchar_t*</code>, but this is actually needed because the wsdl2h tool recognizes that the <b><code>use</code></b> part <code>wchar_t*</code> is already a pointer. By contrast, when using 8-bit strings, it is recommended to use the <code>SOAP_C_UTFSTRING</code> flag to enable UTF-8 formatted strings.</p>
+<p>When the <b><code>ptr-use</code></b> part is not specified, it will be auto-generated as pointer <code>T*</code> for <b><code>use</code></b> type <code>T</code> or <code>std::shared_ptr&lt;T&gt;</code> when the variable <code>$POINTER = std::shared</code>, see <a href="#typemap5">the special variables $CONTAINER, $POINTER, $SIZE and $OPTIONAL</a>.</p>
+<p>The <b><code>declaration</code></b> part need not be empty, for example if a type must be declared. For example: </p><pre class="fragment">xsd__string = typedef std::string mystring; | mystring | std::optional&lt;mystring&gt;
+</pre><p>When a auto-generated <b><code>declaration</code></b> should be preserved but the <b><code>use</code></b> or <b><code>ptr-use</code></b> parts must be redefined, then we use an ellipsis for the <b><code>declaration</code></b> part: </p><pre class="fragment">prefix__type = ... | use | ptr-use
+</pre><p>The <b><code>ptr-use</code></b> part is also useful to map schema polymorphic types to C types for example, where we need to be able to both handle a base type and its extensions as per schema extensibility. Say we have a base type called <em><code>ns:base</code></em> that is extended, then we can remap this to a C type that permits referening the extended types via a <code>void*</code> as follows: </p><pre class="fragment">ns__base = ... | int __type_base; void*
 </pre><p>such that <code>__type_base</code> and <code>void*</code> will be used to (de)serialize any data type, including base and its derived types. The <code>__type_base</code> integer is set to a <code>SOAP_TYPE_T</code> value to indicate what type of data the <code>void*</code> pointer points to.</p>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="custom"></a>
@@ -435,7 +437,7 @@ xsd:duration</h3>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="qt"></a>
 Custom Qt serializers for XSD types                                        </h2>
-<p>The gSOAP distribution includes several custom serializers for Qt types. Also Qt container classes are supported, see <a href="#typemap5">the built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE</a>.</p>
+<p>The gSOAP distribution includes several custom serializers for Qt types. Also Qt container classes are supported, see <a href="#typemap5">the special variables $CONTAINER, $POINTER, $SIZE and $OPTIONAL</a>.</p>
 <p>This feature requires gSOAP 2.8.34 or higher and Qt 4.8 or higher.</p>
 <p>Each Qt custom serializer has an interface header file for soapcpp2 and a C++ implementation file to be compiled with your project.</p>
 <p>Other Qt primitive types that are Qt <code>typedef</code>s of C/C++ types do not require a custom serializer.</p>
@@ -485,7 +487,7 @@ Replacing XSD types by equivalent alternatives                       </h2>
 <dl class="section warning"><dt>Warning</dt><dd>Do not agressively replace types, because this can cause XML schema validation to fail when a value-type mismatch is encountered in the XML input. Therefore, only replace similar types with other similar types that are wider (e.g. <code>short</code> by <code>int</code> and <code>float</code> by <code>double</code>).</dd></dl>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="typemap5"></a>
-The built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE    </h2>
+The special variables $CONTAINER, $POINTER, $SIZE and $OPTIONAL      </h2>
 <p>The <em><code>typemap.dat</code></em> <b><code>$CONTAINER</code></b> variable defines the container type to use in the wsdl2h-generated declarations for C++, which is <code>std::vector</code> by default. For example, to use <code>std::list</code> as the container in the wsdl2h-generated declarations we add the following line to <em><code>typemap.dat</code></em>: </p><pre class="fragment">$CONTAINER = std::list
 </pre><p>Also a Qt container can be used instead of the default <code>std::vector</code>, for example <code>QVector</code>: </p><pre class="fragment">[
 #include &lt;QVector&gt;
@@ -502,6 +504,9 @@ $POINTER = boost::shared_ptr
 </pre><p>The user-defined content between <b><code>[</code></b> and <b><code>]</code></b> ensures that we include the Boost header files that are needed to support <code>boost::shared_ptr</code> and <code>boost::make_shared</code>.</p>
 <p>The variable <b><code>$SIZE</code></b> defines the type of array sizes, which is <code>int</code> by default. For example, to change array size types to <code>size_t</code>: </p><pre class="fragment">$SIZE = size_t
 </pre><p>Permissible types are <code>int</code> and <code>size_t</code>. This variable does not affect the size of dynamic arrays, <code>xsd__hexBinary</code> and <code>xsd__base64Binary</code> types, which is always <code>int</code>.</p>
+<p>When C++17 is enabled with wsdl2h and soapcpp2 option <b><code>-c++17</code></b>, you can also semi-automatically enable <code>std::optional</code> declarations with optional class and structure member variables. This means that <code>std::optional</code> is used instead of a (smart) pointer to make a member optional.</p>
+<p>To enable <code>std::optional</code> with member variables that are primitive types, <code>typedef</code>, and <code>enum</code> automatically: </p><pre class="fragment">$OPTIONAL = std::optional
+</pre><p>Local unnamed simpleType restrictions may not adopt the specified optional type and still use pointers instead. This limitation may be lifted in a future release.</p>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="typemap6"></a>
 User-defined content                                                 </h2>
@@ -1792,10 +1797,10 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2020, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Sep 1 2020 10:43:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun Dec 4 2022 15:33:33 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

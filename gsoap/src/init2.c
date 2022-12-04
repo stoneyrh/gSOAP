@@ -207,6 +207,7 @@ static Keyword keywords[] =
   { "std::shared_ptr",  TYPE },
   { "std::unique_ptr",  TYPE },
   { "std::auto_ptr",    TYPE },
+  { "std::optional",    TYPE },
 
   { "std::weak_ptr",    TYPE },
   { "std::function",    TYPE },

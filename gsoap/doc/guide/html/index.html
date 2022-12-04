@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">gSOAP user guide</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Aug 31 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun Dec 4 2022 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -424,7 +424,7 @@ Tooling characteristics</h1>
 <li><b>SOAP</b>: implements the full range of SOAP 1.1/1.2 specifications, including RPC encoding and document/literal messaging styles.</li>
 <li><b>XSD</b>: supports all XML schema 1.0 and 1.1 schema type constructs and has been tested against the W3C XML Schema Patterns for Databinding Interoperability working group.</li>
 <li><b>XML</b>: implements a fast schema-specific XML pull parser that does not require intermediate storage of XML in a DOM to deserialize data.</li>
-<li><b>HTTP</b>: HTTP 1.0/1.1 (HTTP 2.0 will be available soon), IPv4 and IPv6, HTTPS (requires OpenSSL 3.0 or 1.1 or GNUTLS), cookies, authentication, Zlib deflate and gzip compression, and connecting through HTTP proxies.</li>
+<li><b>HTTP</b>: HTTP 1.0/1.1, IPv4 and IPv6, HTTPS (requires OpenSSL 3.0 or 1.1 or GNUTLS), cookies, authentication, Zlib deflate and gzip compression, and connecting through HTTP proxies.</li>
 <li><b>Attachments</b>: MIME (SwA), DIME, and MTOM attachments are supported. Streaming capabilities to direct the data stream to/from resources using user-defined callbacks. gSOAP is the only toolkit that supports streaming MIME, DIME, and MTOM attachment transfers, which allows you to exchange binary data of practically unlimited size in the fastest possible way by streaming, while ensuring the usefulness of XML interoperability.</li>
 <li><b>Debugging</b>: compilation of client and service applications in <code><a class="el" href="group__group__debug.html#gad72dbcf6d0153db1b8d8a58001feed83" title="User-definable macro to enable debugging and logging. ">DEBUG</a></code> mode traces their engine activity for debugging, verifies memory usage (leak detection), and saves message logs for inspection.</li>
 <li><b>Testing</b>: <b><code>soapcpp2 -T</code></b> generates server source code that automatically implements echo message services for testing. The <b><code>testmsgr</code></b> tool generates XML messages from message templates for server-side and client-side black-box testing, see <a href="../../testmsgr/html/index.html">Test Messenger</a> documentation. In addition, the soapcpp2 tool generates sample SOAP/XML input and output messages for verification and testing.</li>
@@ -1742,7 +1742,9 @@ ns__myClass       = $ ns__myClass();
 </pre><p>XML Schema types are associated with an optional C/C++ type declaration, a use reference, and a pointer-use reference. The pointer-use reference of the <code>xsd__byte</code> type for example, is <code>int*</code> because <code>char*</code> is reserved for strings.</p>
 <p>For example, you can replace the <code>std::string</code> that used by default for C++ with a wide string: </p><pre class="fragment">xsd__string = | std::wstring
 </pre><p>Or replace the <code>char*</code> strings that are used by default for C with <code>wchar_t*</code>: </p><pre class="fragment">xsd__string = | wchar_t* | wchar_t*
-</pre><p>When a type binding requires only the usage to be changed, the declaration part can be an ellipsis <code>...</code>, as in: </p><pre class="fragment">prefix__type = ... | use | ptr-use
+</pre><p>When the <code>ptr-use</code> part is not specified, it will be auto-generated as pointer <code>T*</code> for <code>use</code> type <code>T</code> or <code>std::shared_ptr&lt;T&gt;</code> when the variable <code>$POINTER = std::shared</code>.</p>
+<p>The <code>declaration</code> part need not be empty, for example if a type must be declared. For example: </p><pre class="fragment">xsd__string = typedef std::string mystring; | mystring | std::optional&lt;mystring&gt;
+</pre><p>When a type binding requires only the <code>use</code> part to be changed, the declaration part can be an ellipsis <code>...</code>, as in: </p><pre class="fragment">prefix__type = ... | use | ptr-use
 </pre><p>The <code>...</code> ellipsis ensures that the wsdl2h-generated type definition is preserved, while the <code>use</code> and <code>ptr-use</code> parts are amended as specified.</p>
 <p>This method is useful to serialize types dynamically, when XML elements carry the <em><code>xsi:type</code></em> attribute indicating the type of element content. The following illustrates an "any" type mapping for the <em><code>ns:sometype</code></em> XSD type in a schema. This type will be replaced with a "any" type wrapper that supports dynamic serialization of element types indicated by the <em><code>xsi:type</code></em> attribute: </p><pre class="fragment">[ 
 struct __any 
@@ -1770,6 +1772,9 @@ $CONTAINER = QVector
 </pre><p>Not all pointers in the generated output are replaced by smart pointers by wsdl2h, such as pointers as union members and pointers as struct/class members that point to arrays of values.</p>
 <p>The variable <b><code>$SIZE</code></b> defines the type of array sizes, which is <code>int</code> by default. For example, to change array size types to <code>size_t</code>: </p><pre class="fragment">$SIZE = size_t
 </pre><p>Permissible types are <code>int</code> and <code>size_t</code>. This variable does not affect the size of dynamic arrays, <code><a class="el" href="structxsd____hex_binary.html" title="XSD hexBinary structure with attachment data. ">xsd__hexBinary</a></code> and <code><a class="el" href="structxsd____base64_binary.html" title="XSD base64Binary structure with attachment data. ">xsd__base64Binary</a></code> types, which is always <code>int</code>.</p>
+<p>When C++17 is enabled with wsdl2h and soapcpp2 option <b><code>-c++17</code></b>, you can also semi-automatically enable <code>std::optional</code> declarations with optional class and structure member variables. This means that <code>std::optional</code> is used instead of a (smart) pointer to make a member optional.</p>
+<p>To enable <code>std::optional</code> with member variables that are primitive types, <code>typedef</code>, and <code>enum</code> automatically: </p><pre class="fragment">$OPTIONAL = std::optional
+</pre><p>Local unnamed simpleType restrictions may not adopt the specified optional type and still use pointers instead. This limitation may be lifted in a future release.</p>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h1><a class="anchor" id="soapcpp2"></a>
 The soapcpp2 tool</h1>
@@ -4835,7 +4840,7 @@ All rights reserved.</em> </p>
 Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Aug 31 2022 20:10:03 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun Dec 4 2022 15:33:25 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

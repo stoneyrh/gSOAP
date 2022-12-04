@@ -60,7 +60,7 @@
 
 ####### CLASS/STRUCT MEMBER ADDITIONS
 
-#       Additional data and function members can be provided to extend a
+#       Additional variable and function members can be provided to extend a
 #       wsdl2h-generated struct or class.
 #
 #       Class and struct extensions are of the form:
@@ -127,6 +127,17 @@
 #       Permissible types are int and size_t.  This variable does not affect
 #       the size of SOAP-encoded arrays, xsd__hexBinary and xsd__base64Binary
 #       types, which is always int.
+#
+#       The variable '$OPTIONAL' defines the template optional type to use in
+#       place of a pointer for an optional member variable, provided that the
+#       member type is a primitive type, or a typedef of a primitive type, or
+#       an enumeration. For example, C++17 std::optional:
+#
+#               $OPTIONAL = std::optional
+#
+#       Local unnamed simpleType restrictions may not adopt the specified
+#       optional type and still use pointers instead.  This limitation may be
+#       lifted in a future release.
  
 ####### USER-DEFINED CONTENT
 

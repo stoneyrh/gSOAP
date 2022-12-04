@@ -1468,6 +1468,13 @@ type    : VOID          { $$ = mkvoid(); }
                             if (!c11flag)
                               semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14 or -c++17");
                           }
+                          else if ($1 == lookup("std::optional"))
+                          {
+                            $$ = mktemplate($3.typ, $1);
+                            $$->transient = -2; /* volatile indicates smart pointer or optional template */
+                            if (!c11flag)
+                              semwarn("To use std::optional you should also use wsdl2h and soapcpp2 with option -c++17");
+                          }
                           else if ($1 == lookup("std::weak_ptr") ||
                               $1 == lookup("std::function"))
                           {

@@ -1710,7 +1710,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
   if (cflag)
     fprintf(stream, "\n//gsoapopt c,w\n");
   else if (c11flag)
-    fprintf(stream, "\n//gsoapopt c++11,w\n");
+    fprintf(stream, "\n//gsoapopt c++%d,w\n", c11flag);
   else
     fprintf(stream, "\n//gsoapopt c++,w\n");
   banner("Definitions", definitions.targetNamespace ? definitions.targetNamespace : "");
@@ -1745,6 +1745,12 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, "#include <set>\n");
         fprintf(stream, "template <class T> class %s;\n", s);
       }
+    }
+    s = types.vname("$OPTIONAL");
+    if (s && *s != '*' && *s != '$')
+    {
+      banner("$OPTIONAL typemap variable:", s);
+      fprintf(stream, "volatile template <class T> class %s;\n", s);
     }
     s = types.vname("$POINTER");
     if (s && *s != '*' && *s != '$')
