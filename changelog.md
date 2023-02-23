@@ -1733,11 +1733,17 @@ Version 2.8.123 (08/31/2022)
 - Minor update to make `std::string` typed element tags self-closing, which is consistent with `char*` typed element tags.
 - Minor improvement to HTTP header line processing to drop start-end quotes.
 
-Version 2.8.124 (12/04/2022) {#latest}
+Version 2.8.124 (12/04/2022)
 ---
-- Added C++17 `std::optional` member variable serialization.
-- Updated wsdl2h to automatically generates `std::optional` member variables for optional schemas when typedef.dat defines `$OPTIONAL = std::optional`.  Only primitive type member variables are made `std::optional`, not classes, because optional types must be defined before referenced when in fact cyclic data structure relationships may exist among classes.
+- Added support for C++17 `std::optional` member variable serialization.
+- Updated wsdl2h to automatically generate `std::optional` member variables for optional schemas when typemap.dat defines the new `$OPTIONAL = std::optional` configuration parameter.  However, as a compromise, only primitive type member variables are automatically made `std::optional`, not classes.  This choice was made because optional types must be defined before referenced, when in fact cyclic data structure relationships may exist among classes, which prohibit the use of `std::optional`.
 - Added missing `std::vector<xsd__anyType>` deep copy of vector of DOM trees generated with soapcpp2 option `-Ec`.
+
+Version 2.8.125 (02/23/2023) {#latest}
+---
+- Added WolfSSL support for HTTPS TLS/SSL secure communications with new compiler-time flag `WITH_WOLFSSL` and `./configure --enable-wolfssl`.
+- Added new example clients and servers to demonstrate XML and JSON transfers directly over TCP with (or without) TLS/SSL in samples/tcp, with detailed instructions in a README.
+- Minor improvement of the soapcpp2 `-Ec` option to deep copy C/C++ data.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Security plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Apr 5 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Feb 1 2023 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -105,7 +105,7 @@ Getting started</h2>
 <p>To use the wsse plugin:</p><ol type="1">
 <li>Run wsdl2h -t typemap.dat on a WSDL of a service that requires WS-Security headers. The typemap.dat file is used to recognize and translate Security header blocks for XML signature and encryption. The generated file also includes WS-Policy instructions with WS-Security requirements to follow, when WS-Policy is typically present in the WSDL.</li>
 <li>Run soapcpp2 on the header file produced by wsdl2h.</li>
-<li>(Re-)compile stdsoap2.c/pp, dom.c/pp, <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, <a class="el" href="wsseapi_8c.html">wsseapi.c</a> and the generated source files with the <code>-DWITH_DOM</code> and <code>-DWITH_OPENSSL</code> compiler flags set. The <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, and <a class="el" href="wsseapi_8c.html">wsseapi.c</a> files are located in the 'plugin' directory. If you used <code>./configure</code> to configure the software, then it is recommended to use <code>-DHAVE_CONFIG_H</code> to compile stdsoap2.c/pp and all other source code by including the config.h settings.</li>
+<li>(Re-)compile stdsoap2.c/pp, dom.c/pp, <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, <a class="el" href="wsseapi_8c.html">wsseapi.c</a> and the generated source files with the <code>-DWITH_DOM</code> and <code>-DWITH_OPENSSL</code> compiler flags to set the <code>WITH_DOM</code> and <code>WITH_OPENSSL</code> defines. The <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, and <a class="el" href="wsseapi_8c.html">wsseapi.c</a> files are located in the 'plugin' directory. If you used <code>./configure</code> to configure the software, then it is recommended to use <code>-DHAVE_CONFIG_H</code> to compile stdsoap2.c/pp and all other source code by including the config.h settings.</li>
 <li>Use the wsse plugin API functions described below to add and verify Security headers, sign and verify messages, and to encrypt/decrypt messages.</li>
 </ol>
 <p>An example WS-Security client/server application can be found in gsoap/samples/wsse that illustrates the use of the API to cover a wide range of WS-Security features. As a demo of the API, this example is not intended as a typical WS-Security client or server application.</p>
@@ -122,8 +122,8 @@ Getting started</h2>
 <li><code>gsoap/custom/struct_timeval.c</code> compile and link this file (C and C++).</li>
 <li><code><a class="el" href="smdevp_8c.html">gsoap/plugin/smdevp.c</a></code> compile and link this file (C and C++).</li>
 <li><code><a class="el" href="mecevp_8c.html">gsoap/plugin/mecevp.c</a></code> compile and link this file (C and C++).</li>
-<li>compile all sources with <code>-DWITH_OPENSSL -DWITH_DOM</code>.</li>
-<li>if you have zlib installed, compile all sources also with <code>-DWITH_GZIP</code>.</li>
+<li>compile all source code files with <code>-DWITH_OPENSSL</code> and <code>-DWITH_DOM</code>.</li>
+<li>if you have zlib installed, compile all source code files with <code>-DWITH_GZIP</code> to support compressed XML.</li>
 <li>link with <code>-lssl -lcrypto -lz -lgsoapssl++</code> (or <code>-lgsoapssl</code> for C, or compile <code>stdsoap2.cpp</code> for C++ and <code>stdsoap2.c</code> for C).</li>
 </ul>
 <p>The gSOAP header file (generated with wsdl2h, and containing the data binding interface for soapcpp2) should import <a class="el" href="wsse_8h.html">wsse.h</a>:</p>
@@ -488,10 +488,10 @@ WS-SecureConversation and WS-Trust</h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Apr 5 2022 14:45:15 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Feb 1 2023 15:53:51 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

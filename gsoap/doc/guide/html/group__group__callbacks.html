@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Callback functions</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Dec 4 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Feb 23 2023 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -262,7 +262,7 @@ Variables</h2></td></tr>
 <li><code><a class="el" href="group__group__callbacks.html#ga9084f0392e4a54287366121d30bc4830" title="Callback to write data in a MIME attachment stream. ">soap::fmimewrite</a></code></li>
 <li><code><a class="el" href="group__group__callbacks.html#ga8af884096b21cea1b69133843131a47b" title="Callback to close a MIME/MTOM attachment stream after writing. ">soap::fmimewriteclose</a></code></li>
 </ul>
-<p>OpenSSL and GNUTLS SSL/TLS callbacks:</p><ul>
+<p>OpenSSL, GNUTLS and WolfSSL client-side SSL/TLS certificate verification callbacks:</p><ul>
 <li><code><a class="el" href="group__group__callbacks.html#gaec56697005ded17d4d19705013f908ee" title="Callback to initialize the OpenSSL library. ">soap::fsslauth</a></code></li>
 <li><code><a class="el" href="group__group__callbacks.html#ga49fee9ca4a78f9a681afbdfbc0194bf0" title="Callback to manage the verification of the certificate provided by a peer (typically a server) ...">soap::fsslverify</a></code></li>
 </ul>
@@ -1295,7 +1295,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to initialize the OpenSSL library. </p>
-<p>This callback is called to initialize the OpenSSL or GNUTLS context for HTTPS connections configured with the parameters passed to <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code> and <code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code>. Returns <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> or a <code><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444" title="Status and error codes are int values, a zero value or SOAP_OK (0) means no error, nonzero means error. ">soap_status</a></code> (int) error code. The built-in function assigned to <code><a class="el" href="group__group__callbacks.html#gaec56697005ded17d4d19705013f908ee" title="Callback to initialize the OpenSSL library. ">soap::fsslauth</a></code> is <code>ssl_auth_init</code>.</p>
+<p>This callback is called to initialize the OpenSSL, GNUTLS, or WolfSSL context for HTTPS connections configured with the parameters passed to <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code> and <code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code>. Returns <code><a class="el" href="group__group__errors.html#ga3b10a68f354f39cbb0fe0d043ad4c7c0" title="The soap_status code for no error (zero) ">SOAP_OK</a></code> or a <code><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444" title="Status and error codes are int values, a zero value or SOAP_OK (0) means no error, nonzero means error. ">soap_status</a></code> (int) error code. The built-in function assigned to <code><a class="el" href="group__group__callbacks.html#gaec56697005ded17d4d19705013f908ee" title="Callback to initialize the OpenSSL library. ">soap::fsslauth</a></code> is <code>ssl_auth_init</code>.</p>
 <dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a8eb35c04359a567c0b5e2664f3f94d5b" title="User-definable variable that may point to user-specified data of any type to pass the data through to...">soap::user</a></code>.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1386,10 +1386,10 @@ Variables</h2></td></tr>
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Dec 4 2022 15:33:24 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Feb 23 2023 08:39:14 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

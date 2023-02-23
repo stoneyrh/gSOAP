@@ -274,6 +274,7 @@ struct value
   struct _base64&       operator=(const struct _base64&);
   struct _rawdata&      operator=(const struct _rawdata&);
   struct value&         operator=(const struct value&);
+  extern void           clear();                ///< clear value to unassigned
   extern void           size(int);              ///< set/allocate size of array
   extern int            size() const;           ///< returns array/struct size or 0
   extern bool           empty() const;          ///< true if empty array or struct

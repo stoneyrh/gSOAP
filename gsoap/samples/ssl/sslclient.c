@@ -6,7 +6,13 @@
         Build steps:
 
         soapcpp2 -c ssl.h
-        cc -DWITH_OPENSSL -o sslserver sslserver.c soapC.c soapClient.c stdsoap2.c thread_setup.c
+        cc -DWITH_OPENSSL -o sslclient sslclient.c soapC.c soapClient.c stdsoap2.c ssl_setup.c -lssl -lcrypto
+
+        with GNUTLS use "gnutls-cacert.pem" in soap_ssl_client_context() below:
+        cc -DWITH_GNUTLS -o sslclient sslclient.c soapC.c soapClient.c stdsoap2.c ssl_setup.c -lgnutls
+
+        with WOLFSSL use "gnutls-cacert.pem" in soap_ssl_client_context() below:
+        cc -DWITH_WOLFSSL -o sslclient sslclient.c soapC.c soapClient.c stdsoap2.c ssl_setup.c -lwolfssl
 
 	SSL-enabled services use the gSOAP SSL interface. See sslclient.c and
 	sslserver.c for example code with instructions and the gSOAP
@@ -61,7 +67,7 @@ int main()
   soap_init(&soap);
   a = 10.0;
   b = 20.0;
-#if defined(WITH_OPENSSL)
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS) || defined(WITH_WOLFSSL) || defined(WITH_SYSTEMSSL)
   /* Uncomment to call this first before all else if SSL is initialized elsewhere, e.g. in application code */
   /* soap_ssl_noinit(); */
   /* Init SSL before any threads are started (do this just once) */
@@ -97,7 +103,7 @@ int main()
     /* SOAP_SSL_DEFAULT, */ /* use SOAP_SSL_DEFAULT in production code */
     NULL, 		/* keyfile (cert+key): required only when client must authenticate to server (see SSL docs to create this file) */
     NULL, 		/* password to read the keyfile */
-    "cacert.pem",	/* optional cacert file to store trusted certificates, use cacerts.pem for all public certificates issued by common CAs */
+    "cacert.pem",	/* optional cacert file to store trusted certificates, use cacerts.pem for all public certificates issued by common CAs, use gnutls-cacert.pem with GNUTLS and WolfSSL see README.txt */
     NULL,		/* optional capath to directory with trusted certificates */
     NULL		/* if randfile!=NULL: use a file with random data to seed randomness */ 
   ))

@@ -221,6 +221,9 @@
 /* Define to 1 if you have the `uselocale' function. */
 #define HAVE_USELOCALE 1
 
+/* Define to 1 if you have the <wolfssl/ssl.h> header file. */
+#define HAVE_WOLFSSL_SSL_H 1
+
 /* Define to 1 if you have the <xlocale.h> header file. */
 #define HAVE_XLOCALE_H 1
 

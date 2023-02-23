@@ -1,13 +1,13 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.124
+        DOM API v5 gSOAP 2.8.125
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2022, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2023, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208124
+#define GSOAP_LIB_VERSION 208125
 
 #include "stdsoap2.h"
 
@@ -1680,9 +1680,7 @@ struct soap_dom_element *
 SOAP_FMAC2
 soap_elt_bool(struct soap_dom_element *elt, LONG64 b)
 {
-  if (elt)
-    elt->text = b ? "true" : "false";
-  return elt;
+  return soap_elt_text(elt, b ? "true" : "false");
 }
 
 /******************************************************************************/
@@ -2351,9 +2349,7 @@ struct soap_dom_attribute *
 SOAP_FMAC2
 soap_att_bool(struct soap_dom_attribute *att, LONG64 b)
 {
-  if (att)
-    att->text = b ? "true" : "false";
-  return att;
+  return soap_att_text(att, b ? "true" : "false");
 }
 
 /******************************************************************************/

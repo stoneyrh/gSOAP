@@ -31,13 +31,31 @@ The SSL-enabled applications are compiled with -DWITH_GNUTLS -DWITH_GZIP and
 linked with stdsoap2.c[pp] -lgnutls -lgcrypt -lz
 
 Note that stdsoap2.c[pp] MUST be compiled with -DWITH_GNUTLS to use GNUTLS,
-because libgsoapssl is built with OpenSSL by default.
+because libgsoapssl is built with OpenSSL by default it cannot be used.
 
 Note: GNUTLS does not support encrypted PEM keyfiles, so you cannot use the key
 files generated with OpenSSL and use them in a GNUTLS-enabled application.
+For sslclient.c and sslserver.c, use gnutls-server.pem and gnutls-cacert.pem to
+compile and run the client-server demo.
 
 GNUTLS mutex locks are automatically enabled by the gSOAP engine stdsoap2.c[pp]
 when pthreads are detected.
+
+
+Using WolfSSL
+-------------
+
+The SSL-enabled applications are compiled with -DWITH_WOLFSSL -DWITH_GZIP and
+linked with stdsoap2.c[pp] -lwolfssl -lz
+
+Note that stdsoap2.c[pp] MUST be compiled with -DWITH_WOLFSSL to use WolfSSL,
+because libgsoapssl is built with OpenSSL by default it cannot be used.
+
+Note: by default, the WolfSSL library does not support encrypted PEM keyfiles.
+In that case you cannot use the key files generated with OpenSSL and use them
+in a WolfSSL-enabled application.  For sslclient.c and sslserver.c, use
+gnutls-server.pem and gnutls-cacert.pem to compile and run the client-server
+demo.  Or rebuild the WolfSSL library with WOLFSSL_ENCRYPTED_KEYS enabled.
 
 
 How to automatically load certificates from common locations on Unix/Linux
@@ -77,8 +95,8 @@ parameter to common locations of certificates automatically.
 When the gSOAP CURL plugin is used when -DWITH_CURL is defined,
 soap_ssl_client_setup() uses the CURL certificate store.
 
-Compile the source code with -DWITH_OPENSSL or -DWITH_GNUTLS and link with
-OpenSSL or GNUTLS libraries.
+Compile the source code with -DWITH_OPENSSL, -DWITH_GNUTLS or -DWITH_WOLFSSL
+and link with the corresponding library.
 
 
 How to automatically load certificates on Windows machines
@@ -203,7 +221,7 @@ server are tightly coupled and must mutually trust each other.
 The server.pem and client.pem files actually hold both the private key and
 certificate.
 
-To print the contents of a PEM file:
+To display the contents of a PEM file:
 
     openssl x509 -text -in file.pem
 
@@ -297,8 +315,9 @@ certificates.
 The PEM files produced by GNUTLS can be used with OpenSSL.
 
 The PEM key files created with OpenSSL (such as server.pem and client.pem)
-CANNOT be used with GNUTLS, because they contain encrypted private keys that
-GNUTLS cannot read ("SSL/TLS error: Can't read key file").
+CANNOT be used with GNUTLS and WolfSSL, because they contain encrypted private
+keys that GNUTLS and WolfSSL cannot read giving an error message "SSL/TLS
+error: Can't read server key file".
 
 We can also use GNUTLS 'certtool' to create a Certificate Authority (CA) to
 sign client and server certificates as follows.

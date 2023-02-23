@@ -6,7 +6,13 @@
         Build steps:
 
         soapcpp2 -c ssl.h
-        cc -o sslserver sslserver.c soapC.c soapServer.c stdsoap2.c thread_setup.c
+        cc -DWITH_OPENSSL -o sslserver sslserver.c soapC.c soapServer.c stdsoap2.c -lssl -lcrypto -lpthread
+
+        with GNUTLS use "gnutls-server.pem" in soap_ssl_client_context() below:
+        cc -DWITH_GNUTLS -o sslserver sslserver.c soapC.c soapServer.c stdsoap2.c -lgnutls
+
+        with WOLFSSL use "gnutls-server.pem" in soap_ssl_client_context() below:
+        cc -DWITH_WOLFSSL -o sslserver sslserver.c soapC.c soapServer.c stdsoap2.c -lwolfssl
 
 	SSL-enabled services use the gSOAP SSL interface. See sslclient.c and
 	sslserver.c for example code with instructions and the gSOAP
@@ -65,7 +71,7 @@ int main()
   struct soap soap, *tsoap;
   /* init gsoap context */
   soap_init(&soap);
-#if defined(WITH_OPENSSL)
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS) || defined(WITH_WOLFSSL) || defined(WITH_SYSTEMSSL)
   /* Uncomment to call this first before all else if SSL is initialized elsewhere, e.g. in application code */
   /* soap_ssl_noinit(); */
   /* Init SSL before any threads are started (do this just once) */
@@ -95,7 +101,7 @@ int main()
   */
   if (soap_ssl_server_context(&soap,
     SOAP_SSL_DEFAULT,	/* use SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION to verify clients: client must provide a key file e.g. "client.pem" and "password" */
-    "server.pem",	/* keyfile (cert+key): see README.txt to create this file */
+    "server.pem",	/* keyfile (cert+key): see README.txt to create this file, use non-password protected gnutls-server.pem with GNUTLS and WolfSSL see README.txt */
     "password",		/* password to read the private key in the key file */
     NULL, 	        /* cacert file to store trusted certificates (to authenticate clients), see README.txt */
     NULL,		/* capath */
@@ -156,7 +162,7 @@ int main()
 void *process_request(struct soap *soap)
 {
   THREAD_DETACH(THREAD_ID);
-#if defined(WITH_OPENSSL)
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS) || defined(WITH_WOLFSSL) || defined(WITH_SYSTEMSSL)
   if (soap_ssl_accept(soap) != SOAP_OK)
   {
     /* when soap_ssl_accept() fails, socket is closed and SSL data reset */

@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2023, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL.
 --------------------------------------------------------------------------------
@@ -127,12 +127,12 @@ const char sizeparaformat[]            = "  $ %-35s __size%s%s";
 const char pointertemplateparaformat[] = "    %s<%-21s>*%s%s%s";
 const char derivedformat[]             = "  [ %-35s *%-30s; ]";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/WADL/XSD processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2021 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/WADL/XSD processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2023 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
 gSOAP XML Web services tools\n\
-Copyright (C) 2000-2021, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
+Copyright (C) 2000-2023, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
 The wsdl2h tool and its generated software are released under the GPL.\n\
 This software is released under the GPL with the additional exemption that\n\
 compiling, linking, and/or using OpenSSL is allowed.\n\

@@ -105,7 +105,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 #endif
 
-#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS)) && !defined(SOAP_CLIENT_OS_WINDOWS) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
+#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS) || defined(WITH_WOLFSSL)) && !defined(SOAP_CLIENT_OS_WINDOWS) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
 
 #include <sys/stat.h> 
 
@@ -178,7 +178,7 @@ const char *search_ssl_cacert_default_path()
 
 #endif
 
-#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS)) && defined(SOAP_CLIENT_OS_WINDOWS) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
+#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS) || defined(WITH_WOLFSSL)) && defined(SOAP_CLIENT_OS_WINDOWS) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
 
 #include <windows.h>
 #include <Wincrypt.h>
@@ -226,7 +226,7 @@ static bool Add_InStore_from_Windows_Store(X509_STORE *store, LPCWSTR szSubsyste
  
 #endif
 
-#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS)) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
+#if (defined(WITH_OPENSSL) || defined(WITH_GNUTLS) || defined(WITH_WOLFSSL)) && !defined(WITH_WININET) && !defined(GSOAP_WIN_WININET) && !defined(WITH_CURL)
 int soap_ssl_client_setup(
     struct soap *soap,    /* the context */
     unsigned short flags, /* SOAP_SSL_DEFAULT, SOAP_SSL_NO_AUTHENTICATION etc */
@@ -235,7 +235,6 @@ int soap_ssl_client_setup(
     const char *cacert,   /* optionally assign file name of certificates PEM file, NULL to search certificate stores */
     const char *capath)   /* optionally assign path to certificates PEM files, NULL to search certificate stores */
 {
-
   if ((flags & SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION) && !cacert && !capath)
   {
     cacert = search_ssl_cacert_default_file();
@@ -271,13 +270,14 @@ int soap_ssl_client_setup(
 }
 #else
 int soap_ssl_client_setup(
-    struct soap *,
-    unsigned short,
-    const char *,
-    const char *,
-    const char *,
-    const char *)
+    struct soap *soap,    /* the context */
+    unsigned short flags, /* SOAP_SSL_DEFAULT, SOAP_SSL_NO_AUTHENTICATION etc */
+    const char *keyfile,  /* required only when client must authenticate to server, NULL otherwise */
+    const char *password, /* password to read the key file (not used with GNUTLS), NULL otherwise */
+    const char *cacert,   /* optionally assign file name of certificates PEM file, NULL to search certificate stores */
+    const char *capath)   /* optionally assign path to certificates PEM files, NULL to search certificate stores */
 {
+  (void)soap; (void)flags; (void)keyfile; (void)password; (void)cacert; (void)capath;
   return SOAP_OK;
 }
 #endif

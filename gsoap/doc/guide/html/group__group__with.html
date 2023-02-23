@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">WITH_MACRO compile-time flags</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Dec 4 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Feb 23 2023 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -98,11 +98,14 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga2854fe8474c2f87a9916d892306cb94c"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), IPv6-only is enabled for port binding at the server side by the engine to ensure that a socket will only use IPv6 without mapping IPv4 to IPv6.  <a href="#ga2854fe8474c2f87a9916d892306cb94c">More...</a><br /></td></tr>
 <tr class="separator:ga2854fe8474c2f87a9916d892306cb94c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae5fa06f0e13edb611016c85364b0d0f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#gae5fa06f0e13edb611016c85364b0d0f0">WITH_OPENSSL</a></td></tr>
-<tr class="memdesc:gae5fa06f0e13edb611016c85364b0d0f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), enables linkage with OpenSSL for HTTPS and WS-Security (this macro should also be defined when using plugins that rely on OpenSSL)  <a href="#gae5fa06f0e13edb611016c85364b0d0f0">More...</a><br /></td></tr>
+<tr class="memdesc:gae5fa06f0e13edb611016c85364b0d0f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), enables activation and linkage with OpenSSL for HTTPS and WS-Security (this macro should also be defined when using plugins that rely on OpenSSL)  <a href="#gae5fa06f0e13edb611016c85364b0d0f0">More...</a><br /></td></tr>
 <tr class="separator:gae5fa06f0e13edb611016c85364b0d0f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaba33a0ba79add64c641997a7e5070f27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#gaba33a0ba79add64c641997a7e5070f27">WITH_GNUTLS</a></td></tr>
-<tr class="memdesc:gaba33a0ba79add64c641997a7e5070f27"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), enables linking the GNUTLS library to enable HTTPS in the engine.  <a href="#gaba33a0ba79add64c641997a7e5070f27">More...</a><br /></td></tr>
+<tr class="memdesc:gaba33a0ba79add64c641997a7e5070f27"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), enables activation and linkage the GNUTLS library to enable HTTPS in the engine.  <a href="#gaba33a0ba79add64c641997a7e5070f27">More...</a><br /></td></tr>
 <tr class="separator:gaba33a0ba79add64c641997a7e5070f27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad10abbdcee2595b6ad21dbf595d7ca8c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#gad10abbdcee2595b6ad21dbf595d7ca8c">WITH_WOLFSSL</a></td></tr>
+<tr class="memdesc:gad10abbdcee2595b6ad21dbf595d7ca8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), enables activation and linkage of the WolfSSL library to enable HTTPS in the engine.  <a href="#gad10abbdcee2595b6ad21dbf595d7ca8c">More...</a><br /></td></tr>
+<tr class="separator:gad10abbdcee2595b6ad21dbf595d7ca8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad30a07ea604aea8cb00f41f6310cf30f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__with.html#gad30a07ea604aea8cb00f41f6310cf30f">WITH_GZIP</a></td></tr>
 <tr class="memdesc:gad30a07ea604aea8cb00f41f6310cf30f"><td class="mdescLeft">&#160;</td><td class="mdescRight">When this macro is defined at compile time (undefined by default), enables linkage with the zlib library for HTTP message compression (using compress and gzip methods) when the <code><a class="el" href="group__group__flags.html#gafa62be7ba46b50d58608a066f442c2a8" title="soap_mode ENC output flag value to compress messages sent, requires zlib enabled with compile-time fl...">SOAP_ENC_ZLIB</a></code> mode flag is enabled at runtime.  <a href="#gad30a07ea604aea8cb00f41f6310cf30f">More...</a><br /></td></tr>
 <tr class="separator:gad30a07ea604aea8cb00f41f6310cf30f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,8 +197,9 @@ Macros</h2></td></tr>
 <li><code><a class="el" href="group__group__with.html#gab08b437f239f365c2a266d25e45b0148" title="When this macro is defined at compile time (undefined by default), HTTP cookie support is enabled (as...">WITH_INSECURE_COOKIES</a></code></li>
 <li><code><a class="el" href="group__group__with.html#ga40cbd680e7dbdeb63bce1d6d4b7b9620" title="When this macro is defined at compile time (undefined by default), IPv6 support is enabled and both I...">WITH_IPV6</a></code></li>
 <li><code><a class="el" href="group__group__with.html#ga2854fe8474c2f87a9916d892306cb94c" title="When this macro is defined at compile time (undefined by default), IPv6-only is enabled for port bind...">WITH_IPV6_V6ONLY</a></code></li>
-<li><code><a class="el" href="group__group__with.html#gae5fa06f0e13edb611016c85364b0d0f0" title="When this macro is defined at compile time (undefined by default), enables linkage with OpenSSL for H...">WITH_OPENSSL</a></code></li>
-<li><code><a class="el" href="group__group__with.html#gaba33a0ba79add64c641997a7e5070f27" title="When this macro is defined at compile time (undefined by default), enables linking the GNUTLS library...">WITH_GNUTLS</a></code></li>
+<li><code><a class="el" href="group__group__with.html#gae5fa06f0e13edb611016c85364b0d0f0" title="When this macro is defined at compile time (undefined by default), enables activation and linkage wit...">WITH_OPENSSL</a></code></li>
+<li><code><a class="el" href="group__group__with.html#gaba33a0ba79add64c641997a7e5070f27" title="When this macro is defined at compile time (undefined by default), enables activation and linkage the...">WITH_GNUTLS</a></code></li>
+<li><code><a class="el" href="group__group__with.html#gad10abbdcee2595b6ad21dbf595d7ca8c" title="When this macro is defined at compile time (undefined by default), enables activation and linkage of ...">WITH_WOLFSSL</a></code></li>
 <li><code><a class="el" href="group__group__with.html#gad30a07ea604aea8cb00f41f6310cf30f" title="When this macro is defined at compile time (undefined by default), enables linkage with the zlib libr...">WITH_GZIP</a></code></li>
 <li><code><a class="el" href="group__group__with.html#gad2cdc1f87f3fc46b92e957d9e251797c" title="When this macro is defined at compile time (undefined by default), enables linking the zlib library f...">WITH_ZLIB</a></code></li>
 <li><code><a class="el" href="group__group__with.html#ga4a743d1499292194cfc81d305500c83f" title="When this macro is defined at compile time (undefined by default), enables linkage with the ntlm libr...">WITH_NTLM</a></code></li>
@@ -442,7 +446,7 @@ c++ -D WITH_FASTCGI -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp
       </table>
 </div><div class="memdoc">
 
-<p>When this macro is defined at compile time (undefined by default), enables linking the GNUTLS library to enable HTTPS in the engine. </p>
+<p>When this macro is defined at compile time (undefined by default), enables activation and linkage the GNUTLS library to enable HTTPS in the engine. </p>
 <p>Use the following functions to configure SSL/TLS connections and to accept SSL/TLS connections:</p><ul>
 <li><code><a class="el" href="group__group__ssl.html#ga570b262ac9d55fc509f1f5999deaa18f" title="Initialize the SSL/TLS library. ">soap_ssl_init</a></code></li>
 <li><code><a class="el" href="group__group__ssl.html#ga0391e39e900926438969dc2461634574" title="Do not initalized the SSL/TLS library. ">soap_ssl_noinit</a></code></li>
@@ -452,7 +456,9 @@ c++ -D WITH_FASTCGI -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp
 <li><code><a class="el" href="group__group__ssl.html#ga990083effa5d8ed931fd75dc2630a2cc" title="Accept SSL/TLS connection. ">soap_ssl_accept</a></code></li>
 </ul>
 <dl class="section user"><dt>Examples:</dt><dd><pre class="fragment">c++ -D WITH_GNUTLS -o client stdsoap2.cpp soapC.cpp soapClient.cpp client.cpp -lgnutls
-c++ -D WITH_GNUTLS -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lgnutls</pre> </dd></dl>
+c++ -D WITH_GNUTLS -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lgnutls
+</pre></dd></dl>
+<p>Link with libgnutls and optionally libgcrypt and libgpg-error. </p>
 
 </div>
 </div>
@@ -796,9 +802,9 @@ c++ -D WITH_NTLM -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lnt
       </table>
 </div><div class="memdoc">
 
-<p>When this macro is defined at compile time (undefined by default), enables linkage with OpenSSL for HTTPS and WS-Security (this macro should also be defined when using plugins that rely on OpenSSL) </p>
+<p>When this macro is defined at compile time (undefined by default), enables activation and linkage with OpenSSL for HTTPS and WS-Security (this macro should also be defined when using plugins that rely on OpenSSL) </p>
 <p>OpenSSL 3.0 and 1.1 are supported. Earlier OpenSSL versions are also supported, but not recommended.</p>
-<p>An alternative to OpenSSL is GNUTLS. Use <code><a class="el" href="group__group__with.html#gaba33a0ba79add64c641997a7e5070f27" title="When this macro is defined at compile time (undefined by default), enables linking the GNUTLS library...">WITH_GNUTLS</a></code>.</p>
+<p>Alternatives to OpenSSL are GNUTLS and WolfSSL with <code><a class="el" href="group__group__with.html#gaba33a0ba79add64c641997a7e5070f27" title="When this macro is defined at compile time (undefined by default), enables activation and linkage the...">WITH_GNUTLS</a></code> or <code><a class="el" href="group__group__with.html#gad10abbdcee2595b6ad21dbf595d7ca8c" title="When this macro is defined at compile time (undefined by default), enables activation and linkage of ...">WITH_WOLFSSL</a></code>.</p>
 <p>Use the following functions to configure SSL/TLS connections and to accept SSL/TLS connections:</p><ul>
 <li><code><a class="el" href="group__group__ssl.html#ga570b262ac9d55fc509f1f5999deaa18f" title="Initialize the SSL/TLS library. ">soap_ssl_init</a></code></li>
 <li><code><a class="el" href="group__group__ssl.html#ga0391e39e900926438969dc2461634574" title="Do not initalized the SSL/TLS library. ">soap_ssl_noinit</a></code></li>
@@ -936,6 +942,32 @@ c++ -D SOAPDEFS_H=mydefs.h -o client stdsoap2.cpp dom.cpp soapC.cpp soapClient.c
 
 </div>
 </div>
+<a class="anchor" id="gad10abbdcee2595b6ad21dbf595d7ca8c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define WITH_WOLFSSL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>When this macro is defined at compile time (undefined by default), enables activation and linkage of the WolfSSL library to enable HTTPS in the engine. </p>
+<p>Use the following functions to configure SSL/TLS connections and to accept SSL/TLS connections:</p><ul>
+<li><code><a class="el" href="group__group__ssl.html#ga570b262ac9d55fc509f1f5999deaa18f" title="Initialize the SSL/TLS library. ">soap_ssl_init</a></code></li>
+<li><code><a class="el" href="group__group__ssl.html#ga0391e39e900926438969dc2461634574" title="Do not initalized the SSL/TLS library. ">soap_ssl_noinit</a></code></li>
+<li><code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code></li>
+<li><code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code></li>
+<li><code><a class="el" href="group__group__ssl.html#gae4052d1c701d1756c3e1b86c740881d5" title="Enable SSL/TLS CRLs. ">soap_ssl_crl</a></code></li>
+<li><code><a class="el" href="group__group__ssl.html#ga990083effa5d8ed931fd75dc2630a2cc" title="Accept SSL/TLS connection. ">soap_ssl_accept</a></code></li>
+</ul>
+<dl class="section user"><dt>Examples:</dt><dd><pre class="fragment">c++ -D WITH_WOLFSSL -o client stdsoap2.cpp soapC.cpp soapClient.cpp client.cpp -lwolfssl
+c++ -D WITH_WOLFSSL -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lwolfssl
+</pre></dd></dl>
+<p>Link with libwolfssl. </p>
+
+</div>
+</div>
 <a class="anchor" id="gad2cdc1f87f3fc46b92e957d9e251797c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -959,10 +991,10 @@ c++ -D WITH_ZLIB -o server stdsoap2.cpp soapC.cpp soapServer.cpp server.cpp -lz
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Dec 4 2022 15:33:24 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Feb 23 2023 08:39:14 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

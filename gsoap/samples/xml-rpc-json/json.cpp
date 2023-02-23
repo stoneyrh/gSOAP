@@ -652,7 +652,7 @@ int json_call(struct soap *soap, const char *endpoint, const struct value *in, s
   {
     if (out)
       json_error(soap, out);
-    else if (soap->error == 200 || soap->error == 201 || soap->error == 202)
+    else if (soap->error == 200 || soap->error == 201 || soap->error == 202 || soap->error == SOAP_EOF)
       soap->error = SOAP_OK;
   }
   return soap_closesock(soap);
@@ -706,9 +706,18 @@ std::ostream& operator<<(std::ostream& o, const struct value& v)
   if (v.soap)
   {
     std::ostream *os = v.soap->os;
+    SOAP_SOCKET sk = v.soap->socket;
+#ifndef UNDER_CE
+    int fd = v.soap->sendfd;
+#else
+    FILE *fd = v.soap->sendfd;
+#endif
+    v.soap->socket = SOAP_INVALID_SOCKET;
     v.soap->os = &o;
     if (json_write(v.soap, v))
       o.clear(std::ios::failbit); // writing JSON data failed (must be a stream error)
+    v.soap->sendfd = fd;
+    v.soap->socket = sk;
     v.soap->os = os;
   }
   else

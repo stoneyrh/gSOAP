@@ -96,7 +96,7 @@ AC_SUBST(SAMPLE_EXTRA_LIBS)
 AC_SUBST(platform)
 
 # Checks for header files.
-AC_CHECK_HEADERS([arpa/inet.h locale.h xlocale.h errno.h fcntl.h ctype.h limits.h float.h math.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h time.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h])
+AC_CHECK_HEADERS([arpa/inet.h locale.h xlocale.h errno.h fcntl.h ctype.h limits.h float.h math.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h time.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h wolfssl/ssl.h zlib.h])
 
 
 AC_CHECK_TYPES([socklen_t],,,
@@ -282,16 +282,23 @@ AC_ARG_WITH([openssl],
 # the disable-ssl option removes the dependence on OpenSSL
 AC_ARG_ENABLE(ssl,
               [AS_HELP_STRING([--disable-ssl],
-                              [build without SSL/TLS -- note: the wsse and wst examples will fail to build])],
+                              [build without TLS/SSL -- note: the wsse and wst examples will fail to build])],
               [with_openssl="$enable_ssl"],
               [with_openssl="yes"])
 
 # the enable-gnutls option enables GNUTLS in favor of OpenSSL
 AC_ARG_ENABLE(gnutls,
               [AS_HELP_STRING([--enable-gnutls],
-                              [build with GNUTLS SSL/TLS])],
+                              [build with GNUTLS TLS/SSL])],
               [with_gnutls="$enable_gnutls"],
               [with_gnutls="no"])
+
+# the enable-wolfssl option enables WolfSSL in favor of OpenSSL
+AC_ARG_ENABLE(wolfssl,
+              [AS_HELP_STRING([--enable-wolfssl],
+                              [build with WolfSSL TLS/SSL])],
+              [with_wolfssl="$enable_wolfssl"],
+              [with_wolfssl="no"])
 
 AC_MSG_CHECKING(for disable openssl in library)
 if test "x$with_openssl" = "xyes"; then
@@ -305,13 +312,22 @@ if test "x$with_openssl" = "xyes"; then
     SAMPLE_SSL_LIBS="-lgnutls -lgcrypt -lgpg-error -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
   else
-    AC_MSG_RESULT(no)
-    WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
-    # compile with wsdl2h when OPENSSL is available
-    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} -lssl -lcrypto -lz"
-    SAMPLE_INCLUDES=
-    SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
-    WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
+    if test "x$with_wolfssl" = "xyes"; then
+      AC_MSG_RESULT(yes)
+      WSDL2H_EXTRA_FLAGS="-DWITH_WOLFSSL -DWITH_GZIP"
+      WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} -lwolfssl -lz"
+      SAMPLE_INCLUDES=
+      SAMPLE_SSL_LIBS="-lwolfssl -lz"
+      WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
+    else
+      AC_MSG_RESULT(no)
+      WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
+      # compile with wsdl2h when OPENSSL is available
+      WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} -lssl -lcrypto -lz"
+      SAMPLE_INCLUDES=
+      SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
+      WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
+    fi
   fi
   if test -n "$ZLIB"; then
     WSDL2H_EXTRA_FLAGS="-I${ZLIB}/include ${WSDL2H_EXTRA_FLAGS}"
@@ -332,7 +348,7 @@ else
   SAMPLE_INCLUDES=
   WSDL2H_SOAP_CPP_LIB="libgsoap++.a"
 fi
-AM_CONDITIONAL([WITH_OPENSSL], [test "x$with_openssl" = "xyes" -a "x$with_gnutls" != "xyes"])
+AM_CONDITIONAL([WITH_OPENSSL], [test "x$with_openssl" = "xyes" -a "x$with_gnutls" != "xyes" -a "x$with_wolfssl" != "xyes"])
 AC_SUBST(WSDL2H_EXTRA_FLAGS)
 AC_SUBST(WSDL2H_EXTRA_LIBS)
 AC_SUBST(SAMPLE_INCLUDES)
@@ -418,6 +434,7 @@ AC_CONFIG_FILES([ Makefile \
     gsoap/samples/ssl/Makefile \
     gsoap/samples/template/Makefile \
     gsoap/samples/udp/Makefile \
+    gsoap/samples/tcp/Makefile \
     gsoap/samples/varparam/Makefile \
     gsoap/samples/wsa/Makefile \
     gsoap/samples/wsrm/Makefile \

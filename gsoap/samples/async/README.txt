@@ -1,11 +1,15 @@
 Simple examples illustrating asynchronous messaging with SOAP and REST.
 
 The SOAP examples are a calculator web service and invoke 'add' and 'mul'
-service operations.  The REST examples use GET, PUT, and POST of and XML
-record to the REST server.  The web server used by these examples is the
-gSOAP demo web server located in gsoap/samples/webserver, which should be build
-to run the examples.  The gSOAP webserver optionally uses the httppipe HTTP
-pipelining plugin to support HTTP pipelining.
+service operations.  The REST examples GET, PUT, and POST an XML record to the
+REST server.  The web server used by these examples is the gSOAP demo web
+server located in gsoap/samples/webserver, which should be build to run the
+examples.  The gSOAP webserver optionally uses the httppipe HTTP pipelining
+plugin to support HTTP pipelining.
+
+Instead of XML, also JSON REST async can be implemented in the same way by
+replacing XML with JSON using the JSON plugin for gSOAP, see
+samples/xml-rpc-json on how to send and receive JSON payloads.
 
 Note that true asynchronous messaging expects non-blocking operations.
 However, message sends and receives cannot be interrupted without losing their
@@ -21,20 +25,20 @@ GET messages.
 
 Examples:
 
-- asyncsoap.c   C example SOAP asynchronous messaging with one thread
-- asyncsoap.cpp C++ example SOAP asynchronous messaging with one thread
-- asyncrest.c   C example REST asynchronous messaging with one thread
-- asyncrest.cpp C++ example REST asynchronous messaging with one thread
+- asyncsoap.c   C example SOAP/XML asynchronous messaging with one thread
+- asyncsoap.cpp C++ example SOAP/XML asynchronous messaging with one thread
+- asyncrest.c   C example REST XML asynchronous messaging with one thread
+- asyncrest.cpp C++ example REST XML asynchronous messaging with one thread
 
-- asyncsoap2.c   C example SOAP asynchronous messaging with threads
-- asyncsoap2.cpp C++ example SOAP asynchronous messaging with threads
-- asyncrest2.c   C example REST asynchronous messaging with threads
-- asyncrest2.cpp C++ example REST asynchronous messaging with threads
+- asyncsoap2.c   C example SOAP/XML asynchronous messaging with threads
+- asyncsoap2.cpp C++ example SOAP/XML asynchronous messaging with threads
+- asyncrest2.c   C example REST XML asynchronous messaging with threads
+- asyncrest2.cpp C++ example REST XML asynchronous messaging with threads
 
-- asyncsoap3.c   C example SOAP asynchronous pipelined messaging with threads
-- asyncsoap3.cpp C++ example SOAP asynchronous pipelined messaging with threads
-- asyncrest3.c   C example REST asynchronous pipelined messaging with threads
-- asyncrest3.cpp C++ example REST asynchronous pipelined messaging with threads
+- asyncsoap3.c   C example SOAP/XML asynchronous pipelined messaging with threads
+- asyncsoap3.cpp C++ example SOAP/XML asynchronous pipelined messaging with threads
+- asyncrest3.c   C example REST XML asynchronous pipelined messaging with threads
+- asyncrest3.cpp C++ example REST XML asynchronous pipelined messaging with threads
 
 To build the C examples:
 

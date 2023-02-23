@@ -1,10 +1,10 @@
 /*
-        stdsoap2.h 2.8.124
+        stdsoap2.h 2.8.125
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or the gSOAP public license.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 208124
+#define GSOAP_VERSION 208125
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -930,6 +930,10 @@ extern intmax_t __strtoull(const char*, char**, int);
 #   define HAVE_PTHREAD_H /* make GNUTLS thread safe */
 #  endif
 # endif
+#endif
+
+#ifdef WITH_WOLFSSL
+# include <wolfssl/ssl.h>
 #endif
 
 #ifdef WITH_SYSTEMSSL
@@ -2848,12 +2852,21 @@ struct SOAP_CMAC soap
   gnutls_session_t session;                     /* session pointer */
   gnutls_dh_params_t dh_params;
   gnutls_rsa_params_t rsa_params;
+#elif defined(WITH_WOLFSSL)     /* WolfSSL */
+  int (*fsslauth)(struct soap*);
+  VerifyCallback fsslverify;    /* callback to verify certificates */
+  void *bio;                    /* N/A */
+  WOLFSSL *ssl;                 /* ssl socket */
+  WOLFSSL_CTX *ctx;             /* environment */
+  void *session;                /* N/A */
+  const char *dhfile;           /* N/A */
+  const char *randfile;         /* N/A */
 #elif defined(WITH_SYSTEMSSL)   /* SYSTEM SSL */
   int (*fsslauth)(struct soap*);
   void *fsslverify;             /* N/A */
   void *bio;                    /* N/A */
-  gsk_handle ctx;               /* environment */
   gsk_handle ssl;               /* ssl socket */
+  gsk_handle ctx;               /* environment */
   void *session;                /* N/A */
   const char *dhfile;           /* N/A */
   const char *randfile;         /* N/A */

@@ -247,6 +247,7 @@ var stdsoap2_8h =
     [ "WITH_SOCKET_CLOSE_ON_EXIT", "group__group__with.html#ga11ff99091a8f7fa179705bb3bff1aed2", null ],
     [ "WITH_SSL_FULL_SHUTDOWN", "group__group__with.html#ga861b3552cdade3f062b0caa2e187746f", null ],
     [ "WITH_TCPFIN", "group__group__with.html#ga32da1a1af344a155b0ad01e6dbb7daaa", null ],
+    [ "WITH_WOLFSSL", "group__group__with.html#gad10abbdcee2595b6ad21dbf595d7ca8c", null ],
     [ "WITH_ZLIB", "group__group__with.html#gad2cdc1f87f3fc46b92e957d9e251797c", null ],
     [ "_QName", "group__group__context.html#gaa178a46d0cf703ff226a5c148483286d", null ],
     [ "_XML", "group__group__context.html#ga5c62d26b4823b76c5b4ef29e7865d3f0", null ],

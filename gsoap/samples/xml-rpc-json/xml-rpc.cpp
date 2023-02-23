@@ -631,6 +631,11 @@ value& value::operator=(const value& v)
   return *this;
 }
 
+void value::clear()
+{
+  soap_default_value(soap, this);
+}
+
 void value::size(int n)
 {
   if (__type == SOAP_TYPE__array)

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">soap Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Dec 4 2022 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Feb 23 2023 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -1223,7 +1223,7 @@ Public Attributes</h2></td></tr>
 
 <p>OpenSSL context pointer. </p>
 <p>This pointer is non-NULL after calling <code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code> or <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code> and points to the OpenSSL context which can be configured with OpenSSL API functions such as <code>SSL_CTX_set_cipher_list</code>.</p>
-<dl class="section note"><dt>Note</dt><dd>Requires compilation with <code><a class="el" href="group__group__with.html#gae5fa06f0e13edb611016c85364b0d0f0" title="When this macro is defined at compile time (undefined by default), enables linkage with OpenSSL for H...">WITH_OPENSSL</a></code>.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Requires compilation with <code><a class="el" href="group__group__with.html#gae5fa06f0e13edb611016c85364b0d0f0" title="When this macro is defined at compile time (undefined by default), enables activation and linkage wit...">WITH_OPENSSL</a></code>.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code>, <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code>. </dd></dl>
 
 </div>
@@ -1300,7 +1300,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>User-definable <em><code>SOAP-ENV:encodingStyle</code></em> URI value. </p>
-<p>This URI string value is pre-defined by the engine depending on the SOAP protocol version used, setting this to NULL means no SOAP encodingStyle, setting this to "" means that the engine will set the encodingStyle URI according to the SOAP version used.</p>
+<p>This URI string value is pre-defined by the engine depending on the SOAP protocol version used, setting this to NULL means no SOAP encodingStyle. Setting this to an empty string "" means that the engine will set the encodingStyle URI according to the SOAP version used. However, the encodingStyle is always set if the interface header file for soappcpp2 explicitly specifies an encoding or literal.</p>
 <dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a39daa19f039aebc76b8c4b6bf933570a" title="SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap::version</a></code>, <code><a class="el" href="group__group__context.html#ga7c0a034b54cd46ee06ce1253e5a40467" title="Set SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap_set_version</a></code>. </dd></dl>
 
 </div>
@@ -2347,10 +2347,10 @@ Public Attributes</h2></td></tr>
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2022, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Dec 4 2022 15:33:24 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Feb 23 2023 08:39:14 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

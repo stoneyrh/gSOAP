@@ -1095,6 +1095,7 @@ with `is_int()` you can then safely cast value with e.g.  `int64_t n = v`.
 The following methods can be used to inspect arrays and structs (JSON objects):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    void value::clear()                    // clear value to unassigned
     void value::size(int)                  // reset array size or pre-allocate space
     int value::size()                      // returns array or struct size or 0
     bool value::empty()                    // true if array or struct is empty
@@ -2016,7 +2017,7 @@ List of files                                                         {#c-files}
 
 The following files define XML-RPC operations and data types:
 
-- `xml-rpc.c`:  XML-RPC C API
+- `xml-rpc.c`:  XML-RPC and JSON C API functions to inspect and manipulate data
 - `xml-rpc.h`:  XML-RPC data binding as a gSOAP .h file for soapcpp2
                 (do not #include this file in your project builds)
 
@@ -2244,6 +2245,7 @@ example `int64_t n = *int_of(v)`.
 The following functions can be used with arrays and structs (JSON objects):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    void clear_value(v)                        /* clear value to unassigned */
     void set_struct(v)                         /* reset/create an empty struct */
     void set_size(v, int)                      /* reset/change array size or pre-allocate space */
     int has_size(v)                            /* returns array or struct size or 0 */

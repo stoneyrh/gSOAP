@@ -105,10 +105,11 @@ To use the wsse plugin:
 -# Run soapcpp2 on the header file produced by wsdl2h.
 -# (Re-)compile stdsoap2.c/pp, dom.c/pp, smdevp.c, mecevp.c, wsseapi.c and the
    generated source files with the `-DWITH_DOM` and `-DWITH_OPENSSL` compiler
-   flags set. The smdevp.c, mecevp.c, and wsseapi.c files are located in the
-   'plugin' directory.  If you used `./configure` to configure the software,
-   then it is recommended to use `-DHAVE_CONFIG_H` to compile stdsoap2.c/pp and
-   all other source code by including the config.h settings.
+   flags to set the `WITH_DOM` and `WITH_OPENSSL` defines. The smdevp.c,
+   mecevp.c, and wsseapi.c files are located in the 'plugin' directory.  If you
+   used `./configure` to configure the software, then it is recommended to use
+   `-DHAVE_CONFIG_H` to compile stdsoap2.c/pp and all other source code by
+   including the config.h settings.
 -# Use the wsse plugin API functions described below to add and verify
    Security headers, sign and verify messages, and to encrypt/decrypt messages.
 
@@ -143,8 +144,8 @@ You will also need:
 - `gsoap/custom/struct_timeval.c` compile and link this file (C and C++).
 - `gsoap/plugin/smdevp.c` compile and link this file (C and C++).
 - `gsoap/plugin/mecevp.c` compile and link this file (C and C++).
-- compile all sources with `-DWITH_OPENSSL -DWITH_DOM`.
-- if you have zlib installed, compile all sources also with `-DWITH_GZIP`.
+- compile all source code files with `-DWITH_OPENSSL` and `-DWITH_DOM`.
+- if you have zlib installed, compile all source code files with `-DWITH_GZIP` to support compressed XML.
 - link with `-lssl -lcrypto -lz -lgsoapssl++` (or `-lgsoapssl` for C, or compile `stdsoap2.cpp` for C++ and `stdsoap2.c` for C).
 
 The gSOAP header file (generated with wsdl2h, and containing the data binding
@@ -2310,6 +2311,14 @@ Similarly, PSHA256 can be computed by calling `soap_psha256()`.
 
 #if defined(SOAP_WSA_2003) || defined(SOAP_WSA_2004) || defined(SOAP_WSA_200408) || defined(SOAP_WSA_2005)
 #include "wsaapi.h"
+#endif
+
+#ifndef WITH_OPENSSL
+#error "wsseapi.c, stdsoap2.c/stdsoap2.cpp, smdevp.c, mecevp.c, and all other source code files must be compiled with -DWITH_OPENSSL to use WS-Security"
+#endif
+
+#ifndef WITH_DOM
+#error "wsseapi.c, stdsoap2.c/stdsoap2.cpp, dom.c/dom.cpp, and all other source code files must be compiled with -DWITH_DOM to use WS-Security"
 #endif
 
 #ifdef __cplusplus
