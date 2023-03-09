@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.125
+        DOM API v5 gSOAP 2.8.126
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,16 +50,30 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208125
+#define GSOAP_LIB_VERSION 208126
+
+/* silence GNU's warnings on format nonliteral strings and truncation (snprintf truncates on purpose for safety) */
+#ifdef __GNUC__
+# define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
+# pragma GCC diagnostic ignored "-Wformat-nonliteral"
+# if GCC_VERSION_AT_LEAST(7, 0, 0)
+#  pragma GCC diagnostic ignored "-Wformat-truncation"
+# endif
+#endif
+
+/* convert EBCDIC to ASCII */
+#ifdef AS400
+# pragma convert(819)
+#endif
+
+#ifdef __BORLANDC__
+# pragma warn -8060
+#endif
 
 #include "stdsoap2.h"
 
 #if GSOAP_VERSION != GSOAP_LIB_VERSION
 # error "GSOAP VERSION MISMATCH IN LIBRARY: PLEASE REINSTALL PACKAGE"
-#endif
-
-#ifdef __BORLANDC__
-# pragma warn -8060
 #endif
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyType(struct soap*, const struct soap_dom_element *);

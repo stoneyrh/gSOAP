@@ -1860,7 +1860,7 @@ static void path_gen_c(struct soap *ctx, const char *xpath, std::string& v, bool
   }
   else if (atroot && *xpath != '@') // path: /name...
   {
-    const char *tag = getname(&xpath).c_str();
+    std::string tag = getname(&xpath);
     if (explain)
       indent(ctx, k) << "/* if node " << v << " is '" << tag << "' then match " << putstr(xpath, 0) << " */\n";
     indent(ctx, k) << "if (soap_elt_match(" << v << ", NULL, " << putstr(tag) << "))\n";
@@ -1870,11 +1870,11 @@ static void path_gen_c(struct soap *ctx, const char *xpath, std::string& v, bool
   }
   else // path: name..., name[n]..., @name, *..., *:*..., @*..., @*:*...
   {
-    const char *tag = getname(&xpath).c_str();
+    std::string tag = getname(&xpath);
     size_t nth = 0;
-    bool is_att = (*tag == '@');
-    bool is_patt = strchr(tag, '*') != NULL;
-    bool is_wild = !strcmp(tag + is_att, "*") || !strcmp(tag + is_att, "*:*");
+    bool is_att = (*tag.c_str() == '@');
+    bool is_patt = strchr(tag.c_str(), '*') != NULL;
+    bool is_wild = !strcmp(tag.c_str() + is_att, "*") || !strcmp(tag.c_str() + is_att, "*:*");
     if (!is_patt)
       nth = getnth(&xpath);
     if (is_att && is_wild)
@@ -1887,15 +1887,15 @@ static void path_gen_c(struct soap *ctx, const char *xpath, std::string& v, bool
     else if (is_att && is_patt)
     {
       if (explain)
-        indent(ctx, k) << "/* for each attribute '" << tag + 1 << "' of current node " << v << " match " << putstr(xpath, 0) << " */\n";
+        indent(ctx, k) << "/* for each attribute '" << tag.c_str() + 1 << "' of current node " << v << " match " << putstr(xpath, 0) << " */\n";
       indent(ctx, k) << "xsd__anyAttribute *it;\n";
       indent(ctx, k) << "for (it = soap_att_find(" << v << ", NULL, " << putstr(tag) << "); it; it = soap_att_find_next(it, NULL, " << putstr(tag) << "))\n";
     }
     else if (is_att)
     {
       if (explain)
-        indent(ctx, k) << "/* if current node " << v << " has an attribute '" << tag + 1 << "' then match " << putstr(xpath, 0) << " */\n";
-      indent(ctx, k) << "if ((att = soap_att_get(" << v << ", NULL, " << putstr(tag + 1) << ")))\n";
+        indent(ctx, k) << "/* if current node " << v << " has an attribute '" << tag.c_str() + 1 << "' then match " << putstr(xpath, 0) << " */\n";
+      indent(ctx, k) << "if ((att = soap_att_get(" << v << ", NULL, " << putstr(tag.c_str() + 1) << ")))\n";
     }
     else if (is_wild)
     {
@@ -2183,7 +2183,7 @@ static void path_gen_cpp(struct soap *ctx, const char *xpath, std::string& v, bo
   }
   else if (atroot && *xpath != '@') // path: /name...
   {
-    const char *tag = getname(&xpath).c_str();
+    std::string tag = getname(&xpath);
     if (explain)
       indent(ctx, k) << "// if node " << v << " is '" << tag << "' then match " << putstr(xpath, 0) << "\n";
     indent(ctx, k) << "if (" << v << ".match(" << putstr(tag) << "))\n";
@@ -2193,11 +2193,11 @@ static void path_gen_cpp(struct soap *ctx, const char *xpath, std::string& v, bo
   }
   else // path: name..., name[n]..., @name, *..., *:*..., @*..., @*:*...
   {
-    const char *tag = getname(&xpath).c_str();
+    std::string tag = getname(&xpath);
     size_t nth = 0;
-    bool is_att = (*tag == '@');
-    bool is_patt = strchr(tag, '*') != NULL;
-    bool is_wild = !strcmp(tag + is_att, "*") || !strcmp(tag + is_att, "*:*");
+    bool is_att = (*tag.c_str() == '@');
+    bool is_patt = strchr(tag.c_str(), '*') != NULL;
+    bool is_wild = !strcmp(tag.c_str() + is_att, "*") || !strcmp(tag.c_str() + is_att, "*:*");
     if (!is_patt)
       nth = getnth(&xpath);
     if (is_att && is_wild)
@@ -2209,14 +2209,14 @@ static void path_gen_cpp(struct soap *ctx, const char *xpath, std::string& v, bo
     else if (is_att && is_patt)
     {
       if (explain)
-        indent(ctx, k) << "// for each attribute '" << tag + 1 << "' of current node " << v << " match " << putstr(xpath, 0) << "\n";
+        indent(ctx, k) << "// for each attribute '" << tag.c_str() + 1 << "' of current node " << v << " match " << putstr(xpath, 0) << "\n";
       indent(ctx, k) << "for (xsd__anyAttribute::iterator it = " << v << ".att_find(" << putstr(tag) << "); it != " << v << ".att_end(); ++it)\n";
     }
     else if (is_att)
     {
       if (explain)
-        indent(ctx, k) << "// if current node " << v << " has an attribute '" << tag + 1 << "' then match " << putstr(xpath, 0) << "\n";
-      indent(ctx, k) << "if ((att = " << v << ".att_get(" << putstr(tag + 1) << ")))\n";
+        indent(ctx, k) << "// if current node " << v << " has an attribute '" << tag.c_str() + 1 << "' then match " << putstr(xpath, 0) << "\n";
+      indent(ctx, k) << "if ((att = " << v << ".att_get(" << putstr(tag.c_str() + 1) << ")))\n";
     }
     else if (is_wild)
     {

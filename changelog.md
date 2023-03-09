@@ -756,7 +756,7 @@ Version 2.8.7 (02/07/2012)
 - Improved interoperability of wsdl2h output wrt. to element qualification.
 - Renamed `-DTANDEM` to `-DTANDEM_NONSTOP` to prevent naming conflicts.
 - Fixed WS-Discovery URL.
-- Fixed soapcpp2 option -i and -j server chaining.
+- Fixed a soapcpp2 usability issue with options -i and -j when chaining multiple servers that did not compile.
 
 Version 2.8.8 (02/20/2012)
 ---
@@ -773,8 +773,8 @@ Version 2.8.9 (06/10/2012)
 - Added iOS plugin with examples.
 - Improved WS-Policy analysis and reporting.
 - Fixed and improved wsse plugin for WS-Security interoperability with WCF and other implementations (required a small API change).
-- Fixed HTTP headers for NTLM.
-- Fixed httpda plugin OpenSSL init crash in md5evp.c.
+- Fixed HTTP header formatting with NTLM authentication.
+- Fixed a httpda plugin OpenSSL init issue that may lead to a crash in md5evp.c.
 
 Version 2.8.10 (08/16/2012)
 ---
@@ -788,10 +788,10 @@ Version 2.8.11 (10/14/2012)
 - Changed wsdl2h output for the few cases that multiple service bindings are defined, use wsdl2h -Nns for backward compatibility.
 - Improved DOM processing.
 - Improved C++0x/C++11 compatibility.
-- Fixed httpda plugin crash.
-- Fixed wsdl2h processing of *`xs:group maxOccurs="unbounded"`*.
-- Fixed `mod_gsoap` plugin compilation issues.
-- Fixed literal XML UTF8 (UTF8 is now retained with `SOAP_C_UTFSTRING`).
+- Fixed httpda plugin issue that may lead to a crash.
+- Fixed a wsdl2h usability issue when processing of *`xs:group maxOccurs="unbounded"`*.
+- Fixed `mod_gsoap` plugin C/C++ compilation issues.
+- Fixed literal XML UTF-8 to that UTF-8 is now retained with `SOAP_C_UTFSTRING`.
 
 Version 2.8.12 (12/8/2012)
 ---
@@ -802,14 +802,14 @@ Version 2.8.12 (12/8/2012)
 - Improved soapcpp2 -b option.
 - Improved WCF WS-Addressing interop (duplex) channel.
 - Changed code to normalize in/out MEP for solicit-response messaging.
-- Fixed client-side OpenSSL host check that is known to crash in OpenSSL.
+- Fixed client-side OpenSSL host check that is known to crash in OpenSSL, using a work around.
 
 Version 2.8.13 (1/21/2013)
 ---
 - Improved XML-RPC/JSON API and documentation, with one change: now must use `SOAP_C_UTFSTRING` to hold UTF8 in 8-bit strings.
 - Improved VxWorks compatibility.
 - Updated `soap_read_X` and `soap_write_X` to serialize object graphs with SOAP encoding enabled: use `soap_set_version(soap, V)` with V=0 (no SOAP), V=1 (SOAP1.1), V=2 (SOAP1.2).
-- Fixed broken WSDL *`types`* nested schema XSD import.
+- Fixed an issue that could break WSDL *`types`* nested schema XSD import.
 - Fixed operation action overriding by input/output SOAP action.
 - Deprecated old-style C++ service proxies and objects (use soapcpp2 -z1 flag to generate).
 
@@ -826,16 +826,16 @@ Version 2.8.15 (5/12/2013)
 - Fixed automatic detection of DIME/MIME transfers.
 - Fixed HTTP 1.0 chunking issue.
 - Fixed HTTP digest authentication with DIME/MIME transfers.
-- Fixed OpenSSL subject alt name check.
+- Fixed OpenSSL subject alt name check rejecting valid names.
 - Fixed HTTP 100 message handling issue.
 
 Version 2.8.16 (8/12/2013)
 ---
 - Improved support for Android platform.
 - Improved WCF interop duplex messaging requiring ChannelInstances.
+- Updated snprintf/sprintf's that trigger Valgrind and Fortify warnings.
 - Fixed complexType restriction of schema types with redefined attributes in wsdl2h output.
 - Fixed wcf/WS/DualHttp example (wrong use of `send_X()` replaced by `X()` for client-side operations X, to allow HTTP keep-alive to be used).
-- Fixed use of sprintf's that trigger Valgrind and Fortify warnings.
 - Fixed parsing character strings from CDATA sections ending in ']'.
 - Fixed DOM output for `SOAP_XML_CANONICAL` c14n normalization of xmlns namespace bindings.
 
@@ -1223,7 +1223,7 @@ Version 2.8.53 (08/29/2017)
 
 - Improved testmsgr "Test Messenger" to handle element repetitions, selections, and optional values for complete XML message randomization to test services and clients.  Updated soapcpp2 option `-g` to emit XML message templates with the new template indicators.
 - Updated plugin/threads.h to let `THREAD_CREATE` return 0 (OK) on Windows like pthreads, thereby making the `THREAD_CREATE` return value portable.
-- Fixed DIME receiver looping on specific malformed DIME headers.
+- Fixed DIME receiver potentially looping on specific malformed DIME headers.
 
 Version 2.8.54 (09/17/2017)
 ---
@@ -1245,7 +1245,7 @@ Version 2.8.55 (10/26/2017)
 - Updated WinInet plugin.
 - Updated DOM node serialization of embedded serializable data: to serialize types defined in C++ namespaces, please see the updated DOM documentation about the new `-DSOAP_DOM_EXTERNAL_NAMESPACE=namespace_name` flag and how to "register" additional C++ namespaces.
 - Fixed deserialization of pointers to Qt types with the custom serializers `custom/qbytearray_base64.h`, `custom/qbytearray_hex.h`, `custom/qdate.h`, `custom/qstring.h`, and `custom/qtime.h`.
-- Fixed `WITH_NOIO` compilation errors (`close()` and/or `gettimeofday()` not found).
+- Fixed special case `WITH_NOIO` compilation errors (`close()` and/or `gettimeofday()` not found).
 
 Version 2.8.56 (12/07/2017)
 ---
@@ -1305,7 +1305,7 @@ Version 2.8.62 (02/10/2018)
 - Added the inclusion of `xlocale.h` for GNU Linux to avoid compilation issues.
 - Updated HTTP digest plugin.
 - Improved soapcpp2 options `-g` and `-y`, may be used together to generate sample XML messages.
-- Fixed Borland C++ compilation issue.
+- Fixed Borland C++ compilation issue when compiling gSOAP source code.
 
 Version 2.8.63 (02/17/2018)
 ---
@@ -1331,7 +1331,7 @@ Version 2.8.66 (04/09/2018)
 
 - Added `soap_close_connection()` to close a connection from another thread.
 - Fixed C++ proxy and server class `copy()` and `operator=()` methods to prevent a possible memory leak which may occur in certain usage scenarios.
-- Fixed an issue in wsdl2h, generating an incorrect simpleType element name that leads to a soapcpp2 error.  The element has a local simpleType restriction of a simpleType with the same name as the element type, where this simpleType in turn is a restriction.
+- Fixed a wsdl2h usability issue when generating an incorrect simpleType element name that leads to a soapcpp2 error.  The element has a local simpleType restriction of a simpleType with the same name as the element type, where this simpleType in turn is a restriction.
 
 Version 2.8.67 (06/11/2018)
 ---
@@ -1339,7 +1339,7 @@ Version 2.8.67 (06/11/2018)
 - Changed `typemap.dat` to disable `xsd__duration` custom serializer by default, meaning that `xsd__duration` is serialized as a string by default. To serialize `xsd__duration` as an integer with the `gsoap/custom/duration.c` custom serializer e.g. in ONVIF, please re-enable the `xsd__duration` custom serializer by removing the `#` comment from the `xsd__duration` specification in `typemap.dat`.
 - Fixed an issue where the 64 bit integer types `LONG64` and `ULONG64` and their serializers would be downcast to 32 bit when compiling C code with newer GCC versions, due to `__STDC_VERSION__` no longer being defined by the compiler.
 - Fixed Apache module URL query `?wsdl` handling.
-- Fixed `gsoap/custom/qstring.cpp` deserializer, converts XML entities to/from chars.
+- Fixed a conversion issue with the `gsoap/custom/qstring.cpp` deserializer, converts XML entities to/from chars.
 
 Version 2.8.68 (06/29/2018)
 ---
@@ -1382,8 +1382,8 @@ Version 2.8.71 (11/12/2018)
 - Renamed the `form` function of the HTTP POST form plugin gsoap/plugin/httpform.cto `soap_get_form`.
 - Fixed `-DWITH_INCLUDE_XLOCALE_H` and `configure` script: the problem caused build failures on Linux.  It is possible to force the use of `xlocale.h` with `./configure --enable-xlocale` but only use this when necessary, when `locale_t` is not declared.
 - Fixed C14N-related WS-Security signature issue introduced in 2.8.28, which in most cases made no difference but could lead to a signature validation failure.
-- Fixed soapcpp2 code generation issue for single- and multi-dimensional fixed-size arrays.
-- Fixed wsdl2h missing built-in XSD types when multiple WSDLs are imported.
+- Fixed a soapcpp2 usability issue when generating code for single- and multi-dimensional fixed-size arrays.
+- Fixed a wsdl2h usability issue with missing built-in XSD types when multiple WSDLs are imported.
 
 Version 2.8.72 (11/24/2018)
 ---
@@ -1490,7 +1490,7 @@ Version 2.8.83 (04/18/2019)
 - Added wsdl2h option `-Q` to make `xsd__anySimpleType` equal to `xsd__anyType` to use as the base type for derived types, so that elements of type *`xsd:anySimpleType`* can be serialized with a derived type, using inheritance in C++ and by using simulated inheritance in C using wsdl2h option `-F`.  On the other hand this option invalidates XML attributes of type *`xsd:anySimpleType`*.  The soapcpp2 tool warns about this invalid attribute type as a result.
 - Updated wsdl2h options `-p` and `-F` to generate additional wrappers for primitive types that aren't XSD primitive types, such as `SOAP-ENC:base64`.  This allows serialization of `xs:anyType` and `xs:anySimpleType` with additional derived types such as `SOAP-ENC:base64`.
 - Improved wsdl2h output for the infrequently-used `SOAP-ENC:Array` type.  To regress to the old behavior, add this line `SOAP_ENC__Array = | struct { _XML *__ptr; int __size; } | struct { _XML *__ptr; int __size; }` to your copy of typemap.dat and rerun wsdl2h with the updated typemap.dat definitions.
-- Fixed an issue with soapcpp2 option `-A` that resulted in error 13 `SOAP_NO_METHOD`.
+- Fixed a usability issue with soapcpp2 option `-A` that resulted in error 13 `SOAP_NO_METHOD`.
 - Minor improvements.
 
 Version 2.8.84 (05/14/2019)
@@ -1502,13 +1502,13 @@ Version 2.8.85 (06/24/2019)
 ---
 
 - Added `soap::client_addr` string to specify a IPv4 or IPv6 or a host address to bind to before connecting.  This can be used at the client side to bind to an address before connecting to a server endpoint, similar to `soap::client_port`.
-- Fixed wsdl2h compilation issue with C++17.
+- Fixed a wsdl2h usability issue when compiling with C++17.
 - Fixed `custom/duration.c` custom deserializer `SOAP_TYPE` error caused by parsing duration fractional seconds.
 
 Version 2.8.86 (06/24/2019)
 ---
 
-- Fixed a problem with the `SOAP_SSL_DEFAULT` settings parameter used with `soap_ssl_client_context` and `soap_ssl_server_context` when `SOAP_SSL_DEFAULT` is used without any `SOAP_TLSv1_X` or `SOAP_SSLv3` values.
+- Fixed a problem with the `SOAP_SSL_DEFAULT` settings parameter used with `soap_ssl_client_context` and `soap_ssl_server_context` when `SOAP_SSL_DEFAULT` is used without any `SOAP_TLSv1_X` or `SOAP_SSLv3` values, blocking the selection of a TLS/SSL protocol since none is specified.
 
 Version 2.8.87 (07/01/2019)
 ---
@@ -1520,7 +1520,7 @@ Version 2.8.87 (07/01/2019)
 Version 2.8.88 (07/25/2019)
 ---
 
-- Fixed an issue with wsdl2h `typemap.dat` for WS-Trust WSDLs causing missing types in the generated header file.
+- Fixed a usability issue with wsdl2h `typemap.dat` for WS-Trust WSDLs causing missing types in the generated header file.
 - Software portability fixes and improvements.
 
 Version 2.8.89 (08/5/2019)
@@ -1544,19 +1544,19 @@ Version 2.8.91 (08/15/2019)
 Version 2.8.92 (09/16/2019)
 ---
 
-- Fixed an issue with soapcpp2-generated calls to `soap_DELETE` for REST DELETE operations.
+- Fixed a usability minor issue with soapcpp2-generated calls to `soap_DELETE` for REST DELETE operations.
 - Minor improvements.
 
 Version 2.8.93 (09/24/2019)
 ---
 
-- Fixed a wsdl2h schema import/include issue when a `./` occurs in `schemaLocation` and schema import/include dependencies are cyclic, causing wsdl2h to not be able to locate and read schema files.
+- Fixed a wsdl2h usability issue with schema import/include when a `./` occurs in `schemaLocation` and schema import/include dependencies are cyclic, causing wsdl2h to not be able to locate and read schema files.
 - Removed empty substitutionGroup and duplicate substitutionGroup elements in wsdl2h-generated `SUBSTITUTIONS` sections.
 
 Version 2.8.94 (10/17/2019)
 ---
 
-- Fixed a wsdl2h issue that caused it to omit names for local simpleType restrictions in the generated `enum` types of struct/class members; improved soapcpp2 to avoid `enum` symbol numbering clashes in the generated source code.
+- Fixed a wsdl2h usability issue that caused it to omit names for local simpleType restrictions in the generated `enum` types of struct/class members; improved soapcpp2 to avoid `enum` symbol numbering clashes in the generated source code.
 - Removed unnecessary namespace prefixes from some class/struct members in the source code generated by wsdl2h in a specific case, to prevent XML validation issues.  This specific case for removing the prefix occurs for a reference to an element/attribute in the same schema, when the schema has an unqualified element/attribute default form.  That is, `ns1__member` is changed to `member` if `member` corresponds to a reference to an element in the schema to which the class/struct belongs and the `ns1` schema has `elementForm: unqualified`. This change has no effect on the generated code for typical WSDLs and schemas that use qualified default forms.  Added wsdl2h option `-z9` for backward compatibility of 2.8.94 and greater to versions 2.8.93 and lesser, which reverts this change.
 
 Version 2.8.95 (11/14/2019)
@@ -1575,7 +1575,7 @@ Version 2.8.96 (12/4/2019)
 Version 2.8.97 (01/7/2020)
 ---
 
-- Fixed wsdl2h processing of schemas with a cyclic schema `<xs:include>` that may cause the wsdl2h tool to hang when schemas have no `targetNamespace` attribute.
+- Fixed a wsdl2h usability issue related to the processing of schemas with a cyclic schema `<xs:include>` that may cause the wsdl2h tool to hang when schemas have no `targetNamespace` attribute.
 - Improved wsdl2h code generation of unqualified types and names defined in imported schemas (with `<xs:import>`) when these schemas have no `targetNamespace`.  Use wsdl2h option `-z10` or lesser to revert to the code generation behavior of versions prior to 2.8.97.
 - Other improvements.
 
@@ -1586,8 +1586,8 @@ Version 2.8.98 (02/16/2020)
 - Updated `ds__KeyInfoType` declared in `ds.h` to include a `xenc__EncryptedKey` member when `xenc.h` is imported, i.e. by making `ds__KeyInfoType` a mutable struct that is extended in `xenc.h`.
 - Updated Test Messenger tool for unit testing, regression testing, and fuzz testing.  New options `-X` and `-Y`.
 - Updated DOM API, whitespace at both edges of text elements in the DOM is no longer trimmed.
-- Fixed an issue with soapcpp2 code generation of `wchar_t*` serializers when combined with a custom serializer with base type `wchar_t*`, i.e. when `extern typedef wchar_t* name` is declared.
-- Fixed an issue with soapcpp2 code generation when an element tag names starts with an underscore and the element is namespace qualified.
+- Fixed a usability issue with soapcpp2 code generation of `wchar_t*` serializers when combined with a custom serializer with base type `wchar_t*`, i.e. when `extern typedef wchar_t* name` is declared.
+- Fixed a usability issue with soapcpp2 code generation when an element tag names starts with an underscore and the element is namespace qualified.
 - Other improvements.
 
 Version 2.8.99 (03/12/2020)
@@ -1604,7 +1604,7 @@ Version 2.8.100 (03/24/2020)
 - Improved proxy connectivity on the client side to handle bearer authentication.
 - Improved soapcpp2 handling of the `#module` directive.
 - Improved AIX 7.2 portability.
-- Fixed an MTOM flag clearing issue that may hamper MTOM usability.
+- Fixed an MTOM attachments flag clearing issue that may hamper MTOM usability.
 
 Version 2.8.101 (04/08/2020)
 ---
@@ -1652,7 +1652,7 @@ Version 2.8.108 (10/16/2020)
 Version 2.8.109 (11/19/2020)
 ---
 
-- Fixed wsdl2h output for a special case when schemas have no namespaces.
+- Fixed a wsdl2h usability issue in the output for a special case when schemas have no namespaces.
 - Improved streaming MIME/MTOM attachment output.
 - Removed C/C++ compiler warnings.
 - Updated WS-Addressing and WS-Security plugins to fix potential null pointer dereferences and to fix a potential but highly unlikely random 2GB heap corruption issue in the WS-Addressing plugin (CVE-2020-13574 to 13578 and duplicate CVE-2021-21783; the CVE authors appear to attempt to maximize getting credit by spreading of CVEs, even though the potential null pointer bugs are related and in the same code.)
@@ -1726,7 +1726,7 @@ Version 2.8.121 (04/05/2022)
 
 Version 2.8.122 (05/11/2022)
 ---
-- Fixed an issue with wsdl2h generating inconsistent primitive type default values (schema default values extracted from WSDLs and schemas).
+- Fixed a minor usability issue with wsdl2h generating inconsistent primitive type default values (schema default values extracted from WSDLs and schemas).
 
 Version 2.8.123 (08/31/2022)
 ---
@@ -1739,11 +1739,15 @@ Version 2.8.124 (12/04/2022)
 - Updated wsdl2h to automatically generate `std::optional` member variables for optional schemas when typemap.dat defines the new `$OPTIONAL = std::optional` configuration parameter.  However, as a compromise, only primitive type member variables are automatically made `std::optional`, not classes.  This choice was made because optional types must be defined before referenced, when in fact cyclic data structure relationships may exist among classes, which prohibit the use of `std::optional`.
 - Added missing `std::vector<xsd__anyType>` deep copy of vector of DOM trees generated with soapcpp2 option `-Ec`.
 
-Version 2.8.125 (02/23/2023) {#latest}
+Version 2.8.125 (02/23/2023)
 ---
-- Added WolfSSL support for HTTPS TLS/SSL secure communications with new compiler-time flag `WITH_WOLFSSL` and `./configure --enable-wolfssl`.
+- Added WolfSSL support for HTTPS TLS/SSL secure communications with new compile-time flag `WITH_WOLFSSL` and `./configure --enable-wolfssl`.
 - Added new example clients and servers to demonstrate XML and JSON transfers directly over TCP with (or without) TLS/SSL in samples/tcp, with detailed instructions in a README.
 - Minor improvement of the soapcpp2 `-Ec` option to deep copy C/C++ data.
+
+Version 2.8.126 (03/09/2023) {#latest}
+---
+- Minor update to fix an issue if the WolfSSL library is used for HTTPS TLS/SSL.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -303,7 +303,7 @@ AC_ARG_ENABLE(wolfssl,
 AC_MSG_CHECKING(for disable openssl in library)
 if test "x$with_openssl" = "xyes"; then
   AC_MSG_RESULT(no)
-  AC_MSG_CHECKING(for enable gnutls in library)
+  AC_MSG_CHECKING(for enable gnutls or wolfssl in library)
   if test "x$with_gnutls" = "xyes"; then
     AC_MSG_RESULT(yes)
     WSDL2H_EXTRA_FLAGS="-DWITH_GNUTLS -DWITH_GZIP"

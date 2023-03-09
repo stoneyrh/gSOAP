@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.125
+        stdsoap2.c[pp] 2.8.126
 
         gSOAP runtime engine
 
@@ -52,10 +52,20 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208125
+#define GSOAP_LIB_VERSION 208126
 
+/* silence GNU's warnings on format nonliteral strings and truncation (snprintf truncates on purpose for safety) */
+#ifdef __GNUC__
+# define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
+# pragma GCC diagnostic ignored "-Wformat-nonliteral"
+# if GCC_VERSION_AT_LEAST(7, 0, 0)
+#  pragma GCC diagnostic ignored "-Wformat-truncation"
+# endif
+#endif
+
+/* convert EBCDIC to ASCII */
 #ifdef AS400
-# pragma convert(819)   /* EBCDIC to ASCII */
+# pragma convert(819)
 #endif
 
 #if defined(__gnu_linux__) && !defined(_GNU_SOURCE)
@@ -86,10 +96,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.125 2023-02-23 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.126 2023-03-09 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.125 2023-02-23 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.126 2023-03-09 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4756,8 +4766,10 @@ ssl_auth_init(struct soap *soap)
     else if ((soap->ssl_flags & SOAP_TLSv1_2))
       method = wolfTLSv1_2_client_method(); /* TLSv1.2 only or upgrade to TLSv1.2 */
 #endif
+#ifndef NO_OLD_TLS
     else if ((soap->ssl_flags & SOAP_TLSv1_1))
       method = wolfTLSv1_1_client_method(); /* TLSv1.1 only or upgrade to TLSv1.1 */
+#endif
 #ifdef WOLFSSL_ALLOW_TLSV10
     else if ((soap->ssl_flags & SOAP_TLSv1_0))
       method = wolfTLSv1_client_method(); /* TLSv1.0 only or upgrade to TLSv1.0 */
@@ -4779,8 +4791,10 @@ ssl_auth_init(struct soap *soap)
     else if ((soap->ssl_flags & SOAP_TLSv1_2))
       method = wolfTLSv1_2_server_method(); /* TLSv1.2 only or upgrade to TLSv1.2 */
 #endif
+#ifndef NO_OLD_TLS
     else if ((soap->ssl_flags & SOAP_TLSv1_1))
       method = wolfTLSv1_1_server_method(); /* TLSv1.1 only or upgrade to TLSv1.1 */
+#endif
 #ifdef WOLFSSL_ALLOW_TLSV10
     else if ((soap->ssl_flags & SOAP_TLSv1_0))
       method = wolfTLSv1_server_method(); /* TLSv1.0 only or upgrade to TLSv1.0 */
@@ -4792,6 +4806,11 @@ ssl_auth_init(struct soap *soap)
   }
   if (!method)
     return soap_set_receiver_error(soap, "SSL/TLS error", "Can't setup method, the specified TLS protocol is unsupported", SOAP_SSL_ERROR);
+  if (soap->ctx)
+  {
+    wolfSSL_CTX_free(soap->ctx);
+    soap->ctx = NULL;
+  }
   soap->ctx = wolfSSL_CTX_new(method);
   if (!soap->ctx)
     return soap_set_receiver_error(soap, "SSL/TLS error", "Can't setup context", SOAP_SSL_ERROR);
@@ -8602,7 +8621,7 @@ http_post(struct soap *soap, const char *endpoint, const char *host, int port, c
   if (soap->bearer)
   {
     l = strlen(soap->bearer);
-    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), l + 1), "Bearer %s", soap->bearer);
+    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), l + 7), "Bearer %s", soap->bearer);
     err = soap->fposthdr(soap, "Authorization", soap->tmpbuf);
     if (err)
       return err;

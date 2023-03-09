@@ -7538,8 +7538,8 @@ printf %s "checking for disable openssl in library... " >&6; }
 if test "x$with_openssl" = "xyes"; then
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for enable gnutls in library" >&5
-printf %s "checking for enable gnutls in library... " >&6; }
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for enable gnutls or wolfssl in library" >&5
+printf %s "checking for enable gnutls or wolfssl in library... " >&6; }
   if test "x$with_gnutls" = "xyes"; then
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
