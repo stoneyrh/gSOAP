@@ -240,6 +240,7 @@ int is_pointer_to_derived(Entry*);
 void gen_match_derived(FILE *, Tnode*);
 int is_transient(Tnode*);
 int is_external(Tnode*);
+int is_anyType_base(Tnode*);
 int is_anyType(Tnode*);
 int is_anyAttribute(Tnode*);
 int is_binary(Tnode*);
@@ -11328,6 +11329,20 @@ is_external(Tnode* typ)
 }
 
 int
+is_anyType_base(Tnode *typ)
+{
+  if (typ && typ->baseid)
+  {
+    Entry *p;
+    if (!strcmp(typ->baseid->name, "soap_dom_element"))
+      return 1;
+    p = entry(classtable, typ->baseid);
+    return p && is_anyType_base(p->info.typ);
+  }
+  return 0;
+}
+
+int
 is_anyType(Tnode* typ)
 {
   if (!typ)
@@ -11499,7 +11514,6 @@ is_sequence(Entry *p)
   return 0;
 }
 
-
 int
 is_anytype(Entry *p)
 {
@@ -11522,7 +11536,6 @@ is_keyword(const char *name)
     return s->token != ID;
   return 0;
 }
-
 
 int
 has_ptr(Tnode *typ)
@@ -13380,10 +13393,8 @@ generate_type(Tnode *typ)
     fprintf(fhead, "\n#endif");
     return; /* do not generate int serializers in libs */
   }
-  else if (is_imported(typ) && (typ->type != Tint || typ->sym))
-  {
+  if (is_imported(typ) && (typ->type != Tint || typ->sym))
     return;
-  }
   if (is_typedef(typ) && (is_element(typ) || is_synonym(typ)))
     fprintf(fhead, "\n/* %s is a typedef synonym of %s */", c_ident(typ), t_ident(typ));
   else if (is_typedef(typ) && (is_element(typ) || is_restriction(typ)))
@@ -16404,7 +16415,7 @@ soap_traverse(Tnode* typ)
   Entry *p;
   Tnode* temp;
   int cardinality;
-  if (is_primitive_or_string(typ) || is_fixedstring(typ))
+  if (is_primitive_or_string(typ) || is_fixedstring(typ) || is_external(typ))
   {
     fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
     fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap *soap, %s, const char *s, soap_walker p, soap_walker q)\n{\t(void)soap; (void)q; /* appease -Wall -Werror */", c_ident(typ), c_type_id(typ, "*a"));
@@ -16412,8 +16423,9 @@ soap_traverse(Tnode* typ)
     fprintf(fout, "\n\tif (q) q(soap, (void*)a, %s, s, \"%s\");\n}", soap_type(typ), c_type(typ));
     return;
   }
-  if (typ->type != Tclass || !(typ->sym && (is_stdstring(typ) || is_stdwstring(typ)) && is_eq(typ->sym->name, "xsd__QName")) || is_external(typ) || is_imported(typ))
-    if (is_typedef(typ) && !is_external(typ))
+  if (typ->type != Tclass || !(typ->sym && (is_stdstring(typ) || is_stdwstring(typ)) && is_eq(typ->sym->name, "xsd__QName")) || is_imported(typ))
+  {
+    if (is_typedef(typ))
     {
       if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
         fprintf(fhead, "\n\n#define soap_traverse_%s(soap, a, s, p, q) (a)->soap_traverse(soap, s, p, q)\n", c_ident(typ));
@@ -16423,6 +16435,7 @@ soap_traverse(Tnode* typ)
         fprintf(fhead, "\n\n#define soap_traverse_%s(soap, a, s, p, q) soap_traverse_%s(soap, a, s, p, q)\n", c_ident(typ), t_ident(typ));
       return;
     }
+  }
   if (is_XML(typ))
   {
     fprintf(fhead, "\n\n#define soap_traverse_%s(soap, a, s, p, q) soap_traverse_%s(soap, a, s, p, q)\n", c_ident(typ), t_ident(typ));
@@ -16432,8 +16445,6 @@ soap_traverse(Tnode* typ)
   {
     if (typ->type == Tclass && !is_volatile(typ))
     {
-      if (is_external(typ))
-        return;
       fprintf(fout, "\n\nvoid %s::soap_traverse(struct soap *soap, const char *s, soap_walker p, soap_walker q)\n{", c_ident(typ));
       if (is_binary(typ))
       {
@@ -16486,11 +16497,6 @@ soap_traverse(Tnode* typ)
     }
     else
     {
-      if (is_external(typ))
-      {
-        fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
-        return;
-      }
       fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
       fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap *soap, %s, const char *s, soap_walker p, soap_walker q)\n{", c_ident(typ), c_type_id(typ, "*a"));
       if (is_binary(typ))
@@ -16550,11 +16556,6 @@ soap_traverse(Tnode* typ)
     case Tclass:
       if (!is_volatile(typ))
       {
-        if (is_external(typ))
-        {
-          fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
-          return;
-        }
         table=(Table*)typ->ref;
         fprintf(fout, "\n\nvoid %s::soap_traverse(struct soap *soap, const char *s, soap_walker p, soap_walker q)\n{", ident(typ->id->name));
         fprintf(fout, "\n\t(void)soap; /* appease -Wall -Werror */");
@@ -16621,11 +16622,6 @@ soap_traverse(Tnode* typ)
       }
       /* fall through to next case when class is volatile, since serializers cannot be member functions */
     case Tstruct:
-      if (is_external(typ) && !is_volatile(typ))
-      {
-        fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
-        return;
-      }
       fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
       if (!typ->ref)
         return;
@@ -16692,11 +16688,6 @@ soap_traverse(Tnode* typ)
       fprintf(fout, "\n}");
       break;
     case Tunion:
-      if (is_external(typ) && !is_volatile(typ))
-      {
-        fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, int, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
-        return;
-      }
       table = (Table*)typ->ref;
       fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, int, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
       fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap *soap, int choice, %s, const char *s, soap_walker p, soap_walker q)\n{", c_ident(typ), c_type_id(typ, "*a"));
@@ -16751,11 +16742,6 @@ soap_traverse(Tnode* typ)
     case Tpointer:
       if (((Tnode*)typ->ref)->type == Tclass && !is_external((Tnode*)typ->ref) && !is_volatile((Tnode*)typ->ref) && !is_typedef((Tnode*)typ->ref))
       {
-        if (is_external(typ))
-        {
-          fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
-          return;
-        }
         fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
         fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap *soap, %s, const char *s, soap_walker p, soap_walker q)\n{", c_ident(typ), c_type_id(typ, "*a"));
         p = is_dynamic_array((Tnode*)typ->ref);
@@ -16773,11 +16759,6 @@ soap_traverse(Tnode* typ)
       }
       else
       {
-        if (is_external(typ))
-        {
-          fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
-          return;
-        }
         fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
         fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap *soap, %s, const char *s, soap_walker p, soap_walker q)\n{", c_ident(typ), c_type_id(typ, "*a"));
         if (is_primitive((Tnode*)typ->ref))
@@ -16803,11 +16784,6 @@ soap_traverse(Tnode* typ)
       }
       break;
     case Tarray:
-      if (is_external(typ))
-      {
-        fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type(typ));
-        return;
-      }
       fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type(typ));
       fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap *soap, %s, const char *s, soap_walker p, soap_walker q)", c_ident(typ), c_type_id(typ, "a"));
       if (is_primitive((Tnode*)typ->ref))
@@ -16850,11 +16826,6 @@ soap_traverse(Tnode* typ)
       fprintf(fout, "\n}");
       break;
     case Ttemplate:
-      if (is_external(typ))
-      {
-        fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
-        return;
-      }
       fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_traverse_%s(struct soap*, %s, const char *s, soap_walker p, soap_walker q);", c_ident(typ), c_type_id(typ, "*"));
       temp = (Tnode*)typ->ref;
       if (!temp)
@@ -17277,10 +17248,18 @@ has_soapref(Tnode *typ)
   Entry *p;
   Table *t;
   if (typ->type == Tstruct || typ->type == Tclass)
+  {
+    if (is_anyType_base(typ))
+      return "soap";
     for (t = (Table*)typ->ref; t; t = t->prev)
+    {
       for (p = t->list; p; p = p->next)
+      {
         if (is_soapref(p->info.typ) && (t == (Table*)typ->ref || !(p->info.sto & Sprivate)))
           return ident(p->sym->name);
+      }
+    }
+  }
   return NULL;
 }
 

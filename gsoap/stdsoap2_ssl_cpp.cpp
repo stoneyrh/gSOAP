@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.126
+        stdsoap2.c[pp] 2.8.127
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208126
+#define GSOAP_LIB_VERSION 208127
 
 /* silence GNU's warnings on format nonliteral strings and truncation (snprintf truncates on purpose for safety) */
 #ifdef __GNUC__
@@ -96,10 +96,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.126 2023-03-09 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.127 2023-03-22 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.126 2023-03-09 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.127 2023-03-22 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -5463,7 +5463,7 @@ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, 
     hostent = NULL;
     soap->errnum = h_errno;
   }
-#elif (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && !defined(SUN_OS) && defined(HAVE_GETHOSTBYNAME_R)
+#elif (!defined(_GNU_SOURCE) || (!(~_GNU_SOURCE+1) && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || defined(FREEBSD) || defined(__FreeBSD__)) && !defined(SUN_OS) && !defined(__QNX__) && !defined(QNX) && defined(HAVE_GETHOSTBYNAME_R)
   while ((r = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &hostent, &soap->errnum)) < 0)
   {
     if (tmpbuf != soap->tmpbuf)
@@ -13366,9 +13366,15 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       size_t n = 0;
       s = strchr(tag, ':');
       if (s)
+      {
         n = s++ - tag;
+        if (type && !strncmp(type, tag, n + 1))
+          type += n + 1;
+      }
       else
+      {
         s = tag;
+      }
       if (soap_send_raw(soap, "<", 1)
        || soap_send(soap, s))
         return soap->error;
@@ -21646,13 +21652,13 @@ soap_envelope_begin_in(struct soap *soap)
   {
     if (soap->error == SOAP_TAG_MISMATCH)
     {
-      if (!soap_element_begin_in(soap, "Envelope", 0, NULL))
-        soap->error = SOAP_VERSIONMISMATCH;
-      else if (soap->status == 0
+      if (!soap_element_begin_in(soap, ":Envelope", 0, NULL))
+        return soap->error = SOAP_VERSIONMISMATCH;
+      if (soap->status == 0
            || (soap->status >= 200 && soap->status <= 299)
            || soap->status == 400
            || soap->status == 500)
-        return SOAP_OK; /* allow non-SOAP (REST) XML content to be captured */
+        return soap->error = SOAP_OK; /* allow non-SOAP (REST) XML content to be captured */
       soap->error = soap->status;
     }
     else if (soap->status)
@@ -22992,7 +22998,7 @@ soap_recv_fault(struct soap *soap, int check)
     /* if check>0 and no SOAP Fault is present and no HTTP error then just return to parse request */
     if (check
      && (status == 0 || (status >= 200 && status <= 299))
-     && ((soap->error == SOAP_TAG_MISMATCH && soap->level == 2) || soap->error == SOAP_NO_TAG))
+     && ((soap->error == SOAP_TAG_MISMATCH && soap->level <= 2) || soap->error == SOAP_NO_TAG))
       return soap->error = SOAP_OK;
     /* if check=0 and empty SOAP Body and encodingStyle is NULL and no HTTP error then just return */
     if (!check
@@ -23084,7 +23090,7 @@ soap_recv_empty_response(struct soap *soap)
       if (soap->status < SOAP_STOP)
         soap->error = soap->status;
     }
-    if (soap->error == 200 || soap->error == 201 || soap->error == 202)
+    if (soap->error == 200 || soap->error == 201 || soap->error == 202 || soap->error == 204)
     {
       soap->error = SOAP_OK;
     }

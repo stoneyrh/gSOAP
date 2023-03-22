@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.126
+        DOM API v5 gSOAP 2.8.127
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 208126
+#define GSOAP_LIB_VERSION 208127
 
 /* silence GNU's warnings on format nonliteral strings and truncation (snprintf truncates on purpose for safety) */
 #ifdef __GNUC__
@@ -77,7 +77,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyType(struct soap*, const struct soap_dom_element *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_traverse_xsd__anyType(struct soap*, struct soap_dom_element*, const char*, soap_walker, soap_walker);
 SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyType(struct soap*, struct soap_dom_element *);
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyType(struct soap*, const struct soap_dom_element*, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyType(struct soap*, const char*, int, const struct soap_dom_element*, const char*);
@@ -85,7 +84,6 @@ SOAP_FMAC3 struct soap_dom_element * SOAP_FMAC4 soap_get_xsd__anyType(struct soa
 SOAP_FMAC1 struct soap_dom_element * SOAP_FMAC2 soap_in_xsd__anyType(struct soap*, const char*, struct soap_dom_element *, const char*);
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyAttribute(struct soap*, const struct soap_dom_attribute*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_traverse_xsd__anyAttribute(struct soap*, struct soap_dom_attribute*, const char*, soap_walker, soap_walker);
 SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyAttribute(struct soap*, struct soap_dom_attribute*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyAttribute(struct soap*, const struct soap_dom_attribute*, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyAttribute(struct soap*, const char*, int, const struct soap_dom_attribute*, const char*);
@@ -180,14 +178,6 @@ soap_serialize_xsd__anyType(struct soap *soap, const struct soap_dom_element *no
   }
 }
 
-SOAP_FMAC3
-void
-SOAP_FMAC4
-soap_traverse_xsd__anyType(struct soap *soap, struct soap_dom_element *node, const char *s, soap_walker p, soap_walker q)
-{
-  (void)soap; (void)node; (void)s; (void)p; (void)q;
-}
-
 /******************************************************************************/
 
 SOAP_FMAC1
@@ -196,14 +186,6 @@ SOAP_FMAC2
 soap_serialize_xsd__anyAttribute(struct soap *soap, const struct soap_dom_attribute *node)
 {
   (void)soap; (void)node;
-}
-
-SOAP_FMAC1
-void
-SOAP_FMAC2
-soap_traverse_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *node, const char *s, soap_walker p, soap_walker q)
-{
-  (void)soap; (void)node; (void)s; (void)p; (void)q;
 }
 
 /******************************************************************************/

@@ -26,6 +26,11 @@
     elementFormDefault="unqualified"
     attributeFormDefault="unqualified">
     <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+    <complexType name="record"><!-- ns__record -->
+          <sequence>
+            <element name="text" type="xsd:string" minOccurs="1" maxOccurs="1"/><!-- ns__record::text -->
+          </sequence>
+    </complexType>
   </schema>
 
 </types>

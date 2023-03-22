@@ -4,7 +4,7 @@
 	Custom serializer for struct timeval as xsd:dateTime
 
 	Because time_t (binds to xsd:dateTime) lacks fractional seconds, struct
-	timeval can be used to represent microseconds since 1970-01-01.
+	timeval can be used to represent microseconds.
 
 	#import this file into your gSOAP .h file to enable struct timeval
 	serialization and use the serializable xsd__dateTime type.
@@ -13,7 +13,7 @@
 	precision:
 
 	struct timeval {
-		time_t       tv_sec;   // seconds since Jan. 1, 1970
+		time_t       tv_sec;   // seconds
 		suseconds_t  tv_usec;  // and microseconds
 	};
 

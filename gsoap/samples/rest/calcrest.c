@@ -1,7 +1,8 @@
 /*
 	calcrest.c
 
-	Example REST calculator service client in C
+	Example REST calculator service + client in C
+        Simple CGI server (can be made stand-alone by adding threading code).
 
 	Compilation in C (see samples/calc/calc.h):
 	$ wsdl2h -R -c calcrest.wsdl
@@ -9,6 +10,7 @@
 	$ cc -o calcrest calcrest.c stdsoap2.c soapC.c soapClient.c
 	where stdsoap2.c is in the 'gsoap' directory, or use libgsoap:
 	$ cc -o calcrest calcrest.c soapC.c soapClient.c -lgsoap
+
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools

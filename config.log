@@ -30,8 +30,8 @@ Kernel configured for up to 10 processors.
 Processor type: arm64e (ARM64E)
 Processors active: 0 1 2 3 4 5 6 7 8 9
 Primary memory available: 16.00 gigabytes
-Default processor set: 483 tasks, 2547 threads, 10 processors
-Load average: 3.72, Mach factor: 6.89
+Default processor set: 654 tasks, 2973 threads, 10 processors
+Load average: 0.92, Mach factor: 9.07
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -100,9 +100,9 @@ configure:3418: result: yes
 configure:3448: checking whether make supports nested variables
 configure:3466: result: yes
 configure:3609: checking build system type
-configure:3624: result: arm-apple-darwin21.6.0
+configure:3624: result: aarch64-apple-darwin21.6.0
 configure:3644: checking host system type
-configure:3658: result: arm-apple-darwin21.6.0
+configure:3658: result: aarch64-apple-darwin21.6.0
 configure:3683: checking whether make sets $(MAKE)
 configure:3706: result: yes
 configure:3785: checking for g++
@@ -554,7 +554,7 @@ configure:5649: checking for library containing yywrap
 configure:5679: gcc -o conftest -g -O2   conftest.c  >&5
 Undefined symbols for architecture arm64:
   "_yywrap", referenced from:
-      _main in conftest-312b26.o
+      _main in conftest-70ba0e.o
 ld: symbol(s) not found for architecture arm64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5679: $? = 1
@@ -1869,7 +1869,7 @@ configure:7261: checking for gethostbyname_r
 configure:7261: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture arm64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-af0e6d.o
+      _main in conftest-8eb8f6.o
 ld: symbol(s) not found for architecture arm64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:7261: $? = 1
@@ -2144,8 +2144,8 @@ config.status:1326: cd gsoap/samples/gmt       && sed -e '/# am--include-marker/
 make: Nothing to be done for `am--depfiles'.
 config.status:1331: $? = 0
 config.status:1326: cd gsoap/samples/googleapi       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmlSNWnc:645: warning: overriding commands for target `soapC.cpp'
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmlSNWnc:642: warning: ignoring old commands for target `soapC.cpp'
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmOgr96Z:645: warning: overriding commands for target `soapC.cpp'
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmOgr96Z:642: warning: ignoring old commands for target `soapC.cpp'
 make: Nothing to be done for `am--depfiles'.
 config.status:1331: $? = 0
 config.status:1326: cd gsoap/samples/hello       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
@@ -2234,7 +2234,7 @@ config.status:1331: $? = 0
 ## Cache variables. ##
 ## ---------------- ##
 
-ac_cv_build=arm-apple-darwin21.6.0
+ac_cv_build=aarch64-apple-darwin21.6.0
 ac_cv_c_compiler_gnu=yes
 ac_cv_c_const=yes
 ac_cv_cxx_compiler_gnu=yes
@@ -2340,7 +2340,7 @@ ac_cv_header_unistd_h=yes
 ac_cv_header_wolfssl_ssl_h=yes
 ac_cv_header_xlocale_h=yes
 ac_cv_header_zlib_h=yes
-ac_cv_host=arm-apple-darwin21.6.0
+ac_cv_host=aarch64-apple-darwin21.6.0
 ac_cv_lib_lex='none needed'
 ac_cv_member_struct_tm___tm_gmtoff=no
 ac_cv_member_struct_tm_tm_gmtoff=yes
@@ -2481,9 +2481,9 @@ am__quote=''
 am__tar='$${TAR-tar} chof - "$$tardir"'
 am__untar='$${TAR-tar} xf -'
 bindir='${exec_prefix}/bin'
-build='arm-apple-darwin21.6.0'
+build='aarch64-apple-darwin21.6.0'
 build_alias=''
-build_cpu='arm'
+build_cpu='aarch64'
 build_os='darwin21.6.0'
 build_vendor='apple'
 datadir='${datarootdir}'
@@ -2491,9 +2491,9 @@ datarootdir='${prefix}/share'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
 dvidir='${docdir}'
 exec_prefix='${prefix}'
-host='arm-apple-darwin21.6.0'
+host='aarch64-apple-darwin21.6.0'
 host_alias=''
-host_cpu='arm'
+host_cpu='aarch64'
 host_os='darwin21.6.0'
 host_vendor='apple'
 htmldir='${docdir}'

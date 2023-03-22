@@ -1745,9 +1745,14 @@ Version 2.8.125 (02/23/2023)
 - Added new example clients and servers to demonstrate XML and JSON transfers directly over TCP with (or without) TLS/SSL in samples/tcp, with detailed instructions in a README.
 - Minor improvement of the soapcpp2 `-Ec` option to deep copy C/C++ data.
 
-Version 2.8.126 (03/09/2023) {#latest}
+Version 2.8.126 (03/09/2023)
 ---
 - Minor update to fix an issue if the WolfSSL library is used for HTTPS TLS/SSL.
+
+Version 2.8.127 (03/22/2023) {#latest}
+---
+- Minor update to include `soap` context member initialization in the soapcpp2-generated `soap_new_T()` source code for all classes `T` derived from `soap_dom_element`, e.g. with wsdl2h option `-d`.
+- Minor update to soapcpp2 option `-Et` traversal code generation to walk C/C++ data structures.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

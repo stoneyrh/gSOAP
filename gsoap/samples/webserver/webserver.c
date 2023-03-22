@@ -545,7 +545,9 @@ void server_loop(struct soap *soap)
           soap_print_fault(soap, stderr);
         }
         else if (options[OPTION_v].selected)
+        {
           fprintf(stderr, "Request #%d completed\n", req);
+        }
         soap_destroy(soap);
         soap_end(soap);
       }
@@ -653,7 +655,9 @@ void *process_queue(void *soap)
       soap_print_fault(tsoap, stderr);
     }
     else if (options[OPTION_v].selected)
+    {
       fprintf(stderr, "Thread %d finished serving request\n", (int)(long)tsoap->user);
+    }
     soap_destroy(tsoap);
     soap_end(tsoap);
   }
