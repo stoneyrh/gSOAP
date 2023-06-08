@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.127
+        stdsoap2.c[pp] 2.8.128
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208127
+#define GSOAP_LIB_VERSION 208128
 
 /* silence GNU's warnings on format nonliteral strings and truncation (snprintf truncates on purpose for safety) */
 #ifdef __GNUC__
@@ -91,15 +91,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  else
 #   pragma comment(lib, "Ws2_32.lib")
 #  endif
-#  pragma warning(disable : 4996) /* disable deprecation warnings */
+#  pragma warning(disable : 4996) /* disable visual studio POSIX deprecation warnings */
 # endif
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.127 2023-03-22 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.128 2023-06-07 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.127 2023-03-22 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.128 2023-06-07 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4520,6 +4520,8 @@ ssl_auth_init(struct soap *soap)
 #endif
   if ((soap->ssl_flags & SOAP_SSL_RSA))
   {
+    /* OpenSSL v3 deprecated low-level RSA key generation: ignore SOAP_SSL_RSA flag */
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
     if (SSL_CTX_need_tmp_RSA(soap->ctx))
     {
@@ -4547,14 +4549,38 @@ ssl_auth_init(struct soap *soap)
     }
     RSA_free(rsa);
 #endif
+#endif
   }
   else if (soap->dhfile)
   {
-    DH *dh = NULL;
-    char *s = NULL;
+    char *s = (char*)soap->dhfile;
     int n = (int)soap_strtoul(soap->dhfile, &s, 10);
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    /* if dhfile is numeric, set auto DH selection regardless of the value of n */
+    if (n >= 1 && *s == '\0')
+    {
+      if (!SSL_CTX_set_dh_auto(soap->ctx, 1))
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't generate DH parameters", SOAP_SSL_ERROR);
+    }
+    else
+    {
+      EVP_PKEY *dh;
+      BIO *bio = BIO_new_file(soap->dhfile, "r");
+      if (!bio)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read DH PEM file", SOAP_SSL_ERROR);
+      dh = PEM_read_bio_Parameters(bio, NULL);
+      BIO_free(bio);
+      if (!dh || !SSL_CTX_set0_tmp_dh_pkey(soap->ctx, dh))
+      {
+        if (dh)
+          EVP_PKEY_free(dh);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set DH parameters", SOAP_SSL_ERROR);
+      }
+    }
+#else
+    DH *dh = NULL;
     /* if dhfile is numeric, treat it as a key length to generate DH params which can take a while */
-    if (n >= 512 && s && *s == '\0')
+    if (n >= 512 && *s == '\0')
     {
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
       dh = DH_new();
@@ -4579,13 +4605,14 @@ ssl_auth_init(struct soap *soap)
       dh = PEM_read_bio_DHparams(bio, NULL, NULL, NULL);
       BIO_free(bio);
     }
-    if (!dh || DH_check(dh, &n) != 1 || SSL_CTX_set_tmp_dh(soap->ctx, dh) < 0)
+    if (!dh || !DH_check(dh, &n) || !SSL_CTX_set_tmp_dh(soap->ctx, dh))
     {
       if (dh)
         DH_free(dh);
       return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set DH parameters", SOAP_SSL_ERROR);
     }
     DH_free(dh);
+#endif
   }
   /* enable all TSLv1 protocols and disable SSLv3 by default if no SSL/TLS flags are set */
   if ((soap->ssl_flags & SOAP_SSLv3_TLSv1) == 0)

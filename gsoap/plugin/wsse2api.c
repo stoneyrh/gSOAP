@@ -56,6 +56,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "wsaapi.h"
 #endif
 
+#ifdef WIN32
+# pragma warning(disable : 4996) /* disable visual studio POSIX deprecation warnings */
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

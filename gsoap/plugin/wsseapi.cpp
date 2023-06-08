@@ -2321,6 +2321,10 @@ Similarly, PSHA256 can be computed by calling `soap_psha256()`.
 #error "wsseapi.c, stdsoap2.c/stdsoap2.cpp, dom.c/dom.cpp, and all other source code files must be compiled with -DWITH_DOM to use WS-Security"
 #endif
 
+#ifdef WIN32
+# pragma warning(disable : 4996) /* disable visual studio POSIX deprecation warnings */
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -3461,8 +3465,12 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned 
         {
           for (ns = soap->local_namespaces; ns && ns->id; )
           {
-            strcpy(p, ns->id);
-            p += strlen(p);
+            size_t k = strlen(ns->id);
+            soap_strcpy(p, n, ns->id);
+            p += k;
+            if (n <= k + 1)
+              break;
+            n -= k + 1;
             ns++;
             if (ns->id)
               *p++ = ' ';

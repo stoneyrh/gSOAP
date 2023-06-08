@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">SOAP_MACRO compile-time values</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Mar 22 2023 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Jun 7 2023 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -119,7 +119,7 @@ Macros</h2></td></tr>
 <tr class="memdesc:gad4edb63b6b20a8e5ac3891550013f64a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro is set to <code><a class="el" href="group__group__soap.html#gad4edb63b6b20a8e5ac3891550013f64a" title="Macro is set to SOAP_PURE_VIRTUAL = 0 at compile time when macro WITH_PURE_VIRTUAL is defined...">SOAP_PURE_VIRTUAL</a></code> = 0 at compile time when macro <code><a class="el" href="group__group__with.html#gaa0801009d3ed28b2c66063c26423fa8d" title="When this macro is defined at compile time (undefined by default), makes C++ service class operation ...">WITH_PURE_VIRTUAL</a></code> is defined.  <a href="#gad4edb63b6b20a8e5ac3891550013f64a">More...</a><br /></td></tr>
 <tr class="separator:gad4edb63b6b20a8e5ac3891550013f64a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab18ff4d6039f1387641508ae7be8a145"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145">SOAP_SSL_RSA_BITS</a>&#160;&#160;&#160;(2048)</td></tr>
-<tr class="memdesc:gab18ff4d6039f1387641508ae7be8a145"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable length of RSA keys used for https connections (the value is 2048 by default)  <a href="#gab18ff4d6039f1387641508ae7be8a145">More...</a><br /></td></tr>
+<tr class="memdesc:gab18ff4d6039f1387641508ae7be8a145"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable length of RSA keys used for https connections (the value is 2048 by default), ignored with OpenSSL v3.  <a href="#gab18ff4d6039f1387641508ae7be8a145">More...</a><br /></td></tr>
 <tr class="separator:gab18ff4d6039f1387641508ae7be8a145"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3a42c92a6417928388f4ee790ff74434"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__soap.html#ga3a42c92a6417928388f4ee790ff74434">SOAP_UNKNOWN_CHAR</a>&#160;&#160;&#160;(0x7F)</td></tr>
 <tr class="memdesc:ga3a42c92a6417928388f4ee790ff74434"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character (typically UTF-8), this is applicable when the runtime flag <code><a class="el" href="group__group__flags.html#ga9006d22d0abc39831dfe3ce1e491ce6f" title="soap_mode input/output flag value to serialize and deserialize 8-bit C/C++ strings containing UTF-8 e...">SOAP_C_UTFSTRING</a></code> is not used (the value is 0x7F by default)  <a href="#ga3a42c92a6417928388f4ee790ff74434">More...</a><br /></td></tr>
@@ -256,7 +256,7 @@ Macros</h2></td></tr>
 <li><code><a class="el" href="group__group__soap.html#gadf06a04f79f46d6c32b4c960e112bdfb" title="User-definable maximum HTTP chunk size receivable (the value is 2147483647 by default), also HTTP chunk sizes cannot exceed soap::recv_maxlength. ">SOAP_MAXHTTPCHUNK</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga61bac5e1247c779c5ea27090faf0e79d" title="Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached, trust when compressed / deflated &gt; SOAP...">SOAP_MINDEFLATERATIO</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gad4edb63b6b20a8e5ac3891550013f64a" title="Macro is set to SOAP_PURE_VIRTUAL = 0 at compile time when macro WITH_PURE_VIRTUAL is defined...">SOAP_PURE_VIRTUAL</a></code></li>
-<li><code><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145" title="User-definable length of RSA keys used for https connections (the value is 2048 by default) ...">SOAP_SSL_RSA_BITS</a></code></li>
+<li><code><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145" title="User-definable length of RSA keys used for https connections (the value is 2048 by default)...">SOAP_SSL_RSA_BITS</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#ga3a42c92a6417928388f4ee790ff74434" title="User-definable 8 bit integer that represents a character that could not be converted to an ASCII char...">SOAP_UNKNOWN_CHAR</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gaafe757ff5b99e03ae2c7814dedf9aa8e" title="A user-definable integer Unicode value representing a character that replaces an invalid Unicode code...">SOAP_UNKNOWN_UNICODE_CHAR</a></code></li>
 <li><code><a class="el" href="group__group__soap.html#gabd3b66726c9832645b90f313b109d4b5" title="User-definable macro that represents the LONG64 printf %-format. ">SOAP_LONG_FORMAT</a></code></li>
@@ -1167,7 +1167,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable length of RSA keys used for https connections (the value is 2048 by default) </p>
+<p>User-definable length of RSA keys used for https connections (the value is 2048 by default), ignored with OpenSSL v3. </p>
 
 </div>
 </div>
@@ -1304,7 +1304,7 @@ C:&gt; link /LIBPATH ws2_32.lib /OUT:mygsoap.dll /DLL envC.obj stdsoap2.obj</pre
 Copyright (C) 2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Mar 22 2023 12:01:20 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Jun 7 2023 20:28:00 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

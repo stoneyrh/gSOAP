@@ -1302,7 +1302,7 @@ DIME attachments sizes are limited to `#SOAP_MAXDIMESIZE`.  Increase this value 
 /// Macro is set to `#SOAP_PURE_VIRTUAL` = 0 at compile time when macro `#WITH_PURE_VIRTUAL` is defined
 #define SOAP_PURE_VIRTUAL = 0
 
-/// User-definable length of RSA keys used for https connections (the value is 2048 by default)
+/// User-definable length of RSA keys used for https connections (the value is 2048 by default), ignored with OpenSSL v3
 #define SOAP_SSL_RSA_BITS (2048)
 
 /// User-definable 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character (typically UTF-8), this is applicable when the runtime flag `#SOAP_C_UTFSTRING` is not used (the value is 0x7F by default)
@@ -6101,7 +6101,7 @@ if (soap_ssl_server_context(soap,
       "password",                  // password to read server.pem
       NULL,
       NULL,
-      "1024",                      // generate DH with 1024 bits (takes a while to execute)
+      "1024",                      // generate DH with 1024 bits, but OpenSSL v3 auto-selects an internal DH
       NULL,
       "my_unique_server_id123"     // identification to enable SSL session caching to speed up TLS
       ))
@@ -6145,7 +6145,7 @@ int soap_ssl_server_context(
     const char *password, ///< password to unlock the private key or NULL
     const char *cafile,   ///< file with certificates in PEM format or NULL
     const char *capath,   ///< directory to certificates
-    const char *dhfile,   ///< file with DH parameters or numeric string value to generate DH parameters or NULL
+    const char *dhfile,   ///< file with DH parameters or numeric string value to generate DH parameters or NULL for RSA
     const char *randfile, ///< file to seed the PRNG or NULL
     const char *sid)      ///< a unique server id for session caching or NULL
   /// @returns `#SOAP_OK` or a `::soap_status` error code

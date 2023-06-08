@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: GSoap
 Description: SOAP C++ Web Services with SSL, ZLIB, DOM
-Version: 2.8.127
+Version: 2.8.128
 Requires:
 Libs: -L${libdir} -lgsoapssl++
 Libs.private: @SAMPLE_SSL_LIBS@ @SAMPLE_EXTRA_LIBS@

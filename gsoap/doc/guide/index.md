@@ -13686,7 +13686,7 @@ define                       | result
 `#SOAP_MAXHTTPCHUNK`         | maximum HTTP chunk size receivable
 `#SOAP_MINDEFLATERATIO`      | trusted deflation ratio after `#SOAP_MAXINFLATESIZE` is reached
 `#SOAP_PURE_VIRTUAL`         | set to `= 0` when `#WITH_PURE_VIRTUAL` is defined
-`#SOAP_SSL_RSA_BITS`         | length of the RSA key (2048 by default) 
+`#SOAP_SSL_RSA_BITS`         | length of the RSA key (2048 by default), ignored with OpenSSL v3
 `#SOAP_UNKNOWN_CHAR`         | an 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character
 `#SOAP_UNKNOWN_UNICODE_CHAR` | integer Unicode value representing a character that replaces an invalid Unicode code point
 `#SOAP_LONG_FORMAT`          | macro that represents the `#LONG64` printf %-format
@@ -16543,11 +16543,6 @@ The cacert.pem certificate is used in the `cafile` parameter of the `::soap_ssl_
 
 Finally, you need to generate Diffie-Helmann (DH) parameters for the server if
 you wish to use DH instead of RSA. There are two options:
-
-
-*  Set the `dhfile` parameter to the numeric DH prime length in bits
-required (for example "1024") to let the engine generate DH parameters at
-initialization. This can be time consuming.
 
 *  Provide a file name for the `dhfile` parameter of
 `::soap_ssl_server_context`. The file should be generated beforehand. To

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">gSOAP user guide</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Mar 22 2023 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Jun 7 2023 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -3381,7 +3381,7 @@ Compile-time flags</h1>
 <tr>
 <td><code><a class="el" href="group__group__soap.html#gad4edb63b6b20a8e5ac3891550013f64a" title="Macro is set to SOAP_PURE_VIRTUAL = 0 at compile time when macro WITH_PURE_VIRTUAL is defined...">SOAP_PURE_VIRTUAL</a></code> </td><td>set to <code>= 0</code> when <code><a class="el" href="group__group__with.html#gaa0801009d3ed28b2c66063c26423fa8d" title="When this macro is defined at compile time (undefined by default), makes C++ service class operation ...">WITH_PURE_VIRTUAL</a></code> is defined </td></tr>
 <tr>
-<td><code><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145" title="User-definable length of RSA keys used for https connections (the value is 2048 by default) ...">SOAP_SSL_RSA_BITS</a></code> </td><td>length of the RSA key (2048 by default) </td></tr>
+<td><code><a class="el" href="group__group__soap.html#gab18ff4d6039f1387641508ae7be8a145" title="User-definable length of RSA keys used for https connections (the value is 2048 by default)...">SOAP_SSL_RSA_BITS</a></code> </td><td>length of the RSA key (2048 by default), ignored with OpenSSL v3 </td></tr>
 <tr>
 <td><code><a class="el" href="group__group__soap.html#ga3a42c92a6417928388f4ee790ff74434" title="User-definable 8 bit integer that represents a character that could not be converted to an ASCII char...">SOAP_UNKNOWN_CHAR</a></code> </td><td>an 8 bit integer that represents a character that could not be converted to an ASCII char, i.e. when converting an XML Unicode character </td></tr>
 <tr>
@@ -4439,7 +4439,6 @@ SSL certificates and key files</h2>
 <p>You now have a self-signed CA root certificate cacert.pem and a server.pem (or client.pem) certificate in PEM format. The cacert.pem certificate is used in the <code>cafile</code> parameter of the <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code> (or <code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code>) at the client (or server) side to verify the authenticity of the peer. You can also provide a capath parameter to these trusted certificates. The server.pem (or client.pem) must be provided with the <code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code> at the server side (or <code><a class="el" href="group__group__ssl.html#ga269c7732b1cda9dc79db08fcbf1d5438" title="Initialize the client-side SSL/TLS context. ">soap_ssl_client_context</a></code> at the client side) together with the password you entered when generating the certificate using cert.sh to access the file. These certificates must be present to grant authentication requests by peers. In addition, the server.pem (and client.pem) include the host name of the machine on which the application runs (e.g. localhost), so you need to generate new certificates when migrating a server (or client).</p>
 <p>Finally, you need to generate Diffie-Helmann (DH) parameters for the server if you wish to use DH instead of RSA. There are two options:</p>
 <ul>
-<li>Set the <code>dhfile</code> parameter to the numeric DH prime length in bits required (for example "1024") to let the engine generate DH parameters at initialization. This can be time consuming.</li>
 <li>Provide a file name for the <code>dhfile</code> parameter of <code><a class="el" href="group__group__ssl.html#ga3492465cdd8aa71fe746199d3842cac7" title="Initialize the server-side SSL/TLS context. ">soap_ssl_server_context</a></code>. The file should be generated beforehand. To do so with the OpenSSL command line tool, use: <pre class="fragment"> openssl dhparam -outform PEM -out dh.pem 512
 </pre></li>
 </ul>
@@ -4847,7 +4846,7 @@ All rights reserved.</em> </p>
 Copyright (C) 2023, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Mar 22 2023 12:01:20 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Jun 7 2023 20:28:01 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

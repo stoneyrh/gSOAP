@@ -4098,7 +4098,7 @@ void Types::gen(const char *URI, const xs__anyAttribute& anyAttribute)
     if (dflag)
       fprintf(stream, ";\t///< Store anyAttribute content in DOM soap_dom_attribute linked node structure.\n");
     else
-      fprintf(stream, ";\t///< A placeholder that has no effect: please see comment.\n");
+      fprintf(stream, ";\t///< A placeholder that has no effect: please see comment on enabling xsd__anyAttribute DOM with option -d.\n");
   }
 }
 

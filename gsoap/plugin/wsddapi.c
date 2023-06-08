@@ -477,6 +477,10 @@ services, the above suffices to generate the required code.
 
 #include "wsddapi.h"
 
+#ifdef WIN32
+# pragma warning(disable : 4996) /* disable visual studio POSIX deprecation warnings */
+#endif
+
 #ifdef SOAP_WSDD_2005
 /* WS-Discovery 1.0 2005 */
 const char *to_ts_URL = "urn:schemas-xmlsoap-org:ws:2005:04:discovery";
