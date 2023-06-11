@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.128
+        stdsoap2.c[pp] 2.8.129
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 208128
+#define GSOAP_LIB_VERSION 208129
 
 /* silence GNU's warnings on format nonliteral strings and truncation (snprintf truncates on purpose for safety) */
 #ifdef __GNUC__
@@ -96,10 +96,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.128 2023-06-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.129 2023-06-11 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.128 2023-06-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.129 2023-06-11 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */

@@ -5204,8 +5204,9 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
           gen_type_documentation(fd, p, ns);
           fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(((Table*)typ->ref)->prev->sym->name));
           fprintf(fd, "            <element name=\"%s\" type=\"%s\" minOccurs=\"0\" maxOccurs=\"unbounded\" nillable=\"true\"/>\n", q->tag?ns_tag_remove(q):q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1));
-          fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
+          fprintf(fd, "          </sequence>\n");
           gen_schema_attributes(fd, typ, NULL, ns, ns1);
+          fprintf(fd, "        </extension>\n      </complexContent>\n");
           fprintf(fd, "    </complexType>\n");
         }
         else
@@ -5214,8 +5215,9 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
           gen_type_documentation(fd, p, ns);
           fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(((Table*)typ->ref)->prev->sym->name));
           fprintf(fd, "            <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"%s/>\n", q->tag?ns_tag_remove(q):q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, nillable_ref(q));
-          fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
+          fprintf(fd, "          </sequence>\n");
           gen_schema_attributes(fd, typ, NULL, ns, ns1);
+          fprintf(fd, "        </extension>\n      </complexContent>\n");
           fprintf(fd, "    </complexType>\n");
         }
       }
@@ -5254,8 +5256,9 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
           gen_type_documentation(fd, p, ns);
           fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(typ->base->id->name));
           gen_schema_elements(fd, typ, typ->base, ns, ns1);
-          fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
+          fprintf(fd, "          </sequence>\n");
           gen_schema_attributes(fd, typ, typ->base, ns, ns1);
+          fprintf(fd, "        </extension>\n      </complexContent>\n");
           fprintf(fd, "    </complexType>\n");
         }
         else
@@ -5280,8 +5283,9 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
           gen_type_documentation(fd, p, ns);
           fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(((Table*)typ->ref)->prev->sym->name));
           gen_schema_elements(fd, typ, NULL, ns, ns1);
-          fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
+          fprintf(fd, "          </sequence>\n");
           gen_schema_attributes(fd, typ, NULL, ns, ns1);
+          fprintf(fd, "        </extension>\n      </complexContent>\n");
           fprintf(fd, "    </complexType>\n");
         }
         else
@@ -5292,8 +5296,9 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
             gen_type_documentation(fd, p, ns);
             fprintf(fd, "      <complexContent>\n        <extension base=\"%s\">\n          <sequence>\n", ns_convert(typ->base->id->name));
             gen_schema_elements(fd, typ, typ->base, ns, ns1);
-            fprintf(fd, "          </sequence>\n        </extension>\n      </complexContent>\n");
+            fprintf(fd, "          </sequence>\n");
             gen_schema_attributes(fd, typ, typ->base, ns, ns1);
+            fprintf(fd, "        </extension>\n      </complexContent>\n");
             fprintf(fd, "    </complexType>\n");
           }
           else

@@ -925,6 +925,7 @@ int http_POST_handler(struct soap *soap)
   {
     /* in this example we actually do not save the data as a file person.xml, but we could! */
     const char *data = soap_http_get_body(soap, NULL);
+    (void)data;
     (void)soap_end_recv(soap);
     return copy_file(soap, "person.xml", "text/xml");
   }

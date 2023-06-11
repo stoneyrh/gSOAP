@@ -1754,9 +1754,13 @@ Version 2.8.127 (03/22/2023)
 - Minor update to include `soap` context member initialization in the soapcpp2-generated `soap_new_T()` source code for all classes `T` derived from `soap_dom_element`, e.g. with wsdl2h option `-d`.
 - Minor update to soapcpp2 option `-Et` traversal code generation to walk C/C++ data structures.
 
-Version 2.8.128 (06/07/2023) {#latest}
+Version 2.8.128 (06/07/2023)
 ---
 - Update to resolve OpenSSL v3 deprecation warnings by using OpenSSL v3 API functions.  This improvement only applies to OpenSSL v3 and greater.  Older OpenSSL versions can still be used without changing any code or flags.
+
+Version 2.8.129 (06/11/2023) {#latest}
+---
+- A correction of a schema formatting issue in the WSDL and XSD files output of soapcpp2.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
