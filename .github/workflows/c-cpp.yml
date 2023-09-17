@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build-linux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: configure
+      run: ./configure
+    - name: make release
+      run: make
+    - name: make clean
+      run: make clean
+    - name: make debug
+      run: make CFLAGS="-DDEBUG" CPPFLAGS="-DDEBUG"
